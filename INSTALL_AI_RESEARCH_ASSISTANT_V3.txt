@@ -1,0 +1,7 @@
+AI Research Assistant v3
+
+Overwrite only files included in this package. Keep your existing stock_api.py and .env.
+
+Core change: Qwen3 8B autonomously selects research tools, reads evidence, creates research notes/tags/evidence/follow-up, and persists memory. EmailAgent only formats the Agent result; it no longer chooses fixed top-N research content.
+
+Test: python test_agent_research_assistant.py

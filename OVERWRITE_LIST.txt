@@ -1,0 +1,18 @@
+AI Research Assistant Agent upgrade overlay
+
+Copy and overwrite these files into the existing stock_dashboard project:
+1. agent_research_assistant.py
+2. research_agent.py
+3. earnings_call_agent.py
+4. email_agent.py
+5. run_after_close_research.py
+6. setup_research_task.ps1
+7. stock_dashboard.py
+8. test_agent_research_assistant.py
+9. AI_RESEARCH_ASSISTANT_README.md
+10. .env.example (reference only; do NOT overwrite your real .env)
+
+IMPORTANT:
+- DO NOT overwrite stock_api.py. Your existing stock_api.py contains your Fugle API key / current API logic.
+- DO NOT overwrite your real .env.
+- Keep all other existing project files.

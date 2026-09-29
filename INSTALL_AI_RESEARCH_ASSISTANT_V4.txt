@@ -1,0 +1,21 @@
+AI Research Assistant v4
+
+請注意：本套件不包含、不覆蓋既有 stock_api.py 與 .env。
+
+本版重點：
+1. Email 恢復「目前主要利多題材」與「營收成長重點」兩個實用區塊。
+2. 營收表格改為「公司名稱（代號）」顯示，例如「晶豪科（3006）」。
+3. Email 的「最近 5 天法說會」為獨立區塊；Agent 摘要不再重複整段法說內容。
+4. Email 移除「模型健康度」正文區塊；模型細節仍保留於 research JSON/附件。
+5. Agent 看到產業／個股異常且原因不明時，必須主動查研究包新聞或使用 Google News RSS 補查。
+6. Agent 看到財報／營收缺資料時，先查公司財務，仍不足時再查近期新聞與公開資訊。
+7. Agent 強化「股價異動 → 新聞原因 → 供應鏈／產業題材 → 財務／公司資料」的因果鏈研究。
+8. Agent 研究筆記可保存新聞來源網址，Email 可直接點開來源。
+9. confidence 使用 0～100%，有證據時不再把 0 當成預設信心值。
+
+安裝／覆蓋方式：
+把 ZIP 內的程式檔覆蓋到既有 stock_dashboard 資料夾；保留自己的 stock_api.py、.env、output 與 data。
+
+測試：
+python test_agent_research_assistant.py
+python test_email_agent.py
