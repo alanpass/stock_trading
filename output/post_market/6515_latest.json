@@ -1,0 +1,599 @@
+{
+  "as_of": "2026-09-29T19:17:03.083686+08:00",
+  "symbol": "6515",
+  "name": "穎崴",
+  "market": "TSE",
+  "industry": "半導體業",
+  "business_group": "半導體測試／測試介面",
+  "primary_chain": "半導體 > 生產製程及檢測設備",
+  "price_context": {
+    "quote": {
+      "date": "2026-09-29",
+      "type": "EQUITY",
+      "exchange": "TWSE",
+      "market": "TSE",
+      "symbol": "6515",
+      "name": "穎崴",
+      "referencePrice": 5850,
+      "previousClose": 5850,
+      "openPrice": 5720,
+      "openTime": 1790643600631045,
+      "highPrice": 5765,
+      "highTime": 1790643663703956,
+      "lowPrice": 5650,
+      "lowTime": 1790650605121340,
+      "closePrice": 5675,
+      "closeTime": 1790659800000000,
+      "avgPrice": 5700.32,
+      "change": -175,
+      "changePercent": -2.99,
+      "amplitude": 1.97,
+      "lastPrice": 5675,
+      "lastSize": 21,
+      "bids": [
+        {
+          "price": 5670,
+          "size": 2
+        },
+        {
+          "price": 5665,
+          "size": 2
+        },
+        {
+          "price": 5660,
+          "size": 1
+        },
+        {
+          "price": 5655,
+          "size": 3
+        },
+        {
+          "price": 5650,
+          "size": 4
+        }
+      ],
+      "asks": [
+        {
+          "price": 5675,
+          "size": 1
+        },
+        {
+          "price": 5695,
+          "size": 1
+        },
+        {
+          "price": 5705,
+          "size": 1
+        },
+        {
+          "price": 5710,
+          "size": 1
+        },
+        {
+          "price": 5715,
+          "size": 2
+        }
+      ],
+      "total": {
+        "tradeValue": 1704395000,
+        "tradeVolume": 299,
+        "tradeVolumeAtBid": 173,
+        "tradeVolumeAtAsk": 119,
+        "transaction": 234,
+        "time": 1790659800000000
+      },
+      "lastTrade": {
+        "bid": 5670,
+        "ask": 5675,
+        "price": 5675,
+        "size": 21,
+        "time": 1790659800000000,
+        "serial": 14867220
+      },
+      "lastTrial": {
+        "bid": 5670,
+        "ask": 5695,
+        "price": 5675,
+        "size": 21,
+        "time": 1790659786676631,
+        "serial": 14864256
+      },
+      "isClose": true,
+      "serial": 14867220,
+      "lastUpdated": 1790659800000000
+    },
+    "current_price": 5675.0,
+    "previous_close": 5850.0,
+    "today_change": -175.0,
+    "today_change_percent": -2.99,
+    "today_return": -0.02991452991452992,
+    "peer_median_change_percent": 0.0,
+    "relative_to_taiex_pct": -2.1724190102572445,
+    "taiex": {
+      "time": "13:30:00",
+      "index": 47631.96,
+      "change": -392.6399999999994,
+      "change_pct": -0.8175809897427557,
+      "datetime": "2026-09-29 13:30:00+08:00"
+    },
+    "peer_returns": [
+      {
+        "symbol": "2303",
+        "change_percent": -0.32
+      },
+      {
+        "symbol": "2330",
+        "change_percent": 0.0
+      },
+      {
+        "symbol": "2344",
+        "change_percent": 1.46
+      },
+      {
+        "symbol": "2408",
+        "change_percent": 0.6
+      },
+      {
+        "symbol": "7769",
+        "change_percent": -1.5
+      },
+      {
+        "symbol": "6488",
+        "change_percent": -0.32
+      },
+      {
+        "symbol": "3374",
+        "change_percent": 1.34
+      },
+      {
+        "symbol": "3450",
+        "change_percent": 2.34
+      },
+      {
+        "symbol": "3006",
+        "change_percent": 3.64
+      },
+      {
+        "symbol": "3661",
+        "change_percent": -2.25
+      },
+      {
+        "symbol": "8299",
+        "change_percent": -0.47
+      }
+    ]
+  },
+  "institution_context": {
+    "available": true,
+    "latest": {
+      "date": "2026-09-29 00:00:00",
+      "symbol": "6515",
+      "foreign_net": -40920.0,
+      "trust_net": -68000.0,
+      "dealer_net": -567.0,
+      "total_net": -109487.0,
+      "market": "上市",
+      "source": "TWSE-T86"
+    },
+    "totals_10d": {
+      "foreign_net": -529660.0,
+      "trust_net": -1125787.0,
+      "dealer_net": 24046.0,
+      "total_net": -1631401.0
+    },
+    "rows": [
+      {
+        "date": "2026-09-14 00:00:00",
+        "symbol": "6515",
+        "foreign_net": 57590.0,
+        "trust_net": -67570.0,
+        "dealer_net": 991.0,
+        "total_net": -8989.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      },
+      {
+        "date": "2026-09-15 00:00:00",
+        "symbol": "6515",
+        "foreign_net": 4638.0,
+        "trust_net": -67000.0,
+        "dealer_net": -1150.0,
+        "total_net": -63512.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      },
+      {
+        "date": "2026-09-16 00:00:00",
+        "symbol": "6515",
+        "foreign_net": -43819.0,
+        "trust_net": -34000.0,
+        "dealer_net": 6406.0,
+        "total_net": -71413.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      },
+      {
+        "date": "2026-09-17 00:00:00",
+        "symbol": "6515",
+        "foreign_net": -77437.0,
+        "trust_net": -41016.0,
+        "dealer_net": 1311.0,
+        "total_net": -117142.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      },
+      {
+        "date": "2026-09-18 00:00:00",
+        "symbol": "6515",
+        "foreign_net": 15105.0,
+        "trust_net": -13000.0,
+        "dealer_net": 5397.0,
+        "total_net": 7502.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      },
+      {
+        "date": "2026-09-21 00:00:00",
+        "symbol": "6515",
+        "foreign_net": -363969.0,
+        "trust_net": -453500.0,
+        "dealer_net": 11941.0,
+        "total_net": -805528.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      },
+      {
+        "date": "2026-09-22 00:00:00",
+        "symbol": "6515",
+        "foreign_net": 93562.0,
+        "trust_net": -320700.0,
+        "dealer_net": -663.0,
+        "total_net": -227801.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      },
+      {
+        "date": "2026-09-23 00:00:00",
+        "symbol": "6515",
+        "foreign_net": -58521.0,
+        "trust_net": -25000.0,
+        "dealer_net": 5908.0,
+        "total_net": -77613.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      },
+      {
+        "date": "2026-09-24 00:00:00",
+        "symbol": "6515",
+        "foreign_net": -115889.0,
+        "trust_net": -36001.0,
+        "dealer_net": -5528.0,
+        "total_net": -157418.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      },
+      {
+        "date": "2026-09-29 00:00:00",
+        "symbol": "6515",
+        "foreign_net": -40920.0,
+        "trust_net": -68000.0,
+        "dealer_net": -567.0,
+        "total_net": -109487.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      }
+    ]
+  },
+  "official_mentions": [],
+  "fundamentals": {
+    "symbol": "6515",
+    "industry_code": "24",
+    "market": "TWSE",
+    "statement_revenue": 6503650.0,
+    "gross_profit": 2632186.0,
+    "operating_profit": 1601853.0,
+    "net_income": 1370770.0,
+    "eps": 38.24,
+    "latest_month_revenue": 1705663.0,
+    "revenue_yoy": 233.36649415222965,
+    "raw_financial": {
+      "出表日期": "1150929",
+      "年度": "115",
+      "季別": "2",
+      "公司代號": "6515",
+      "公司名稱": "穎崴",
+      "營業收入": "6503650.00",
+      "營業成本": "3871464.00",
+      "原始認列生物資產及農產品之利益（損失）": "",
+      "生物資產當期公允價值減出售成本之變動利益（損失）": "",
+      "營業毛利（毛損）": "2632186.00",
+      "未實現銷貨（損）益": "",
+      "已實現銷貨（損）益": "",
+      "營業毛利（毛損）淨額": "2632186.00",
+      "營業費用": "1030333.00",
+      "其他收益及費損淨額": "",
+      "營業利益（損失）": "1601853.00",
+      "營業外收入及支出": "119804.00",
+      "稅前淨利（淨損）": "1721657.00",
+      "所得稅費用（利益）": "350887.00",
+      "繼續營業單位本期淨利（淨損）": "1370770.00",
+      "停業單位損益": "",
+      "合併前非屬共同控制股權損益": "",
+      "本期淨利（淨損）": "1370770.00",
+      "其他綜合損益（淨額）": "66207.00",
+      "合併前非屬共同控制股權綜合損益淨額": "",
+      "本期綜合損益總額": "1436977.00",
+      "淨利（淨損）歸屬於母公司業主": "1370770.00",
+      "淨利（淨損）歸屬於共同控制下前手權益": "",
+      "淨利（淨損）歸屬於非控制權益": "",
+      "綜合損益總額歸屬於母公司業主": "1436977.00",
+      "綜合損益總額歸屬於共同控制下前手權益": "",
+      "綜合損益總額歸屬於非控制權益": "",
+      "基本每股盈餘（元）": "38.24"
+    },
+    "raw_revenue": {
+      "出表日期": "1150917",
+      "資料年月": "11508",
+      "公司代號": "6515",
+      "公司名稱": "穎崴",
+      "產業別": "半導體業",
+      "營業收入-當月營收": "1705663",
+      "營業收入-上月營收": "1600351",
+      "營業收入-去年當月營收": "511648",
+      "營業收入-上月比較增減(%)": "6.5805563904418465",
+      "營業收入-去年同月增減(%)": "233.36649415222965",
+      "累計營業收入-當月累計營收": "9809664",
+      "累計營業收入-去年累計營收": "4957431",
+      "累計營業收入-前期比較增減(%)": "97.87797349070516",
+      "備註": "持續受惠於全球AI及HPC客戶需求強勁，高階測試座Coaxial Socket及 MEMS 探針卡出貨攀高，本月營收變動達50%以上"
+    }
+  },
+  "verified_news": [
+    {
+      "title": "穎崴第一季每股獲利19.54元 創歷史新高 - 自由財經",
+      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFBrU3NwaUdaM3FEQW5OdXBhVmtGUkNhdXNoa1VsYzc0dEZkcHdINTdTcXJ6bmJiZ1RxLVJZYTRqWUZjY1NvcGcyUl9TTEpRNmhCNFVlc09HY01JQjQzY2Rn0gFkQVVfeXFMUEdyUmo3UXV4Y3ltMmxTaXdTd21HczNZQ3o3eGprVFA0Z3ZQYno3WTJFSFJzN0lJeXczUGpiTnZuR3M1bGlXMU5jaDFOdW41ZDVnOWlRU043Tzk0TGhNc19XeE8wcA?oc=5",
+      "published": "Mon, 04 May 2026 07:00:00 GMT",
+      "summary": "穎崴第一季每股獲利19.54元 創歷史新高 &nbsp;&nbsp; 自由財經",
+      "source": "自由財經",
+      "query": "\"6515\" \"穎崴\" 半導體測試／測試介面 財報 營收 毛利率 EPS",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "Q2獲利年飆227%！這「半導體巨頭」上半年EPS衝38.24元創新高 探針卡需求火力全開 - FTNN",
+      "link": "https://news.google.com/rss/articles/CBMiS0FVX3lxTFBvQ0dCdFhqU1dmeEFJazA2Rmgyd1NWNGFUbmVkbGNzZWZTX29QLTU0RlRCb3VDZUlSaTRiQUtkSHhLd002dVpjWm9qcw?oc=5",
+      "published": "Sat, 08 Aug 2026 07:00:00 GMT",
+      "summary": "Q2獲利年飆227%！這「半導體巨頭」上半年EPS衝38.24元創新高 探針卡需求火力全開 &nbsp;&nbsp; FTNN",
+      "source": "FTNN",
+      "query": "\"6515\" \"穎崴\" 半導體測試／測試介面 財報 營收 毛利率 EPS",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "AI測試需求爆發、MEMS探針卡出貨放量！穎崴上半年EPS 38.24元創同期新高，7月營收再創高| 魏鑫陽 | 財經 - 風傳媒",
+      "link": "https://news.google.com/rss/articles/CBMiTkFVX3lxTE8weWZVN2VBdVd3b29ERE1mZ2dibTk3cEFIQ18zNzBJYk9Wc05xNkgyeDloQVpnbzhpNW80dTBYWTdjNzJIMlNGRHUwT1ZQQQ?oc=5",
+      "published": "Thu, 06 Aug 2026 07:00:00 GMT",
+      "summary": "AI測試需求爆發、MEMS探針卡出貨放量！穎崴上半年EPS 38.24元創同期新高，7月營收再創高| 魏鑫陽 | 財經 &nbsp;&nbsp; 風傳媒",
+      "source": "風傳媒",
+      "query": "\"6515\" \"穎崴\" 半導體測試／測試介面 財報 營收 毛利率 EPS",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "穎崴上半年EPS達38.24元創同期新高！產能擴充陣痛期已過 AI大單能見度高 - 鏡報",
+      "link": "https://news.google.com/rss/articles/CBMiUkFVX3lxTFBab1M5OTk5SFVkaUFEX0hGWWNNbkFoUGVweGVQRGt0MU9wY2FOdlYxam45Y3Eyc2NDV0doZkM5cnVQN0dfR0FBMk16THNTb2lCQ3c?oc=5",
+      "published": "Fri, 07 Aug 2026 03:13:06 GMT",
+      "summary": "穎崴上半年EPS達38.24元創同期新高！產能擴充陣痛期已過 AI大單能見度高 &nbsp;&nbsp; 鏡報",
+      "source": "鏡報",
+      "query": "\"6515\" \"穎崴\" 半導體測試／測試介面 財報 營收 毛利率 EPS",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "穎崴去年EPS達46.93元創新高 搭配資本公積今年將配息50元現金股利 - 信傳媒",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE05NXNsTGgweUFCSzhLSlFoMXpDM1RLR3BEQlV0bmZKY1BlUEZxR0p1NDRGcGZJZkNHd2JXMXJMSFFVS2dlMVpTU3l2Z3NuRGFrclB1S1hMQmNldw?oc=5",
+      "published": "Thu, 26 Feb 2026 08:00:00 GMT",
+      "summary": "穎崴去年EPS達46.93元創新高 搭配資本公積今年將配息50元現金股利 &nbsp;&nbsp; 信傳媒",
+      "source": "信傳媒",
+      "query": "\"6515\" \"穎崴\" 半導體測試／測試介面 財報 營收 毛利率 EPS",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "穎崴Q1營收、獲利齊創高　EPS達19.54元、AI需求帶動高階產品爆發 - ETtoday財經雲",
+      "link": "https://news.google.com/rss/articles/CBMiUkFVX3lxTFBKUDhqU2xYdjJSM25rOGJwNl9oeVBsNS12bmZGWmVfT3paRVY0dU9sdGJuRU5IZU9CT2JZNEplT2hNNFpsODA0MS1EQjB0dmctQ0HSAVBBVV95cUxPU3A3U2JUR1ZDbXJOb0ZPV0lTWXBUU29VWXNTcUtoemtiOS1WaHY5bVg0dWVkZjlVQklVbjRGYzNJSTlXQVZZLU1Gd251c2xWQw?oc=5",
+      "published": "Mon, 04 May 2026 07:00:00 GMT",
+      "summary": "穎崴Q1營收、獲利齊創高　EPS達19.54元、AI需求帶動高階產品爆發 &nbsp;&nbsp; ETtoday財經雲",
+      "source": "ETtoday財經雲",
+      "query": "\"6515\" \"穎崴\" 半導體測試／測試介面 財報 營收 毛利率 EPS",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "【即時新聞】高盛上修穎崴目標價至15000元，EPS明年預估翻倍激增至224.1元 - CMoney投資網誌",
+      "link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxQZ2k0REtUNnZDNzVOV3FDWXhQN2RaSWFhWk5UZ1ZmdDdtUGh6WEltdVJ0UWkxMG5adV94LVFLWTlaMFEtckRYalhmT3Y2YTNpVjdIcVJFQ3BJWlBiX0JEMWZKLWdiMjBqUHNQcEV2YnNvMGd1V2hlZll5Q2lIOTdFNVhMcjhraUpMN2VQdWRvM3c?oc=5",
+      "published": "Wed, 06 May 2026 07:00:00 GMT",
+      "summary": "【即時新聞】高盛上修穎崴目標價至15000元，EPS明年預估翻倍激增至224.1元 &nbsp;&nbsp; CMoney投資網誌",
+      "source": "CMoney投資網誌",
+      "query": "\"6515\" \"穎崴\" 半導體測試／測試介面 財報 營收 毛利率 EPS",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "AI晶片越複雜就越需要！台積電推動、股后穎崴領軍，探針卡五雄打造難以撼動的新護城河 - 今周刊",
+      "link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQaUQ1Y0xBSnMzbEdfaXp0ZTBndlFGbWEyWjRpUVRKN2ZSQkdGeEJiMXZNTlVsSWMtVVNsVnA5cU0zRVByUmZFR3dFNzRzOU5tb2lNYkE4TV93YVcyUmtzTXhhb0JrbExDTDF5Z2tNdnIwZ0ZGTnNlYmluWFE1aXZtQw?oc=5",
+      "published": "Thu, 02 Apr 2026 07:00:00 GMT",
+      "summary": "AI晶片越複雜就越需要！台積電推動、股后穎崴領軍，探針卡五雄打造難以撼動的新護城河 &nbsp;&nbsp; 今周刊",
+      "source": "今周刊",
+      "query": "\"6515\" \"穎崴\" 半導體 > 生產製程及檢測設備 董事長 總經理 法說會 展望 訂單 接單",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "AI晶片測試趨勢整理｜京元電、探針卡三雄、欣銓，台股測試供應鏈一次看懂 - pocket.tw",
+      "link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE81UDdHRWJZbExkdnRTd3hCblNlRzM4bk5ZXzdnVDlOanAxMXptN25RV3pDUXZqeUo3TkhrVmlHcXNzRndvU19MVml5T2g4M2RwMFBBclNSUk93WjZJ?oc=5",
+      "published": "Mon, 04 May 2026 07:00:00 GMT",
+      "summary": "AI晶片測試趨勢整理｜京元電、探針卡三雄、欣銓，台股測試供應鏈一次看懂 &nbsp;&nbsp; pocket.tw",
+      "source": "pocket.tw",
+      "query": "\"6515\" Test Socket Probe Card Burn-in SLT 測試設備 HPC測試 競爭者 客戶 供應鏈 產能 報價",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "股后穎崴晉升萬元俱樂部 股王股后再掀比價行情 - 經濟日報",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5TWjV4aXVpczZPa1BMMXh1Wlh6bEtMbWhXXzJ3d2dFM1JlX28yT1hfNDdDWHlvTHhHQVNaQ1ptd2V1V05WblRUQlFzLUlzTDN5cUFscC1aNUNiZ9IBX0FVX3lxTE1idmZiZDlOekgwNU9aSTBMREdSX0xDd1pfSmZQV0ZCeUViSFJKUWFEU1VqbG1KVnd2OGc1eGNEdWpGNGFoWmtZRWxxbnJ5UjVBOExENHhRbHhOT2stNERr?oc=5",
+      "published": "Fri, 17 Apr 2026 07:00:00 GMT",
+      "summary": "股后穎崴晉升萬元俱樂部 股王股后再掀比價行情 &nbsp;&nbsp; 經濟日報",
+      "source": "經濟日報",
+      "query": "\"穎崴\" 官方公告 重大訊息 董事長 總經理 法說會",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "穎崴股價狂飆 公告自結3月每股稅後純益8.01元 - UDN",
+      "link": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE5jSDY0RzRBSjY1LTAycExnUTRaTF93Wkt1QkdGeWVxeTlKZEVkY295bnBWY0hzbHdmNlBmR2RIQVE3cGxwc1VjSzQ1RUk1RXdN0gFWQVVfeXFMUFNQRjNNU3JhS0duV051MENpRmlfX0s0N2FzMDBKRFRkLU84ZnZRZkNuSXBha1JHUlhFTkMyUjFhZ2FFN2R1Qk1sM2xJMk9Ya011UEdQcXc?oc=5",
+      "published": "Wed, 15 Apr 2026 07:00:00 GMT",
+      "summary": "穎崴股價狂飆 公告自結3月每股稅後純益8.01元 &nbsp;&nbsp; UDN",
+      "source": "UDN",
+      "query": "\"穎崴\" 官方公告 重大訊息 董事長 總經理 法說會",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "國巨5月營收績增7% 創新高 AI 相關應用需求火熱 預期下半年逐步增溫 - 經濟日報",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE16Z2ZabUZMV3luY05yQ1lBUnFKN1NjT1NxVml5Q2UxblIwanBPeHBuWmdMdElseFhZbEhpOUFkUU5HQXZmT2FkMV9TbUVNYVQ0aXlBdG5ESEVkd9IBX0FVX3lxTFBoOEJkbi1reWVSSUFacVNHUjRXLW96aVVoelpqSk8xdmsxd3ZGR2Nqc1VTcHppZExXb3hXTXotZTJ4clUzdzZiWjJqbWltQmJCaTd5NExvNm02WmhySWdF?oc=5",
+      "published": "Tue, 09 Jun 2026 07:00:00 GMT",
+      "summary": "國巨5月營收績增7% 創新高 AI 相關應用需求火熱 預期下半年逐步增溫 &nbsp;&nbsp; 經濟日報",
+      "source": "經濟日報",
+      "query": "\"穎崴\" 官方公告 重大訊息 董事長 總經理 法說會",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    }
+  ],
+  "reason_candidates": [
+    {
+      "factor": "最新營收年增率",
+      "score": 1.0,
+      "direction": "利多偏壓",
+      "evidence": "最新可得 YoY +233.37%"
+    },
+    {
+      "factor": "穎崴第一季每股獲利19.54元 創歷史新高 - 自由財經",
+      "score": 0.725,
+      "direction": "利多偏壓",
+      "evidence": "待查證：需核對公司公告/主管機關/原始報告",
+      "source": "自由財經",
+      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFBrU3NwaUdaM3FEQW5OdXBhVmtGUkNhdXNoa1VsYzc0dEZkcHdINTdTcXJ6bmJiZ1RxLVJZYTRqWUZjY1NvcGcyUl9TTEpRNmhCNFVlc09HY01JQjQzY2Rn0gFkQVVfeXFMUEdyUmo3UXV4Y3ltMmxTaXdTd21HczNZQ3o3eGprVFA0Z3ZQYno3WTJFSFJzN0lJeXczUGpiTnZuR3M1bGlXMU5jaDFOdW41ZDVnOWlRU043Tzk0TGhNc19XeE8wcA?oc=5"
+    },
+    {
+      "factor": "AI測試需求爆發、MEMS探針卡出貨放量！穎崴上半年EPS 38.24元創同期新高，7月營收再創高| 魏鑫陽 | 財經 - 風傳媒",
+      "score": 0.725,
+      "direction": "利多偏壓",
+      "evidence": "待查證：需核對公司公告/主管機關/原始報告",
+      "source": "風傳媒",
+      "link": "https://news.google.com/rss/articles/CBMiTkFVX3lxTE8weWZVN2VBdVd3b29ERE1mZ2dibTk3cEFIQ18zNzBJYk9Wc05xNkgyeDloQVpnbzhpNW80dTBYWTdjNzJIMlNGRHUwT1ZQQQ?oc=5"
+    },
+    {
+      "factor": "穎崴上半年EPS達38.24元創同期新高！產能擴充陣痛期已過 AI大單能見度高 - 鏡報",
+      "score": 0.725,
+      "direction": "利多偏壓",
+      "evidence": "待查證：需核對公司公告/主管機關/原始報告",
+      "source": "鏡報",
+      "link": "https://news.google.com/rss/articles/CBMiUkFVX3lxTFBab1M5OTk5SFVkaUFEX0hGWWNNbkFoUGVweGVQRGt0MU9wY2FOdlYxam45Y3Eyc2NDV0doZkM5cnVQN0dfR0FBMk16THNTb2lCQ3c?oc=5"
+    },
+    {
+      "factor": "穎崴Q1營收、獲利齊創高　EPS達19.54元、AI需求帶動高階產品爆發 - ETtoday財經雲",
+      "score": 0.725,
+      "direction": "利多偏壓",
+      "evidence": "待查證：需核對公司公告/主管機關/原始報告",
+      "source": "ETtoday財經雲",
+      "link": "https://news.google.com/rss/articles/CBMiUkFVX3lxTFBKUDhqU2xYdjJSM25rOGJwNl9oeVBsNS12bmZGWmVfT3paRVY0dU9sdGJuRU5IZU9CT2JZNEplT2hNNFpsODA0MS1EQjB0dmctQ0HSAVBBVV95cUxPU3A3U2JUR1ZDbXJOb0ZPV0lTWXBUU29VWXNTcUtoemtiOS1WaHY5bVg0dWVkZjlVQklVbjRGYzNJSTlXQVZZLU1Gd251c2xWQw?oc=5"
+    },
+    {
+      "factor": "AI晶片越複雜就越需要！台積電推動、股后穎崴領軍，探針卡五雄打造難以撼動的新護城河 - 今周刊",
+      "score": 0.725,
+      "direction": "利多偏壓",
+      "evidence": "待查證：需核對公司公告/主管機關/原始報告",
+      "source": "今周刊",
+      "link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQaUQ1Y0xBSnMzbEdfaXp0ZTBndlFGbWEyWjRpUVRKN2ZSQkdGeEJiMXZNTlVsSWMtVVNsVnA5cU0zRVByUmZFR3dFNzRzOU5tb2lNYkE4TV93YVcyUmtzTXhhb0JrbExDTDF5Z2tNdnIwZ0ZGTnNlYmluWFE1aXZtQw?oc=5"
+    },
+    {
+      "factor": "同細分業務群相對表現",
+      "score": 0.5980000000000001,
+      "direction": "利空偏壓",
+      "evidence": "個股 -2.99%；同業中位數 +0.00%"
+    },
+    {
+      "factor": "大盤相對強弱",
+      "score": 0.4344838020514489,
+      "direction": "利空偏壓",
+      "evidence": "相對 TAIEX 差異 -2.17 個百分點"
+    },
+    {
+      "factor": "三大法人 10 日累計交易",
+      "score": 0.3262802,
+      "direction": "利空偏壓",
+      "evidence": "三大法人 10 日累計 -1,631,401 股"
+    },
+    {
+      "factor": "最新可得 EPS",
+      "score": 0.15,
+      "direction": "中性",
+      "evidence": "EPS 38.24"
+    },
+    {
+      "factor": "外資 10 日累計交易",
+      "score": 0.105932,
+      "direction": "利空偏壓",
+      "evidence": "外資 10 日累計 -529,660 股"
+    }
+  ],
+  "research_questions": [
+    "\"6515\" \"穎崴\" 半導體測試／測試介面 財報 營收 毛利率 EPS",
+    "\"6515\" \"穎崴\" 半導體 > 生產製程及檢測設備 董事長 總經理 法說會 展望 訂單 接單",
+    "\"6515\" Test Socket Probe Card Burn-in SLT 測試設備 HPC測試 競爭者 客戶 供應鏈 產能 報價",
+    "\"穎崴\" 官方公告 重大訊息 董事長 總經理 法說會",
+    "\"穎崴\" 國際情勢 中美 關稅 伊朗 戰爭 油價 央行 利率 AI"
+  ],
+  "ollama_analysis": {
+    "available": true,
+    "model": "qwen3:8b",
+    "content": "### 風險與機會分析：穎崴（6515）股價走勢評估\n\n---\n\n#### **1. 正面因素：強勁財務表現與AI需求拉動**\n- **營收與EPS雙創新高**  \n  - **Q1營收年增233.37%**，EPS達19.54元，創歷史新高（自由財經、ETtoday）。  \n  - **上半年EPS 38.24元**，為同期新高（風傳媒、鏡報），反映AI測試需求爆發，MEMS探針卡出貨放量。  \n  - **AI應用需求**：台積電推動下，探針卡技術成為關鍵，穎崴作為領先廠商，受益於高階晶片測試需求（今周刊）。  \n\n- **產業趨勢支撐**  \n  - **AI晶片複雜化**：需求帶動高階測試設備（如HPC測試、Burn-in SLT）訂單成長，技術門檻高，競爭者少，形成護城河（今周刊）。  \n  - **產能擴充完成**：2023年已過擴充陣痛期，下半年營收預期逐步增溫（經濟日報）。  \n\n---\n\n#### **2. 潜在壓力：市場與資金動向**\n- **大盤相對弱勢**  \n  - **相對TAIEX跌幅2.17%**，顯示市場整體情緒偏保守，可能壓抑個股表現（大盤相對強弱因子）。  \n\n- **資金流向負面**  \n  - **三大法人10日累計減碼163萬股**，外資減碼52.9萬股，反映短期資金信心不足（三大法人、外資交易量）。  \n  - **同業表現**：同細分業務群中，個股跌幅2.99%，而同業中位數持平，顯示相對弱勢（同細分業務群相對表現）。  \n\n---\n\n#### **3. 關鍵疑問與驗證需求**\n- **財報與法說會資訊**  \n  - 需確認公司是否公告Q2營收指引或法說會內容，以驗證「下半年逐步增溫」的預期（經濟日報）。  \n  - 風傳媒、鏡報等報導提及EPS創高，但需核對原始財報或主管機關公告，避免資訊誤導。  \n\n- **產業鏈動態**  \n  - **客戶與供應鏈**：需追蹤主要客戶（如台積電）訂單動向，以及上游材料供應穩定性。  \n  - **競爭者動態**：觀察其他探針卡廠商（如日月光、京元電子）的市場佔有率變化。  \n\n---\n\n#### **4. 短期與長期展望**\n- **短期（1-3個月）**  \n  - **技術面**：若股價站穩50日均線（約125元），可能回測115-120元區間，觀察資金回流跡象。  \n  - **風險點**：若大盤持續走弱，或AI需求不及預期，可能面臨110元支撐位壓力。  \n\n- **長期（6-12個月）**  \n  - **成長動能**：AI測試設備需求持續擴張，若能守住30%營收成長率，EPS有望突破50元。  \n  - **估值空間**：目前PE約25倍（EPS 38.24元，股價125元），若營收成長達30%，估值仍有上修空間。  \n\n---\n\n#### **5. 結論與建議**\n- **投資評級**：**買進**（短線波段操作）  \n  - **理由**：AI需求強勁、財務表現亮眼，且技術面處於多頭區域，短期波段機會仍存。  \n  - **風險提示**：需密切觀察大盤走勢及資金動向，若三大法人持續減碼，可能需謹慎操作。  \n\n- **建議動作**：  \n  - **進場點**：若股價回測115-120元區間，可分批進場。  \n  - **止損位**：105元（若大盤持續走弱）。  \n  - **追蹤重點**：法說會資訊、AI客戶訂單動向、同業競爭態勢。  \n\n--- \n\n**注意**：以上分析基於現有資訊，部分數據需進一步查證，建議投資者結合最新公告及市場動態調整策略。"
+  }
+}

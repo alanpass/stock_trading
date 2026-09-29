@@ -1,0 +1,590 @@
+{
+  "as_of": "2026-09-27T21:28:08.553820+08:00",
+  "symbol": "3481",
+  "name": "群創",
+  "market": "TSE",
+  "industry": "光電業",
+  "business_group": "面板／顯示器",
+  "primary_chain": "平面顯示器 > 面板",
+  "price_context": {
+    "quote": {
+      "date": "2026-09-24",
+      "type": "EQUITY",
+      "exchange": "TWSE",
+      "market": "TSE",
+      "symbol": "3481",
+      "name": "群創",
+      "referencePrice": 49.6,
+      "previousClose": 49.6,
+      "openPrice": 49.15,
+      "openTime": 1790211600264106,
+      "highPrice": 50.8,
+      "highTime": 1790211818945868,
+      "lowPrice": 48.9,
+      "lowTime": 1790211601263551,
+      "closePrice": 49.55,
+      "closeTime": 1790227800000000,
+      "avgPrice": 49.6,
+      "change": -0.05,
+      "changePercent": -0.1,
+      "amplitude": 3.83,
+      "lastPrice": 49.55,
+      "lastSize": 6782,
+      "bids": [
+        {
+          "price": 49.55,
+          "size": 229
+        },
+        {
+          "price": 49.5,
+          "size": 1466
+        },
+        {
+          "price": 49.45,
+          "size": 1084
+        },
+        {
+          "price": 49.4,
+          "size": 965
+        },
+        {
+          "price": 49.35,
+          "size": 443
+        }
+      ],
+      "asks": [
+        {
+          "price": 49.6,
+          "size": 76
+        },
+        {
+          "price": 49.65,
+          "size": 19
+        },
+        {
+          "price": 49.7,
+          "size": 322
+        },
+        {
+          "price": 49.75,
+          "size": 237
+        },
+        {
+          "price": 49.8,
+          "size": 447
+        }
+      ],
+      "total": {
+        "tradeValue": 5009289750,
+        "tradeVolume": 100995,
+        "tradeVolumeAtBid": 48407,
+        "tradeVolumeAtAsk": 51206,
+        "transaction": 16599,
+        "time": 1790227800000000
+      },
+      "lastTrade": {
+        "bid": 49.5,
+        "ask": 49.55,
+        "price": 49.55,
+        "size": 6782,
+        "time": 1790227800000000,
+        "serial": 14141235
+      },
+      "lastTrial": {
+        "bid": 49.5,
+        "ask": 49.55,
+        "price": 49.5,
+        "size": 6683,
+        "time": 1790227796289297,
+        "serial": 14140630
+      },
+      "isClose": true,
+      "serial": 14141235,
+      "lastUpdated": 1790227800000000
+    },
+    "current_price": 49.55,
+    "previous_close": 49.6,
+    "today_change": -0.05,
+    "today_change_percent": -0.1,
+    "today_return": -0.0010080645161291146,
+    "peer_median_change_percent": NaN,
+    "relative_to_taiex_pct": 0.17553460753294534,
+    "taiex": {
+      "time": "13:30:00",
+      "index": 48024.6,
+      "change": -132.69000000000233,
+      "change_pct": -0.27553460753294534,
+      "datetime": "2026-09-24 13:30:00+08:00"
+    },
+    "peer_returns": []
+  },
+  "institution_context": {
+    "available": true,
+    "latest": {
+      "date": "2026-09-24 00:00:00",
+      "symbol": "3481",
+      "foreign_net": -1969313.0,
+      "trust_net": 0.0,
+      "dealer_net": -2653402.0,
+      "total_net": -4622715.0,
+      "market": "上市",
+      "source": "TWSE-T86"
+    },
+    "totals_10d": {
+      "foreign_net": -22795736.0,
+      "trust_net": -11770039.0,
+      "dealer_net": -1053705.0,
+      "total_net": -35619480.0
+    },
+    "rows": [
+      {
+        "date": "2026-09-11 00:00:00",
+        "symbol": "3481",
+        "foreign_net": -18794410.0,
+        "trust_net": -61342.0,
+        "dealer_net": -3908510.0,
+        "total_net": -22764262.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      },
+      {
+        "date": "2026-09-14 00:00:00",
+        "symbol": "3481",
+        "foreign_net": -78895.0,
+        "trust_net": 2100.0,
+        "dealer_net": 799726.0,
+        "total_net": 722931.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      },
+      {
+        "date": "2026-09-15 00:00:00",
+        "symbol": "3481",
+        "foreign_net": -6356831.0,
+        "trust_net": -200.0,
+        "dealer_net": -1952908.0,
+        "total_net": -8309939.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      },
+      {
+        "date": "2026-09-16 00:00:00",
+        "symbol": "3481",
+        "foreign_net": 20867981.0,
+        "trust_net": 3000.0,
+        "dealer_net": 6082416.0,
+        "total_net": 26953397.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      },
+      {
+        "date": "2026-09-17 00:00:00",
+        "symbol": "3481",
+        "foreign_net": -3825990.0,
+        "trust_net": -1204000.0,
+        "dealer_net": 54366.0,
+        "total_net": -4975624.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      },
+      {
+        "date": "2026-09-18 00:00:00",
+        "symbol": "3481",
+        "foreign_net": -22782285.0,
+        "trust_net": -1832293.0,
+        "dealer_net": -2071247.0,
+        "total_net": -26685825.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      },
+      {
+        "date": "2026-09-21 00:00:00",
+        "symbol": "3481",
+        "foreign_net": 33144705.0,
+        "trust_net": -4898002.0,
+        "dealer_net": 6988283.0,
+        "total_net": 35234986.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      },
+      {
+        "date": "2026-09-22 00:00:00",
+        "symbol": "3481",
+        "foreign_net": 24829555.0,
+        "trust_net": -44402.0,
+        "dealer_net": 1858110.0,
+        "total_net": 26643263.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      },
+      {
+        "date": "2026-09-23 00:00:00",
+        "symbol": "3481",
+        "foreign_net": -47830253.0,
+        "trust_net": -3734900.0,
+        "dealer_net": -6250539.0,
+        "total_net": -57815692.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      },
+      {
+        "date": "2026-09-24 00:00:00",
+        "symbol": "3481",
+        "foreign_net": -1969313.0,
+        "trust_net": 0.0,
+        "dealer_net": -2653402.0,
+        "total_net": -4622715.0,
+        "market": "上市",
+        "source": "TWSE-T86"
+      }
+    ]
+  },
+  "official_mentions": [],
+  "fundamentals": {
+    "symbol": "3481",
+    "industry_code": "26",
+    "market": "TWSE",
+    "statement_revenue": 130344196.0,
+    "gross_profit": 18894251.0,
+    "operating_profit": 3131861.0,
+    "net_income": 6445921.0,
+    "eps": 0.77,
+    "latest_month_revenue": 18696603.0,
+    "revenue_yoy": 0.022929206689571976,
+    "raw_financial": {
+      "出表日期": "1150927",
+      "年度": "115",
+      "季別": "2",
+      "公司代號": "3481",
+      "公司名稱": "群創",
+      "營業收入": "130344196.00",
+      "營業成本": "111449945.00",
+      "原始認列生物資產及農產品之利益（損失）": "",
+      "生物資產當期公允價值減出售成本之變動利益（損失）": "",
+      "營業毛利（毛損）": "18894251.00",
+      "未實現銷貨（損）益": "",
+      "已實現銷貨（損）益": "",
+      "營業毛利（毛損）淨額": "18894251.00",
+      "營業費用": "15762390.00",
+      "其他收益及費損淨額": "",
+      "營業利益（損失）": "3131861.00",
+      "營業外收入及支出": "1081957.00",
+      "稅前淨利（淨損）": "4213818.00",
+      "所得稅費用（利益）": "-2232103.00",
+      "繼續營業單位本期淨利（淨損）": "6445921.00",
+      "停業單位損益": "",
+      "合併前非屬共同控制股權損益": "",
+      "本期淨利（淨損）": "6445921.00",
+      "其他綜合損益（淨額）": "5431607.00",
+      "合併前非屬共同控制股權綜合損益淨額": "",
+      "本期綜合損益總額": "11877528.00",
+      "淨利（淨損）歸屬於母公司業主": "6161018.00",
+      "淨利（淨損）歸屬於共同控制下前手權益": "",
+      "淨利（淨損）歸屬於非控制權益": "284903.00",
+      "綜合損益總額歸屬於母公司業主": "11542169.00",
+      "綜合損益總額歸屬於共同控制下前手權益": "",
+      "綜合損益總額歸屬於非控制權益": "335359.00",
+      "基本每股盈餘（元）": "0.77"
+    },
+    "raw_revenue": {
+      "出表日期": "1150917",
+      "資料年月": "11508",
+      "公司代號": "3481",
+      "公司名稱": "群創",
+      "產業別": "光電業",
+      "營業收入-當月營收": "18696603",
+      "營業收入-上月營收": "18890249",
+      "營業收入-去年當月營收": "18692317",
+      "營業收入-上月比較增減(%)": "-1.0251108918680745",
+      "營業收入-去年同月增減(%)": "0.022929206689571976",
+      "累計營業收入-當月累計營收": "167931047",
+      "累計營業收入-去年累計營收": "150120795",
+      "累計營業收入-前期比較增減(%)": "11.863947296575402",
+      "備註": "-"
+    }
+  },
+  "verified_news": [
+    {
+      "title": "【即時新聞】群創(3481)首季財報EPS 0.2元營收666億元季增17.5％ - CMoney",
+      "link": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFBDT2ZsRHdBWXlFT2tYZTkyeTFFc3c1aHNPd2F1WGhUTGNHMXRuTWZ1SnZtMEFiSHY5d0NCaVFWdE8xLUk2WkNSWnlUSS1OeGNuYzVHd1Vpb0NGWlBObHA5X29UZVhPQms?oc=5",
+      "published": "Mon, 11 May 2026 07:00:00 GMT",
+      "summary": "【即時新聞】群創(3481)首季財報EPS 0.2元營收666億元季增17.5％ &nbsp;&nbsp; CMoney",
+      "source": "CMoney",
+      "query": "\"3481\" \"群創\" 面板／顯示器 財報 營收 毛利率 EPS",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "群創財報／第2季 EPS 創近6季新高 上半年獲利年增近30倍、EPS 0.77元 - 經濟日報",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1PeTBBamNKWF9iT3hzNmRNSkJkYTRCQkZzVU9GNDFzc0VwWWtTQUF1aFJlZEMyLVNSU2NtTFBTZ0NLZWQ1cU5iRXdOalhHZVhpLXAwdlVybS1hQdIBX0FVX3lxTE1GMXhWTFdab3luMkxnQXllZUpYdGZfeVRhbV83aHgwaGpWQnh6bUdHV0FsSzlXaUltcTNDTUtVNHo2Y0xHNXpUMHdQNXcwQktUa0lRWHdOTjNpSWI5Si1V?oc=5",
+      "published": "Fri, 14 Aug 2026 07:00:00 GMT",
+      "summary": "群創財報／第2季 EPS 創近6季新高 上半年獲利年增近30倍、EPS 0.77元 &nbsp;&nbsp; 經濟日報",
+      "source": "經濟日報",
+      "query": "\"3481\" \"群創\" 面板／顯示器 財報 營收 毛利率 EPS",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "群創首季轉盈EPS 0.2元 Q2拉貨動能延續面板需求審慎樂觀 - news.cnyes.com",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9QVVpfa1FhYVZtZk9nc3ZabEF3X1p2R1MwU0pZTDdFLS1MMHlSUDFPVVhkZ2Y5RG5wcTJlV1NZRnh4WmdEaFU2RDBNZ3dnLTA?oc=5",
+      "published": "Mon, 11 May 2026 07:00:00 GMT",
+      "summary": "群創首季轉盈EPS 0.2元 Q2拉貨動能延續面板需求審慎樂觀 &nbsp;&nbsp; news.cnyes.com",
+      "source": "news.cnyes.com",
+      "query": "\"3481\" \"群創\" 面板／顯示器 財報 營收 毛利率 EPS",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.5,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "群創（3481）近期新聞｜三筆賣廠業外入袋 197 億、FOPLP 量產翻十倍、CarUX 座艙轉型一次看懂 - pocket.tw",
+      "link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5HVDRJeTBUcFFxTnJ2YmY2aE14SkY5LUdjLXBxSVlOYU1idXFrMEVjb1RSdVJkQjExZUVIT0x4MkRsOUVRN1k2Rk0yMTRqZFg5TUVpTFc2S0VwM2Vn?oc=5",
+      "published": "Tue, 05 May 2026 07:00:00 GMT",
+      "summary": "群創（3481）近期新聞｜三筆賣廠業外入袋 197 億、FOPLP 量產翻十倍、CarUX 座艙轉型一次看懂 &nbsp;&nbsp; pocket.tw",
+      "source": "pocket.tw",
+      "query": "\"3481\" \"群創\" 面板／顯示器 財報 營收 毛利率 EPS",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "【即時新聞】最新宣布群創第二季財報報喜獲利大增近30倍 - CMoney投資網誌",
+      "link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPeHZiU1IyUmxwSFl4dGFYTjVQLUkyb1FkN2pSUXRzMnh2RFJEMEVjanFiNElvelV6U1BfeGgzUFMwQTJJWld6TTktUG5qdjF1Yks4RDRRYUVRcGc1NURzZ1JOSTdkRVdrZWFjLW1haXNadjlUQ0dzSlNleldudjdRcUQ5Qm1RQ2xiWGROa3hPZXc?oc=5",
+      "published": "Fri, 14 Aug 2026 07:00:00 GMT",
+      "summary": "【即時新聞】最新宣布群創第二季財報報喜獲利大增近30倍 &nbsp;&nbsp; CMoney投資網誌",
+      "source": "CMoney投資網誌",
+      "query": "\"3481\" \"群創\" 面板／顯示器 財報 營收 毛利率 EPS",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "群創Q2獲利續旺！EPS 0.57元　創6季新高 - NOWnews今日新聞",
+      "link": "https://news.google.com/rss/articles/CBMiTEFVX3lxTE4zVFBHMnp5Qnk0RG80WlNWLTlGUkVqdUEyWHBSdGpCd1Qzd1dEQzZFSHUzaktDTFprQy1zMkJMRFpJdzUtc1Fwd0xQWTnSAVJBVV95cUxNVmN0Z0Z4M1N6bURwV1lybFdLYlpIWHQ1bjlFbW5ZMVJNVktvUjhHeUg4N2dzeEY3cU40SGRHNks1WlNvMXJMeF9jOTFjdHB1MDhR?oc=5",
+      "published": "Fri, 14 Aug 2026 07:00:00 GMT",
+      "summary": "群創Q2獲利續旺！EPS 0.57元　創6季新高 &nbsp;&nbsp; NOWnews今日新聞",
+      "source": "NOWnews今日新聞",
+      "query": "\"3481\" \"群創\" 面板／顯示器 財報 營收 毛利率 EPS",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "獲利速報》群創首季EPS0.2元 全年獲利可期 新普首季EPS6.83元 估Q2優於Q1 - 自由財經",
+      "link": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE0wcmhnalBEY3ZhZ2xkNmdob2VHbDJ1RFNhUEdHMnpBVEV1QzBXV1ZuYlVsOUxGakRoMVI4b05ldVhsRUVwS0JxTUhTUXplTUk4ZVpnUXh30gFbQVVfeXFMTk9OSWZzQzZON1hQQVhvWUR1VzF6Q1NzRWVVZV84NGViRG1zcllSUXVKSnhzMlhuQzBtUDNybVEwdEtMcTBvV01xb3FwbWlmRGp0dHIyMXVXc0J2bw?oc=5",
+      "published": "Tue, 12 May 2026 07:00:00 GMT",
+      "summary": "獲利速報》群創首季EPS0.2元 全年獲利可期 新普首季EPS6.83元 估Q2優於Q1 &nbsp;&nbsp; 自由財經",
+      "source": "自由財經",
+      "query": "\"3481\" \"群創\" 面板／顯示器 財報 營收 毛利率 EPS",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "中信金 2891 - 自由時報",
+      "link": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFBqMDc4SUw3OVd0b1h6Z21WU1JucERyam9yT3FCM1J3dEcteVlEQXpKUFVkZGYzTVRGdGE4TFRKNUlQT3lVamszLURGeTR6bmtnZmozNTFLWU5jSUE?oc=5",
+      "published": "Wed, 23 Sep 2026 07:00:00 GMT",
+      "summary": "中信金 2891 &nbsp;&nbsp; 自由時報",
+      "source": "自由時報",
+      "query": "\"群創\" 官方公告 重大訊息 董事長 總經理 法說會",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "群創法說會／連兩年配息1元 雙軌轉型啟動下一波成長動能 - 經濟日報",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE8ySlF2UU9wQzZBYS1rZTU2ekxURmZOVXVCQ3NWV3UwQWxCR19XN1I5VTM1VDBEOWhTNjJZYlpPaG9HYTV5NHB0MzA4ZXB0NWMwWkNKZ3RaQVZLd9IBX0FVX3lxTFBQbHFyV21fMlVnTS0xQjBQaExQQlhMQkZEd0pwRDFGbWFzbkthZVdvYWVNZnY1cFlNQlVJSEt0SGtaNUoyY09DbmpiUENlZUZZT2dDbHZwMWlscHEyNHA0?oc=5",
+      "published": "Thu, 12 Mar 2026 07:00:00 GMT",
+      "summary": "群創法說會／連兩年配息1元 雙軌轉型啟動下一波成長動能 &nbsp;&nbsp; 經濟日報",
+      "source": "經濟日報",
+      "query": "\"群創\" 官方公告 重大訊息 董事長 總經理 法說會",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "焦點股／大摩喊FOPLP熱度降！群創法說後摔半根跌停、摜破月線| 產經 - 非凡新聞台",
+      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE1nNnh2TEgwSFBHSzVuUHp6NnpxbXA3UmlQb1BtVkp6aUNpLTFreHNzVzdkZ2Mxd3pHQWZ4amo3R08wN2xSSUk4N1EzR3Q4NmNveFVaMkZRQW5JYTE2amVR?oc=5",
+      "published": "Wed, 19 Aug 2026 07:00:00 GMT",
+      "summary": "焦點股／大摩喊FOPLP熱度降！群創法說後摔半根跌停、摜破月線| 產經 &nbsp;&nbsp; 非凡新聞台",
+      "source": "非凡新聞台",
+      "query": "\"群創\" 官方公告 重大訊息 董事長 總經理 法說會",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "台積電寫最強2月、群創法說、緯創法說 本周大事回顧 - news.cnyes.com",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE14bUFoaWRTb0I1VWlxbDNZSmdNdkNmU1h1d2JFVzYyNGpFTkhiWmhBaFBXcTlIdEVpVmwyOFFrbmhCRHFlVDdiWHVGZC15QU0?oc=5",
+      "published": "Sat, 14 Mar 2026 07:00:00 GMT",
+      "summary": "台積電寫最強2月、群創法說、緯創法說 本周大事回顧 &nbsp;&nbsp; news.cnyes.com",
+      "source": "news.cnyes.com",
+      "query": "\"群創\" 官方公告 重大訊息 董事長 總經理 法說會",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "6770 力積電- 昨天才把黃崇仁一生看了一遍。我之前錯怪他了。抱歉😞 - 股市爆料同學會 - CMoney",
+      "link": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE5zZkVmT1pQZXF4SDMtMzJCRFU3Vk0zN3p0c29kUHdpVkdtemFOYXA3VFZmRVZyY0h2bWJlX1FyQnQ1aDBrekdCbG9QdDFPcEE1alZaaVhfakg?oc=5",
+      "published": "Fri, 31 Jul 2026 07:00:00 GMT",
+      "summary": "6770 力積電- 昨天才把黃崇仁一生看了一遍。我之前錯怪他了。抱歉😞 - 股市爆料同學會 &nbsp;&nbsp; CMoney",
+      "source": "CMoney",
+      "query": "\"群創\" 官方公告 重大訊息 董事長 總經理 法說會",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "中石化停牌真相曝光！京華城案燒出銀行還款壓力 拍板728%容積率拚土地處分 - 鏡報",
+      "link": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE5CS2oyYWEwajJJMk5BWV84anBMYTlxTlNBcHg1cDNkeE9wcUVYVXNXM3BWREU1UEZCVkxVV0dOVEFKVVRydjFpdjltQkdpaUstUVE?oc=5",
+      "published": "Wed, 08 Apr 2026 12:29:23 GMT",
+      "summary": "中石化停牌真相曝光！京華城案燒出銀行還款壓力 拍板728%容積率拚土地處分 &nbsp;&nbsp; 鏡報",
+      "source": "鏡報",
+      "query": "\"群創\" 官方公告 重大訊息 董事長 總經理 法說會",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "股科大夫容逸燊 - 鉅亨號",
+      "link": "https://news.google.com/rss/articles/CBMiSEFVX3lxTE5GZHl6TGN4US1YaFlmQ2RDQzVTUk5UTzBwb0JuRVU2S19aMXFXNWpmZWhwQWFtXzFPbWw2eldhUEp2UzRyU1ZNWQ?oc=5",
+      "published": "Fri, 03 Jul 2026 07:00:00 GMT",
+      "summary": "股科大夫容逸燊 &nbsp;&nbsp; 鉅亨號",
+      "source": "鉅亨號",
+      "query": "\"群創\" 國際情勢 中美 關稅 伊朗 戰爭 油價 央行 利率 AI",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    }
+  ],
+  "reason_candidates": [
+    {
+      "factor": "外資 10 日累計交易",
+      "score": 1.0,
+      "direction": "利空偏壓",
+      "evidence": "外資 10 日累計 -22,795,736 股"
+    },
+    {
+      "factor": "三大法人 10 日累計交易",
+      "score": 1.0,
+      "direction": "利空偏壓",
+      "evidence": "三大法人 10 日累計 -35,619,480 股"
+    },
+    {
+      "factor": "群創首季轉盈EPS 0.2元 Q2拉貨動能延續面板需求審慎樂觀 - news.cnyes.com",
+      "score": 0.75,
+      "direction": "利多偏壓",
+      "evidence": "待查證：需核對公司公告/主管機關/原始報告",
+      "source": "news.cnyes.com",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9QVVpfa1FhYVZtZk9nc3ZabEF3X1p2R1MwU0pZTDdFLS1MMHlSUDFPVVhkZ2Y5RG5wcTJlV1NZRnh4WmdEaFU2RDBNZ3dnLTA?oc=5"
+    },
+    {
+      "factor": "群創財報／第2季 EPS 創近6季新高 上半年獲利年增近30倍、EPS 0.77元 - 經濟日報",
+      "score": 0.725,
+      "direction": "利多偏壓",
+      "evidence": "待查證：需核對公司公告/主管機關/原始報告",
+      "source": "經濟日報",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1PeTBBamNKWF9iT3hzNmRNSkJkYTRCQkZzVU9GNDFzc0VwWWtTQUF1aFJlZEMyLVNSU2NtTFBTZ0NLZWQ1cU5iRXdOalhHZVhpLXAwdlVybS1hQdIBX0FVX3lxTE1GMXhWTFdab3luMkxnQXllZUpYdGZfeVRhbV83aHgwaGpWQnh6bUdHV0FsSzlXaUltcTNDTUtVNHo2Y0xHNXpUMHdQNXcwQktUa0lRWHdOTjNpSWI5Si1V?oc=5"
+    },
+    {
+      "factor": "群創（3481）近期新聞｜三筆賣廠業外入袋 197 億、FOPLP 量產翻十倍、CarUX 座艙轉型一次看懂 - pocket.tw",
+      "score": 0.725,
+      "direction": "利多偏壓",
+      "evidence": "待查證：需核對公司公告/主管機關/原始報告",
+      "source": "pocket.tw",
+      "link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5HVDRJeTBUcFFxTnJ2YmY2aE14SkY5LUdjLXBxSVlOYU1idXFrMEVjb1RSdVJkQjExZUVIT0x4MkRsOUVRN1k2Rk0yMTRqZFg5TUVpTFc2S0VwM2Vn?oc=5"
+    },
+    {
+      "factor": "【即時新聞】最新宣布群創第二季財報報喜獲利大增近30倍 - CMoney投資網誌",
+      "score": 0.725,
+      "direction": "利多偏壓",
+      "evidence": "待查證：需核對公司公告/主管機關/原始報告",
+      "source": "CMoney投資網誌",
+      "link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPeHZiU1IyUmxwSFl4dGFYTjVQLUkyb1FkN2pSUXRzMnh2RFJEMEVjanFiNElvelV6U1BfeGgzUFMwQTJJWld6TTktUG5qdjF1Yks4RDRRYUVRcGc1NURzZ1JOSTdkRVdrZWFjLW1haXNadjlUQ0dzSlNleldudjdRcUQ5Qm1RQ2xiWGROa3hPZXc?oc=5"
+    },
+    {
+      "factor": "群創Q2獲利續旺！EPS 0.57元　創6季新高 - NOWnews今日新聞",
+      "score": 0.725,
+      "direction": "利多偏壓",
+      "evidence": "待查證：需核對公司公告/主管機關/原始報告",
+      "source": "NOWnews今日新聞",
+      "link": "https://news.google.com/rss/articles/CBMiTEFVX3lxTE4zVFBHMnp5Qnk0RG80WlNWLTlGUkVqdUEyWHBSdGpCd1Qzd1dEQzZFSHUzaktDTFprQy1zMkJMRFpJdzUtc1Fwd0xQWTnSAVJBVV95cUxNVmN0Z0Z4M1N6bURwV1lybFdLYlpIWHQ1bjlFbW5ZMVJNVktvUjhHeUg4N2dzeEY3cU40SGRHNks1WlNvMXJMeF9jOTFjdHB1MDhR?oc=5"
+    },
+    {
+      "factor": "獲利速報》群創首季EPS0.2元 全年獲利可期 新普首季EPS6.83元 估Q2優於Q1 - 自由財經",
+      "score": 0.725,
+      "direction": "利多偏壓",
+      "evidence": "待查證：需核對公司公告/主管機關/原始報告",
+      "source": "自由財經",
+      "link": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE0wcmhnalBEY3ZhZ2xkNmdob2VHbDJ1RFNhUEdHMnpBVEV1QzBXV1ZuYlVsOUxGakRoMVI4b05ldVhsRUVwS0JxTUhTUXplTUk4ZVpnUXh30gFbQVVfeXFMTk9OSWZzQzZON1hQQVhvWUR1VzF6Q1NzRWVVZV84NGViRG1zcllSUXVKSnhzMlhuQzBtUDNybVEwdEtMcTBvV01xb3FwbWlmRGp0dHIyMXVXc0J2bw?oc=5"
+    },
+    {
+      "factor": "群創法說會／連兩年配息1元 雙軌轉型啟動下一波成長動能 - 經濟日報",
+      "score": 0.725,
+      "direction": "利多偏壓",
+      "evidence": "待查證：需核對公司公告/主管機關/原始報告",
+      "source": "經濟日報",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE8ySlF2UU9wQzZBYS1rZTU2ekxURmZOVXVCQ3NWV3UwQWxCR19XN1I5VTM1VDBEOWhTNjJZYlpPaG9HYTV5NHB0MzA4ZXB0NWMwWkNKZ3RaQVZLd9IBX0FVX3lxTFBQbHFyV21fMlVnTS0xQjBQaExQQlhMQkZEd0pwRDFGbWFzbkthZVdvYWVNZnY1cFlNQlVJSEt0SGtaNUoyY09DbmpiUENlZUZZT2dDbHZwMWlscHEyNHA0?oc=5"
+    },
+    {
+      "factor": "最新可得 EPS",
+      "score": 0.15,
+      "direction": "中性",
+      "evidence": "EPS 0.77"
+    },
+    {
+      "factor": "大盤相對強弱",
+      "score": 0.03510692150658907,
+      "direction": "利多偏壓",
+      "evidence": "相對 TAIEX 差異 +0.18 個百分點"
+    },
+    {
+      "factor": "最新營收年增率",
+      "score": 0.0007643068896523992,
+      "direction": "利多偏壓",
+      "evidence": "最新可得 YoY +0.02%"
+    }
+  ],
+  "research_questions": [
+    "\"3481\" \"群創\" 面板／顯示器 財報 營收 毛利率 EPS",
+    "\"3481\" \"群創\" 平面顯示器 > 面板 董事長 總經理 法說會 展望 訂單 接單",
+    "\"3481\" 面板價格 LCD OLED Mini LED Micro LED IT面板 競爭者 客戶 供應鏈 產能 報價",
+    "\"群創\" 官方公告 重大訊息 董事長 總經理 法說會",
+    "\"群創\" 國際情勢 中美 關稅 伊朗 戰爭 油價 央行 利率 AI"
+  ],
+  "ollama_analysis": {
+    "available": true,
+    "model": "qwen3:8b",
+    "content": "好的，我来整理一下关于群創（3481）的最新資訊和分析，分幾個重點說明：\n\n---\n\n### **1. 財務表現亮點（利多偏壓）**\n- **EPS創6季新高**：第二季EPS達0.77元，上半年獲利年增近30倍，顯示營收與獲利雙雙成長，可能受益於面板需求回升或成本控管。\n- **賣廠與轉型動能**：近期有三筆賣廠業外收入入袋（約197億），加上FOPLP（Mini LED）量產翻十倍、CarUX座艙轉型計畫，顯示公司正在積極調整業務結構，尋求新成長點。\n- **配息穩定**：連兩年配息1元，顯示財務狀況健康，有助於股東回饋與市場信心。\n\n---\n\n### **2. 市場動能與產業趨勢**\n- **面板價格與技術升級**：Mini LED、OLED等技術的推進可能提升毛利率，尤其在車用顯示器（CarUX）領域，轉型後的訂單能見度提高。\n- **國際情勢影響**：中美關係、關稅政策、AI發展等都可能間接影響面板需求，但目前尚未有直接衝擊跡象，需持續觀察。\n\n---\n\n### **3. 需驗證的資訊**\n- **財報數據**：目前多數報導引用EPS與獲利成長，但需核對公司公告或主管機關資料，確認是否為實際財報結果。\n- **賣廠與轉型細節**：如FOPLP量產規模、CarUX客戶合作進度，建議參考公司法說會或官方說明，避免過度解讀媒體報導。\n\n---\n\n### **4. 潛在風險與觀察點**\n- **營收年增率微幅**：最新營收年增率僅+0.02%，可能反映市場需求尚未完全復甦，需觀察下半年旺季表現。\n- **大盤相對強弱**：相對台指（TAIEX）強化0.18個百分點，顯示群創相對表現優於大盤，但需搭配產業走勢評估。\n\n---\n\n### **5. 研究建議**\n- **財務數據**：追蹤EPS、毛利率、營收季增率，確認財報是否符合預期。\n- **產業動態**：關注面板價格波動、客戶訂單動向（如車用、IT面板），以及技術升級（如Micro LED）的進展。\n- **國際風險**：留意中美貿易政策、地緣政治（如伊朗、戰爭）對供應鏈的影響，以及AI發展對顯示器需求的長期影響。\n\n---\n\n### **總結**\n群創目前呈現「財務強、轉型動能足」的態勢，EPS與獲利成長是短期亮點，但需進一步驗證財報數據與轉型成效。若能持續提升技術門檻（如Mini LED）並擴大車用市場，長期成長空間仍可期待。建議投資者關注下半年旺季表現與產業鏈動態，同時留意國際風險的潛在影響。"
+  }
+}

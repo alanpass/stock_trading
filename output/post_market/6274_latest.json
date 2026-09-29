@@ -1,0 +1,606 @@
+{
+  "as_of": "2026-09-28T20:02:30.770125+08:00",
+  "symbol": "6274",
+  "name": "台燿",
+  "market": "OTC",
+  "industry": "電子零組件業",
+  "business_group": "CCL／銅箔基板",
+  "primary_chain": "印刷電路板 > 銅箔基板",
+  "price_context": {
+    "quote": {
+      "date": "2026-09-24",
+      "type": "EQUITY",
+      "exchange": "TPEx",
+      "market": "OTC",
+      "symbol": "6274",
+      "name": "台燿",
+      "referencePrice": 1460,
+      "previousClose": 1460,
+      "openPrice": 1485,
+      "openTime": 1790211611068959,
+      "highPrice": 1530,
+      "highTime": 1790211900578845,
+      "lowPrice": 1475,
+      "lowTime": 1790212497169728,
+      "closePrice": 1495,
+      "closeTime": 1790227800000000,
+      "avgPrice": 1495.89,
+      "change": 35,
+      "changePercent": 2.4,
+      "amplitude": 3.77,
+      "lastPrice": 1495,
+      "lastSize": 457,
+      "bids": [
+        {
+          "price": 1490,
+          "size": 104
+        },
+        {
+          "price": 1485,
+          "size": 63
+        },
+        {
+          "price": 1480,
+          "size": 131
+        },
+        {
+          "price": 1475,
+          "size": 152
+        },
+        {
+          "price": 1470,
+          "size": 157
+        }
+      ],
+      "asks": [
+        {
+          "price": 1495,
+          "size": 48
+        },
+        {
+          "price": 1500,
+          "size": 145
+        },
+        {
+          "price": 1505,
+          "size": 82
+        },
+        {
+          "price": 1510,
+          "size": 88
+        },
+        {
+          "price": 1515,
+          "size": 65
+        }
+      ],
+      "total": {
+        "tradeValue": 15029170000,
+        "tradeVolume": 10047,
+        "tradeVolumeAtBid": 4735,
+        "tradeVolumeAtAsk": 5123,
+        "transaction": 3460,
+        "time": 1790227800000000
+      },
+      "lastTrade": {
+        "bid": 1490,
+        "ask": 1495,
+        "price": 1495,
+        "size": 457,
+        "time": 1790227800000000,
+        "serial": 4239588
+      },
+      "lastTrial": {
+        "bid": 1495,
+        "ask": 1500,
+        "price": 1495,
+        "size": 450,
+        "time": 1790227796988878,
+        "serial": 4238953
+      },
+      "isClose": true,
+      "serial": 4239588,
+      "lastUpdated": 1790227800000000
+    },
+    "current_price": 1495.0,
+    "previous_close": 1460.0,
+    "today_change": 35.0,
+    "today_change_percent": 2.4,
+    "today_return": 0.023972602739726012,
+    "peer_median_change_percent": 0.875,
+    "relative_to_taiex_pct": 2.675534607532945,
+    "taiex": {
+      "time": "13:30:00",
+      "index": 48024.6,
+      "change": -132.69000000000233,
+      "change_pct": -0.27553460753294534,
+      "datetime": "2026-09-24 13:30:00+08:00"
+    },
+    "peer_returns": [
+      {
+        "symbol": "2327",
+        "change_percent": 1.22
+      },
+      {
+        "symbol": "2492",
+        "change_percent": 1.8
+      },
+      {
+        "symbol": "3037",
+        "change_percent": 2.16
+      },
+      {
+        "symbol": "3044",
+        "change_percent": -0.92
+      },
+      {
+        "symbol": "3533",
+        "change_percent": 0.0
+      },
+      {
+        "symbol": "2308",
+        "change_percent": 0.53
+      }
+    ]
+  },
+  "institution_context": {
+    "available": true,
+    "latest": {
+      "date": "2026-09-24 00:00:00",
+      "symbol": "6274",
+      "foreign_net": -711104.0,
+      "trust_net": -61997.0,
+      "dealer_net": 196494.0,
+      "total_net": -576607.0,
+      "market": "上櫃",
+      "source": "TPEx-OpenAPI"
+    },
+    "totals_10d": {
+      "foreign_net": -711104.0,
+      "trust_net": -61997.0,
+      "dealer_net": 196494.0,
+      "total_net": -576607.0
+    },
+    "rows": [
+      {
+        "date": "2026-09-24 00:00:00",
+        "symbol": "6274",
+        "foreign_net": -711104.0,
+        "trust_net": -61997.0,
+        "dealer_net": 196494.0,
+        "total_net": -576607.0,
+        "market": "上櫃",
+        "source": "TPEx-OpenAPI"
+      }
+    ]
+  },
+  "official_mentions": [],
+  "fundamentals": {
+    "symbol": "6274",
+    "industry_code": "28",
+    "market": "TPEx",
+    "statement_revenue": 24355008.0,
+    "gross_profit": 6778129.0,
+    "operating_profit": 5185472.0,
+    "net_income": 3601714.0,
+    "eps": 12.4,
+    "latest_month_revenue": 5914540.0,
+    "revenue_yoy": 132.48393122185607,
+    "raw_financial": {
+      "Date": "1150928",
+      "Year": "115",
+      "Season": "2",
+      "SecuritiesCompanyCode": "6274",
+      "CompanyName": "台燿",
+      "營業收入": "24355008.00",
+      "營業成本": "17576879.00",
+      "原始認列生物資產及農產品之利益（損失）": "",
+      "生物資產當期公允價值減出售成本之變動利益（損失）": "",
+      "營業毛利（毛損）": "6778129.00",
+      "未實現銷貨（損）益": "",
+      "已實現銷貨（損）益": "",
+      "營業毛利（毛損）淨額": "6778129.00",
+      "營業費用": "1592657.00",
+      "其他收益及費損淨額": "",
+      "營業利益（損失）": "5185472.00",
+      "營業外收入及支出": "115316.00",
+      "稅前淨利（淨損）": "5300788.00",
+      "所得稅費用（利益）": "1699074.00",
+      "繼續營業單位本期淨利（淨損）": "3601714.00",
+      "停業單位損益": "",
+      "合併前非屬共同控制股權損益": "",
+      "本期淨利（淨損）": "3601714.00",
+      "其他綜合損益（淨額）": "459005.00",
+      "合併前非屬共同控制股權綜合損益淨額": "",
+      "本期綜合損益總額": "4060719.00",
+      "淨利（淨損）歸屬於母公司業主": "3601714.00",
+      "淨利（淨損）歸屬於共同控制下前手權益": "",
+      "淨利（淨損）歸屬於非控制權益": "",
+      "綜合損益總額歸屬於母公司業主": "4060719.00",
+      "綜合損益總額歸屬於共同控制下前手權益": "",
+      "綜合損益總額歸屬於非控制權益": "",
+      "基本每股盈餘（元）": "12.40"
+    },
+    "raw_revenue": {
+      "出表日期": "1150917",
+      "資料年月": "11508",
+      "公司代號": "6274",
+      "公司名稱": "台燿",
+      "產業別": "電子零組件業",
+      "營業收入-當月營收": "5914540",
+      "營業收入-上月營收": "5908074",
+      "營業收入-去年當月營收": "2544064",
+      "營業收入-上月比較增減(%)": "0.10944344976044647",
+      "營業收入-去年同月增減(%)": "132.48393122185607",
+      "累計營業收入-當月累計營收": "36178244",
+      "累計營業收入-去年累計營收": "18363676",
+      "累計營業收入-前期比較增減(%)": "97.0098143748561",
+      "備註": "產品組合優化"
+    }
+  },
+  "verified_news": [
+    {
+      "title": "銅箔基板(CCL) 台股概念股全解析，台光電、台燿、聯茂7月營收同步創高與法人目標價一次看懂 - pocket.tw",
+      "link": "https://news.google.com/rss/articles/CBMiY0FVX3lxTFBHWTlmcHpuQkh5TzFjaU9HUkhhRWx4b08zMHhiMDhjY2dZMGtSemxDcW82R1lCMVlyU0NWcUVTdklqQ24tc3Y2TGRKdTJZdWhfa3BGVzZKVEZOZHNqX1lPU1ZBaw?oc=5",
+      "published": "Fri, 07 Aug 2026 07:00:00 GMT",
+      "summary": "銅箔基板(CCL) 台股概念股全解析，台光電、台燿、聯茂7月營收同步創高與法人目標價一次看懂 &nbsp;&nbsp; pocket.tw",
+      "source": "pocket.tw",
+      "query": "\"6274\" \"台燿\" CCL／銅箔基板 財報 營收 毛利率 EPS",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.5,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "漲價效益發威！「這CCL大廠」7月營收爆衝121% H1賺逾1股本 - 三立新聞",
+      "link": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE9PRFV4M1pkMThncW1xZEhJMGZVT0tBSkpvS3hSRmM0cUtpaWwwS3dfb3FRSlNfcHlzNHk0ZmhfOThuR1RhZWQ1cjhDZw?oc=5",
+      "published": "Mon, 10 Aug 2026 07:00:00 GMT",
+      "summary": "漲價效益發威！「這CCL大廠」7月營收爆衝121% H1賺逾1股本 &nbsp;&nbsp; 三立新聞",
+      "source": "三立新聞",
+      "query": "\"6274\" \"台燿\" CCL／銅箔基板 財報 營收 毛利率 EPS",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "CCL廠台燿、台光電首季營收獲利同創新高 台燿EPS4.36元 - news.cnyes.com",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1VU1lCX1RoWl85SjB1N2J5UVRlQWh4ekZJXzdyR0xZeVpXYldaM0Q0SzRxQW1jRG9TY3NwbmV3NTVXVHZLdGluLThBSUgwUmM?oc=5",
+      "published": "Wed, 06 May 2026 07:00:00 GMT",
+      "summary": "CCL廠台燿、台光電首季營收獲利同創新高 台燿EPS4.36元 &nbsp;&nbsp; news.cnyes.com",
+      "source": "news.cnyes.com",
+      "query": "\"6274\" \"台燿\" CCL／銅箔基板 財報 營收 毛利率 EPS",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "累計EPS飆16.76元！「銅箔基板大廠」7月獲利狂漲近300%創高 亞系外資點讚激勵股價漲停 - FTNN",
+      "link": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE5KeDhvUFZzbWVvWlVvbDEySFQzMmJWbXFDOG1yZlhWczd2d2dwMERfbXYyTnNhemo3RWM3UzhVaTkybGtVeGVDemxqQQ?oc=5",
+      "published": "Tue, 11 Aug 2026 07:00:00 GMT",
+      "summary": "累計EPS飆16.76元！「銅箔基板大廠」7月獲利狂漲近300%創高 亞系外資點讚激勵股價漲停 &nbsp;&nbsp; FTNN",
+      "source": "FTNN",
+      "query": "\"6274\" \"台燿\" CCL／銅箔基板 財報 營收 毛利率 EPS",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.05,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "台燿財報／首季獲利年增近9成 EPS 4.36元、毛利率升至25.2% - UDN",
+      "link": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE9paWVxWGJDZ3VQVWpKbEJzdUl1czR3ajB3SXlzd2F4VFN5VXE2Rm40UXlFTVNVNjNheDF6MEJRaVhPVHdYNmZYZkZDNGpzVTZu0gFWQVVfeXFMUDByVFRUbFFyUG5lZ0JYbUtTLVhScmxvdk1PRUNPNDlFVEVPUHJXS3Vabk40VVR6MGc0anJvWWthbVVRTzFvRzdNV0JtcmREUTZTZFozbVE?oc=5",
+      "published": "Wed, 06 May 2026 07:00:00 GMT",
+      "summary": "台燿財報／首季獲利年增近9成 EPS 4.36元、毛利率升至25.2% &nbsp;&nbsp; UDN",
+      "source": "UDN",
+      "query": "\"6274\" \"台燿\" CCL／銅箔基板 財報 營收 毛利率 EPS",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "CCL缺貨Q2喊漲40％！台燿漲停再創天價還不夠…3大投顧上修目標價EPS一次看- 上市櫃 - 旺得富理財網",
+      "link": "https://news.google.com/rss/articles/CBMiakFVX3lxTE10LUpwZ0U0TWJ5QzBHNVhaeVdhVzhkd1IyZzluOEZGLW5yS3RtSFZReWRhM21qV3gyQTMxQWh0aTZFZUlYLW4yV19kVEpfZW9kclBLNEp4c3lVMm5Lb2xtaWxMd3JOeTR3d2c?oc=5",
+      "published": "Thu, 07 May 2026 07:00:00 GMT",
+      "summary": "CCL缺貨Q2喊漲40％！台燿漲停再創天價還不夠…3大投顧上修目標價EPS一次看- 上市櫃 &nbsp;&nbsp; 旺得富理財網",
+      "source": "旺得富理財網",
+      "query": "\"6274\" \"台燿\" CCL／銅箔基板 財報 營收 毛利率 EPS",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "【即時新聞】台燿首季獲利年增87.5% EPS達4.36元毛利率升至25.2% - CMoney投資網誌",
+      "link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPT05CT2dUMnluenFWS1psVVVheloyaHEyMHNtRGt6RVlScWhuaDJBZ25kUkw0cU91STVwaXZ4SHpiWEhyWmVpcjNfYVdBdjJYZnptc3Z4RU4zMkk4MklVZFRZZ2dKOEdUZlNWenlEVW1BODBNcjNBWC11NlpKYk5uWWJhUEN4STExXzV2c3RGbDA?oc=5",
+      "published": "Wed, 06 May 2026 07:00:00 GMT",
+      "summary": "【即時新聞】台燿首季獲利年增87.5% EPS達4.36元毛利率升至25.2% &nbsp;&nbsp; CMoney投資網誌",
+      "source": "CMoney投資網誌",
+      "query": "\"6274\" \"台燿\" CCL／銅箔基板 財報 營收 毛利率 EPS",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "【產業焦點】Panasonic二度喊漲！PCB漲價潮升級，AI隱藏骨幹誰受惠？ - CMoney投資網誌",
+      "link": "https://news.google.com/rss/articles/CBMifkFVX3lxTFA0dEFfNTc5XzVlTHN1MllpUVZpT2c5NEhiLVQySTZ1NDNEdVlUd29NRzJqMkJnRm1HS1NDS1hkYlpBNE02STNQUXBmOWZlNmxsWFZvRFZJSWUzWFJYbFVUTy1ZR0RfWksybklydHU0dlpYbk1yUFhGYWxWWFc5QQ?oc=5",
+      "published": "Tue, 15 Sep 2026 07:00:00 GMT",
+      "summary": "【產業焦點】Panasonic二度喊漲！PCB漲價潮升級，AI隱藏骨幹誰受惠？ &nbsp;&nbsp; CMoney投資網誌",
+      "source": "CMoney投資網誌",
+      "query": "\"6274\" 印刷電路板 銅箔基板 競爭者 客戶 供應鏈 產能 報價",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "AI伺服器推升HDI PCB需求 電子玻纖布用量增3至5倍 高階材料供給缺口持續擴大 - 優分析UAnalyze",
+      "link": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBnY1U3djVKbG05ZzBkclVpdk81R2tBb09zdFBzb0RIOEVaUGNUNmFCNzRLck1ZZ1RwRzh3WUtEZzZpbWgxcGFCZWxhd0JOUHhVQ1ducTNB?oc=5",
+      "published": "Tue, 05 May 2026 07:00:00 GMT",
+      "summary": "AI伺服器推升HDI PCB需求 電子玻纖布用量增3至5倍 高階材料供給缺口持續擴大 &nbsp;&nbsp; 優分析UAnalyze",
+      "source": "優分析UAnalyze",
+      "query": "\"6274\" 印刷電路板 銅箔基板 競爭者 客戶 供應鏈 產能 報價",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "PCB 族群搶吃 AI 商機 材料設備總動員 - 經濟日報",
+      "link": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1tbUlVYzVoYnZ5OTlUdkJHU2VyaHpJSnhmQ0oxMjY1WXV0cnZiVmstNm5nUjcxN2htbEZQR1ZuY0thR0FZdm9xb0VpbWpiQi1sWDZaSkI0aUh4X0XSAWBBVV95cUxObXhLREh4Z0xhRmp5LWdtT3FzZl94dk53NXBhU2dyUzV5QTZ6T2Rkd2pNT0k5RG1NRS1QMHJtb1BKLVI0cUtKLXIwS3NPTi1GTzZJMFZDLUppakFjRDQyZlM?oc=5",
+      "published": "Mon, 15 Jun 2026 07:00:00 GMT",
+      "summary": "PCB 族群搶吃 AI 商機 材料設備總動員 &nbsp;&nbsp; 經濟日報",
+      "source": "經濟日報",
+      "query": "\"6274\" 印刷電路板 銅箔基板 競爭者 客戶 供應鏈 產能 報價",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "銅箔基板（CCL）概念股2026全解析：漲價超級週期下，哪些台股最受惠？ - TOP1markets",
+      "link": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPMndXNTdQd3lUTi10LWxsMWpwd3FoMjB0OWJnT3U3QU5SLU5lTXAzWkpiWGtMZGZralFnVzZDVDh4TURFa1BoTlZLd0ZQTFVDbWNTQU0waGxreTRwcG4zVExtTlpDX3NzRkdLV1Vrak92TzNhUHpKN3JXQjNqQWlNak1NeFEyQ3RYeVE?oc=5",
+      "published": "Wed, 12 Aug 2026 07:00:00 GMT",
+      "summary": "銅箔基板（CCL）概念股2026全解析：漲價超級週期下，哪些台股最受惠？ &nbsp;&nbsp; TOP1markets",
+      "source": "TOP1markets",
+      "query": "\"6274\" 印刷電路板 銅箔基板 競爭者 客戶 供應鏈 產能 報價",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.05,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "台燿（6274）做什麼？從高階 CCL、AI 伺服器到 800G 交換器，一次看懂台燿成長動能！ - StockFeel 股感",
+      "link": "https://news.google.com/rss/articles/CBMitwFBVV95cUxOcGdlWjNRRHB0Z3hoeUhReWVVU2xadm9MZ3lGY1lwcXpXNXdEd21IV1oxUnNQeDRnOEY0U19PeXotclFxOENUa2htRHAzSmZPODlfenp4bGFONm9pSGZlYmhsZzk0c2hhbGpTTW9pUWY4cGExWTNoWDV5T3lJMWdhMWthNldNUnNmaTMyM1VXNG9NUm5zbTdJb3ZmSTRYNGFBTHpiclNTR2hfZEFmZS14eHBfQWR1Mzg?oc=5",
+      "published": "Wed, 20 May 2026 07:00:00 GMT",
+      "summary": "台燿（6274）做什麼？從高階 CCL、AI 伺服器到 800G 交換器，一次看懂台燿成長動能！ &nbsp;&nbsp; StockFeel 股感",
+      "source": "StockFeel 股感",
+      "query": "\"6274\" 印刷電路板 銅箔基板 競爭者 客戶 供應鏈 產能 報價",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.45,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "待查證：需核對公司公告/主管機關/原始報告"
+    },
+    {
+      "title": "AI帶動台灣PCB產值衝破1.5兆，獲利會先落在載板還是CCL？-跟著大資走 澤明 - CMoney投資網誌",
+      "link": "https://news.google.com/rss/articles/CBMigwFBVV95cUxPS1pFVmVOSUJybnNjMjU5aXFQTEdBMkYtVGh5RTl6LW5XbzFRdkNqdFZBVFNmV2FSUWhtSmNDdEk0WTc5RGN4c2Q4VUtERDA2REFxM1NYYWdvTTJYMzcwVmdkSk1tS19LSUJoWFFYVEV1aFF0Z01uTFBHc1BqNjJmNDVvWQ?oc=5",
+      "published": "Sun, 09 Aug 2026 07:00:00 GMT",
+      "summary": "AI帶動台灣PCB產值衝破1.5兆，獲利會先落在載板還是CCL？-跟著大資走 澤明 &nbsp;&nbsp; CMoney投資網誌",
+      "source": "CMoney投資網誌",
+      "query": "\"6274\" 印刷電路板 銅箔基板 競爭者 客戶 供應鏈 產能 報價",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "低軌衛星概念股有哪些？SpaceX供應鏈、台股ETF、投資風險一次看 - cw.com.tw",
+      "link": "https://news.google.com/rss/articles/CBMiTkFVX3lxTE5XRERaOVZGcFVKdkRXLWxRaTFUZmhVWV8xRElGc0hDakpEeVVBMk1HMlhUNmRDNUFlNnNfanFjeEhXek5qT0ppZUtXVmgxdw?oc=5",
+      "published": "Thu, 28 May 2026 07:00:00 GMT",
+      "summary": "低軌衛星概念股有哪些？SpaceX供應鏈、台股ETF、投資風險一次看 &nbsp;&nbsp; cw.com.tw",
+      "source": "cw.com.tw",
+      "query": "\"6274\" 印刷電路板 銅箔基板 競爭者 客戶 供應鏈 產能 報價",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "金管會因應郭明鑑事件補破網 將強化重大事件揭露機制 - 經濟日報",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9MS1ZXWGhWNjRhWUlaWlZHeE9HLWdKTXFiUkZyV3Z2M3ZpLW1tT0UtcFc0QUM3MnlhN0tNdldpbC14Nm1CMWhiSmFvUGlpS0JKbnJwX05JZ21vUdIBX0FVX3lxTE5rbldRcDhLSXo0R0JLZVJ3aWo2NEFmWFIxTmdDNjJJbHFfRm05N1puM1hZcURqR3lsVTlra3MtNlhvVENmTEQtLTR5UVhWNXhkM1cwVEVWWW5DbFFySGo4?oc=5",
+      "published": "Tue, 01 Sep 2026 07:00:00 GMT",
+      "summary": "金管會因應郭明鑑事件補破網 將強化重大事件揭露機制 &nbsp;&nbsp; 經濟日報",
+      "source": "經濟日報",
+      "query": "\"台燿\" 官方公告 重大訊息 董事長 總經理 法說會",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "董事長、總經理全換人 股票還要終止興櫃 長亨大跌逾5成 - 經濟日報",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFA5cGpsX1pXcm91TjNnblVBa2JJSjZrdEphOENkMk5xRzMxQ29iZkozTTVybkxBcXk4NENMa280eHF2WXZWV1kyRnNZV2VTN2E0cVBaQWdQWE9JQdIBX0FVX3lxTE0wWE9CMHRnWWdvRloxUDFveHQ0QlI4REZBTkVLNlhPeXJIMk5HNHZpMUtCdzVmVjVrbkY3aVB0TkZiMG5lYnNIOE9IN1FvV1d6cnp1UmZocnBzMkFLZDNr?oc=5",
+      "published": "Mon, 20 Jul 2026 07:00:00 GMT",
+      "summary": "董事長、總經理全換人 股票還要終止興櫃 長亨大跌逾5成 &nbsp;&nbsp; 經濟日報",
+      "source": "經濟日報",
+      "query": "\"台燿\" 官方公告 重大訊息 董事長 總經理 法說會",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "友達下午2點半召開重訊記者會 發言人說明董事會重大決議 - 經濟日報",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBfZWNnakdlY3FMZl9RNFVadlM1MngzYUF1am1PQWVDMlR0VjZXUkpEUnFlRG0xRHg4Mk9rWldYSjNhaDVoaUxQdWZsNUVfa3E1V3Vrb1BoZUdJQdIBX0FVX3lxTE1WTGF0Y1g2M0Z4U0xFck9BOFFMZ2lhZXd5R0pMM0RfcUNTSEgybGpwQ0V6NVV6VjFJS29fbjZleTVHUG5JLTBVUUk1T0w0YktCSTIzMzRNakptekExUHo0?oc=5",
+      "published": "Mon, 13 Apr 2026 07:00:00 GMT",
+      "summary": "友達下午2點半召開重訊記者會 發言人說明董事會重大決議 &nbsp;&nbsp; 經濟日報",
+      "source": "經濟日報",
+      "query": "\"台燿\" 官方公告 重大訊息 董事長 總經理 法說會",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "5／23盤前》CCL龍頭領漲台廠最新動向曝光- 證券 - 工商時報",
+      "link": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFBxTEFRMHMyZnR4NWJYYlYyd0F3X3NTYi1keWM2OHlNUk9PYmoweFZkT29VeW1HVkJBLWhKbWxsb3NxYmNNRjBWLXU1Uk5LYmRyZVVLakJGaG5RV0Z3enZ3?oc=5",
+      "published": "Thu, 23 May 2024 07:00:00 GMT",
+      "summary": "5／23盤前》CCL龍頭領漲台廠最新動向曝光- 證券 &nbsp;&nbsp; 工商時報",
+      "source": "工商時報",
+      "query": "\"台燿\" 官方公告 重大訊息 董事長 總經理 法說會",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "欣興法說會倒數 PCB載板廠再掀比價行情 材料耗材同旺 - UDN",
+      "link": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE1lcnVHNDJiZFRZZFlsbmFUZkNvUFJPNmMwZjhGaVpWZUszcFNpRlotZlVlVXN2blAwdF9VS2dad3B0cTRfUkFkVkk5dU9uanYw0gFWQVVfeXFMTmNwdjUtT0tSMkRaT3pXdHUwWnpaV2pkTnlhQVdkbjQzNFpjdGp3OHZPS1JoSDlIZV9fQ1ZMQ1N2N1ZkcGNJYVJKS1E3ZmVvMHBYVkZTQlE?oc=5",
+      "published": "Tue, 24 Feb 2026 08:00:00 GMT",
+      "summary": "欣興法說會倒數 PCB載板廠再掀比價行情 材料耗材同旺 &nbsp;&nbsp; UDN",
+      "source": "UDN",
+      "query": "\"台燿\" 官方公告 重大訊息 董事長 總經理 法說會",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "宇隆：人事底定營運正常 AI液冷和機器人雙軸並進 - 經濟日報",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE51Y2RLNVRMcFA4TU1qUlJ1Zi1aSTkya0VCRWZJZXE1VTZ3djAyaWNYMi1LdFEwWDNFOTNKRUQ1RlhzaXJDWlNEUktKUHd2bXRlUkxycWVvUkpWQdIBX0FVX3lxTE4yT3ZYeWJSZ3N6elg4MHRKeWZvRnh3eExNOVRNQ2h3TkhLbVVmb0NybFlRQU8xaXN4UG95ZXZyX2Jmd3R0cHFuU0J6SWtfczd1eEFLRjBEQjE3WGowYWZz?oc=5",
+      "published": "Mon, 29 Jun 2026 07:00:00 GMT",
+      "summary": "宇隆：人事底定營運正常 AI液冷和機器人雙軸並進 &nbsp;&nbsp; 經濟日報",
+      "source": "經濟日報",
+      "query": "\"台燿\" 官方公告 重大訊息 董事長 總經理 法說會",
+      "sentiment_score": 1.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    },
+    {
+      "title": "任遠東零售集團副董事長　徐雪芳：6大引擎驅動營運 - 經濟日報",
+      "link": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFBKQU1QczBJMzVyWmFBbVUybHJuNzhhN25ZdFh2bnRic21YcmZEYzhaaDFRbkRaWFgzSHRxeUNFV09rNTVTSktVWHVjVTMzZ1VFZm92aG4wT2xvT2PSAWBBVV95cUxPdU43S3k3WkwtTHJHRVVzRG1BYWhBVl9oT0k5QU05TlBORDhZZkdreEpQdVBjTjVDR1hwelJBSmdYN2tzREZ6WVpsVjhEOHVpNFA5c2RuZnNKU01xc2wyXzc?oc=5",
+      "published": "Wed, 27 May 2026 07:00:00 GMT",
+      "summary": "任遠東零售集團副董事長　徐雪芳：6大引擎驅動營運 &nbsp;&nbsp; 經濟日報",
+      "source": "經濟日報",
+      "query": "\"台燿\" 官方公告 重大訊息 董事長 總經理 法說會",
+      "sentiment_score": 0.0,
+      "business_relevance": 0.0,
+      "official_match": false,
+      "corroboration": 0,
+      "verification": "低業務相關度，不宜直接歸因"
+    }
+  ],
+  "reason_candidates": [
+    {
+      "factor": "最新營收年增率",
+      "score": 1.0,
+      "direction": "利多偏壓",
+      "evidence": "最新可得 YoY +132.48%"
+    },
+    {
+      "factor": "銅箔基板(CCL) 台股概念股全解析，台光電、台燿、聯茂7月營收同步創高與法人目標價一次看懂 - pocket.tw",
+      "score": 0.75,
+      "direction": "利多偏壓",
+      "evidence": "待查證：需核對公司公告/主管機關/原始報告",
+      "source": "pocket.tw",
+      "link": "https://news.google.com/rss/articles/CBMiY0FVX3lxTFBHWTlmcHpuQkh5TzFjaU9HUkhhRWx4b08zMHhiMDhjY2dZMGtSemxDcW82R1lCMVlyU0NWcUVTdklqQ24tc3Y2TGRKdTJZdWhfa3BGVzZKVEZOZHNqX1lPU1ZBaw?oc=5"
+    },
+    {
+      "factor": "CCL廠台燿、台光電首季營收獲利同創新高 台燿EPS4.36元 - news.cnyes.com",
+      "score": 0.725,
+      "direction": "利多偏壓",
+      "evidence": "待查證：需核對公司公告/主管機關/原始報告",
+      "source": "news.cnyes.com",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1VU1lCX1RoWl85SjB1N2J5UVRlQWh4ekZJXzdyR0xZeVpXYldaM0Q0SzRxQW1jRG9TY3NwbmV3NTVXVHZLdGluLThBSUgwUmM?oc=5"
+    },
+    {
+      "factor": "台燿財報／首季獲利年增近9成 EPS 4.36元、毛利率升至25.2% - UDN",
+      "score": 0.725,
+      "direction": "利多偏壓",
+      "evidence": "待查證：需核對公司公告/主管機關/原始報告",
+      "source": "UDN",
+      "link": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE9paWVxWGJDZ3VQVWpKbEJzdUl1czR3ajB3SXlzd2F4VFN5VXE2Rm40UXlFTVNVNjNheDF6MEJRaVhPVHdYNmZYZkZDNGpzVTZu0gFWQVVfeXFMUDByVFRUbFFyUG5lZ0JYbUtTLVhScmxvdk1PRUNPNDlFVEVPUHJXS3Vabk40VVR6MGc0anJvWWthbVVRTzFvRzdNV0JtcmREUTZTZFozbVE?oc=5"
+    },
+    {
+      "factor": "【即時新聞】台燿首季獲利年增87.5% EPS達4.36元毛利率升至25.2% - CMoney投資網誌",
+      "score": 0.725,
+      "direction": "利多偏壓",
+      "evidence": "待查證：需核對公司公告/主管機關/原始報告",
+      "source": "CMoney投資網誌",
+      "link": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPT05CT2dUMnluenFWS1psVVVheloyaHEyMHNtRGt6RVlScWhuaDJBZ25kUkw0cU91STVwaXZ4SHpiWEhyWmVpcjNfYVdBdjJYZnptc3Z4RU4zMkk4MklVZFRZZ2dKOEdUZlNWenlEVW1BODBNcjNBWC11NlpKYk5uWWJhUEN4STExXzV2c3RGbDA?oc=5"
+    },
+    {
+      "factor": "台燿（6274）做什麼？從高階 CCL、AI 伺服器到 800G 交換器，一次看懂台燿成長動能！ - StockFeel 股感",
+      "score": 0.725,
+      "direction": "利多偏壓",
+      "evidence": "待查證：需核對公司公告/主管機關/原始報告",
+      "source": "StockFeel 股感",
+      "link": "https://news.google.com/rss/articles/CBMitwFBVV95cUxOcGdlWjNRRHB0Z3hoeUhReWVVU2xadm9MZ3lGY1lwcXpXNXdEd21IV1oxUnNQeDRnOEY0U19PeXotclFxOENUa2htRHAzSmZPODlfenp4bGFONm9pSGZlYmhsZzk0c2hhbGpTTW9pUWY4cGExWTNoWDV5T3lJMWdhMWthNldNUnNmaTMyM1VXNG9NUm5zbTdJb3ZmSTRYNGFBTHpiclNTR2hfZEFmZS14eHBfQWR1Mzg?oc=5"
+    },
+    {
+      "factor": "大盤相對強弱",
+      "score": 0.535106921506589,
+      "direction": "利多偏壓",
+      "evidence": "相對 TAIEX 差異 +2.68 個百分點"
+    },
+    {
+      "factor": "同細分業務群相對表現",
+      "score": 0.305,
+      "direction": "利多偏壓",
+      "evidence": "個股 +2.40%；同業中位數 +0.88%"
+    },
+    {
+      "factor": "最新可得 EPS",
+      "score": 0.15,
+      "direction": "中性",
+      "evidence": "EPS 12.40"
+    },
+    {
+      "factor": "外資 10 日累計交易",
+      "score": 0.1422208,
+      "direction": "利空偏壓",
+      "evidence": "外資 10 日累計 -711,104 股"
+    },
+    {
+      "factor": "三大法人 10 日累計交易",
+      "score": 0.1153214,
+      "direction": "利空偏壓",
+      "evidence": "三大法人 10 日累計 -576,607 股"
+    }
+  ],
+  "research_questions": [
+    "\"6274\" \"台燿\" CCL／銅箔基板 財報 營收 毛利率 EPS",
+    "\"6274\" \"台燿\" 印刷電路板 > 銅箔基板 董事長 總經理 法說會 展望 訂單 接單",
+    "\"6274\" 印刷電路板 銅箔基板 競爭者 客戶 供應鏈 產能 報價",
+    "\"台燿\" 官方公告 重大訊息 董事長 總經理 法說會",
+    "\"台燿\" 國際情勢 中美 關稅 伊朗 戰爭 油價 央行 利率 AI"
+  ],
+  "ollama_analysis": {
+    "available": true,
+    "model": "qwen3:8b",
+    "content": "### 分析與建議：台燿（6274）投資評估\n\n---\n\n#### **1. 核心正面因素（高分項）**\n- **最新營收年增率（+132.48%）**  \n  - **利多偏壓**：營收大幅成長，顯示公司業務擴張或需求激增，可能來自CCL（銅箔基板）產業的強勁需求，尤其在AI伺服器、800G交換器等應用領域（StockFeel分析）。\n  - **關鍵觀察**：需確認是否為季節性因素或長期趨勢，並觀察未來季度能否持續成長。\n\n- **CCL產業表現**  \n  - **首季獲利年增87.5%**（EPS 4.36元，毛利率25.2%）  \n    - **利多偏壓**：CCL廠（台燿、台光電）同步創高，反映產業景氣回溫，尤其在5G、AI、數據中心需求驅動下，CCL作為核心材料需求穩定。\n    - **風險**：需核實是否為短期利多（如庫存釋放）或長期產業轉型成功。\n\n- **相對強弱表現**  \n  - **大盤相對強勢**（+2.68% vs. TAIEX）  \n    - **利多偏壓**：台燿表現優於大盤，可能受益於CCL產業集中度提升或技術壁壘（如高階CCL技術）。\n\n---\n\n#### **2. 需謹慎查證的資訊**\n- **CCL產業相關報導**  \n  - 多篇報導提及台燿在CCL領域的技術優勢（如高階CCL、800G交換器），但需確認是否為公司官方公告或第三方機構分析，避免誤判。\n  - **建議**：直接查閱台燿財報、法說會資料或主管機關公告，驗證營收成長是否來自CCL業務。\n\n- **法說會與管理層動態**  \n  - 經濟日報報導徐雪芳提及「6大引擎驅動營運」，但未明確說明具體策略，需關注後續法說會或官方公告。\n\n---\n\n#### **3. 潜在負面因素**\n- **外資與機構賣壓**  \n  - **外資10日累計賣出71萬股**，三大法人累計賣出57萬股，可能反映短期資金對產業景氣或國際情勢（如中美貿易戰、關稅）的擔憂。\n  - **風險**：若國際需求不確定性升高（如中美關係、油價波動），可能影響CCL出口訂單。\n\n- **業務相關度低的訊息**  \n  - 有報導提及「台燿」與「台燿」的業務相關度低（如非CCL領域），需區分公司實際業務範疇，避免誤導。\n\n---\n\n#### **4. 研究問題回應**\n1. **財報與營收動能**  \n   - 台燿CCL業務營收成長顯著，但需確認是否來自高階產品（如HDI板、800G交換器）的技術突破，以及毛利率是否持續改善。\n\n2. **產業與競爭者分析**  \n   - **競爭者**：台光電、聯茂等同業，CCL產業集中度提升，台燿技術壁壘（如高階CCL製程）可能形成護城河。\n   - **客戶與供應鏈**：需查閱公司公告，確認主要客戶（如IC廠、伺服器廠）及供應鏈合作動態。\n\n3. **國際情勢影響**  \n   - 中美貿易戰、關稅政策可能影響CCL出口，但台燿若已拓展至亞洲或歐洲市場，可能降低風險。\n\n---\n\n#### **5. 總結與建議**\n- **短期觀點**：台燿CCL業務表現亮眼，營收與獲利雙成長，且相對大盤強勢，具短線買盤機會，但需觀察外資賣壓是否為短期資金操作。\n- **長期觀點**：若CCL產業持續受益於AI、5G、數據中心需求，台燿技術優勢可能推動長期成長，但需警惕國際貿易風險。\n- **行動建議**：  \n  1. 確認財報與法說會資料，驗證CCL業務成長是否可持續。  \n  2. 跟蹤國際情勢（如中美關係、油價）對CCL出口的影響。  \n  3. 觀察外資與機構買盤動態，判斷是否為長期資金布局。\n\n---\n\n**風險提示**：部分資訊需進一步查證，投資決策應結合多源資料與市場動態。"
+  }
+}
