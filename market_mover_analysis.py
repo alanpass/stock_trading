@@ -25,6 +25,8 @@ from stock_api import FugleClient, clean_symbol, INDUSTRIES, INDUSTRY_OVERRIDES
 from business_master import business_map_for_symbols, build_business_research_context
 
 GOOGLE_NEWS_RSS = "https://news.google.com/rss/search"
+TWSE_DAILY_ALL_URL = "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
+TPEX_DAILY_URL = "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_daily_close_quotes"
 POSITIVE_WORDS = ["漲價", "報價上調", "需求增加", "訂單", "接單", "擴產", "AI需求", "出貨增加", "營收成長", "獲利成長", "供給吃緊", "漲價循環", "庫存回補"]
 NEGATIVE_WORDS = ["跌價", "降價", "需求下滑", "砍單", "庫存過高", "庫存調整", "營收下滑", "獲利衰退", "成本上升", "供給過剩", "需求疲弱", "關稅", "制裁"]
 
@@ -107,6 +109,112 @@ class MarketMoverAnalyzer:
         df["industry_name"] = df["industry"].map(lambda x: INDUSTRIES.get(str(x).zfill(2), "其他"))
         return df
 
+    @staticmethod
+    def _roc_to_iso(value: Any) -> str:
+        """將交易所民國年月日字串轉成 YYYY-MM-DD。"""
+        text = str(value or "").strip().replace("/", "").replace("-", "")
+        if not text.isdigit():
+            return ""
+        if len(text) == 7:
+            try:
+                return f"{int(text[:3]) + 1911:04d}-{int(text[3:5]):02d}-{int(text[5:7]):02d}"
+            except Exception:
+                return ""
+        return ""
+
+    def _official_daily_snapshot(self) -> tuple[pd.DataFrame, str, list[str]]:
+        """用 TWSE / TPEx 官方當日收盤快照作為 Fugle 失敗時的即時日期保護與 fallback。
+
+        兩個來源各只提供最新交易日；這裡要求至少有可解析的交易日期，
+        並保留 source_date 供後續 freshness 驗證。
+        """
+        rows: list[dict[str, Any]] = []
+        errors: list[str] = []
+        dates: list[str] = []
+
+        try:
+            r = self.session.get(TWSE_DAILY_ALL_URL, timeout=25)
+            r.raise_for_status()
+            payload = r.json()
+            if isinstance(payload, list):
+                for item in payload:
+                    if not isinstance(item, dict):
+                        continue
+                    code = clean_symbol(item.get("Code", ""))
+                    if not code:
+                        continue
+                    trade_date = self._roc_to_iso(item.get("Date", ""))
+                    if trade_date:
+                        dates.append(trade_date)
+                    close = self._float(item.get("ClosingPrice"))
+                    change = self._float(item.get("Change"))
+                    prev = close - change if np.isfinite(close) and np.isfinite(change) else np.nan
+                    chg_pct = change / prev * 100 if np.isfinite(prev) and abs(prev) > 1e-12 else np.nan
+                    rows.append({
+                        "symbol": code,
+                        "name": str(item.get("Name") or code),
+                        "last_price": close,
+                        "change": change,
+                        "change_percent": chg_pct,
+                        "volume": self._float(item.get("TradeVolume")),
+                        "market": "TSE",
+                        "source_date": trade_date,
+                    })
+        except Exception as exc:
+            errors.append(f"TWSE官方日行情失敗：{exc}")
+
+        try:
+            r = self.session.get(TPEX_DAILY_URL, timeout=25)
+            r.raise_for_status()
+            payload = r.json()
+            if isinstance(payload, list):
+                for item in payload:
+                    if not isinstance(item, dict):
+                        continue
+                    code = clean_symbol(
+                        item.get("SecuritiesCompanyCode")
+                        or item.get("Code")
+                        or item.get("SecuritiesCompanyCode")
+                        or ""
+                    )
+                    if not code:
+                        continue
+                    trade_date = self._roc_to_iso(item.get("Date", ""))
+                    if trade_date:
+                        dates.append(trade_date)
+                    close = self._float(item.get("Close", item.get("ClosingPrice")))
+                    change = self._float(item.get("Change"))
+                    prev = close - change if np.isfinite(close) and np.isfinite(change) else np.nan
+                    chg_pct = change / prev * 100 if np.isfinite(prev) and abs(prev) > 1e-12 else np.nan
+                    rows.append({
+                        "symbol": code,
+                        "name": str(item.get("CompanyName") or item.get("Name") or code),
+                        "last_price": close,
+                        "change": change,
+                        "change_percent": chg_pct,
+                        "volume": self._float(item.get("TradingShares", item.get("TradeVolume"))),
+                        "market": "OTC",
+                        "source_date": trade_date,
+                    })
+        except Exception as exc:
+            errors.append(f"TPEx官方日行情失敗：{exc}")
+
+        df = pd.DataFrame(rows)
+        if df.empty:
+            return pd.DataFrame(), "", errors
+
+        df = df.drop_duplicates("symbol", keep="first")
+        df = self._enrich_industries(df)
+        df["data_source"] = "TWSE/TPEx官方當日收盤快照"
+        trade_date = max(dates) if dates else ""
+        return df, trade_date, errors
+
+    @staticmethod
+    def _cache_date(asof: str) -> str:
+        text = str(asof or "")
+        m = __import__("re").search(r"(20\d{2}-\d{2}-\d{2})", text)
+        return m.group(1) if m else ""
+
     def _snapshot_universe(self) -> pd.DataFrame:
         rows = []
         for market in ["TSE", "OTC"]:
@@ -157,13 +265,25 @@ class MarketMoverAnalyzer:
                 df["data_asof"] = asof
                 return df
 
-        # 休市／盤後若 Fugle 沒有可用 snapshot，改用最近一次成功交易日快取。
+        # Fugle snapshot 失敗時，先嘗試官方最新交易日快照。
+        official, official_date, official_errors = self._official_daily_snapshot()
+        if not official.empty and official_date:
+            # 只有官方資料的交易日符合今天，或今天本身是非交易日且官方回傳前一交易日，才可使用。
+            official["data_asof"] = official_date
+            if official_date == pd.Timestamp.now(tz="Asia/Taipei").strftime("%Y-%m-%d"):
+                return official
+
+        # 最後才允許使用快取，而且不准把上一交易日快取當成「今天」資料。
         cached, cached_asof = self._load_cached_snapshot()
-        if not cached.empty:
+        cache_date = self._cache_date(cached_asof)
+        today = pd.Timestamp.now(tz="Asia/Taipei").strftime("%Y-%m-%d")
+        if not cached.empty and cache_date == today:
             cached = self._enrich_industries(cached)
-            cached["data_source"] = "最近一次成功的Fugle市場snapshot"
+            cached["data_source"] = "當日成功的Fugle市場snapshot快取"
             cached["data_asof"] = cached_asof
             return cached
+
+        # 沒有今天資料時，明確回傳空資料，讓上層停止寄出過期行情報告，而不是誤報昨天。
         return pd.DataFrame()
 
     def _history(self, symbol: str) -> pd.DataFrame:

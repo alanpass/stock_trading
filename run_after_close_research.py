@@ -96,6 +96,19 @@ def main() -> int:
 
     agent_notes = report.get("agent_research_notes", {}) or {}
 
+    # 盤後屬於「今日行情」報告：若 MarketMoverAnalyzer 沒拿到當日交易資料，
+    # 絕不沿用昨天快取寄信。這是避免舊行情污染盤後報告的最後一道防線。
+    market_movers = report.get("market_movers", {}) or {}
+    market_asof = str(market_movers.get("data_asof", "") or "")[:10]
+    report_day = str(report.get("report_date", ""))[:10]
+    if report_day and market_asof and market_asof != report_day:
+        print(f"ERROR: market data date {market_asof} != report date {report_day}")
+        print("已停止寄送，避免把前一交易日行情誤標為今日盤後資料。")
+        return 4
+    if not market_movers.get("movers"):
+        print("ERROR: 今日沒有取得有效的全市場行情資料，停止寄送盤後報告。")
+        return 4
+
     print("")
     print("Research Agent 完成")
     print(f"report_date = {report.get('report_date')}")

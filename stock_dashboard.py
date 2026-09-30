@@ -4,7 +4,7 @@
 重點：
 1. 自選股上漲整列紅字、下跌整列綠字。
 2. 右上固定即時卡：選取股票 + 即時價格 + TAIEX；盤中 2 秒更新。
-3. 各個資訊視窗獨立使用 Streamlit fragment，盤中每 2 秒更新；非交易時段不自動輪詢，避免不必要的 API 請求。
+3. 盤中即時資料以 Streamlit browser-side rerun 自動刷新，預設每 5 秒更新；盤後嚴格驗證今日行情日期。
 4. 技術 K 線：日K / 當日 5 / 30 / 60 分K。
 4. 當日逢低進場預測；主要使用 5 分 K 學習 K 線特徵，輔助量能、VWAP、日內位置與前一交易日資料。
 5. 大戶 VS 散戶持股比例。
@@ -13,7 +13,7 @@
 8. 法人說明會：抓取 MOPS 法說資料、判斷偏利多/偏利空，並比較法說後 1/5 交易日股價反應。
 9. 近期產業漲跌：全市場漲跌候選、5/20日報酬、產業聚合與利多/利空原因。
 10. AI：Regression + Classification 整合成單一最終方向與可信度，不要求使用者自行選擇。
-11. 所有即時/選取股票資料盤中每 2 秒更新；AI 模型本身不每 2 秒重訓。
+11. 所有即時/選取股票資料盤中預設每 5 秒更新；AI 模型本身不隨即時刷新重訓。
 """
 from __future__ import annotations
 
@@ -109,6 +109,21 @@ def save_watchlist(items):
 
 st.set_page_config(page_title="AI 台股即時互動式分析系統", layout="wide", initial_sidebar_state="expanded")
 
+# 手動立即更新：只清除即時資料相關快取，不影響慢資料與模型快取。
+# 這對 Cloud 使用者特別有用：若瀏覽器剛喚醒 App，可以直接取得最新行情。
+
+def _manual_live_refresh() -> None:
+    try:
+        watch_rows.clear()
+        get_quote.clear()
+        get_intraday.clear()
+        get_trades.clear()
+        get_taiex.clear()
+    except Exception:
+        # 這些函式尚未宣告時不應阻止 App 啟動；按鈕僅在它們完成定義後才會正常工作。
+        pass
+    st.session_state["manual_refresh_at"] = taiwan_now().strftime("%Y-%m-%d %H:%M:%S") if "TW_TZ" in globals() else ""
+
 @st.cache_resource(show_spinner=False)
 def get_client():
     return FugleClient()
@@ -128,7 +143,15 @@ def is_taiwan_cash_session_open() -> bool:
     t = now.time()
     return dt_time(9, 0) <= t <= dt_time(13, 30)
 
-REFRESH_INTERVAL = "2s" if is_taiwan_cash_session_open() else None
+# 即時行情刷新：預設每 5 秒一次。
+# 2 秒雖然更即時，但對 Streamlit Cloud + Fugle API 會造成較高的重跑與請求壓力，
+# 因此改為 5 秒，並可用 LIVE_REFRESH_SECONDS 自訂。
+try:
+    LIVE_REFRESH_SECONDS = max(2, int(os.getenv("LIVE_REFRESH_SECONDS", "5")))
+except Exception:
+    LIVE_REFRESH_SECONDS = 5
+
+REFRESH_INTERVAL = LIVE_REFRESH_SECONDS if is_taiwan_cash_session_open() else None
 MARKET_OPEN = dt_time(9, 0)
 MARKET_CLOSE = dt_time(13, 30)
 
@@ -255,39 +278,45 @@ if "research_busy" not in st.session_state:
 def watch_rows(watchlist_key):
     rows, errors, maps = [], [], {}
     market_open = is_market_open_now()
+    now = taiwan_now()
+    today = now.date()
+    trading_day = is_twse_trading_day(now, BASE)
+    after_close = trading_day and now.time() > MARKET_CLOSE
 
-    # 盤中才使用即時 snapshot。非交易日／盤後不輪詢即時行情，避免啟動時卡在外部 API。
+    # 盤中：用全市場 snapshot，一次取得自選股最新行情，避免每 5 秒逐檔打 API。
+    # 重要：若 snapshot 明確帶有日期，日期不是今天就丟掉，避免把舊快照當成即時資料。
     if market_open:
         for market in ["TSE", "OTC"]:
             try:
                 for x in client.snapshot_quotes(market):
                     code = clean_symbol(x.get("symbol", ""))
-                    if code:
-                        maps[code] = x
+                    if not code:
+                        continue
+                    raw_date = x.get("date") or x.get("dataDate") or x.get("asOfDate")
+                    if raw_date:
+                        d = pd.to_datetime(raw_date, errors="coerce")
+                        if pd.notna(d) and d.date() != today:
+                            continue
+                    maps[code] = x
             except Exception as e:
                 errors.append(f"snapshot/{market}: {e}")
-    else:
-        # 盤後／週末：允許手動載入一次 snapshot（若資料源可用），但不再逐檔立即呼叫 ticker。
-        # 若 snapshot 無資料，再回退到最近交易日歷史資料。
-        for market in ["TSE", "OTC"]:
-            try:
-                for x in client.snapshot_quotes(market):
-                    code = clean_symbol(x.get("symbol", ""))
-                    if code:
-                        maps[code] = x
-            except Exception:
-                pass
 
     watchlist = list(watchlist_key)
     for code in watchlist:
-        x = maps.get(code, {})
-        if not x and not market_open:
+        # 盤後是本次問題的關鍵：不要使用可能停留在前一交易日的 snapshot。
+        # 直接走「今日 Quote -> 今日分K -> 今日日K」的嚴格日期驗證流程。
+        if after_close:
+            x = get_quote(code) or {}
+        elif not trading_day or (trading_day and now.time() < MARKET_OPEN):
+            # 盤前／週末／休市日只顯示最近完成交易日，不拿舊 snapshot 冒充即時行情。
             x = previous_day_daily_quote(code)
-        if not x and market_open:
-            try:
-                x = client.quote(code)
-            except Exception as e:
-                errors.append(f"{code}: {e}")
+        else:
+            x = maps.get(code, {})
+            if not x:
+                try:
+                    x = client.quote(code)
+                except Exception as e:
+                    errors.append(f"{code}: {e}")
 
         price_candidates = [x.get("lastPrice"), x.get("closePrice"), x.get("tradePrice"), x.get("avgPrice")]
         p = np.nan
@@ -315,9 +344,16 @@ def watch_rows(watchlist_key):
         name = x.get("name") or x.get("stockName") or x.get("securityName") or code
         limit_up = pd.to_numeric(x.get("limitUpPrice", x.get("limitUp", np.nan)), errors="coerce")
         limit_down = pd.to_numeric(x.get("limitDownPrice", x.get("limitDown", np.nan)), errors="coerce")
+        row_date = x.get("date") or x.get("dataDate") or x.get("asOfDate")
+        try:
+            row_date = pd.to_datetime(row_date, errors="coerce").date().isoformat() if pd.notna(pd.to_datetime(row_date, errors="coerce")) else ""
+        except Exception:
+            row_date = ""
         rows.append({
             "code": code, "name": name, "price": p, "change": ch, "change_pct": cp,
             "limit_up": limit_up, "limit_down": limit_down, "market": x.get("market", ""),
+            "data_date": row_date,
+            "data_source": "Fugle Quote／今日收盤" if after_close else ("Fugle Snapshot／盤中" if market_open else "Fugle 歷史日K／最近交易日"),
             "industry": str(x.get("industry", WATCHLIST_INDUSTRY_FALLBACK.get(code, "00"))).zfill(2),
         })
 
@@ -417,59 +453,115 @@ def search_stock(keyword: str) -> pd.DataFrame:
 
 @st.cache_data(ttl=2, show_spinner=False)
 def get_quote(code: str) -> dict:
-    """取得正確的最新可用價格。
+    """取得最新且日期可驗證的行情。
 
-    盤中：使用今日即時 Quote。
-    盤後：優先使用今天最後成交/收盤資訊；若 Quote 不含今日日期，改用今日盤中 1/5 分 K 最後一筆。
-    盤前/週末：使用最近完成交易日資料。
+    規則：
+    - 盤中：使用 Fugle 即時 Quote。
+    - 交易日盤後：只接受「今天」資料；依序使用 Quote、今日分K、今日日K。
+    - 盤前／非交易日：使用最近一個已完成交易日。
+    - 盤後若今天資料尚未取得，寧可回傳空值，也不把昨天價格冒充成今天收盤。
     """
     code = clean_symbol(code)
     now = taiwan_now()
     today = now.date()
+    trading_day = is_twse_trading_day(now, BASE)
+    after_close = trading_day and now.time() > MARKET_CLOSE
 
-    # 先嘗試即時 quote；盤後 Quote 通常仍保留今天最後成交。
+    # ------------------------------------------------------------
+    # 1. Fugle 即時 Quote：date 必須能確認。
+    # Fugle Quote 的 closePrice 是最後成交價，date 是資料日期。
+    # ------------------------------------------------------------
     try:
         q = client.quote(code)
         qdate = pd.to_datetime(q.get("date"), errors="coerce") if q.get("date") else pd.NaT
         price_candidates = [q.get("lastPrice"), q.get("closePrice"), q.get("tradePrice")]
         has_price = any(pd.notna(pd.to_numeric(v, errors="coerce")) for v in price_candidates)
-        if has_price:
-            if is_market_open_now():
-                return q
-            if is_twse_trading_day(now, BASE) and now.time() > MARKET_CLOSE:
-                if pd.isna(qdate) or qdate.date() == today:
-                    return q
-            if not is_twse_trading_day(now, BASE) and pd.notna(qdate):
-                return q if qdate.date() <= today else {}
-    except Exception:
-        pass
 
-    # 盤後同一交易日：用今日 5/1 分鐘 K 的最後一根確定今日實際收盤。
-    if is_twse_trading_day(now, BASE) and now.time() > MARKET_CLOSE:
+        if has_price and pd.notna(qdate):
+            qday = qdate.date()
+            if trading_day and qday == today:
+                return q
+            if not trading_day and qday <= today:
+                return q
+
+        # 盤中若 API 沒提供 date，仍可讓即時畫面使用 Quote；
+        # 但盤後絕對不能接受日期不明的資料。
+        if has_price and is_market_open_now() and pd.isna(qdate):
+            return q
+    except Exception:
+        q = {}
+
+    # ------------------------------------------------------------
+    # 2. 交易日盤後：只接受今天的 5/1 分鐘K最後一根。
+    # ------------------------------------------------------------
+    if after_close:
         for tf in ("5", "1"):
             try:
-                k = client.intraday_candles(code, tf)
-                k = normalize_intraday(k)
-                if not k.empty:
-                    last = k.iloc[-1]
-                    prev = k.iloc[-2] if len(k) >= 2 else None
-                    close = float(last["close"])
-                    prev_close = float(prev["close"]) if prev is not None else np.nan
-                    change = close - prev_close if np.isfinite(prev_close) else np.nan
-                    cp = change / prev_close * 100 if np.isfinite(change) and prev_close != 0 else np.nan
-                    return {
-                        "date": str(pd.Timestamp(last["date"]).date()),
-                        "symbol": code,
-                        "name": q.get("name", code) if 'q' in locals() and isinstance(q, dict) else code,
-                        "closePrice": close, "tradePrice": close, "lastPrice": close,
-                        "previousClose": prev_close, "referencePrice": prev_close,
-                        "change": change, "changePercent": cp,
-                        "openPrice": float(last["open"]), "highPrice": float(last["high"]), "lowPrice": float(last["low"]),
-                    }
+                k = normalize_intraday(client.intraday_candles(code, tf))
+                if k.empty or "date" not in k.columns:
+                    continue
+                k["date"] = pd.to_datetime(k["date"], errors="coerce")
+                k = k.dropna(subset=["date"]).sort_values("date")
+                if k.empty or k.iloc[-1]["date"].date() != today:
+                    continue
+
+                last = k.iloc[-1]
+                prev = k.iloc[-2] if len(k) >= 2 else None
+                close = float(last["close"])
+                prev_close = float(prev["close"]) if prev is not None else np.nan
+                change = close - prev_close if np.isfinite(prev_close) else np.nan
+                cp = change / prev_close * 100 if np.isfinite(change) and prev_close != 0 else np.nan
+                return {
+                    "date": str(last["date"].date()),
+                    "symbol": code,
+                    "name": q.get("name", code) if isinstance(q, dict) else code,
+                    "closePrice": close, "tradePrice": close, "lastPrice": close,
+                    "previousClose": prev_close, "referencePrice": prev_close,
+                    "change": change, "changePercent": cp,
+                    "openPrice": float(last["open"]), "highPrice": float(last["high"]), "lowPrice": float(last["low"]),
+                }
             except Exception:
                 continue
 
-    # 盤前 / 週末或即時來源失效時，回退至最近完成交易日。
+        # 歷史日K同步通常比即時 Quote 慢，所以最後再明確查今天日K。
+        try:
+            k = client.historical_candles(code, today, today, "D")
+            k = k.copy() if isinstance(k, pd.DataFrame) else pd.DataFrame(k)
+            if not k.empty and "date" in k.columns:
+                k["date"] = pd.to_datetime(k["date"], errors="coerce")
+                k = k.dropna(subset=["date"]).sort_values("date")
+                if not k.empty and k.iloc[-1]["date"].date() == today:
+                    last = k.iloc[-1]
+                    close = float(last["close"])
+                    prev_close = np.nan
+                    try:
+                        kh = client.historical_candles(code, today - pd.Timedelta(days=7), today - pd.Timedelta(days=1), "D")
+                        kh = kh.copy() if isinstance(kh, pd.DataFrame) else pd.DataFrame(kh)
+                        if not kh.empty and "close" in kh.columns:
+                            prev_close = float(kh.sort_values("date").iloc[-1]["close"])
+                    except Exception:
+                        pass
+                    change = close - prev_close if np.isfinite(prev_close) else np.nan
+                    cp = change / prev_close * 100 if np.isfinite(change) and prev_close != 0 else np.nan
+                    return {
+                        "date": str(last["date"].date()), "symbol": code,
+                        "name": q.get("name", code) if isinstance(q, dict) else code,
+                        "closePrice": close, "tradePrice": close, "lastPrice": close,
+                        "previousClose": prev_close, "referencePrice": prev_close,
+                        "change": change, "changePercent": cp,
+                        "openPrice": last.get("open", np.nan),
+                        "highPrice": last.get("high", np.nan),
+                        "lowPrice": last.get("low", np.nan),
+                    }
+        except Exception:
+            pass
+
+        # 今天資料尚未取得時，禁止回退到昨天；否則首頁又會出現「看起來像今天、實際是昨天」的價格。
+        return {}
+
+    # ------------------------------------------------------------
+    # 3. 盤前／非交易日：只使用最近完成交易日。
+    # ------------------------------------------------------------
     fallback = previous_day_daily_quote(code)
     return fallback if fallback else {}
 
@@ -494,16 +586,20 @@ def get_intraday(code: str, timeframe: str) -> pd.DataFrame:
     if is_twse_trading_day(now, BASE) and now.time() > MARKET_CLOSE:
         try:
             k = normalize_intraday(client.intraday_candles(code, timeframe))
-            if not k.empty:
-                return k
+            if not k.empty and "date" in k.columns:
+                k["date"] = pd.to_datetime(k["date"], errors="coerce")
+                if pd.notna(k["date"].max()) and k["date"].max().date() == now.date():
+                    return k
         except Exception:
             pass
         try:
             today = now.date()
             k = client.historical_candles(code, today, today, str(timeframe))
             k = normalize_intraday(k)
-            if not k.empty:
-                return k
+            if not k.empty and "date" in k.columns:
+                k["date"] = pd.to_datetime(k["date"], errors="coerce")
+                if pd.notna(k["date"].max()) and k["date"].max().date() == today:
+                    return k
         except Exception:
             pass
 
@@ -729,8 +825,8 @@ if isinstance(_search_row, dict) and _search_row.get("symbol") == _search_code a
             save_watchlist(st.session_state.watchlist)
             st.rerun()
 
-st.caption("即時選取股票相關行情、盤中 K 線、成交明細於 09:00～13:30 盤中每 2 秒更新；歷史籌碼/法人資料則採較合理的快取時間，避免對資料源產生不必要的重複請求。")
-st.caption("🔄 台股盤中 09:00～13:30：每 2 秒自動更新；盤前、盤後及週末：不自動輪詢，按瀏覽器重新整理即可取得最新狀態。")
+st.caption("即時選取股票相關行情、盤中 K 線、成交明細於 09:00～13:30 盤中自動更新；盤後首頁只接受可驗證的今日收盤資料，不把前一交易日快照冒充成今天。")
+st.caption("🔄 台股盤中 09:00～13:30：每 5 秒自動更新；盤前／非交易日顯示最近完成交易日；盤後顯示今天資料，若今日資料暫時無法驗證則不顯示舊價。")
 
 # ============================================================
 # Watchlist fragment
@@ -826,6 +922,12 @@ def render_watchlist():
     rows, errors = watch_rows(tuple(st.session_state.watchlist))
     st.subheader("自選股即時行情")
     st.caption("上漲：股票中文名、當前市價、漲跌與漲跌幅均為紅色；下跌則均為綠色；持平為灰色。")
+    if not rows.empty and "data_date" in rows.columns:
+        valid_dates = sorted({str(v) for v in rows["data_date"].tolist() if str(v).strip()})
+        if valid_dates:
+            st.caption(f"資料日期：{', '.join(valid_dates)}｜盤後行情僅接受可驗證的當日資料")
+        else:
+            st.caption("資料日期：目前尚未取得可驗證的行情資料")
     with st.container(height=365, border=True):
         heads = st.columns([2.55, 1.85, 1.85, 1.85], gap="small")
         head_labels = ["股票中文名", "當前市價", "+/−價格", "+/−價格%"]
@@ -2131,6 +2233,21 @@ st.caption("資料時間統一依台灣時間處理；盤中現貨資料只顯�
 # ============================================================
 # 依使用者操作流程，先呈現看盤、K線、進場、籌碼與交易資訊。
 # AI 研究相關的三個重量級區塊統一移到頁面最後三項。
+# 使用者可手動強制清除即時資料快取。
+_refresh_col, _status_col = st.columns([1, 5])
+with _refresh_col:
+    if st.button("🔄 立即更新行情", use_container_width=True):
+        _manual_live_refresh()
+        st.rerun()
+with _status_col:
+    if is_market_open_now():
+        st.caption(
+            f"即時模式：每 {REFRESH_INTERVAL} 秒刷新｜"
+            "報價、成交、盤中 K 線、加權指數會優先更新；法人/公司基本資料依各自 TTL 更新。"
+        )
+    else:
+        st.caption("目前非交易時段；收盤資料不會每秒變動，仍可使用「立即更新行情」重新取得最新可得資料。")
+
 render_watchlist()
 render_selected_and_live()
 render_trend()
@@ -2163,8 +2280,23 @@ render_model_research_agent()
 # ============================================================
 # Stable full-page refresh
 # ============================================================
-# 不再使用 st.fragment：所有動態內容由同一輪完整 rerun 建立，降低
-# React DOM reconciliation 發生 insertBefore/removeChild 衝突的機率。
-# AI 執行期間尚未走到這裡，因此不會讓 2 秒刷新插入新的 rerun。
-if REFRESH_INTERVAL == "2s" and not st.session_state.get("ai_busy", False):
-    st_autorefresh(interval=2000, key="market_live_refresh")
+# Streamlit Cloud 不會因為畫面停著就自動重新執行整份 Python；
+# 這裡使用 st_autorefresh 在交易時段建立固定週期的 browser-side rerun。
+# 即時資料函式本身再用短 TTL（2~5 秒），避免同一次 rerun 讀到舊快取。
+if REFRESH_INTERVAL and not st.session_state.get("ai_busy", False):
+    st_autorefresh(
+        interval=int(REFRESH_INTERVAL * 1000),
+        key="market_live_refresh",
+    )
+
+# 顯示目前資料刷新狀態，避免使用者不知道頁面到底有沒有在更新。
+if is_market_open_now():
+    st.caption(
+        f"🟢 即時行情更新中｜每 {REFRESH_INTERVAL} 秒自動刷新｜"
+        f"最後頁面刷新：{taiwan_now().strftime('%H:%M:%S')}"
+    )
+else:
+    st.caption(
+        f"⚪ 目前非台股交易時段｜即時行情不進行高頻輪詢｜"
+        f"頁面檢查時間：{taiwan_now().strftime('%Y-%m-%d %H:%M:%S')}"
+    )

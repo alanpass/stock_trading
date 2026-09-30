@@ -728,6 +728,8 @@ class EmailAgent:
         )[:5]
 
         profiles = report.get("business_profiles", {}) or {}
+        data_asof = str(mm.get("data_asof", "") or "")
+        data_date = data_asof[:10] if len(data_asof) >= 10 else ""
 
         def industry_business(x: dict[str, Any]) -> str:
             symbol = str(x.get("symbol", "")).strip().upper().replace(".TW", "")
@@ -735,6 +737,8 @@ class EmailAgent:
             business = str(
                 p.get("business_group")
                 or p.get("primary_chain")
+                or x.get("business_group")
+                or x.get("primary_chain")
                 or p.get("industry_name")
                 or x.get("industry_name")
                 or ""
@@ -776,9 +780,17 @@ class EmailAgent:
             for x in industries
         ]
 
+        freshness_note = ""
+        if data_date:
+            if data_date == str(report.get("report_date", "")):
+                freshness_note = f"<p class='muted'>行情資料日：{self._esc(data_date)}（當日資料）</p>"
+            else:
+                freshness_note = f"<p class='notice'>行情資料日為 {self._esc(data_date)}，與研究日期 {self._esc(report.get('report_date',''))} 不一致；為避免誤報舊資料，本次不應視為今日行情。</p>"
+
         return f"""
         <section>
           <h2>一、今日市場重點</h2>
+          {freshness_note}
           <div class='legend'><span class='positive-text'>紅字＝上漲／利多</span>　<span class='negative-text'>綠字＝下跌／利空</span>　<span class='watch-text'>橘字＝待追蹤</span></div>
           <h3>漲幅重點</h3>
           {self._colored_table(["公司", "產業／業務", "今日", "5日"], up_rows, "positive")}
