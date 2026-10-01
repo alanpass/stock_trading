@@ -726,6 +726,160 @@ st.markdown("""
 .live-title{font-size:10px;color:#94a3b8;margin-bottom:2px}.live-main{font-size:14px;font-weight:800;color:#f8fafc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.live-price{font-size:22px;line-height:1.03;font-weight:900;color:#f8fafc;margin-top:2px}.live-change{font-size:12px;font-weight:800;margin-top:3px}.live-time{font-size:9px;color:#64748b;margin-top:3px}
 .top-header-safe-space{height:92px;width:100%;}
 .title-search-row{position:relative;z-index:2;}
+
+/* ============================================================
+   Mobile responsive layout
+   Streamlit Cloud / iPhone / Android
+   ============================================================ */
+@media (max-width: 768px){
+  /* 頁面左右留白縮小，避免手機出現水平捲軸。 */
+  .main .block-container{
+    padding-left:12px !important;
+    padding-right:12px !important;
+    padding-top:8px !important;
+    padding-bottom:24px !important;
+    max-width:100% !important;
+  }
+
+  /* 右上即時卡改成手機寬度，避免固定 340px 撐破畫面。 */
+  .live-card{
+    position:relative !important;
+    left:auto !important;
+    right:auto !important;
+    top:auto !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-height:0 !important;
+    margin:0 0 10px 0 !important;
+    box-sizing:border-box !important;
+    z-index:20 !important;
+  }
+
+  .top-header-safe-space{height:8px !important;}
+
+  /* Streamlit st.columns 在窄螢幕改成單欄堆疊，避免文字、按鈕被壓縮。 */
+  [data-testid="stHorizontalBlock"]{
+    flex-wrap:wrap !important;
+    row-gap:8px !important;
+    column-gap:0 !important;
+  }
+  [data-testid="stHorizontalBlock"] > [data-testid="column"]{
+    flex:1 1 100% !important;
+    width:100% !important;
+    min-width:100% !important;
+    max-width:100% !important;
+  }
+
+  /* 標題與搜尋列在手機改為上下排列。 */
+  .title-search-row{display:block !important;}
+  [data-testid="stTextInput"] input{
+    height:44px !important;
+    font-size:16px !important;
+  }
+  button[title='搜尋股票代號或名稱']{
+    width:100% !important;
+    min-width:100% !important;
+    height:44px !important;
+    margin-top:2px !important;
+  }
+
+  /* 自選股區：手機不使用桌面固定欄寬，改成卡片式資訊。 */
+  .watch-head{
+    font-size:14px !important;
+    min-height:36px !important;
+    padding:5px 8px !important;
+  }
+  .watch-name-display{
+    font-size:16px !important;
+    padding:10px 8px !important;
+  }
+  .watch-value{
+    justify-content:flex-start !important;
+    text-align:left !important;
+    font-size:19px !important;
+    min-height:42px !important;
+    padding:7px 8px !important;
+  }
+  .watch-price-cell{
+    border-left:0 !important;
+    border-top:1px solid rgba(148,163,184,.18) !important;
+    padding-left:8px !important;
+  }
+  .watch-name-cell{padding-right:0 !important;}
+
+  .watch-industry-header{
+    font-size:16px !important;
+    padding:8px 10px !important;
+    margin-top:8px !important;
+  }
+  .watch-business-header{
+    font-size:14px !important;
+    padding:6px 9px !important;
+  }
+
+  /* 搜尋結果在手機上改成一張一張的卡片。 */
+  .search-panel{
+    padding:11px 12px !important;
+    margin:8px 0 !important;
+  }
+  .search-code{font-size:16px !important;padding:7px 2px !important;}
+  .search-name{font-size:15px !important;padding:5px 2px !important;}
+
+  /* 圖表、表格避免超出螢幕。 */
+  .stPlotlyChart,
+  [data-testid="stDataFrame"],
+  [data-testid="stTable"]{
+    max-width:100% !important;
+    overflow-x:auto !important;
+  }
+
+  /* Tabs 在手機上允許橫向滑動，不把內容擠成極窄欄位。 */
+  [data-baseweb="tab-list"]{
+    overflow-x:auto !important;
+    flex-wrap:nowrap !important;
+    scrollbar-width:none !important;
+  }
+  [data-baseweb="tab-list"]::-webkit-scrollbar{display:none;}
+  [data-baseweb="tab"]{
+    flex:0 0 auto !important;
+    white-space:nowrap !important;
+    padding-left:12px !important;
+    padding-right:12px !important;
+  }
+
+  /* Expander、資訊卡與按鈕不要超出手機寬度。 */
+  [data-testid="stExpander"],
+  [data-testid="stAlert"],
+  [data-testid="stMetric"],
+  .element-container{
+    max-width:100% !important;
+    box-sizing:border-box !important;
+  }
+  .stButton > button{
+    width:100% !important;
+    min-height:42px !important;
+  }
+
+  /* 手機上的主標題縮小，避免第一屏被標題吃掉。 */
+  h1{font-size:1.55rem !important;line-height:1.25 !important;}
+  h2{font-size:1.28rem !important;}
+  h3{font-size:1.08rem !important;}
+  p, li{font-size:0.93rem;}
+}
+
+@media (max-width: 430px){
+  .main .block-container{
+    padding-left:9px !important;
+    padding-right:9px !important;
+  }
+  .live-grid{grid-template-columns:1fr 1fr !important;}
+  .live-cell{padding:0 7px !important;}
+  .live-price{font-size:19px !important;}
+  .live-main{font-size:12px !important;}
+  .live-change{font-size:11px !important;}
+  .watch-industry-header{font-size:15px !important;}
+  .watch-business-header{font-size:13px !important;}
+}
 </style>
 """, unsafe_allow_html=True)
 
