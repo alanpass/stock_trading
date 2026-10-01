@@ -760,47 +760,162 @@ st.markdown("""
   /* 一般頁面區塊在手機改成單欄，避免標題／分析卡片被擠壓。 */
   [data-testid="stHorizontalBlock"]{
     flex-wrap:wrap !important;
-    row-gap:8px !important;
+    row-gap:10px !important;
     column-gap:0 !important;
+    box-sizing:border-box !important;
+    min-width:0 !important;
   }
   [data-testid="stHorizontalBlock"] > [data-testid="column"]{
     flex:1 1 100% !important;
     width:100% !important;
-    min-width:100% !important;
+    min-width:0 !important;
     max-width:100% !important;
+    box-sizing:border-box !important;
   }
 
   /*
-     自選股例外：手機仍維持「左 → 右」的行情列。
-     原本把所有 st.columns 強制改成 100% 寬，會造成
-     股票名稱 → 價格 → 漲跌 → 漲跌幅一路往下堆疊。
-     這裡只解除 watchlist 容器內的堆疊，讓一列保持橫向。
+     ============================================================
+     自選股手機版 UX：一筆股票固定「左 → 右」四欄
+     股票名稱 | 當前市價 | +/-價格 | +/-百分比
+
+     舊版問題：
+     1. 全域 st.columns 被改成 100%，watchlist 也被一起壓成單欄。
+     2. watchlist 再用 width:auto + flex，遇到 Streamlit column padding
+        後容易發生名稱／按鈕／價格互相覆蓋。
+     3. 查看／刪除按鈕 56px 太大，在 390px 左右的手機會擠壓文字。
+
+     新版做法：
+     - watchlist row 改成明確的 43/19/19/19 比例。
+     - 所有欄位 box-sizing:border-box + min-width:0。
+     - 名稱欄內的查看／刪除固定 38px，避免按鈕撐破欄位。
+     - 不讓整列換行，因此不會再出現「價格掉到下一行」的情況。
+     ============================================================
   */
-  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"]{
+  .st-key-watchlist_scroll_container{
+    width:100% !important;
+    max-width:100% !important;
+    overflow-x:hidden !important;
+    box-sizing:border-box !important;
+  }
+
+  /* 表頭保持四欄。 */
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"]:has(.watch-head){
     flex-wrap:nowrap !important;
-    column-gap:6px !important;
+    width:100% !important;
+    gap:0 !important;
+  }
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"]:has(.watch-head) > [data-testid="column"]:nth-child(1){flex:0 0 43% !important;width:43% !important;}
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"]:has(.watch-head) > [data-testid="column"]:nth-child(2),
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"]:has(.watch-head) > [data-testid="column"]:nth-child(3),
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"]:has(.watch-head) > [data-testid="column"]:nth-child(4){
+    flex:0 0 19% !important;width:19% !important;
+  }
+
+  /* 股票資料列：只鎖定「含有查看按鈕」且有四個直接欄位的 row。 */
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"]:has(> [data-testid="column"] button[title="查看此股票"]){
+    flex-wrap:nowrap !important;
+    width:100% !important;
+    max-width:100% !important;
+    gap:0 !important;
     row-gap:0 !important;
-    width:100% !important;
-    min-width:0 !important;
+    box-sizing:border-box !important;
+    align-items:center !important;
   }
-  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"] > [data-testid="column"]{
-    flex:0 1 auto !important;
-    width:auto !important;
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"]:has(> [data-testid="column"] button[title="查看此股票"]) > [data-testid="column"]{
     min-width:0 !important;
     max-width:none !important;
+    box-sizing:border-box !important;
   }
-  /* 自選股名稱欄裡的「查看／刪除」兩個按鈕也固定橫向。 */
-  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"] [data-testid="column"] [data-testid="stHorizontalBlock"]{
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"]:has(> [data-testid="column"] button[title="查看此股票"]) > [data-testid="column"]:nth-child(1){
+    flex:0 0 43% !important;width:43% !important;
+  }
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"]:has(> [data-testid="column"] button[title="查看此股票"]) > [data-testid="column"]:nth-child(2),
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"]:has(> [data-testid="column"] button[title="查看此股票"]) > [data-testid="column"]:nth-child(3),
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"]:has(> [data-testid="column"] button[title="查看此股票"]) > [data-testid="column"]:nth-child(4){
+    flex:0 0 19% !important;width:19% !important;
+  }
+
+  /* 名稱 + 查看 + 刪除仍保持同一行。 */
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"]:has(> [data-testid="column"] button[title="查看此股票"]) > [data-testid="column"]:first-child [data-testid="stHorizontalBlock"]{
     flex-wrap:nowrap !important;
-    column-gap:4px !important;
     width:100% !important;
+    gap:2px !important;
+    margin:0 !important;
   }
-  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"] [data-testid="column"] [data-testid="stHorizontalBlock"] > [data-testid="column"]{
-    flex:0 1 auto !important;
-    width:auto !important;
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"]:has(> [data-testid="column"] button[title="查看此股票"]) > [data-testid="column"]:first-child [data-testid="stHorizontalBlock"] > [data-testid="column"]{
     min-width:0 !important;
-    max-width:none !important;
+    box-sizing:border-box !important;
   }
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"]:has(> [data-testid="column"] button[title="查看此股票"]) > [data-testid="column"]:first-child [data-testid="stHorizontalBlock"] > [data-testid="column"]:nth-child(1){flex:1 1 auto !important;width:auto !important;}
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"]:has(> [data-testid="column"] button[title="查看此股票"]) > [data-testid="column"]:first-child [data-testid="stHorizontalBlock"] > [data-testid="column"]:nth-child(2),
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"]:has(> [data-testid="column"] button[title="查看此股票"]) > [data-testid="column"]:first-child [data-testid="stHorizontalBlock"] > [data-testid="column"]:nth-child(3){
+    flex:0 0 38px !important;width:38px !important;
+  }
+
+  .st-key-watchlist_scroll_container .watch-name-display{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    padding:8px 5px !important;
+    font-size:14px !important;
+    line-height:1.25 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    box-sizing:border-box !important;
+  }
+  .st-key-watchlist_scroll_container .watch-value{
+    min-width:0 !important;
+    width:100% !important;
+    padding:9px 3px !important;
+    font-size:15px !important;
+    line-height:1.15 !important;
+    justify-content:center !important;
+    text-align:center !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    box-sizing:border-box !important;
+  }
+  .st-key-watchlist_scroll_container .watch-price-cell{
+    border-left:1px solid rgba(148,163,184,.18) !important;
+    border-top:0 !important;
+    padding-left:3px !important;
+  }
+  .st-key-watchlist_scroll_container .watch-head{
+    min-width:0 !important;
+    padding:6px 3px !important;
+    font-size:11px !important;
+    line-height:1.2 !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    box-sizing:border-box !important;
+    text-align:center !important;
+  }
+  .st-key-watchlist_scroll_container button[title="查看此股票"],
+  .st-key-watchlist_scroll_container button[title="查看並切換至此股票"],
+  .st-key-watchlist_scroll_container button[title^="從自選股移除"]{
+    width:38px !important;
+    min-width:38px !important;
+    max-width:38px !important;
+    height:38px !important;
+    min-height:38px !important;
+    max-height:38px !important;
+    padding:0 !important;
+    margin:0 !important;
+    border-radius:8px !important;
+    box-sizing:border-box !important;
+  }
+  .st-key-watchlist_scroll_container button[title="查看此股票"] span[data-testid="stIconMaterial"],
+  .st-key-watchlist_scroll_container button[title="查看並切換至此股票"] span[data-testid="stIconMaterial"],
+  .st-key-watchlist_scroll_container button[title^="從自選股移除"] span[data-testid="stIconMaterial"]{
+    font-size:22px !important;width:22px !important;height:22px !important;
+  }
+
+  /* 手機上的產業／業務標籤不要搶走過多垂直空間。 */
+  .watch-industry-header{font-size:15px !important;padding:8px 9px !important;margin:7px 0 5px !important;}
+  .watch-business-header{font-size:13px !important;padding:5px 8px !important;margin:4px 0 !important;}
 
   /* 標題與搜尋列在手機改為上下排列。 */
   .title-search-row{display:block !important;}
@@ -1340,7 +1455,7 @@ def render_trend():
             title, x, y = f"{period}收盤價", d.date, d.close
         fig = go.Figure(go.Scatter(x=x, y=y, mode="lines", name="價格"))
         fig.update_layout(height=400, margin=dict(l=20,r=20,t=45,b=20), title=title, xaxis_title="時間", yaxis_title="價格")
-        st.plotly_chart(fig, use_container_width=True, key=f"trend_{selected}_{period}")
+        st.plotly_chart(fig, use_container_width=True, config={"responsive": True, "displaylogo": False}, key=f"trend_{selected}_{period}")
     except Exception as e:
         st.error(f"股價趨勢資料取得失敗：{e}")
 
@@ -1378,9 +1493,9 @@ def render_kline():
             yaxis_title="價格",
             legend=dict(orientation="h", yanchor="bottom", y=1.01, xanchor="left", x=0),
         )
-        st.plotly_chart(fig, use_container_width=True, key=f"kline_{selected}_{k_period}")
+        st.plotly_chart(fig, use_container_width=True, config={"responsive": True, "displaylogo": False}, key=f"kline_{selected}_{k_period}")
         vf = go.Figure(go.Bar(x=d.date, y=d.volume, name="成交量")); vf.update_layout(height=220, title="成交量", margin=dict(l=20,r=20,t=40,b=20))
-        st.plotly_chart(vf, use_container_width=True, key=f"vol_{selected}_{k_period}")
+        st.plotly_chart(vf, use_container_width=True, config={"responsive": True, "displaylogo": False}, key=f"vol_{selected}_{k_period}")
     except Exception as e:
         st.error(f"{k_period} 資料取得失敗：{e}")
 
@@ -1621,7 +1736,7 @@ def render_tdcc():
         c3.metric("中間持股比例", f"{row.middle_pct:.2f}%")
         pie = go.Figure(go.Pie(labels=["大戶（≥400張）","散戶（≤50張）","中間持股"], values=[row.big_pct,row.retail_pct,row.middle_pct], hole=.45))
         pie.update_layout(height=380, title=f"{selected}｜最新一期籌碼結構（{pd.Timestamp(row.date).date()}）", margin=dict(l=20,r=20,t=55,b=20))
-        st.plotly_chart(pie, use_container_width=True, key=f"tdcc_{selected}")
+        st.plotly_chart(pie, use_container_width=True, config={"responsive": True, "displaylogo": False}, key=f"tdcc_{selected}")
     except Exception as e:
         st.warning(f"大戶/散戶資料取得失敗：{e}")
 
@@ -1675,7 +1790,7 @@ def render_institutions():
                 fig.add_trace(go.Scatter(x=inst.date,y=vals,mode="lines+markers",name=labels[c]))
             fig.add_hline(y=0,line_dash="dash",line_width=1)
             fig.update_layout(height=450,title=f"{selected}｜最近 10 個交易日買賣超",yaxis_title="買賣超（股）",xaxis_title="交易日",margin=dict(l=20,r=20,t=55,b=20))
-            st.plotly_chart(fig,use_container_width=True,key=f"inst_chart_{selected}")
+            st.plotly_chart(fig, use_container_width=True, config={"responsive": True, "displaylogo": False}, key=f"inst_chart_{selected}")
         disp=inst.copy(); disp["date"]=disp.date.dt.strftime("%Y-%m-%d")
         disp=disp.rename(columns={"date":"日期","symbol":"股票代號","foreign_net":"外資買賣超","trust_net":"投信買賣超","dealer_net":"自營商買賣超","total_net":"三大法人買賣超","market":"市場","source":"資料來源"})
         for c in ["外資買賣超","投信買賣超","自營商買賣超","三大法人買賣超"]:
@@ -2382,7 +2497,7 @@ EMAIL_ATTACH_REPORT=true""", language="dotenv")
                          hover_data=["涉及公司", "狀態", "涉及自選股", "正向消息", "官方佐證", "接單/出貨證據", "營收支撐家數"],
                          title="利多題材強度（研究訊號，不是投資評級）")
             fig.update_layout(height=max(360, 44 * len(tdf)), margin=dict(l=10, r=10, t=50, b=10))
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True, config={"responsive": True, "displaylogo": False})
             st.dataframe(tdf, use_container_width=True, hide_index=True)
             st.caption("介紹利多題材時同步列出受影響的自選股公司、主要業務與產業鏈位置，方便從題材一路追到實際受惠企業。")
             for t in themes[:8]:
