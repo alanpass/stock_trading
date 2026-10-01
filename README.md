@@ -1,307 +1,805 @@
-# AI 台股即時互動式分析系統 v55
+# 🤖 AI 台股研究助理
 
-## 本版新增
+> **結合量化模型、新聞爬蟲與本機 AI Agent 的智慧台股研究系統**
+>
+> **一個 AI 研究助理幫你讀完一堆資料後，整理自己的研究筆記。**
 
-1. 修正「目前股票相關消息」誤顯示「目前沒有選取股票」：統一使用 `st.session_state.selected` 作為全站唯一選取標的，並寫入 `data/last_selected_symbol.json`。
-2. 新增「今日漲跌原因」盤後研究頁籤，針對目前選取股票整合：
-   - 今日實際價格/漲跌幅
-   - TAIEX 相對表現
-   - 同細分業務群相對表現
-   - 外資/投信/自營商/三大法人近10日交易
-   - 公司主要業務/產業鏈
-   - 官方重大訊息
-   - 財報/營收
-   - 董事長/總經理/法說會/展望/接單等公開談話
-   - 產業供應鏈與主要產品需求
-   - 中美/關稅/伊朗/油價/利率/AI 等總體與國際事件
-3. 每則消息做結構化查證：業務相關度、跨來源數、官方匹配、查證狀態。
-4. 新增 `post_market_analysis.py`：將「今天為什麼上漲/下跌」拆成候選驅動因素，不把相關性直接當成因果。
-5. Qwen3 8B 僅統整證據與提出研究結論，不擅自修改 production model。
-6. 每日盤後自動研究：Windows 任務可從 `data/last_selected_symbol.json` 取得最後選取股票，研究報告加入 `post_market_selected`。
-7. 修正進場建議盤後價格：若 Quote 尚未同步今天，優先使用今天最後一根 5 分鐘 K 作為目前價格，避免退回昨天價格。
+[![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)](https://www.python.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red?logo=streamlit)](https://streamlit.io/)
+[![Ollama](https://img.shields.io/badge/Ollama-Qwen3%208B-black)](https://ollama.com/)
+[![Scikit-learn](https://img.shields.io/badge/scikit--learn-Random%20Forest-orange)](https://scikit-learn.org/)
 
-## 官方資料設計
+## 🌐 Online Demo
 
-- TPEx 產業價值鏈：公司個體的主要業務與產業鏈位置，用於建立公司專屬研究 query。https://ic.tpex.org.tw/
-- TWSE / TPEx 官方 OpenAPI：重大訊息、月營收、財務資料、法人/盤後資料等。
-- DGBAS / MOF / CBC 等官方總經資訊可作為國際/總體事件查證的一級或二級證據。
+**Streamlit Dashboard**
 
-## 本機 Agent
+https://stocktrading-c66hschtsd2qh6vkyv4mtq.streamlit.app/
 
-- Ollama
-- Qwen3 8B
-- 完全不使用 OpenAI API
+> 網站主要提供台股行情、個股研究、技術分析、籌碼資訊、AI 模型與研究結果的互動式介面。
 
-## 啟動
+---
 
-```powershell
-cd C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
-python -m pip install -r requirements.txt
-python -m streamlit run stock_dashboard.py --server.address 127.0.0.1 --server.port 8501
-```
+# 🎯 專案介紹
 
+這不是單純的「AI 猜股票」系統。
 
-## 16. 利多題材雷達
+本專題以 **AI 研究助理** 為核心，將原本分散在不同平台的台股資訊集中起來，包括：
 
-盤後研究 Agent 會依公司主要業務與產業鏈，把新聞、官方佐證、營收、接單/出貨、同業涵蓋度整合成「利多題材」證據鏈。題材強度只是研究訊號，不是投資評級；若利多敘事缺乏基本面或官方支撐，會標示為待驗證。
+- 市場行情
+- 公司基本資料
+- 月營收
+- EPS / 財報
+- 三大法人
+- 法人說明會
+- 產業與公司業務
+- 鉅亨網財經新聞
+- 技術與量價資料
 
-Dashboard 的「模型研究 Agent」區新增互動式利多題材圖表與逐題材證據明細。
+再交由本機 **Qwen3 8B + Ollama** Agent 進行研究。
 
-
-## v53 → v54 利多題材公司清單
-
-利多題材雷達現在除了顯示題材強度，也會同步列出每個題材涉及的自選股公司、主要業務與產業鏈位置。
-
-例如「AI 伺服器」題材會顯示哪些自選股真正屬於伺服器、電源、PCB、被動元件、連接器、儲存等相關業務，避免只看到產業題材名稱卻不知道實際受惠公司。
-## 16. 法人說明會與近期產業漲跌研究（v54）
-
-### 法人說明會
-
-系統新增 `earnings_call_agent.py`，依公司代號抓取公開資訊觀測站（MOPS）法人說明會資料，保存：
-
-- 法說日期／時間／地點
-- 法人說明會擇要訊息
-- MOPS 原始查詢連結
-- 規則式證據分數：偏利多／偏利空／中性／待確認
-- 利多與利空關鍵字
-- 法說後 1 個交易日、5 個交易日股價反應
-
-分類只代表「法說文字中的營運訊號」，不代表未來股價必然方向。若法說內容偏利多但股價反而下跌，Agent 會標示市場反應與事件文字不一致，交由 Qwen3 進一步研究。
-
-### 最近漲價／下跌個股與產業
-
-系統新增 `market_mover_analysis.py`：
+Agent 不只是固定套用一組摘要模板，而是可以：
 
 ```text
-Fugle 全市場 snapshot
-        ↓
-當日漲跌幅前段候選 + 自選股
-        ↓
-抓 60 日歷史日K
-        ↓
-計算 5 日 / 20 日報酬
-        ↓
-依產業代碼彙整
-        ↓
-抓少量公司新聞
-        ↓
-分析可能的需求／價格／成本／庫存／訂單原因
+取得資料
+   ↓
+閱讀市場資訊
+   ↓
+判斷哪些資訊值得研究
+   ↓
+選擇研究工具
+   ↓
+發現證據不足
+   ↓
+主動查找其他資料
+   ↓
+交叉比對
+   ↓
+整理研究結果
+   ↓
+形成 Agent Research Note
 ```
 
-Dashboard 會分開顯示：
+最終輸出：
 
-1. 最近漲幅較明顯的個股
-2. 最近跌幅較明顯的個股
-3. 各產業今日、5日、20日平均變化
-4. 每檔公司的主要業務、產業鏈位置
-5. 利多／利空原因候選與證據信心
+**Dashboard + AI 預測 + 研究筆記 + 財經新聞摘要 + 法說會研究 + Email 報告**
 
-### 自動排程
+---
 
-原本的 `TaiwanStock_ModelResearch_Agent` 不需要另外建立第二個排程；15:30 盤後研究時會一併執行：
+# ⭐ 核心特色
 
-- 模型健康度
-- 法說會
-- 財報／營收
-- 近期市場漲跌與產業分布
-- 新聞與公司主要業務交叉分析
-- 利多題材雷達
-- Qwen3 本機研究摘要
+| 功能 | 說明 |
+|---|---|
+| 📊 台股 Dashboard | Streamlit 互動式台股研究介面 |
+| 🔮 AI 隔日預測 | Random Forest + 44 項技術與量價特徵 |
+| 🧠 AI Research Agent | Qwen3 8B Tool Calling 自主研究 |
+| 📰 財經新聞爬蟲 | 自動取得鉅亨網近期財經新聞 |
+| 📣 法說會 Agent | 閱讀 Fugle 法說會詳細備忘錄 |
+| 💰 財報／營收分析 | 整合 TWSE / TPEx / MOPS |
+| 📈 市場異動分析 | 漲跌、5 日、20 日與產業聚合 |
+| 🏷️ 利多題材分析 | 新聞、產業鏈、營收與公司業務交叉研究 |
+| 🧠 Research Memory | 保存每日研究結果，形成跨日研究紀錄 |
+| 📧 自動 Email | 自動產生早報／盤後研究 |
+| ⏰ Windows Scheduler | 自動執行新聞爬蟲與研究流程 |
 
-### 重要資料原則
+---
 
-法說會以 MOPS 原始資料為優先；漲跌原因先由新聞與公司業務建立「可能原因」，沒有官方公告、法說或財報驗證時，一律保留「待查證」狀態。
+# 🖥️ 系統成果展示
 
+## 1. 台股 Dashboard
 
+系統以 Streamlit 建立互動式研究介面，將行情、個股、產業、籌碼與研究資訊集中在同一個操作入口。
 
-## 17. AI 盤後財報 Email Agent（v55）
+![台股 Dashboard](images/dashboard_watchlist.png)
 
-本版新增 `email_agent.py`，把每日盤後研究結果自動整理成 HTML Email，並透過 Gmail SMTP 寄送。
+---
 
-### Email 報告內容
+## 2. 個股盤中價格
 
-- 近期上漲／下跌個股
-- 產業今日／5日／20日強弱
-- 法人說明會與法說後 1／5 日市場反應
-- 利多題材與實際涉及公司
-- 財報／營收
-- 模型健康度與重訓檢查
-- Qwen3 8B 本機研究摘要
-- 資料來源與查證狀態
+提供單一股票的價格趨勢，方便觀察交易時段內的價格變化。
 
-### 自動寄送流程
+![個股盤中價格](images/intraday_price.png)
+
+---
+
+## 3. 技術 K 線與成交量
+
+整合 K 線、成交量與技術分析資訊，作為量價研究與 AI 模型的資料視覺化入口。
+
+![技術 K 線](images/technical_kline.png)
+
+---
+
+## 4. 個股研究分析
+
+整合價格、模型訊號與相關研究資訊，提供個股目前研究狀態。
+
+![個股研究分析](images/entry_analysis.png)
+
+---
+
+## 5. 籌碼結構
+
+展示大戶與散戶持有比例及交易明細，輔助觀察市場籌碼結構。
+
+![籌碼結構](images/holder_structure.png)
+
+---
+
+## 6. 三大法人買賣超
+
+提供外資、投信與自營商近 10 個交易日的買賣超趨勢。
+
+![三大法人](images/institutional_flow.png)
+
+---
+
+## 7. AI 自動研究 Email
+
+研究結果會透過 Email 自動寄送，讓使用者不需要每天手動開啟系統查看研究結果。
+
+![Email 自動研究報告](images/email_report.png)
+
+---
+
+## 8. 法說會 AI Agent
+
+將 Fugle 法說會備忘錄交由本機 Qwen3 8B Agent 進行分析，整理：
+
+- 財務重點
+- 營運展望
+- 利多因素
+- 風險
+- Q&A
+
+![法說會 Agent](images/earnings_call_agent.png)
+
+---
+
+# 🧠 AI Research Agent
+
+本專題最重要的特色不是「讓 LLM 寫摘要」，而是讓 Agent 參與研究流程。
+
+## 傳統固定程式
 
 ```text
-15:30 Windows Task Scheduler
-        ↓
-ResearchAgent
-        ↓
-法說會 + 產業漲跌 + 財報 + 利多題材 + Qwen3
-        ↓
-research_YYYY-MM-DD.json / .md
-        ↓
-EmailAgent
-        ↓
-Gmail SMTP
-        ↓
-a1113359@mail.nuk.edu.tw
+資料
+ ↓
+固定規則
+ ↓
+固定欄位
+ ↓
+固定報告
 ```
 
-### Gmail 設定
-
-請複製 `.env.example` 成 `.env`，再填入寄件 Gmail 與 App Password。不要將 App Password 寫入程式或提交到公開儲存庫。
-
-測試：
-
-```powershell
-python email_agent.py --status
-python email_agent.py --send-latest
-```
-
-Dashboard 也可以手動寄送最新盤後財報。
-
-### 重複寄送保護
-
-Email Agent 會建立：
+## 本專題 Agent
 
 ```text
-data/email/sent_YYYY-MM-DD.json
+資料
+ ↓
+Research Package
+ ↓
+Qwen3 8B Agent
+ ↓
+判斷研究需求
+ ↓
+選擇 Tool
+ ↓
+取得證據
+ ↓
+發現資料不足？
+ ├─ 否 → 整理研究
+ └─ 是 → 繼續查詢
+          ↓
+       新聞／財務／法說／產業
+          ↓
+       交叉驗證
+          ↓
+       Research Note
 ```
 
-同一天的盤後報告預設只寄送一次；需要重寄時可以使用 `--force`。
+Agent 的核心工作是：
 
+> **理解今天需要研究什麼、決定看哪些資料、發現證據不足時繼續查、最後整理成研究筆記。**
 
-## v57 更新
+---
 
-- 模型研究 Agent 可在任何日期手動執行，不因週末或休市日鎖住。
-- Windows 15:30 盤後研究排程改為每日執行；休市日行情分析會回退到最近成功交易日 snapshot。
-- MOPS 法說會改用 mopsov 主入口 + 舊入口 fallback，補齊 queryName/inpuType，並對空快取強制重新抓取。
-- 新增 TWSE/TPEx 重大訊息「召開法人說明會」補漏路徑。
-- Email 改成「今日先看這裡」優先版，先顯示上漲/下跌個股、產業強弱、近期法說、利多題材與營收重點。
-- Qwen3 8B 研究摘要改成精簡研究包，並做輸出年份一致性檢查，避免把舊報告內容誤帶入當日 Email。
+# 📰 財經新聞研究
 
+系統整合鉅亨網頭條：
 
-## v57 修正
+https://news.cnyes.com/news/cat/headline
 
-- 非交易日依臺灣證券交易所官方市場開休市日曆判斷；週末與國定休市日仍可手動執行盤後研究。
-- Windows 15:30 研究排程改為每日執行，休市日仍建立研究報告。
-- MOPS 法說查詢加入最近 6 個月逐月補抓、民國日期緊湊格式解析，並以 TWSE/TPEx 官方重大訊息作法說補漏。
-- 法說會去重改為「公司＋法說日期」，避免同一公司新法說被舊紀錄擋掉。
-- 6274 台燿補上官方產業價值鏈分類：印刷電路板 > 銅箔基板，避免誤顯示為 ETF/無產業分類。
-- Email 盤後摘要維持先結論後明細，若 Qwen 出現研究包外年份則不納入摘要。
+新聞爬蟲採多層策略：
 
+```text
+CNYES 頭條
+    ↓
+新聞列表 API
+    ↓ API 失敗
+HTML
+    ↓ 必要時
+Selenium
+    ↓
+標題 / 時間 / 分類 / 摘要 / 正文 / 標籤 / URL
+    ↓
+JSON Cache
+    ↓
+Research Agent
+```
 
-## Fugle 法說會備忘錄（v59）
+新聞資料會保存至：
 
-法說會研究現在以富果官方「法說會備忘錄」為主要來源：
-https://blog.fugle.tw/topic/earnings-call-memo
+```text
+output/research_reports/
+└── cnyes_news_YYYY-MM-DD.json
+```
 
-每次研究會依序：
-1. 開啟法說會備忘錄主題頁。
-2. 開啟股票代號 Tag 頁。
-3. 找到相關文章後，實際開啟文章詳細頁。
-4. 擷取營運摘要、產品/業務、財務表現、展望與 Q&A。
-5. 再做利多/利空規則式分類。
-6. MOPS/TWSE/TPEx 僅在 Fugle 沒有備忘錄時作為官方補漏，不再把網站導覽文字當成法說摘要。
+Agent 不只是搜尋固定關鍵字，而是可以根據研究脈絡延伸相關概念。
 
+例如：
 
-## v60 法說會 Agent 行為
+```text
+電子零組件
+ ├─ PCB
+ ├─ IC 載板
+ ├─ ABF
+ ├─ BT
+ ├─ CCL
+ ├─ 高速材料
+ ├─ MLCC
+ └─ 連接器
+```
 
-法說會摘要主來源固定為 Fugle：
-https://blog.fugle.tw/topic/earnings-call-memo
+或：
 
-Agent 必須：
-1. 開啟法說會備忘錄主題頁。
-2. 嘗試開啟公司 Tag 頁。
-3. 找到文章 URL 後，實際開啟文章詳細頁。
-4. 讀取營運摘要、產品、市場、財務、展望、Q&A。
-5. 將詳細正文送進本機 Qwen3 8B 作為研究包。
+```text
+半導體
+ ├─ 先進製程
+ ├─ 封裝
+ ├─ HBM
+ ├─ 記憶體
+ ├─ ASIC
+ └─ GPU
+```
 
-若沒有成功開啟正文，只保留「官方法說日程」，不會把 MOPS 網站導覽文字當法說摘要。
+因此市場出現異動時，Agent 可以進一步尋找可能的產業鏈脈絡，再與公司業務、營收、法人與法說資料交叉確認。
 
+---
 
-### v60 強制規則
+# 📣 法說會研究
 
-- 法說會 Agent 不得只回傳網址。
-- 找到 Fugle 法說會備忘錄 URL 後，必須 HTTP 開啟文章詳細頁並擷取正文。
-- 正文成功擷取後，Dashboard 與 Email 都必須先顯示摘要，再提供「原文」連結。
-- 若未成功開啟正文，狀態顯示「未取得Fugle備忘錄摘要」，不可把 MOPS 網站導覽文字冒充摘要。
-- 可用 `python test_fugle_memo.py 6515` 驗證。
+資料來源：
 
+- Fugle 法說會備忘錄
+- 公司公開資料
+- 財務資訊
 
-## v61：Fugle 法說會備忘錄 AI Agent 重構
+研究流程：
 
-主要來源固定為：
-https://blog.fugle.tw/topic/earnings-call-memo
+```text
+法說會事件
+    ↓
+Fugle 詳細備忘錄
+    ↓
+Qwen3 8B
+    ↓
+財務重點
+    ↓
+營運展望
+    ↓
+利多因素
+    ↓
+風險
+    ↓
+Q&A
+```
 
-每篇文章都由 Ollama `qwen3:8b` Agent 逐一處理。Agent 必須呼叫 `read_fugle_memo(url)`，該 tool 才會開啟 Fugle 詳細文章並讀取正文；沒有成功讀取正文就不能產生法說摘要。
+近期法說會研究結果會進入研究包與 Email。
 
-MOPS/TWSE/TPEx 不再混入 `earnings_calls` 摘要，避免網站導覽文字污染。
+---
 
-每日 15:00 由 Windows Task Scheduler 執行；研究與交易日分離，休市日仍可執行法說／新聞／模型研究。
+# 💰 財報與營收研究
 
-Email 收件者預設為 `a1113359@mail.nuk.edu.tw`，寄件帳號與 App Password 仍由 `.env` 管理。
+系統整合：
 
+- TWSE
+- TPEx
+- MOPS
 
-## v62 法說會流程保證
+主要研究：
 
-- 法說會主來源固定為 https://blog.fugle.tw/topic/earnings-call-memo。
-- Agent 必須透過 Ollama Tool Calling 呼叫 `read_fugle_memo(url)`。
-- Tool 會實際開啟 `https://blog.fugle.tw/post/earnings-call-*` 詳細文章後再回傳正文。
-- MOPS/TWSE/TPEx 不可當作法說摘要來源。
-- 報告內顯示 Agent 摘要、財務重點、營運重點、展望、利多、利空/風險與 Q&A。
-- `source_url` 只用於原始資料查閱。
-- 每日 15:00 執行，非交易日也可以執行研究。
+- 最新月營收
+- YoY
+- EPS
+- 財務表現
+- 公司業務
+- 產業脈絡
 
+Email 顯示時會將：
 
-## v62 法說會 Agent 強制工具門檻
+```text
+股票名稱 + 股票代號
+```
 
-法說會摘要成功的唯一條件是：Ollama Agent 已呼叫 `read_fugle_memo(url)`，而 tool 已實際開啟 Fugle 詳細文章正文。若 Agent 沒有完成 tool call，系統不產生偽摘要、不使用 MOPS 導覽、不使用模型記憶代替。
+一起呈現，例如：
 
-主要來源固定為 `https://blog.fugle.tw/topic/earnings-call-memo`。每日 15:00 由盤後 ResearchAgent 呼叫法說會 Agent；非交易日也可執行研究。Email 收件者預設為 `a1113359@mail.nuk.edu.tw`。
+```text
+晶豪科（3006）
+南亞科（2408）
+群聯（8299）
+```
 
+避免只看到股票代號而需要另外查詢公司。
 
-## v63 法說會閱讀器重構
+---
 
-法說會備忘錄抓取採三層讀取：requests → curl_cffi Chrome impersonation → Selenium Chrome headless。
-若一般 HTTP 回應是網站錯誤頁或防護頁，會自動改用下一層。
-主題頁會在 headless Chrome 中嘗試「載入更多」，再逐一開啟 earnings-call 詳細文章。
-只有 `detail_read_verified=true` 的文章才允許 Ollama Agent 產生摘要與利多/利空分析。
+# 🔮 AI 隔日預測
 
-本機測試：
-`python test_earnings_agent.py 6582 --crawl-only`
+量化模型與 LLM Agent 採取明確分工。
 
-應看到 `reader_method`、`memo_chars`、`sections`，確認 Agent 真正讀到文章正文。
+## Quant Model
 
-### CNYES 近兩日新聞 Agent
-盤後研究會先爬取 `https://news.cnyes.com/news/cat/headline` 的近兩個日曆日新聞，保存至 `output/research_reports/cnyes_news_YYYY-MM-DD.json`，再由 Qwen3 8B Agent 使用 `get_cnyes_news_overview`、`search_cnyes_news`、`get_cnyes_news_batch` 自主找原因、做產業鏈關聯與研究摘要。
+負責：
 
-# v8 三段式研究自動化
+- 下一交易日報酬
+- 價格換算
+- 上漲／下跌／盤整方向
+- 上漲機率
 
-- 23:00：`run_cnyes_news_nightly.py` 只負責把當天 CNYES 頭條新聞存成日檔。
-- 08:00：`run_morning_report.py` 讀最近兩份 CNYES 日檔＋最近五日 Fugle 法說會 cache，由 Qwen3 產生早報。
-- 15:00：`run_after_close_research.py` 啟動快速盤後模式，讀快取、不重新爬 CNYES、不重複跑大量 Google News；Agent 查證輪數預設 6。
+## AI Agent
 
-早報內容：
+負責：
+
+- 市場研究
+- 新聞理解
+- 法說會閱讀
+- 財務研究
+- 產業脈絡
+- 證據整理
+- 研究筆記
+
+也就是：
+
+> **模型負責數值，Agent 負責研究。**
+
+---
+
+## 🧮 模型特徵
+
+目前使用 **44 項技術與量價特徵**，包含：
+
+- 短中長期報酬
+- 均線比例
+- EMA
+- RSI
+- MACD
+- Bollinger Bands
+- 成交量比例
+- 波動率
+- ATR
+- K 棒結構
+- OBV
+- MFI
+- Stochastic
+- ROC
+- VWAP
+- Drawdown
+- Price Acceleration
+
+特徵在日期 `t` 僅使用 `t` 或更早資料，目標為下一交易日 `t+1`，降低時間穿越與資料洩漏風險。
+
+---
+
+# 🧪 模型驗證
+
+### 5-Fold Expanding Walk-Forward Validation
+
+依時間順序逐步擴張訓練區間。
+
+### OOS Backtest
+
+使用樣本外資料檢查模型泛化能力。
+
+### 分類模型
+
+- Accuracy
+- Precision
+- Recall
+- F1
+
+### 回歸模型
+
+- MAE
+- RMSE
+- MAPE
+
+---
+
+# 🤖 Agent Tool Calling
+
+Qwen3 8B 透過 Ollama 執行 Tool Calling。
+
+主要研究工具包括：
+
+| Tool | 功能 |
+|---|---|
+| `get_market_overview` | 市場強弱與主要漲跌 |
+| `get_company_financial` | 營收、獲利、EPS |
+| `get_earnings_events` | 近期法說會 |
+| `read_fugle_memo` | 讀取法說會詳細正文 |
+| `search_news_evidence` | 搜尋研究包新聞證據 |
+| `search_live_news` | 額外新聞查證 |
+| `get_cnyes_news_overview` | 查看 CNYES 新聞全貌 |
+| `search_cnyes_news` | 搜尋 CNYES 新聞 |
+| `get_cnyes_news_batch` | 批次閱讀新聞 |
+| `get_theme_evidence` | 題材支撐與產業證據 |
+| `get_company_research` | 公司業務與產業鏈 |
+| `get_previous_notes` | 讀取上一期研究筆記 |
+
+Agent 並不需要每次呼叫所有工具，而是依研究需求選擇工具。
+
+---
+
+# 🧠 Agent Research Memory
+
+每日研究完成後，結果會保存至：
+
+```text
+output/research_reports/agent_memory.json
+```
+
+下一次 Agent 可以讀取上一期研究內容，再用新的資料重新驗證。
+
+因此系統可以逐漸形成：
+
+```text
+Day 1
+研究筆記
+   ↓
+Day 2
+讀取前一期
+   ↓
+新資料驗證
+   ↓
+新的研究筆記
+   ↓
+Day 3
+...
+```
+
+這使研究結果不再只是一次性的 Email，而能形成跨日累積的研究紀錄。
+
+---
+
+# 📧 自動化研究報告
+
+## 🌅 AI 早報
+
+早報主要提供：
+
 1. 最近 5 天法說會
-2. 最近 2 天財經報導摘要
-3. Agent 觀察產業類別
-4. Agent 觀察股票與原因
+2. 最近 2 天財經新聞摘要
+3. Agent 觀察的產業類別
+4. Agent 觀察的股票
+5. 研究證據與原因
 
-盤後 Email：
-- ① 今日 AI 研究重點
-- 正向訊號／負向訊號／待追蹤
-- 一、今日市場重點（漲跌表以「產業／業務」取代「原因候選」）
-- 二、最近 5 天法說會
-- ④ 目前主要利多題材
-- ⑤ 營收成長重點
-- 不顯示③ 法說會訊號、不顯示模型健康度。
+---
 
+## 📊 AI 盤後研究
 
-## v9 網站與排程調整
+盤後研究主要包含：
 
-Dashboard 最後三項固定為：AI 隔日預測、 市場情報與利多／利空分析、 模型研究 Agent。
+### ① 今日 AI 研究重點
 
-Windows 排程：08:30 早報、14:30 盤後研究、23:00 CNYES 當日新聞爬蟲。三個 Task 都保留 WakeToRun，但移除 StartWhenAvailable，因此 Windows 開機／登入不會因錯過時間而立即補跑。
+快速整理：
 
-新增 `streamlit_app.py`、`.streamlit/config.toml`、`.gitignore` 與 `DEPLOY_STREAMLIT_CLOUD.md`，用於 Streamlit Community Cloud 部署。
+- 上漲異動
+- 下跌異動
+- 正向訊號
+- 負向訊號
+- 待追蹤事項
+
+### ② 今日市場重點
+
+- 漲幅重點
+- 跌幅重點
+- 產業強弱
+- 5 日表現
+
+### ③ 利多題材
+
+例如：
+
+```text
+CCL / 高速材料 / 高階 PCB
+AI / Edge AI / Physical AI
+先進封裝 / Chiplet / HBM
+```
+
+### ④ 營收成長重點
+
+整理：
+
+- 公司名稱
+- 股票代號
+- 最新月營收
+- YoY
+- EPS
+
+---
+
+# ⏰ 自動化流程
+
+系統透過 Windows Task Scheduler 執行自動化工作。
+
+```text
+08:30
+🌅 Morning Report
+       ↓
+     Email
+
+14:30
+📊 After-Close Research
+       ↓
+     Email
+
+23:00
+📰 CNYES Nightly Crawler
+       ↓
+   JSON Cache
+       ↓
+等待隔日 Agent 使用
+```
+
+新聞爬蟲與盤後研究分離，可以避免每次研究時重新下載大量新聞，降低研究流程的等待時間。
+
+> Windows 完全關機時無法執行 Python；排程需要 Windows 能夠啟動或由系統喚醒的情境。
+
+---
+
+# 🏗️ 系統架構
+
+```text
+                         ┌─────────────────────┐
+                         │      User / Web     │
+                         │ Streamlit Dashboard │
+                         └──────────┬──────────┘
+                                    │
+                                    ▼
+┌───────────────────────────────────────────────────────────┐
+│                       Data Layer                          │
+│                                                           │
+│ Fugle │ TWSE │ TPEx │ MOPS │ CNYES │ Earnings Call      │
+└───────────────────────────┬───────────────────────────────┘
+                            │
+                            ▼
+                 ┌──────────────────────┐
+                 │   Research Engine    │
+                 │  Market / Financial  │
+                 │  Theme / News / Memo │
+                 └──────────┬───────────┘
+                            │
+                ┌───────────┴───────────┐
+                ▼                       ▼
+      ┌─────────────────┐     ┌──────────────────┐
+      │ Quantitative AI │     │ Research Agent   │
+      │ Random Forest   │     │ Qwen3 8B         │
+      │ 44 Features     │     │ Tool Calling     │
+      └────────┬────────┘     └────────┬─────────┘
+               │                       │
+               │              ┌────────┴─────────┐
+               │              │ Evidence / Note │
+               │              │ Memory / Theme  │
+               │              └────────┬─────────┘
+               └──────────────┬────────┘
+                              ▼
+                 ┌─────────────────────┐
+                 │ Output / Presentation│
+                 │ Dashboard / Email   │
+                 │ JSON / Markdown     │
+                 └─────────────────────┘
+```
+
+---
+
+# 🛠️ 技術棧
+
+| 技術 | 用途 |
+|---|---|
+| Python | 核心開發語言 |
+| Streamlit | Web Dashboard |
+| Plotly | K 線與互動式圖表 |
+| Pandas / NumPy | 資料處理 |
+| Scikit-learn | Random Forest 模型 |
+| Ollama | 本機 LLM 執行環境 |
+| Qwen3 8B | AI Research Agent |
+| Requests | API / 網路資料取得 |
+| BeautifulSoup | HTML 解析 |
+| Selenium | 動態網站與法說會資料 |
+| Fugle API | 台股行情與法說會 |
+| TWSE | 上市資料 |
+| TPEx | 上櫃資料 |
+| MOPS | 公司公開資訊 |
+| CNYES | 財經新聞 |
+| Gmail SMTP | Email 發送 |
+| Windows Task Scheduler | 自動排程 |
+| JSON / CSV / Markdown | 資料保存 |
+| Joblib | 模型保存 |
+
+---
+
+# 📁 主要程式模組
+
+```text
+stock_dashboard/
+│
+├── stock_dashboard.py
+├── research_agent.py
+├── agent_research_assistant.py
+├── cnyes_news_crawler.py
+├── earnings_call_agent.py
+├── email_agent.py
+├── run_after_close_research.py
+├── market_mover_analysis.py
+├── theme_agent.py
+├── business_master.py
+├── ai_engine.py
+│
+├── output/
+│   └── research_reports/
+│       ├── cnyes_news_YYYY-MM-DD.json
+│       ├── research_state.json
+│       ├── agent_memory.json
+│       └── *.md
+│
+└── setup_research_task.ps1
+```
+
+---
+
+# 🔄 完整研究流程
+
+```text
+Windows Scheduler
+        │
+        ▼
+資料取得
+        │
+        ├── Fugle
+        ├── TWSE
+        ├── TPEx
+        ├── MOPS
+        ├── CNYES
+        └── 法說會
+        │
+        ▼
+ResearchAgent
+        │
+        ▼
+建立 Research Package
+        │
+        ▼
+Qwen3 8B Agent
+        │
+        ├── 市場分析
+        ├── 新聞分析
+        ├── 公司研究
+        ├── 財務研究
+        ├── 法說會研究
+        └── 題材研究
+        │
+        ▼
+Evidence / Verification
+        │
+        ▼
+Agent Research Notes
+        │
+        ├── Dashboard
+        ├── Email
+        ├── JSON
+        ├── Markdown
+        └── Agent Memory
+```
+
+---
+
+# 📌 系統設計原則
+
+### 1. 量化模型與 LLM 分工
+
+Random Forest 負責數值預測，Qwen3 Agent 負責研究與解釋。
+
+### 2. 證據優先
+
+新聞只作為研究線索，重要結論應盡可能搭配官方、財務或多來源資料。
+
+### 3. Agent 自主研究
+
+不是程式固定告訴 Agent「今天一定要看什麼」，而是讓 Agent 根據研究資料判斷需要深入哪些方向。
+
+### 4. 可追蹤
+
+研究結果保存至 JSON、Markdown 與 Agent Memory。
+
+### 5. 不把生成式模型當成數值預測器
+
+Qwen3 8B 不直接創造股票價格，數值預測由量化模型負責。
+
+---
+
+# 📊 專案成果
+
+目前已完成：
+
+- ✅ Streamlit 台股研究 Dashboard
+- ✅ AI 隔日預測模型
+- ✅ 44 項技術與量價特徵
+- ✅ 5-Fold Walk-Forward Validation
+- ✅ OOS Backtest
+- ✅ Qwen3 8B 本機 Research Agent
+- ✅ Tool Calling
+- ✅ Agent Research Memory
+- ✅ CNYES 財經新聞爬蟲
+- ✅ Fugle 法說會研究
+- ✅ TWSE / TPEx / MOPS 財務資料整合
+- ✅ 市場異動分析
+- ✅ 利多題材研究
+- ✅ Email 自動通知
+- ✅ Windows Task Scheduler 自動化
+- ✅ Streamlit Cloud 網站部署
+
+---
+
+# 🚀 未來發展
+
+- 🔹 建立新聞 → 產業 → 公司 → 產品 → 供應鏈事件圖譜
+- 🔹 跨日追蹤同一新聞事件
+- 🔹 建立 Agent 研究品質評估
+- 🔹 建立可搜尋的長期 Research Memory
+- 🔹 增加更多非結構化資料來源
+- 🔹 比較 Random Forest 與其他時間序列／Gradient Boosting 模型
+- 🔹 將資料更新與 Agent 排程流程進一步容器化
+
+---
+
+# ⚠️ 研究用途聲明
+
+本專題為 **AI 台股研究與資訊整理系統**，主要目的為協助使用者蒐集資料、分析市場資訊、整理研究筆記與進行模型研究。
+
+系統輸出不代表未來市場表現，也不構成任何投資、買賣或財務建議。
+
+新聞與 AI Agent 分析仍可能存在資訊遺漏、摘要偏差或推論錯誤；重要資訊應回看 TWSE、TPEx、MOPS、公司公告與原始資料。
+
+---
+
+# 👨‍💻 Project
+
+**AI 台股盤後研究助理**
+
+National University of Kaohsiung  
+Information Management
+
+作者：**簡伯承**
+
+技術環境：
+
+```text
+Python 3.x
+Windows
+Streamlit
+Fugle API
+TWSE / TPEx / MOPS
+Ollama
+Qwen3 8B
+Scikit-learn
+Selenium
+BeautifulSoup
+Gmail SMTP
+Windows Task Scheduler
+```
+
+---
+
+## 💡 Project Concept
+
+> **不是讓 AI 猜股票，而是讓 AI 像研究助理一樣閱讀大量市場資料，發現不知道的地方就繼續查，最後形成有證據、有脈絡、可持續累積的台股研究筆記。**
