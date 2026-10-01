@@ -757,7 +757,7 @@ st.markdown("""
 
   .top-header-safe-space{height:8px !important;}
 
-  /* Streamlit st.columns 在窄螢幕改成單欄堆疊，避免文字、按鈕被壓縮。 */
+  /* 一般頁面區塊在手機改成單欄，避免標題／分析卡片被擠壓。 */
   [data-testid="stHorizontalBlock"]{
     flex-wrap:wrap !important;
     row-gap:8px !important;
@@ -768,6 +768,38 @@ st.markdown("""
     width:100% !important;
     min-width:100% !important;
     max-width:100% !important;
+  }
+
+  /*
+     自選股例外：手機仍維持「左 → 右」的行情列。
+     原本把所有 st.columns 強制改成 100% 寬，會造成
+     股票名稱 → 價格 → 漲跌 → 漲跌幅一路往下堆疊。
+     這裡只解除 watchlist 容器內的堆疊，讓一列保持橫向。
+  */
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"]{
+    flex-wrap:nowrap !important;
+    column-gap:6px !important;
+    row-gap:0 !important;
+    width:100% !important;
+    min-width:0 !important;
+  }
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"] > [data-testid="column"]{
+    flex:0 1 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    max-width:none !important;
+  }
+  /* 自選股名稱欄裡的「查看／刪除」兩個按鈕也固定橫向。 */
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"] [data-testid="column"] [data-testid="stHorizontalBlock"]{
+    flex-wrap:nowrap !important;
+    column-gap:4px !important;
+    width:100% !important;
+  }
+  .st-key-watchlist_scroll_container [data-testid="stHorizontalBlock"] [data-testid="column"] [data-testid="stHorizontalBlock"] > [data-testid="column"]{
+    flex:0 1 auto !important;
+    width:auto !important;
+    min-width:0 !important;
+    max-width:none !important;
   }
 
   /* 標題與搜尋列在手機改為上下排列。 */
@@ -825,8 +857,22 @@ st.markdown("""
   .search-code{font-size:16px !important;padding:7px 2px !important;}
   .search-name{font-size:15px !important;padding:5px 2px !important;}
 
-  /* 圖表、表格避免超出螢幕。 */
+  /* 圖表在手機上必須吃滿可用寬度，不使用窄欄位。 */
   .stPlotlyChart,
+  [data-testid="stPlotlyChart"]{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    overflow:visible !important;
+  }
+  .stPlotlyChart > div,
+  [data-testid="stPlotlyChart"] > div,
+  .stPlotlyChart iframe{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+  }
+  /* 表格保留水平滑動，避免欄位被壓到看不清楚。 */
   [data-testid="stDataFrame"],
   [data-testid="stTable"]{
     max-width:100% !important;
@@ -1082,7 +1128,7 @@ def render_watchlist():
             st.caption(f"資料日期：{', '.join(valid_dates)}｜盤後行情僅接受可驗證的當日資料")
         else:
             st.caption("資料日期：目前尚未取得可驗證的行情資料")
-    with st.container(height=365, border=True):
+    with st.container(height=365, border=True, key="watchlist_scroll_container"):
         heads = st.columns([2.55, 1.85, 1.85, 1.85], gap="small")
         head_labels = ["股票中文名", "當前市價", "+/−價格", "+/−價格%"]
         for i, (c, t) in enumerate(zip(heads, head_labels)):
@@ -1323,7 +1369,15 @@ def render_kline():
         if len(d) >= 5: fig.add_trace(go.Scatter(x=d.date, y=d.close.rolling(5).mean(), name="MA5", mode="lines"))
         if len(d) >= 20: fig.add_trace(go.Scatter(x=d.date, y=d.close.rolling(20).mean(), name="MA20", mode="lines"))
         if len(d) >= 60: fig.add_trace(go.Scatter(x=d.date, y=d.close.rolling(60).mean(), name="MA60", mode="lines"))
-        fig.update_layout(height=580, title=title, xaxis_rangeslider_visible=False, margin=dict(l=20,r=20,t=45,b=20), yaxis_title="價格")
+        fig.update_layout(
+            height=580,
+            autosize=True,
+            title=title,
+            xaxis_rangeslider_visible=False,
+            margin=dict(l=45, r=10, t=68, b=28),
+            yaxis_title="價格",
+            legend=dict(orientation="h", yanchor="bottom", y=1.01, xanchor="left", x=0),
+        )
         st.plotly_chart(fig, use_container_width=True, key=f"kline_{selected}_{k_period}")
         vf = go.Figure(go.Bar(x=d.date, y=d.volume, name="成交量")); vf.update_layout(height=220, title="成交量", margin=dict(l=20,r=20,t=40,b=20))
         st.plotly_chart(vf, use_container_width=True, key=f"vol_{selected}_{k_period}")
