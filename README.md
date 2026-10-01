@@ -1,7 +1,7 @@
 # 🤖 AI 台股研究助理
 
 > **結合量化模型、新聞爬蟲與本機 AI Agent 的智慧台股研究系統**
->
+> **我的網站:https://stocktrading-c66hschtsd2qh6vkyv4mtq.streamlit.app/**
 > **一個 AI 研究助理幫你讀完一堆資料後，整理自己的研究筆記。**
 
 [![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)](https://www.python.org/)
