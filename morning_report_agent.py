@@ -180,35 +180,222 @@ class MorningResearchAgent:
         }
 
     def _fallback(self, payload: dict[str, Any], error: str) -> dict[str, Any]:
+        """Qwen 主早報失敗時的證據保底。
+
+        重要：
+        1. 不再把自選股前 8 檔直接塞進「看好的股票」。
+        2. 新聞摘要保留完整物件格式，讓 Email 正常呈現。
+        3. 只有能從 CNYES 新聞／新聞 Agent 找到關聯證據的股票才進入觀察名單。
+        4. 沒有證據的產業／股票寧可留空，不製造看似 AI 判斷的內容。
+        """
         profiles = payload.get("business_profiles", {}) or {}
-        themes = payload.get("previous_research", {}).get("bullish_themes", []) or []
-        stocks = []
-        for sym, p in profiles.items():
-            if not isinstance(p, dict):
+        profile_lookup = {str(k).strip().upper(): v for k, v in profiles.items() if isinstance(v, dict)}
+        digest = payload.get("cnyes_research_digest", {}) or {}
+        digest_findings = [x for x in (digest.get("key_findings", []) or []) if isinstance(x, dict)]
+        raw_articles = [x for x in (payload.get("cnyes_news", {}).get("articles", []) or []) if isinstance(x, dict)]
+        watchlist = {_clean_symbol(x) for x in (payload.get("symbols", []) or []) if _clean_symbol(x)}
+
+        # ---------------------------------------------------------------
+        # 1. 新聞摘要保底：保留 digest 的結構，不再只留下 summary 字串。
+        #    若新聞 Agent 也失敗，直接從夜間快取建立「事件摘要」；
+        #    這不是 AI 歸因，所以 impact 會標為待查證。
+        # ---------------------------------------------------------------
+        news_summary: list[dict[str, Any]] = []
+        seen_news: set[str] = set()
+
+        for item in digest_findings:
+            title = _clean_text(item.get("title", "財經事件"), 120)
+            summary = _clean_text(item.get("summary", ""), 900)
+            if not title or not summary:
                 continue
-            stocks.append({
-                "symbol": sym,
-                "name": p.get("name", sym),
-                "business": p.get("business_group") or p.get("primary_chain") or p.get("industry_name") or "",
-                "reason": "公司業務與近期產業研究可作為早報觀察標的，仍需自行確認最新資訊。",
-                "evidence": [],
+            key = title.lower()
+            if key in seen_news:
+                continue
+            seen_news.add(key)
+            related = [_clean_symbol(x) for x in (item.get("related_symbols") or []) if _clean_symbol(x) in watchlist]
+            industries: list[str] = []
+            for sym in related:
+                p = profile_lookup.get(sym, {}) or {}
+                ind = _clean_text(
+                    p.get("business_group") or p.get("primary_chain") or p.get("industry_name") or "",
+                    80,
+                )
+                if ind and ind not in industries:
+                    industries.append(ind)
+            news_summary.append({
+                "title": title,
+                "summary": summary,
+                "impact": _clean_text(item.get("impact", "待查證"), 20) or "待查證",
+                "industries": industries[:8],
+                "evidence": [_clean_text(v, 500) for v in (item.get("evidence") or []) if str(v).strip()][:6],
+                "source_links": [str(v).strip() for v in (item.get("source_links") or []) if str(v).strip()][:4],
+                "confidence": max(0.0, min(1.0, _safe_float(item.get("confidence"), 0.20) or 0.20)),
             })
-            if len(stocks) >= 8:
+            if len(news_summary) >= 10:
                 break
+
+        if not news_summary:
+            for article in raw_articles:
+                title = _clean_text(article.get("title", ""), 120)
+                summary = _clean_text(article.get("summary", "") or article.get("content", ""), 900)
+                if not title or not summary:
+                    continue
+                key = title.lower()
+                if key in seen_news:
+                    continue
+                seen_news.add(key)
+                article_text = f"{title} {summary}".lower()
+                related = []
+                industries = []
+                for sym in watchlist:
+                    p = profile_lookup.get(sym, {}) or {}
+                    name = str(p.get("name", "")).strip()
+                    if (sym and sym.lower() in article_text) or (name and name.lower() in article_text):
+                        related.append(sym)
+                        ind = _clean_text(
+                            p.get("business_group") or p.get("primary_chain") or p.get("industry_name") or "",
+                            80,
+                        )
+                        if ind and ind not in industries:
+                            industries.append(ind)
+                news_summary.append({
+                    "title": title,
+                    "summary": summary,
+                    "impact": "待查證",
+                    "industries": industries[:8],
+                    "evidence": [f"鉅亨新聞：{title}"],
+                    "source_links": [str(article.get("url", "")).strip()] if article.get("url") else [],
+                    "confidence": 0.20,
+                })
+                if len(news_summary) >= 8:
+                    break
+
+        # ---------------------------------------------------------------
+        # 2. 股票保底：只能使用「新聞有實際關聯」的自選股。
+        # ---------------------------------------------------------------
+        stock_evidence: dict[str, list[dict[str, Any]]] = {}
+
+        def add_stock_evidence(sym: str, item: dict[str, Any]) -> None:
+            sym = _clean_symbol(sym)
+            if sym not in watchlist or sym not in profile_lookup:
+                return
+            stock_evidence.setdefault(sym, []).append(item)
+
+        for item in digest_findings:
+            related = [_clean_symbol(x) for x in (item.get("related_symbols") or [])]
+            for sym in related:
+                add_stock_evidence(sym, item)
+
+        # digest 沒有帶 related_symbols 時，回到夜間新聞本身做公司名稱／代號比對。
+        if not stock_evidence:
+            for article in raw_articles:
+                blob = f"{article.get('title', '')} {article.get('summary', '')} {article.get('content', '')}".lower()
+                for sym in watchlist:
+                    p = profile_lookup.get(sym, {}) or {}
+                    name = str(p.get("name", "")).strip().lower()
+                    if (sym.lower() in blob) or (name and name in blob):
+                        add_stock_evidence(sym, article)
+
+        recommended_stocks = []
+        for sym, evidences in stock_evidence.items():
+            p = profile_lookup.get(sym, {}) or {}
+            name = _clean_text(p.get("name") or sym, 80)
+            industry = _clean_text(
+                p.get("business_group") or p.get("primary_chain") or p.get("industry_name") or "",
+                120,
+            )
+            evidence_text: list[str] = []
+            source_links: list[str] = []
+            reason_parts: list[str] = []
+
+            for e in evidences[:4]:
+                if isinstance(e, dict):
+                    ev = [str(v).strip() for v in (e.get("evidence") or []) if str(v).strip()]
+                    title = _clean_text(e.get("title", ""), 120)
+                    summary = _clean_text(e.get("summary", ""), 260)
+                    if title and title not in evidence_text:
+                        evidence_text.append(title)
+                    for v in ev:
+                        if v not in evidence_text:
+                            evidence_text.append(v)
+                    if summary and not reason_parts:
+                        reason_parts.append(summary)
+                    source_links.extend([str(v).strip() for v in (e.get("source_links") or []) if str(v).strip()])
+                else:
+                    title = _clean_text(e.get("title", "") if isinstance(e, dict) else e, 120)
+                    if title and title not in evidence_text:
+                        evidence_text.append(title)
+
+            source_links = list(dict.fromkeys(source_links))[:4]
+            if not evidence_text:
+                continue
+            reason = (
+                f"公司主要業務為 {industry}；近期兩日鉅亨新聞出現與該公司相關的事件，"
+                f"因此列為新聞研究觀察標的。"
+            )
+            if reason_parts:
+                reason += f" 新聞摘要：{reason_parts[0]}"
+
+            recommended_stocks.append({
+                "symbol": sym,
+                "name": name,
+                "industry": industry,
+                "reason": _clean_text(reason, 900),
+                "evidence": evidence_text[:6],
+                "source_links": source_links,
+            })
+            if len(recommended_stocks) >= 12:
+                break
+
+        # ---------------------------------------------------------------
+        # 3. 產業觀察：只從「有新聞證據的關聯股票」聚合，不引用舊題材硬湊。
+        # ---------------------------------------------------------------
+        industry_map: dict[str, dict[str, Any]] = {}
+        for stock in recommended_stocks:
+            ind = str(stock.get("industry", "")).strip()
+            if not ind:
+                continue
+            row = industry_map.setdefault(ind, {"industry": ind, "symbols": [], "evidence": []})
+            if stock["symbol"] not in row["symbols"]:
+                row["symbols"].append(stock["symbol"])
+            row["evidence"].extend(stock.get("evidence") or [])
+
+        recommended_industries = []
+        for ind, row in sorted(industry_map.items(), key=lambda kv: (-len(kv[1]["symbols"]), kv[0]))[:8]:
+            ev = list(dict.fromkeys(str(x) for x in row["evidence"] if str(x).strip()))[:6]
+            related_symbols = row["symbols"][:15]
+            recommended_industries.append({
+                "industry": ind,
+                "why": f"近兩日鉅亨新聞中出現與 {ind} 相關公司的事件，且可對應到自選股：{'、'.join(related_symbols)}。列為新聞研究觀察產業，不代表投資評價。",
+                "evidence": ev,
+                "related_symbols": related_symbols,
+            })
+
+        # ---------------------------------------------------------------
+        # 4. 追蹤事項：優先使用 CNYES Agent 已產生的 watch_topics，再補錯誤。
+        # ---------------------------------------------------------------
+        watch_items = [_clean_text(x, 500) for x in (digest.get("watch_topics") or []) if str(x).strip()][:10]
+        if not watch_items:
+            watch_items = [_clean_text(x, 500) for x in (digest.get("market_drivers") or []) if str(x).strip()][:6]
+        if error:
+            watch_items.append(f"早報主 Agent 本次未完成完整整合：{_clean_text(error, 450)}")
+
+        overview = "早報主 Agent 本次未完成完整自主整合，已改用夜間 CNYES 快取與新聞 Agent 結果建立證據保底；未有證據的股票不列入觀察名單。"
+        if news_summary:
+            overview += f" 本次仍取得 {len(news_summary)} 則新聞研究摘要。"
+        else:
+            overview += " 本次新聞快取存在，但尚未形成可用的新聞事件摘要。"
+
         return {
-            "agent_status": "morning_fallback",
+            "agent_status": "morning_fallback_evidence",
             "model": self.ollama_model,
             "generated_at": datetime.now(TAIPEI).isoformat(),
-            "overview": "早報 Agent 本次未完成完整自主整理；已保留最近兩日新聞與法說會資料。",
-            "news_summary": [x.get("summary", "") for x in (payload.get("cnyes_research_digest", {}).get("key_findings", []) or []) if isinstance(x, dict) and x.get("summary")][:8],
-            "recommended_industries": [{
-                "industry": x.get("theme", ""),
-                "why": "前一日研究題材，早報中列為待觀察。",
-                "evidence": [],
-            } for x in themes[:5] if isinstance(x, dict)],
-            "recommended_stocks": stocks,
-            "watch_items": [error],
-            "source_links": [],
+            "overview": overview,
+            "news_summary": news_summary[:10],
+            "recommended_industries": recommended_industries[:8],
+            "recommended_stocks": recommended_stocks[:12],
+            "watch_items": list(dict.fromkeys(watch_items))[:10],
+            "source_links": list(dict.fromkeys([u for x in news_summary for u in x.get("source_links", []) if u]))[:12],
             "error": error,
         }
 
