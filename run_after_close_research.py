@@ -4,12 +4,15 @@ from __future__ import annotations
 
 import json
 import os
+import traceback
+from datetime import datetime, time as dt_time
 from pathlib import Path
 
 import pandas as pd
 
 from research_agent import ResearchAgent
 from email_agent import EmailAgent
+from market_mover_analysis import MarketMoverAnalyzer
 from stock_api import clean_symbol
 
 BASE = Path(__file__).resolve().parent
@@ -37,6 +40,25 @@ def load_watchlist() -> list[str]:
     except Exception:
         pass
     return DEFAULT_WATCHLIST.copy()
+
+
+def _write_status(base: Path, report_date: str, status: str, **extra) -> None:
+    """將排程實際結果寫入可追蹤的 status JSON。"""
+    out_dir = base / "output" / "scheduler_logs"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "report_date": report_date,
+        "status": status,
+        "recorded_at": datetime.now().astimezone().isoformat(timespec="seconds"),
+        **extra,
+    }
+    try:
+        (out_dir / f"after_close_status_{report_date or 'unknown'}.json").write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2, default=str),
+            encoding="utf-8",
+        )
+    except Exception:
+        pass
 
 
 def main() -> int:
@@ -99,14 +121,53 @@ def main() -> int:
     # 盤後屬於「今日行情」報告：若 MarketMoverAnalyzer 沒拿到當日交易資料，
     # 絕不沿用昨天快取寄信。這是避免舊行情污染盤後報告的最後一道防線。
     market_movers = report.get("market_movers", {}) or {}
-    market_asof = str(market_movers.get("data_asof", "") or "")[:10]
     report_day = str(report.get("report_date", ""))[:10]
-    if report_day and market_asof and market_asof != report_day:
+
+    # ---------------------------------------------------------------
+    # 市場行情最後一道 recovery：重新直接呼叫 MarketMoverAnalyzer。
+    # ResearchAgent 失敗不代表官方行情一定失敗。
+    # ---------------------------------------------------------------
+    if not market_movers.get("movers") or not market_movers.get("data_asof"):
+        try:
+            print("ResearchAgent 市場行情不足，啟動直接行情 recovery...")
+            recovery = MarketMoverAnalyzer(BASE).analyze(load_watchlist(), max_candidates=40)
+            if isinstance(recovery, dict) and (recovery.get("movers") or recovery.get("is_trading_day") is False):
+                report["market_movers"] = recovery
+                market_movers = recovery
+                print(f"Recovery market_asof = {market_movers.get('data_asof', '')}")
+        except Exception as exc:
+            print(f"Market recovery 失敗：{exc}")
+
+    market_asof = str(market_movers.get("data_asof", "") or "")[:10]
+    trading_flag = market_movers.get("is_trading_day")
+
+    # 非交易日：不拿最近交易日資料冒充今日盤後報告；排程本身視為正常完成。
+    if trading_flag is False:
+        print(f"非交易日，最近官方交易日 = {market_asof}；今日不寄送盤後行情報告。")
+        _write_status(
+            BASE, report_day, "skipped_non_trading_day",
+            market_asof=market_asof,
+            market_source=market_movers.get("data_source", ""),
+        )
+        return 0
+
+    if report_day and market_asof != report_day:
         print(f"ERROR: market data date {market_asof} != report date {report_day}")
         print("已停止寄送，避免把前一交易日行情誤標為今日盤後資料。")
+        _write_status(
+            BASE, report_day, "error_market_date_mismatch",
+            market_asof=market_asof,
+            market_source=market_movers.get("data_source", ""),
+        )
         return 4
+
     if not market_movers.get("movers"):
         print("ERROR: 今日沒有取得有效的全市場行情資料，停止寄送盤後報告。")
+        _write_status(
+            BASE, report_day, "error_no_market_data",
+            market_asof=market_asof,
+            market_source=market_movers.get("data_source", ""),
+        )
         return 4
 
     print("")
@@ -164,7 +225,17 @@ def main() -> int:
     # Email failure should be visible to Task Scheduler.
     # A skipped email due to auto_send=false is a deliberate configuration.
     if email_result.get("error"):
+        _write_status(BASE, report_day, "error_email", market_asof=market_asof, email_result=email_result)
         return 3
+
+    _write_status(
+        BASE, report_day, "success",
+        market_asof=market_asof,
+        market_source=market_movers.get("data_source", ""),
+        market_count=len(market_movers.get("movers", []) or []),
+        email_sent=bool(email_result.get("sent")),
+        email_skipped=bool(email_result.get("skipped")),
+    )
 
     print("")
     print("=" * 72)
@@ -174,4 +245,10 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    try:
+        raise SystemExit(main())
+    except Exception as exc:
+        report_date = datetime.now().strftime("%Y-%m-%d")
+        _write_status(BASE, report_date, "error_unhandled", error=str(exc), traceback=traceback.format_exc())
+        print(traceback.format_exc())
+        raise

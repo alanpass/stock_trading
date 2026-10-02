@@ -22,7 +22,23 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 from cnyes_news_crawler import CnyesNewsCrawler
-from cnyes_news_agent import CnyesNewsDigestAgent
+
+# 相容目前專案的 CNYES Agent 類別名稱。
+# 新版 cnyes_news_agent.py 使用 CnyesNewsAgent；舊版曾使用
+# CnyesNewsDigestAgent。早報不能因單純類別更名而整份失效。
+try:
+    from cnyes_news_agent import CnyesNewsDigestAgent  # type: ignore
+except ImportError:
+    try:
+        from cnyes_news_agent import CnyesNewsAgent as CnyesNewsDigestAgent  # type: ignore
+    except ImportError as exc:
+        CnyesNewsDigestAgent = None  # type: ignore
+        _CNYES_AGENT_IMPORT_ERROR = exc
+    else:
+        _CNYES_AGENT_IMPORT_ERROR = None
+else:
+    _CNYES_AGENT_IMPORT_ERROR = None
+
 from earnings_call_agent import EarningsCallAgent
 from business_master import business_map_for_symbols, build_business_research_context
 
@@ -150,17 +166,77 @@ class MorningResearchAgent:
             profiles = {}
 
         # 早報新聞先由專門 CNYES Agent 做一次「兩日新聞研究」，主 Agent 再整合。
-        digest_agent = CnyesNewsDigestAgent(self.base, self.ollama_host, self.ollama_model)
         digest_payload = {
             "report_date": report_date,
             "symbols": watchlist,
             "cnyes_news": cnyes,
             "market_movers": research.get("market_movers", {}),
         }
-        cnyes_digest = digest_agent.run(
-            digest_payload,
-            limit=int(os.getenv("CNYES_MORNING_AGENT_INPUT_ARTICLES", "100")),
-        )
+
+        cnyes_digest = {
+            "status": "unavailable",
+            "key_findings": [],
+            "watch_topics": [],
+            "market_drivers": [],
+            "error": "",
+        }
+
+        if CnyesNewsDigestAgent is None:
+            cnyes_digest["error"] = (
+                f"CNYES Agent 匯入失敗：{_CNYES_AGENT_IMPORT_ERROR}"
+            )
+        else:
+            try:
+                # 先嘗試目前新版的三參數建構方式。
+                try:
+                    digest_agent = CnyesNewsDigestAgent(
+                        self.base, self.ollama_host, self.ollama_model
+                    )
+                except TypeError:
+                    # 相容只接受 base_dir 的舊版實作。
+                    digest_agent = CnyesNewsDigestAgent(self.base)
+
+                runner = getattr(digest_agent, "run", None)
+                if not callable(runner):
+                    # 對不同版本的 Agent 提供安全相容層。
+                    for method_name in ("analyze", "summarize", "digest"):
+                        candidate = getattr(digest_agent, method_name, None)
+                        if callable(candidate):
+                            runner = candidate
+                            break
+
+                if not callable(runner):
+                    raise AttributeError(
+                        "CNYES Agent 沒有 run/analyze/summarize/digest 方法"
+                    )
+
+                try:
+                    result = runner(
+                        digest_payload,
+                        limit=int(os.getenv("CNYES_MORNING_AGENT_INPUT_ARTICLES", "100")),
+                    )
+                except TypeError:
+                    # 有些舊版 Agent 不接受 limit。
+                    result = runner(digest_payload)
+
+                if isinstance(result, dict):
+                    cnyes_digest = result
+                else:
+                    cnyes_digest = {
+                        "status": "agent_text",
+                        "key_findings": [],
+                        "watch_topics": [],
+                        "market_drivers": [],
+                        "summary_text": _clean_text(result, 4000),
+                    }
+            except Exception as exc:
+                cnyes_digest = {
+                    "status": "error",
+                    "key_findings": [],
+                    "watch_topics": [],
+                    "market_drivers": [],
+                    "error": f"CNYES Agent 執行失敗：{type(exc).__name__}: {exc}",
+                }
 
         return {
             "report_date": report_date,
@@ -234,41 +310,50 @@ class MorningResearchAgent:
             if len(news_summary) >= 10:
                 break
 
-        if not news_summary:
-            for article in raw_articles:
-                title = _clean_text(article.get("title", ""), 120)
-                summary = _clean_text(article.get("summary", "") or article.get("content", ""), 900)
-                if not title or not summary:
-                    continue
-                key = title.lower()
-                if key in seen_news:
-                    continue
-                seen_news.add(key)
-                article_text = f"{title} {summary}".lower()
-                related = []
-                industries = []
-                for sym in watchlist:
-                    p = profile_lookup.get(sym, {}) or {}
-                    name = str(p.get("name", "")).strip()
-                    if (sym and sym.lower() in article_text) or (name and name.lower() in article_text):
-                        related.append(sym)
-                        ind = _clean_text(
-                            p.get("business_group") or p.get("primary_chain") or p.get("industry_name") or "",
-                            80,
-                        )
-                        if ind and ind not in industries:
-                            industries.append(ind)
-                news_summary.append({
-                    "title": title,
-                    "summary": summary,
-                    "impact": "待查證",
-                    "industries": industries[:8],
-                    "evidence": [f"鉅亨新聞：{title}"],
-                    "source_links": [str(article.get("url", "")).strip()] if article.get("url") else [],
-                    "confidence": 0.20,
-                })
-                if len(news_summary) >= 8:
-                    break
+        # ---------------------------------------------------------------
+        # 原始新聞保底：即使 CNYES News Agent 失敗，只要夜間快取存在，
+        # 早報仍必須產生可閱讀的新聞摘要，而不是顯示「沒有新聞」。
+        # 若摘要欄位缺失，明確標示內容不足，不虛構新聞內容。
+        # ---------------------------------------------------------------
+        for article in raw_articles:
+            if len(news_summary) >= 10:
+                break
+            title = _clean_text(article.get("title", ""), 120)
+            if not title:
+                continue
+            key = title.lower()
+            if key in seen_news:
+                continue
+            summary_raw = article.get("summary", "") or article.get("content", "") or ""
+            summary = _clean_text(summary_raw, 900)
+            if not summary:
+                summary = "新聞快取未提供可用摘要，請開啟原文連結查證。"
+
+            seen_news.add(key)
+            article_text = f"{title} {summary} {article.get('category', '')} {article.get('tags', '')}".lower()
+            related = []
+            industries = []
+            for sym in watchlist:
+                p = profile_lookup.get(sym, {}) or {}
+                name = str(p.get("name", "")).strip()
+                name_lower = name.lower()
+                if (sym and sym.lower() in article_text) or (name_lower and name_lower in article_text):
+                    related.append(sym)
+                    ind = _clean_text(
+                        p.get("business_group") or p.get("primary_chain") or p.get("industry_name") or "",
+                        80,
+                    )
+                    if ind and ind not in industries:
+                        industries.append(ind)
+            news_summary.append({
+                "title": title,
+                "summary": summary,
+                "impact": "待查證",
+                "industries": industries[:8],
+                "evidence": [f"鉅亨新聞：{title}"],
+                "source_links": [str(article.get("url", "")).strip()] if article.get("url") else [],
+                "confidence": 0.20,
+            })
 
         # ---------------------------------------------------------------
         # 2. 股票保底：只能使用「新聞有實際關聯」的自選股。
@@ -595,6 +680,9 @@ class MorningResearchAgent:
                 "cnyes_article_count": int(payload.get("cnyes_news", {}).get("article_count", 0) or 0),
                 "earnings_count": len(earnings),
             }
+            raw_article_count = int(payload.get("cnyes_news", {}).get("article_count", 0) or 0)
+            if raw_article_count > 0 and not result["news_summary"]:
+                raise ValueError("CNYES 夜間快取已有新聞，但早報 Agent 沒有產生新聞摘要；啟用原始快取保底。")
             if not result["news_summary"] and not result["recommended_industries"] and not result["recommended_stocks"]:
                 raise ValueError("早報 Agent 沒有產生有效內容")
             return result

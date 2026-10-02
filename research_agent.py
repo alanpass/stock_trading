@@ -43,7 +43,20 @@ from agent_research_assistant import ResearchOrchestratorAgent
 from market_mover_analysis import MarketMoverAnalyzer
 from market_calendar import market_status_text, is_twse_trading_day
 from cnyes_news_crawler import CnyesNewsCrawler
-from cnyes_news_agent import CnyesNewsDigestAgent
+# 相容不同版本的 CNYES Agent：
+# 舊版類別名稱為 CnyesNewsDigestAgent；目前專案可能使用 CnyesNewsAgent。
+try:
+    from cnyes_news_agent import CnyesNewsDigestAgent  # type: ignore
+except ImportError:
+    try:
+        from cnyes_news_agent import CnyesNewsAgent as CnyesNewsDigestAgent  # type: ignore
+    except ImportError as exc:
+        CnyesNewsDigestAgent = None  # type: ignore
+        _CNYES_AGENT_IMPORT_ERROR = exc
+    else:
+        _CNYES_AGENT_IMPORT_ERROR = None
+else:
+    _CNYES_AGENT_IMPORT_ERROR = None
 
 TAIPEI_TZ = "Asia/Taipei"
 TWSE_OPENAPI = "https://openapi.twse.com.tw/v1"
@@ -1291,16 +1304,64 @@ class ResearchAgent:
             if fast_mode and isinstance(morning_loaded, dict) and isinstance(morning_loaded.get("cnyes_research_digest"), dict):
                 cnyes_research_digest = {**morning_loaded.get("cnyes_research_digest", {}), "reused_from_morning_report": True}
             else:
-                cnyes_digest_agent = CnyesNewsDigestAgent(self.base, ollama_host=self.ollama_host, ollama_model=self.ollama_model)
-                cnyes_research_digest = cnyes_digest_agent.run(
-                    {
-                        "report_date": report_date,
-                        "symbols": requested_symbols,
-                        "cnyes_news": cnyes_news,
-                        "market_movers": market_movers,
-                    },
-                    limit=int(os.getenv("CNYES_RESEARCH_AGENT_INPUT_ARTICLES", "100")),
-                )
+                if CnyesNewsDigestAgent is None:
+                    raise ImportError(f"無法匯入 CNYES Agent：{_CNYES_AGENT_IMPORT_ERROR}")
+
+                # 相容不同版本的建構子：
+                # 1) (base_dir, ollama_host=..., ollama_model=...)
+                # 2) (base_dir, host, model)
+                # 3) (base_dir)
+                try:
+                    cnyes_digest_agent = CnyesNewsDigestAgent(
+                        self.base,
+                        ollama_host=self.ollama_host,
+                        ollama_model=self.ollama_model,
+                    )
+                except TypeError:
+                    try:
+                        cnyes_digest_agent = CnyesNewsDigestAgent(
+                            self.base, self.ollama_host, self.ollama_model
+                        )
+                    except TypeError:
+                        cnyes_digest_agent = CnyesNewsDigestAgent(self.base)
+
+                payload_for_cnyes = {
+                    "report_date": report_date,
+                    "symbols": requested_symbols,
+                    "cnyes_news": cnyes_news,
+                    "market_movers": market_movers,
+                }
+
+                # 相容不同版本的執行方法名稱。
+                cnyes_runner = getattr(cnyes_digest_agent, "run", None)
+                if not callable(cnyes_runner):
+                    for method_name in ("analyze", "summarize", "digest"):
+                        candidate = getattr(cnyes_digest_agent, method_name, None)
+                        if callable(candidate):
+                            cnyes_runner = candidate
+                            break
+                if not callable(cnyes_runner):
+                    raise AttributeError(
+                        "CNYES Agent 沒有 run/analyze/summarize/digest 方法"
+                    )
+
+                try:
+                    cnyes_research_digest = cnyes_runner(
+                        payload_for_cnyes,
+                        limit=int(os.getenv("CNYES_RESEARCH_AGENT_INPUT_ARTICLES", "100")),
+                    )
+                except TypeError:
+                    cnyes_research_digest = cnyes_runner(payload_for_cnyes)
+
+                if not isinstance(cnyes_research_digest, dict):
+                    cnyes_research_digest = {
+                        "agent_status": "cnyes_digest_text",
+                        "model": self.ollama_model,
+                        "overview": str(cnyes_research_digest or ""),
+                        "key_findings": [],
+                        "market_drivers": [],
+                        "watch_topics": [],
+                    }
         except Exception as exc:
             cnyes_research_digest = {
                 "agent_status": "cnyes_digest_error",
