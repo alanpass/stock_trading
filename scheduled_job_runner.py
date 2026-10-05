@@ -22,6 +22,7 @@ LOG_DIR.mkdir(parents=True, exist_ok=True)
 JOBS = {
     "morning": "run_morning_report.py",
     "afterclose": "run_after_close_research.py",
+    "finance": "run_finance_info_update.py",
     "cnyes": "run_cnyes_news_nightly.py",
 }
 
@@ -89,6 +90,22 @@ def validate_output(job: str) -> tuple[bool, str]:
         except Exception as exc:
             return False, f"Morning report invalid: {exc}"
 
+    if job == "finance":
+        path = research_dir / "finance_info_latest.json"
+        if not path.exists():
+            return False, f"Finance info cache missing: {path}"
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            updated = str(data.get("updated_at", ""))
+            if not updated:
+                return False, "Finance info cache has no updated_at"
+            return True, (
+                f"Finance info OK: earnings={int(data.get('earnings_count', 0) or 0)}, "
+                f"news={int(data.get('news_count', 0) or 0)}, updated={updated}"
+            )
+        except Exception as exc:
+            return False, f"Finance info invalid: {exc}"
+
     if job == "afterclose":
         status_candidates = [
             LOG_DIR / f"after_close_status_{d}.json",
@@ -99,8 +116,12 @@ def validate_output(job: str) -> tuple[bool, str]:
                 try:
                     data = json.loads(status_file.read_text(encoding="utf-8"))
                     state = str(data.get("status", ""))
-                    if state in {"success", "skipped_non_trading_day"}:
+                    if state == "skipped_non_trading_day":
                         return True, f"After-close status OK: {state}"
+                    if state == "success":
+                        if bool(data.get("email_sent")):
+                            return True, "After-close status OK: success + email_sent=true"
+                        return False, "After-close report completed but email_sent is not true"
                     return False, f"After-close status = {state or 'unknown'}"
                 except Exception as exc:
                     return False, f"After-close status invalid: {exc}"
@@ -111,7 +132,7 @@ def validate_output(job: str) -> tuple[bool, str]:
 
 def main() -> int:
     if len(sys.argv) != 2 or sys.argv[1].lower() not in JOBS:
-        print("Usage: python scheduled_job_runner.py morning|afterclose|cnyes")
+        print("Usage: python scheduled_job_runner.py morning|afterclose|finance|cnyes")
         return 2
 
     job = sys.argv[1].lower()

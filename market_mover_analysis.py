@@ -141,106 +141,135 @@ class MarketMoverAnalyzer:
                 return ""
         return ""
 
-    def _official_daily_snapshot(self, required_date: str | None = None) -> tuple[pd.DataFrame, str, list[str]]:
-        """讀取 TWSE / TPEx 官方日行情，並嚴格以實際資料日期作為 data_asof。
+    def _http_json(self, url: str, params: dict[str, Any] | None = None) -> Any:
+        """GET JSON；遇到企業網路／憑證攔截時，再嘗試 verify=False。"""
+        last_exc = None
+        for verify in (True, False):
+            try:
+                r = self.session.get(url, params=params, timeout=30, verify=verify)
+                r.raise_for_status()
+                return r.json()
+            except Exception as exc:
+                last_exc = exc
+        raise last_exc if last_exc else RuntimeError(f"無法取得 JSON：{url}")
 
-        required_date 若指定，會記錄是否取得該日期；不會把其他日期冒充成 required_date。
+    def _official_daily_snapshot(self, required_date: str | None = None) -> tuple[pd.DataFrame, str, list[str]]:
+        """取得 TWSE/TPEx 最新日收盤，並只用來源實際日期驗證。
+
+        盤後優先使用 TWSE RWD / TPEx 最新日行情；TWSE OpenAPI STOCK_DAY_ALL
+        僅作最後的最新快照來源，若日期不是 required_date，不會冒充成當日。
         """
         today = pd.Timestamp.now(tz="Asia/Taipei").strftime("%Y-%m-%d")
         errors: list[str] = []
         frames: list[pd.DataFrame] = []
+        request_date = pd.Timestamp.now(tz="Asia/Taipei").strftime("%Y%m%d")
 
-        endpoints = [
-            ("TWSE", TWSE_DAILY_ALL_URL),
-            ("TPEx", TPEX_DAILY_URL),
-        ]
+        def build_frame(label: str, rows: list, fields: list[str] | None = None) -> pd.DataFrame:
+            if not rows:
+                return pd.DataFrame()
+            if fields and all(isinstance(x, (list, tuple)) for x in rows):
+                df = pd.DataFrame(rows, columns=fields[:len(rows[0])])
+            else:
+                df = pd.DataFrame(rows)
+            if df.empty:
+                return pd.DataFrame()
 
-        for label, url in endpoints:
-            data = None
-            last_error = ""
-            for attempt in range(1, 4):
-                try:
-                    r = self.session.get(url, timeout=25)
-                    r.raise_for_status()
-                    data = r.json()
-                    if isinstance(data, list) and data:
-                        break
-                    last_error = f"{label}: API returned no rows"
-                except Exception as exc:
-                    last_error = f"{label}: attempt {attempt} failed: {type(exc).__name__}: {exc}"
-                    if attempt < 3:
-                        time.sleep(1.0 * attempt)
-            if not isinstance(data, list) or not data:
-                if last_error:
-                    errors.append(last_error)
-                continue
+            if label.startswith("TWSE"):
+                date_col = next((c for c in ["Date", "日期", "date"] if c in df.columns), None)
+                code_col = next((c for c in ["Code", "證券代號", "股票代號"] if c in df.columns), None)
+                name_col = next((c for c in ["Name", "證券名稱", "股票名稱"] if c in df.columns), None)
+                close_col = next((c for c in ["ClosingPrice", "收盤價", "Close"] if c in df.columns), None)
+                vol_col = next((c for c in ["TradeVolume", "成交股數", "Volume"] if c in df.columns), None)
+                change_col = next((c for c in ["Change", "漲跌價差", "PriceChange"] if c in df.columns), None)
+                high_col = next((c for c in ["HighestPrice", "最高價", "High"] if c in df.columns), None)
+                low_col = next((c for c in ["LowestPrice", "最低價", "Low"] if c in df.columns), None)
+                open_col = next((c for c in ["OpeningPrice", "開盤價", "Open"] if c in df.columns), None)
+            else:
+                date_col = next((c for c in ["Date", "日期", "date"] if c in df.columns), None)
+                code_col = next((c for c in ["SecuritiesCompanyCode", "Code", "證券代號"] if c in df.columns), None)
+                name_col = next((c for c in ["CompanyName", "Name", "證券名稱"] if c in df.columns), None)
+                close_col = next((c for c in ["Close", "ClosingPrice", "收盤價"] if c in df.columns), None)
+                vol_col = next((c for c in ["TradingShares", "TradeVolume", "成交股數", "Volume"] if c in df.columns), None)
+                change_col = next((c for c in ["Change", "漲跌", "漲跌價差", "PriceChange"] if c in df.columns), None)
+                high_col = next((c for c in ["High", "HighestPrice", "最高價"] if c in df.columns), None)
+                low_col = next((c for c in ["Low", "LowestPrice", "最低價"] if c in df.columns), None)
+                open_col = next((c for c in ["Open", "OpeningPrice", "開盤價"] if c in df.columns), None)
 
-            try:
-                df = pd.DataFrame(data)
-                if df.empty:
-                    continue
+            if not date_col or not code_col or not close_col:
+                return pd.DataFrame()
+            out = pd.DataFrame({
+                "source_date": df[date_col].map(parse_tw_date),
+                "symbol": df[code_col].map(clean_symbol),
+                "name": df[name_col].astype(str).str.strip() if name_col else df[code_col].map(clean_symbol),
+                "close": df[close_col].map(self._float),
+                "change_value": df[change_col].map(self._float) if change_col else np.nan,
+                "volume": df[vol_col].map(self._float) if vol_col else np.nan,
+                "high": df[high_col].map(self._float) if high_col else np.nan,
+                "low": df[low_col].map(self._float) if low_col else np.nan,
+                "open": df[open_col].map(self._float) if open_col else np.nan,
+            })
+            out = out[out["symbol"].astype(str).str.len().between(4, 6)]
+            out = out[np.isfinite(out["close"]) & out["source_date"].astype(bool)].copy()
+            out["source"] = label
+            return out
 
-                if label == "TWSE":
-                    date_col = next((c for c in ["Date", "date"] if c in df.columns), None)
-                    code_col = next((c for c in ["Code", "股票代號", "證券代號"] if c in df.columns), None)
-                    name_col = next((c for c in ["Name", "股票名稱", "證券名稱"] if c in df.columns), None)
-                    close_col = next((c for c in ["ClosingPrice", "收盤價", "Close"] if c in df.columns), None)
-                    vol_col = next((c for c in ["TradeVolume", "成交股數", "Volume"] if c in df.columns), None)
-                    change_col = next((c for c in ["Change", "漲跌價差", "PriceChange"] if c in df.columns), None)
-                    high_col = next((c for c in ["HighestPrice", "最高價", "High"] if c in df.columns), None)
-                    low_col = next((c for c in ["LowestPrice", "最低價", "Low"] if c in df.columns), None)
-                    open_col = next((c for c in ["OpeningPrice", "開盤價", "Open"] if c in df.columns), None)
-                else:
-                    date_col = next((c for c in ["Date", "date"] if c in df.columns), None)
-                    code_col = next((c for c in ["SecuritiesCompanyCode", "Code", "證券代號"] if c in df.columns), None)
-                    name_col = next((c for c in ["CompanyName", "Name", "證券名稱"] if c in df.columns), None)
-                    close_col = next((c for c in ["Close", "ClosingPrice", "收盤價"] if c in df.columns), None)
-                    vol_col = next((c for c in ["TradingShares", "TradeVolume", "成交股數", "Volume"] if c in df.columns), None)
-                    change_col = next((c for c in ["Change", "漲跌", "漲跌價差", "PriceChange"] if c in df.columns), None)
-                    high_col = next((c for c in ["High", "HighestPrice", "最高價"] if c in df.columns), None)
-                    low_col = next((c for c in ["Low", "LowestPrice", "最低價"] if c in df.columns), None)
-                    open_col = next((c for c in ["Open", "OpeningPrice", "開盤價"] if c in df.columns), None)
-
-                if not date_col or not code_col or not close_col:
-                    errors.append(f"{label}: 缺少日期／代號／收盤欄位")
-                    continue
-
-                out = pd.DataFrame({
-                    "source_date": df[date_col].map(parse_tw_date),
-                    "symbol": df[code_col].map(clean_symbol),
-                    "name": df[name_col] if name_col else df[code_col].map(clean_symbol),
-                    "close": df[close_col].map(self._float),
-                    "change_value": df[change_col].map(self._float) if change_col else np.nan,
-                    "volume": df[vol_col].map(self._float) if vol_col else np.nan,
-                    "high": df[high_col].map(self._float) if high_col else np.nan,
-                    "low": df[low_col].map(self._float) if low_col else np.nan,
-                    "open": df[open_col].map(self._float) if open_col else np.nan,
-                })
-                out = out[out["symbol"].astype(str).str.len().between(4, 6)]
-                out = out[np.isfinite(out["close"])].copy()
-                out["name"] = out["name"].astype(str).str.strip()
-                out = out[out["source_date"].notna()].copy()
-                out["source"] = label
+        # 1) TWSE RWD：同日盤後資料較適合 14:30 之後的報告。
+        try:
+            payload = self._http_json(
+                "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY_ALL",
+                params={"date": request_date, "response": "json"},
+            )
+            rows = payload.get("data", []) if isinstance(payload, dict) else []
+            fields = payload.get("fields", []) if isinstance(payload, dict) else []
+            out = build_frame("TWSE-RWD", rows, fields if isinstance(fields, list) else None)
+            if not out.empty:
                 frames.append(out)
+            else:
+                errors.append("TWSE RWD STOCK_DAY_ALL：無法解析或 data 為空")
+        except Exception as exc:
+            errors.append(f"TWSE RWD：{type(exc).__name__}: {exc}")
+
+        # 2) TPEx 最新日收盤。
+        try:
+            data = self._http_json(TPEX_DAILY_URL)
+            out = build_frame("TPEx", data if isinstance(data, list) else [])
+            if not out.empty:
+                frames.append(out)
+            else:
+                errors.append("TPEx OpenAPI：無法解析或回應為空")
+        except Exception as exc:
+            errors.append(f"TPEx OpenAPI：{type(exc).__name__}: {exc}")
+
+        # 3) TWSE OpenAPI 作為第三層 fallback。此端點可能有資料延遲，
+        # 所以只有真的等於 required_date 才接受成今日盤後資料。
+        if not any(x.get("source")=="TWSE-RWD" for x in frames):
+            try:
+                data = self._http_json(TWSE_DAILY_ALL_URL)
+                out = build_frame("TWSE-OpenAPI", data if isinstance(data, list) else [])
+                if not out.empty:
+                    latest = str(out["source_date"].max())
+                    if required_date and latest != required_date:
+                        errors.append(f"TWSE OpenAPI：最新日期 {latest} != 要求日期 {required_date}，不採用")
+                    else:
+                        frames.append(out)
+                else:
+                    errors.append("TWSE OpenAPI：無法解析或回應為空")
             except Exception as exc:
-                errors.append(f"{label}: parse failed: {type(exc).__name__}: {exc}")
+                errors.append(f"TWSE OpenAPI：{type(exc).__name__}: {exc}")
 
         if not frames:
             return pd.DataFrame(), "", errors
 
         combined = pd.concat(frames, ignore_index=True)
+        combined["source_date"] = combined["source_date"].astype(str).str[:10]
         valid_dates = pd.to_datetime(combined["source_date"], errors="coerce").dropna()
         if valid_dates.empty:
-            return pd.DataFrame(), "", errors
-
-        # 官方來源若存在不同日期，嚴格只取最新實際交易日。
+            return pd.DataFrame(), "", errors + ["官方行情：日期全部無法解析"]
         trade_date = valid_dates.max().date().isoformat()
-        out = combined[combined["source_date"].astype(str).str[:10] == trade_date].copy()
-
+        out = combined[combined["source_date"] == trade_date].copy()
         if out.empty:
-            return pd.DataFrame(), "", errors
+            return pd.DataFrame(), "", errors + ["官方行情：最新日期沒有有效資料"]
 
-        # 同一股票可能同時存在 TWSE / TPEx 來源；保留第一筆有效名稱與價格。
         out = out.sort_values(["symbol", "source"]).drop_duplicates("symbol", keep="first")
         out["date"] = pd.to_datetime(out["source_date"], errors="coerce")
         out["previous_close"] = out["close"] - out["change_value"]
@@ -249,15 +278,13 @@ class MarketMoverAnalyzer:
         out["change_percent"] = np.where(
             np.isfinite(out["change"]) & np.isfinite(out["previous_close"]) & (out["previous_close"] != 0),
             out["change"] / out["previous_close"] * 100.0,
-            0.0,
+            np.nan,
         )
         out["data_asof"] = trade_date
         out["is_trading_day"] = trade_date == today
         out["data_date_verified"] = True
-
         if required_date and trade_date != required_date:
             errors.append(f"official latest date {trade_date} != required date {required_date}")
-
         out = self._enrich_industries(out)
         return out, trade_date, errors
 
@@ -268,20 +295,22 @@ class MarketMoverAnalyzer:
         return m.group(1) if m else ""
 
     @staticmethod
-    def _normalize_snapshot_response(response: Any, market: str, fallback_date: str) -> pd.DataFrame:
-        """將 Fugle snapshot/quotes v1.0 回應統一成 DataFrame。
+    def _normalize_snapshot_response(response: Any, market: str, fallback_date: str = "") -> pd.DataFrame:
+        """將 Fugle snapshot/quotes 回應轉成 DataFrame，並盡可能從來源本身取得日期。
 
-        Fugle 回應格式為 {date,time,market,data:[...]}；股票資料位於 data。
+        Fugle 文件的回應為 {date,time,market,data:[...]}；data 列另含 type、symbol、
+        closePrice、changePercent、lastUpdated 等欄位。若 wrapper 把頂層 date 拿掉，
+        再從列內 date 或 lastUpdated 還原；絕不單靠程式當天日期冒充來源日期。
         """
         if isinstance(response, dict):
             rows = response.get("data", [])
             if not isinstance(rows, list):
                 return pd.DataFrame()
-            top_date = str(response.get("date") or fallback_date).strip()
+            top_date = str(response.get("date") or "").strip()
             top_time = str(response.get("time") or "").strip()
         elif isinstance(response, list):
             rows = [x for x in response if isinstance(x, dict)]
-            top_date = fallback_date
+            top_date = ""
             top_time = ""
         else:
             return pd.DataFrame()
@@ -310,21 +339,14 @@ class MarketMoverAnalyzer:
 
         df["symbol"] = df["symbol"].map(clean_symbol)
         df["close"] = df["close"].map(MarketMoverAnalyzer._float)
-        if "change" in df.columns:
-            df["change"] = df["change"].map(MarketMoverAnalyzer._float)
-        else:
-            df["change"] = np.nan
-        if "change_percent" in df.columns:
-            df["change_percent"] = df["change_percent"].map(MarketMoverAnalyzer._float)
-        else:
-            df["change_percent"] = np.nan
+        df["change"] = df["change"].map(MarketMoverAnalyzer._float) if "change" in df.columns else np.nan
+        df["change_percent"] = df["change_percent"].map(MarketMoverAnalyzer._float) if "change_percent" in df.columns else np.nan
 
         previous = None
         if "previousClose" in df.columns:
             previous = df["previousClose"].map(MarketMoverAnalyzer._float)
         elif "previous_close" in df.columns:
             previous = df["previous_close"].map(MarketMoverAnalyzer._float)
-
         if previous is not None:
             missing_pct = ~np.isfinite(df["change_percent"])
             calc_pct = np.where(
@@ -334,94 +356,194 @@ class MarketMoverAnalyzer:
             )
             df.loc[missing_pct, "change_percent"] = calc_pct[missing_pct]
 
-            missing_change = ~np.isfinite(df["change"])
-            calc_change = np.where(
-                missing_change & np.isfinite(df["change_percent"]) & np.isfinite(previous),
-                previous * df["change_percent"] / 100.0,
-                np.nan,
-            )
-            df.loc[missing_change, "change"] = calc_change[missing_change]
+        # 還原實際日期。
+        date_series = pd.Series([top_date] * len(df), index=df.index, dtype="object")
+        for c in ("date", "tradeDate", "snapshotDate", "dataDate"):
+            if c in df.columns:
+                vals = df[c].astype(str).str.strip()
+                mask = date_series.astype(str).str.strip().isin(["", "nan", "None", "NaT"])
+                date_series.loc[mask] = vals.loc[mask]
+
+        parsed = pd.to_datetime(date_series, errors="coerce")
+        # 若沒有日期，再由 lastUpdated（Fugle 為 epoch microseconds）推導。
+        if "last_updated" in df.columns:
+            try:
+                epoch = pd.to_numeric(df["last_updated"], errors="coerce")
+                # 常見為 microseconds；也容忍 milliseconds / seconds。
+                unit = "us"
+                finite = epoch.dropna()
+                if not finite.empty and float(finite.median()) < 10_000_000_000:
+                    unit = "s"
+                elif not finite.empty and float(finite.median()) < 10_000_000_000_000:
+                    unit = "ms"
+                ep = pd.to_datetime(epoch, unit=unit, errors="coerce", utc=True).dt.tz_convert("Asia/Taipei")
+                parsed = parsed.fillna(ep)
+            except Exception:
+                pass
+        df["date"] = parsed
+        df["data_date_verified"] = df["date"].notna()
+        df["data_asof"] = df["date"].dt.strftime("%Y-%m-%d").fillna("")
 
         df = df[df["symbol"].astype(str).str.len().between(4, 6) & np.isfinite(df["close"])].copy()
-        if df.empty:
-            return pd.DataFrame()
-
-        parsed_dates = pd.to_datetime(df["snapshot_date"], errors="coerce")
-        df["date"] = parsed_dates
-        df["data_date_verified"] = parsed_dates.notna()
-        df["data_asof"] = df["snapshot_date"].astype(str).str[:10]
-        df.loc[df["data_asof"].isin(["", "nan", "None"]), "data_asof"] = fallback_date
         return df
 
-    def _snapshot_universe(self) -> pd.DataFrame:
-        """取得市場全集；盤後優先使用 Fugle snapshot/quotes。
+    @staticmethod
+    def _filter_tradeable_equity_rows(df: pd.DataFrame) -> pd.DataFrame:
+        """只保留現貨股票／ETF，排除權證、指數、零股等非主體市場標的。
 
-        重要修正：Fugle v1.0 snapshot/quotes 回傳 dict，股票資料在 data。
-        舊版直接 pd.DataFrame(response) 會導致整個 snapshot 被丟棄。
+        Fugle snapshot/quotes 的 `type` 欄位會區分 EQUITY / WARRANT / INDEX /
+        ODDLOT；`EQUITY` 同時涵蓋一般股票與 ETF，因此適合盤後「股票市場
+        漲跌重點」使用。若某些 client wrapper 未保留 `type`，再以名稱做
+        保守的權證排除，避免把權證 +800%、+1500% 等倍率誤當成股票。
         """
+        if df is None or df.empty:
+            return pd.DataFrame()
+
+        out = df.copy()
+
+        if "type" in out.columns:
+            t = out["type"].astype(str).str.upper().str.strip()
+            # 明確只留 Fugle 的現貨 EQUITY。
+            known = t[t.notna() & ~t.isin({"", "NAN", "NONE"})]
+            if not known.empty:
+                out = out[t.eq("EQUITY")].copy()
+
+        if out.empty:
+            return out
+
+        # 某些 wrapper 可能把 type 丟掉；以權證常見名稱特徵做第二層保護。
+        if "name" in out.columns:
+            name = out["name"].astype(str).str.strip()
+            warrant_terms = r"認購|認售|購[0-9A-Za-z]*|售[0-9A-Za-z]*|牛證|熊證|權證"
+            out = out[~name.str.contains(warrant_terms, regex=True, na=False)].copy()
+
+        # 明確排除常見指數／非個股代碼。
+        sym = out["symbol"].astype(str).str.upper().str.strip()
+        out = out[~sym.str.startswith(("IX", "TX"), na=False)].copy()
+
+        return out
+
+    def _resolve_fugle_api_key(self) -> str:
+        """從環境、FugleClient 或 stock_api 模組找 Key；不在 log 印出 Key。"""
+        candidates = [os.getenv("FUGLE_API_KEY", "").strip()]
+        for attr in ("api_key", "_api_key", "key", "_key"):
+            try:
+                value = str(getattr(self.client, attr, "") or "").strip()
+                if value:
+                    candidates.append(value)
+            except Exception:
+                pass
+        try:
+            if hasattr(self.client, "session"):
+                value = str(getattr(self.client.session, "headers", {}).get("X-API-KEY", "") or "").strip()
+                if value:
+                    candidates.append(value)
+        except Exception:
+            pass
+        try:
+            import stock_api as _stock_api
+            for name in ("FUGLE_API_KEY", "API_KEY", "fugle_api_key"):
+                value = str(getattr(_stock_api, name, "") or "").strip()
+                if value:
+                    candidates.append(value)
+        except Exception:
+            pass
+        for value in candidates:
+            if value and value.lower() not in {"none", "null", "your_api_key"}:
+                return value
+        return ""
+
+    def _direct_fugle_snapshot(self, market: str) -> Any:
+        """直接呼叫 Fugle v1.0 snapshot API，作為 FugleClient wrapper 的 fallback。"""
+        key = self._resolve_fugle_api_key()
+        if not key:
+            raise RuntimeError("找不到 FUGLE_API_KEY")
+        url = f"https://api.fugle.tw/marketdata/v1.0/stock/snapshot/quotes/{market}"
+        r = self.session.get(
+            url,
+            params={"type": "ALLBUT0999"},
+            headers={"X-API-KEY": key},
+            timeout=30,
+        )
+        r.raise_for_status()
+        return r.json()
+
+    def _snapshot_universe(self) -> pd.DataFrame:
+        """取得全市場股票／ETF行情，盤後只接受來源可驗證的今日資料。"""
         now = pd.Timestamp.now(tz="Asia/Taipei")
         today = now.strftime("%Y-%m-%d")
         after_close = os.getenv("AFTER_CLOSE_FAST_MODE", "").strip().lower() in {"1", "true", "yes", "on"}
         after_close = after_close or (now.hour > 14 or (now.hour == 14 and now.minute >= 30))
 
+        # 1) Fugle snapshot：盤後即時／收盤快照。優先使用現有 wrapper，再用
+        # 直接 REST API fallback；Fugle 文件明確提供 date/time/data 及 type。
         frames: list[pd.DataFrame] = []
         fugle_errors: list[str] = []
-
-        # 1) Fugle snapshot/quotes：一次拿上市、上櫃全市場。
         for market in ("TSE", "OTC"):
+            responses = []
             try:
-                response = self.client.snapshot_quotes(market=market)
-                df = self._normalize_snapshot_response(response, market, today)
-                if df.empty:
-                    fugle_errors.append(f"Fugle snapshot/quotes/{market}: 無有效資料")
-                    continue
-
-                # API 文件本身提供頂層 date。若沒有 date，盤後因為交易日已由
-                # 上層 market calendar 確認，使用本次執行日作為時間錨點。
-                if after_close:
-                    df["data_asof"] = today
-                    df["data_date_verified"] = True
-                    df["is_trading_day"] = True
-                else:
-                    df["is_trading_day"] = df["data_asof"].astype(str).str[:10].eq(today)
-
-                df["data_source"] = f"Fugle snapshot_quotes/{market}"
-                df = self._enrich_industries(df)
-                frames.append(df)
+                try:
+                    responses.append(self.client.snapshot_quotes(market=market, type="ALLBUT0999"))
+                except TypeError:
+                    responses.append(self.client.snapshot_quotes(market=market))
             except Exception as exc:
-                fugle_errors.append(f"Fugle snapshot/quotes/{market}: {type(exc).__name__}: {exc}")
+                fugle_errors.append(f"FugleClient {market}: {type(exc).__name__}: {exc}")
+            try:
+                responses.append(self._direct_fugle_snapshot(market))
+            except Exception as exc:
+                fugle_errors.append(f"Fugle REST {market}: {type(exc).__name__}: {exc}")
+
+            accepted = False
+            seen = set()
+            for response in responses:
+                key = repr(response)[:200]
+                if key in seen:
+                    continue
+                seen.add(key)
+                try:
+                    df = self._normalize_snapshot_response(response, market)
+                    if df.empty:
+                        continue
+                    df = self._filter_tradeable_equity_rows(df)
+                    if df.empty:
+                        continue
+                    actual_dates = pd.to_datetime(df["date"], errors="coerce").dropna() if "date" in df.columns else pd.Series(dtype="datetime64[ns]")
+                    actual_date = actual_dates.max().date().isoformat() if not actual_dates.empty else ""
+                    if not actual_date:
+                        # 最後更新時間無法解析時，不允許盤後把今天當資料日期。
+                        fugle_errors.append(f"Fugle {market}: 有行情但無法驗證資料日期")
+                        continue
+                    if after_close and actual_date != today:
+                        fugle_errors.append(f"Fugle {market}: 實際日期 {actual_date} != {today}")
+                        continue
+                    df["data_asof"] = actual_date
+                    df["is_trading_day"] = actual_date == today
+                    df["data_date_verified"] = True
+                    df["data_source"] = f"Fugle snapshot_quotes/{market}"
+                    frames.append(self._enrich_industries(df))
+                    accepted = True
+                    break
+                except Exception as exc:
+                    fugle_errors.append(f"Fugle {market} parse: {type(exc).__name__}: {exc}")
+            if not accepted:
+                continue
 
         if frames:
             combined = pd.concat(frames, ignore_index=True)
+            combined = self._filter_tradeable_equity_rows(combined)
             combined = combined[np.isfinite(combined["close"])].copy()
             if not combined.empty:
-                # 先取今天的資料；若盤後沒有日期欄位，前面已用今天做錨定。
+                dates = combined["data_asof"].astype(str).str[:10]
                 if after_close:
-                    combined = combined[combined["data_asof"].astype(str).str[:10] == today].copy()
-                else:
-                    combined = combined[combined["data_asof"].astype(str).str[:10] == today].copy()
-
+                    combined = combined[dates == today].copy()
                 if not combined.empty:
-                    combined["data_asof"] = today
-                    combined["is_trading_day"] = True
+                    combined["data_asof"] = today if after_close else combined["data_asof"].astype(str).str[:10]
+                    combined["is_trading_day"] = True if after_close else combined["data_asof"].eq(today)
                     combined["data_date_verified"] = True
-
-                    # 重新確保 changePercent 可計算。
-                    if "previousClose" in combined.columns:
-                        prev = combined["previousClose"].map(self._float)
-                    else:
-                        prev = combined["close"] - combined["change"]
-                    missing_pct = ~np.isfinite(combined["change_percent"])
-                    calc_pct = np.where(
-                        np.isfinite(combined["change"]) & np.isfinite(prev) & (prev != 0),
-                        combined["change"] / prev * 100.0,
-                        np.nan,
-                    )
-                    combined.loc[missing_pct, "change_percent"] = calc_pct[missing_pct]
                     self._save_snapshot(combined, today)
                     return combined
 
-        # 2) 官方 TWSE / TPEx 日收盤。
+        # 2) 官方同日盤後行情：RWD / TPEx。
         official, official_date, official_errors = self._official_daily_snapshot(required_date=today)
         if not official.empty:
             if official_date == today:
@@ -431,24 +553,31 @@ class MarketMoverAnalyzer:
                 official["data_date_verified"] = True
                 self._save_snapshot(official, today)
                 return official
+            # 官方只拿到舊日期：可以用來判斷休市，但不會冒充今日。
             official["data_source"] = "TWSE/TPEx官方最近交易日"
             official["data_asof"] = official_date
             official["is_trading_day"] = False
             official["data_date_verified"] = True
             return official
 
-        # 3) 今日已驗證 cache。
+        # 3) 今天已驗證快取。
         cached, cached_asof = self._load_cached_snapshot()
         cache_date = self._cache_date(cached_asof)
         if not cached.empty and cache_date == today:
-            cached = self._enrich_industries(cached)
-            cached["data_source"] = "當日已驗證市場快取"
-            cached["data_asof"] = today
-            cached["is_trading_day"] = True
-            cached["data_date_verified"] = True
-            return cached
+            cached = self._filter_tradeable_equity_rows(self._enrich_industries(cached))
+            if not cached.empty:
+                cached["data_source"] = "當日已驗證市場快取"
+                cached["data_asof"] = today
+                cached["is_trading_day"] = True
+                cached["data_date_verified"] = True
+                return cached
 
-        return pd.DataFrame()
+        empty = pd.DataFrame()
+        empty.attrs["official_errors"] = official_errors
+        empty.attrs["fugle_errors"] = fugle_errors
+        empty.attrs["today"] = today
+        return empty
+
     def _history(self, symbol: str) -> pd.DataFrame:
         path = self.cache_dir / f"{clean_symbol(symbol)}.csv"
         try:
@@ -538,7 +667,20 @@ class MarketMoverAnalyzer:
                     "note": "今天沒有台股交易，未將最近交易日資料冒充今日盤後行情。",
                 }
         if universe.empty:
-            return {"generated_at": pd.Timestamp.now().isoformat(), "movers": [], "industry_summary": [], "errors": ["目前沒有可用市場 snapshot；請先於交易日成功取得一次全市場行情快照。"]}
+            details = []
+            details.extend(list(universe.attrs.get("official_errors", [])))
+            details.extend(list(universe.attrs.get("fugle_errors", [])))
+            if not details:
+                details.append("目前沒有可用市場行情。")
+            return {
+                "generated_at": pd.Timestamp.now().isoformat(),
+                "movers": [],
+                "industry_summary": [],
+                "errors": details,
+                "data_asof": "",
+                "is_trading_day": None,
+                "data_date_verified": False,
+            }
         universe = universe[np.isfinite(universe["change_percent"])].copy()
         if universe.empty:
             return {"generated_at": pd.Timestamp.now().isoformat(), "movers": [], "industry_summary": [], "errors": ["目前 snapshot 沒有有效漲跌幅；可能是休市日。"]}

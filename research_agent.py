@@ -1123,37 +1123,41 @@ class ResearchAgent:
                     })
         fundamentals = {s: self._select_symbol_revenue(s, twse_rev, tpex_rev) for s in symbols}
 
-        # 法說會：正常盤後會更新 cache；若啟用快速模式，優先直接讀取早報/前一份已完成 cache，避免重複分析。
+        # 法說會已移到早報。盤後 FAST MODE 不再讀取／分析法說會，
+        # 避免盤後重複內容、重複呼叫 Agent，也避免 Email 再次顯示法說。
+        # 法說會已移到早報；盤後報告永遠不建立 earnings_calls。
+        # 即使非 FAST MODE 也不要把舊 cache 帶進盤後 Email。
         earnings_calls = []
         earnings_memo_report = {}
-        try:
-            cache_files = sorted(self.research_dir.glob("fugle_earnings_memo_*.json"), reverse=True)
-            loaded_cache = None
-            for cache_file in cache_files:
-                try:
-                    obj = json.loads(cache_file.read_text(encoding="utf-8"))
-                except Exception:
-                    continue
-                if isinstance(obj, dict) and isinstance(obj.get("items"), list):
-                    loaded_cache = obj
-                    obj["cache_file"] = str(cache_file)
-                    break
+        if not fast_mode and str(os.getenv("RESEARCH_INCLUDE_EARNINGS", "false")).lower() in {"1", "true", "yes", "on"}:
+            try:
+                cache_files = sorted(self.research_dir.glob("fugle_earnings_memo_*.json"), reverse=True)
+                loaded_cache = None
+                for cache_file in cache_files:
+                    try:
+                        obj = json.loads(cache_file.read_text(encoding="utf-8"))
+                    except Exception:
+                        continue
+                    if isinstance(obj, dict) and isinstance(obj.get("items"), list):
+                        loaded_cache = obj
+                        obj["cache_file"] = str(cache_file)
+                        break
 
-            use_cache_only = fast_mode or _env_bool("EARNINGS_USE_CACHE", False)
-            if use_cache_only and loaded_cache:
-                earnings_memo_report = loaded_cache
-            else:
-                ea = EarningsCallAgent(self.base, ollama_model=getattr(self, "ollama_model", DEFAULT_OLLAMA_MODEL))
-                earnings_memo_report = ea.daily_run(
-                    days=int(os.getenv("EARNINGS_MEMO_LOOKBACK_DAYS", "5")),
-                    limit=int(os.getenv("EARNINGS_MEMO_MAX_ARTICLES", "80")),
-                    force=_env_bool("EARNINGS_FORCE_REFRESH", False),
-                    watchlist=requested_symbols,
-                )
-            earnings_calls = earnings_memo_report.get("items", [])
-        except Exception as exc:
-            earnings_memo_report = {"items": [], "errors": [{"error": f"Fugle 法說會 Agent 失敗：{exc}"}], "daily_digest": {}}
-            earnings_calls = []
+                use_cache_only = _env_bool("EARNINGS_USE_CACHE", False)
+                if use_cache_only and loaded_cache:
+                    earnings_memo_report = loaded_cache
+                else:
+                    ea = EarningsCallAgent(self.base, ollama_model=getattr(self, "ollama_model", DEFAULT_OLLAMA_MODEL))
+                    earnings_memo_report = ea.daily_run(
+                        days=int(os.getenv("EARNINGS_MEMO_LOOKBACK_DAYS", "5")),
+                        limit=int(os.getenv("EARNINGS_MEMO_MAX_ARTICLES", "80")),
+                        force=_env_bool("EARNINGS_FORCE_REFRESH", False),
+                        watchlist=requested_symbols,
+                    )
+                earnings_calls = earnings_memo_report.get("items", [])
+            except Exception as exc:
+                earnings_memo_report = {"items": [], "errors": [{"error": f"Fugle 法說會 Agent 失敗：{exc}"}], "daily_digest": {}}
+                earnings_calls = []
 
         # 市場近期漲跌：全市場當日漲跌前段候選 + 自選股補充，再以 5/20 交易日驗證。
         try:

@@ -20,6 +20,7 @@ from zoneinfo import ZoneInfo
 
 from morning_report_agent import build_morning_report
 from email_agent import EmailAgent
+from run_finance_info_update import update_finance_info
 
 BASE = Path(__file__).resolve().parent
 LOG_DIR = BASE / "output" / "scheduler_logs"
@@ -113,6 +114,13 @@ def main() -> int:
     try:
         watchlist = load_watchlist()
         write_log(f"WATCHLIST_COUNT={len(watchlist)}")
+        write_log("[0/2] 更新 08:30 財經資訊快取")
+        try:
+            finance_result = update_finance_info(BASE, watchlist=watchlist, refresh_news=True)
+            write_log("FINANCE_UPDATE=" + json.dumps(finance_result, ensure_ascii=False, default=str))
+        except Exception as exc:
+            write_log(f"FINANCE_UPDATE_WARNING={type(exc).__name__}: {exc}")
+
         write_log("[1/2] 建立早報研究資料")
         report = build_morning_report(BASE, watchlist=watchlist)
         ok, message = validate_report(report)
@@ -151,25 +159,7 @@ def main() -> int:
             write_status("email_disabled", message=message)
             return 0
 
-        # 相容不同版本的 EmailAgent：
-        # 1. 新版優先使用 send_latest_morning_report()。
-        # 2. 舊版若沒有該方法，直接把本次剛建立的 report 傳給 send_report()。
-        #    這樣不會因為 EmailAgent 版本落後而讓整個早報排程失敗。
-        if hasattr(email, "send_latest_morning_report"):
-            write_log("EMAIL_METHOD=send_latest_morning_report")
-            result = email.send_latest_morning_report(force=True)
-        elif hasattr(email, "send_report"):
-            write_log("EMAIL_METHOD=send_report(fresh_report)")
-            result = email.send_report(report, force=True)
-        else:
-            result = {
-                "sent": False,
-                "error": "目前的 EmailAgent 沒有 send_latest_morning_report() 或 send_report()。",
-            }
-
-        if not isinstance(result, dict):
-            result = {"sent": bool(result), "raw_result": result}
-
+        result = email.send_report(report, force=True)
         write_log("EMAIL_RESULT=" + json.dumps(result, ensure_ascii=False, default=str))
         if result.get("sent"):
             write_status("success", report_path=report.get("json_path"), email=result)

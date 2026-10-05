@@ -93,40 +93,114 @@ class MorningResearchAgent:
         return {}
 
     def _load_recent_earnings_cache(self, days: int = 5, watchlist: list[str] | None = None) -> dict[str, Any]:
-        files = sorted(self.output_dir.glob("fugle_earnings_memo_*.json"), reverse=True)
-        cutoff = datetime.now(TAIPEI).date() - timedelta(days=max(1, int(days)))
-        chosen: Path | None = None
-        for p in files:
-            m = re.search(r"fugle_earnings_memo_(20\d{2}-\d{2}-\d{2})\.json$", p.name)
-            if not m:
-                continue
+        """讀取最近 N 天所有 Fugle 法說 memo，依實際 event_date 過濾，不只取單一日檔。"""
+        today = datetime.now(TAIPEI).date()
+        cutoff = today - timedelta(days=max(1, int(days)))
+        records: list[dict[str, Any]] = []
+        errors: list[dict[str, str]] = []
+
+        def extract_items(data: Any) -> list[dict[str, Any]]:
+            if isinstance(data, dict):
+                for key in ("items", "earnings_calls", "events", "data"):
+                    value = data.get(key)
+                    if isinstance(value, list):
+                        return [x for x in value if isinstance(x, dict)]
+                return [data] if data.get("event_date") or data.get("symbol") else []
+            if isinstance(data, list):
+                return [x for x in data if isinstance(x, dict)]
+            return []
+
+        for path in sorted(self.output_dir.glob("fugle_earnings_memo_*.json"), reverse=True):
             try:
-                d = datetime.strptime(m.group(1), "%Y-%m-%d").date()
-            except Exception:
+                data = json.loads(path.read_text(encoding="utf-8"))
+            except Exception as exc:
+                errors.append({"error": f"{path.name}: {exc}"})
                 continue
-            if d >= cutoff:
-                chosen = p
-                break
-        if chosen:
-            try:
-                data = json.loads(chosen.read_text(encoding="utf-8"))
-                if isinstance(data, dict):
-                    data["cache_file"] = str(chosen)
-                    return data
-            except Exception:
-                pass
-        # 沒有現成 cache：補抓一次，但 EarningsCallAgent 本身使用 DB 避免重複分析。
+
+            for item in extract_items(data):
+                event_dt = None
+                for key in ("event_date", "eventDate", "date", "published_at", "published_time", "created_at"):
+                    raw = item.get(key)
+                    if raw:
+                        try:
+                            event_dt = pd.to_datetime(raw, errors="coerce")
+                            if pd.notna(event_dt):
+                                event_dt = event_dt.date()
+                                break
+                        except Exception:
+                            pass
+                if event_dt is None:
+                    # 檔名只作最後 fallback，不作主要日期依據。
+                    m = re.search(r"fugle_earnings_memo_(20\d{2}-\d{2}-\d{2})\.json$", path.name)
+                    if m:
+                        try:
+                            event_dt = datetime.strptime(m.group(1), "%Y-%m-%d").date()
+                        except Exception:
+                            pass
+                if event_dt is None or not (cutoff <= event_dt <= today):
+                    continue
+
+                row = dict(item)
+                row["event_date"] = event_dt.isoformat()
+                row["cache_file"] = str(path)
+                records.append(row)
+
+        # 依日期＋股票＋來源去重。
+        dedup: dict[tuple[str, str, str], dict[str, Any]] = {}
+        for row in records:
+            key = (
+                str(row.get("event_date", "")),
+                _clean_symbol(row.get("symbol") or row.get("code") or row.get("stock_code")),
+                str(row.get("source_url") or row.get("url") or row.get("title") or ""),
+            )
+            dedup[key] = row
+        records = sorted(
+            dedup.values(),
+            key=lambda x: (
+                str(x.get("event_date", "")),
+                str(x.get("symbol", "")),
+            ),
+            reverse=True,
+        )
+
+        if records:
+            return {
+                "items": records,
+                "errors": errors,
+                "daily_digest": {},
+                "cache_file": "multiple_fugle_earnings_memo_files",
+            }
+
+        # 沒有現成 cache：補抓一次，EarningsCallAgent 內部 DB 會避免重複。
         try:
             agent = EarningsCallAgent(self.base, ollama_model=self.ollama_model)
             out = agent.daily_run(
-                days=int(os.getenv("EARNINGS_MEMO_LOOKBACK_DAYS", "5")),
+                days=int(os.getenv("EARNINGS_MEMO_LOOKBACK_DAYS", str(days))),
                 limit=int(os.getenv("EARNINGS_MEMO_MAX_ARTICLES", "80")),
                 force=_clean_text(os.getenv("EARNINGS_FORCE_REFRESH", "false")).lower() in {"1", "true", "yes", "on"},
                 watchlist=watchlist or [],
             )
-            return out if isinstance(out, dict) else {}
+            if isinstance(out, dict):
+                # 再次依實際事件日期過濾，防止 Agent 回傳舊 memo。
+                items = []
+                for item in out.get("items", []) or []:
+                    if not isinstance(item, dict):
+                        continue
+                    raw = item.get("event_date") or item.get("date") or item.get("published_at")
+                    try:
+                        dt = pd.to_datetime(raw, errors="coerce").date()
+                    except Exception:
+                        dt = None
+                    if dt is not None and cutoff <= dt <= today:
+                        item = dict(item)
+                        item["event_date"] = dt.isoformat()
+                        items.append(item)
+                out["items"] = items
+                return out
+            return {}
         except Exception as exc:
-            return {"items": [], "errors": [{"error": f"早報法說會 cache 補抓失敗：{exc}"}], "daily_digest": {}}
+            return {"items": [], "errors": errors + [{"error": f"早報法說會 cache 補抓失敗：{exc}"}], "daily_digest": {}}
+
 
     def _load_cnyes_cache(self, report_date: str) -> dict[str, Any]:
         crawler = CnyesNewsCrawler(
