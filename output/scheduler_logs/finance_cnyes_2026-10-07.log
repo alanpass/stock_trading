@@ -1,0 +1,60 @@
+Traceback (most recent call last):
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_cnyes_news_nightly.py", line 47, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_cnyes_news_nightly.py", line 26, in main
+    result = crawler.crawl(days=1, force=args.force, max_articles=args.max_articles)
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\cnyes_news_crawler.py", line 690, in crawl
+    enrich_limit = int(os.getenv("CNYES_DETAIL_ENRICH_MAX", "120"))
+                       ^^
+NameError: name 'os' is not defined. Did you forget to import 'os'?
+Traceback (most recent call last):
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_cnyes_news_nightly.py", line 47, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_cnyes_news_nightly.py", line 26, in main
+    result = crawler.crawl(days=1, force=args.force, max_articles=args.max_articles)
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\cnyes_news_crawler.py", line 690, in crawl
+    enrich_limit = int(os.getenv("CNYES_DETAIL_ENRICH_MAX", "120"))
+                       ^^
+NameError: name 'os' is not defined. Did you forget to import 'os'?
+Traceback (most recent call last):
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_cnyes_news_nightly.py", line 47, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_cnyes_news_nightly.py", line 26, in main
+    result = crawler.crawl(days=1, force=args.force, max_articles=args.max_articles)
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\cnyes_news_crawler.py", line 690, in crawl
+    enrich_limit = int(os.getenv("CNYES_DETAIL_ENRICH_MAX", "120"))
+                       ^^
+NameError: name 'os' is not defined. Did you forget to import 'os'?
+Traceback (most recent call last):
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_cnyes_news_nightly.py", line 47, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_cnyes_news_nightly.py", line 26, in main
+    result = crawler.crawl(days=1, force=args.force, max_articles=args.max_articles)
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\cnyes_news_crawler.py", line 690, in crawl
+    enrich_limit = int(os.getenv("CNYES_DETAIL_ENRICH_MAX", "120"))
+                       ^^
+NameError: name 'os' is not defined. Did you forget to import 'os'?
+Traceback (most recent call last):
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_cnyes_news_nightly.py", line 47, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_cnyes_news_nightly.py", line 26, in main
+    result = crawler.crawl(days=1, force=args.force, max_articles=args.max_articles)
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\cnyes_news_crawler.py", line 690, in crawl
+    enrich_limit = int(os.getenv("CNYES_DETAIL_ENRICH_MAX", "120"))
+                       ^^
+NameError: name 'os' is not defined. Did you forget to import 'os'?
+Traceback (most recent call last):
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_cnyes_news_nightly.py", line 47, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_cnyes_news_nightly.py", line 26, in main
+    result = crawler.crawl(days=1, force=args.force, max_articles=args.max_articles)
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\cnyes_news_crawler.py", line 690, in crawl
+    enrich_limit = int(os.getenv("CNYES_DETAIL_ENRICH_MAX", "120"))
+                       ^^
+NameError: name 'os' is not defined. Did you forget to import 'os'?

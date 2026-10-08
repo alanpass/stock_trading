@@ -1,0 +1,21 @@
+[2026-10-03T08:30:06+08:00] ========================================================================
+[2026-10-03T08:30:06+08:00] AI TW STOCK MORNING REPORT
+[2026-10-03T08:30:06+08:00] BASE=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+[2026-10-03T08:30:06+08:00] PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\pythonw.exe
+[2026-10-03T08:30:06+08:00] OLLAMA_HOST=http://127.0.0.1:11434
+[2026-10-03T08:30:06+08:00] OLLAMA_MODEL=qwen3:8b
+[2026-10-03T08:30:06+08:00] WATCHLIST_COUNT=22
+[2026-10-03T08:30:06+08:00] [1/2] 建立早報研究資料
+[2026-10-03T08:31:29+08:00] REPORT_VALIDATION=True
+[2026-10-03T08:31:29+08:00] REPORT_VALIDATION_MESSAGE=report_date=2026-10-03, CNYES=323, news_summary=10
+[2026-10-03T08:31:29+08:00] MORNING_AGENT_STATUS=morning_fallback_evidence
+[2026-10-03T08:31:29+08:00] CNYES_CACHE_DATES=['2026-10-02', '2026-10-01']
+[2026-10-03T08:31:29+08:00] CNYES_ARTICLES=323
+[2026-10-03T08:31:29+08:00] NEWS_SUMMARY_COUNT=10
+[2026-10-03T08:31:29+08:00] RECOMMENDED_INDUSTRIES=8
+[2026-10-03T08:31:29+08:00] RECOMMENDED_STOCKS=12
+[2026-10-03T08:31:29+08:00] [2/2] Email Agent
+[2026-10-03T08:31:29+08:00] EMAIL_CONFIGURED=True AUTO_SEND=True RECIPIENT=a1113359@mail.nuk.edu.tw
+[2026-10-03T08:31:29+08:00] EMAIL_METHOD=send_latest_morning_report
+[2026-10-03T08:31:39+08:00] EMAIL_RESULT={"sent": true, "skipped": false, "report_date": "2026-10-03", "recipient": "a1113359@mail.nuk.edu.tw", "subject": "【AI 台股盤後財報】2026-10-03｜AI早報 × 法說會 × 財經新聞", "attachments": ["morning_2026-10-03.json", "morning_2026-10-03.md"], "agent_summary_status": "morning_fallback_evidence", "smtp_log": ["CONNECT smtp.gmail.com:587 STARTTLS", "CONNECTED", "EHLO 250", "STARTTLS", "STARTTLS_OK", "EHLO_TLS 250", "LOGIN", "LOGIN_OK", "SEND_OK"], "status": {"enabled": true, "auto_send": true, "configured": true, "sender": "10501500978aaa@gmail.com", "recipient": "a1113359@mail.nuk.edu.tw", "smtp_host": "smtp.gmail.com", "smtp_port": 587, "use_ssl": false, "attach_reports": true, "missing": [], "ollama_host": "http://127.0.0.1:11434", "ollama_model": "qwen3:8b", "env_path": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\.env"}}
+[2026-10-03T08:31:39+08:00] AI TW STOCK MORNING REPORT COMPLETED

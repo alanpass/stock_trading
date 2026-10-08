@@ -1,0 +1,249 @@
+========================================================================
+JOB=morning
+START=2026-10-06T00:14:13+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_morning_report.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+Traceback (most recent call last):
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_morning_report.py", line 21, in <module>
+    from morning_report_agent import build_morning_report
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\morning_report_agent.py", line 25, in <module>
+    from cnyes_news_agent import CnyesNewsDigestAgent
+ImportError: cannot import name 'CnyesNewsDigestAgent' from 'cnyes_news_agent' (C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\cnyes_news_agent.py). Did you mean: 'CnyesNewsAgent'?
+CHILD_RETURN_CODE=1
+FINAL_RETURN_CODE=1
+========================================================================
+JOB=morning
+START=2026-10-06T00:14:48+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_morning_report.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+Traceback (most recent call last):
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_morning_report.py", line 21, in <module>
+    from morning_report_agent import build_morning_report
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\morning_report_agent.py", line 25, in <module>
+    from cnyes_news_agent import CnyesNewsDigestAgent
+ImportError: cannot import name 'CnyesNewsDigestAgent' from 'cnyes_news_agent' (C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\cnyes_news_agent.py). Did you mean: 'CnyesNewsAgent'?
+CHILD_RETURN_CODE=1
+FINAL_RETURN_CODE=1
+========================================================================
+JOB=morning
+START=2026-10-06T00:27:49+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_morning_report.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+Traceback (most recent call last):
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_morning_report.py", line 21, in <module>
+    from morning_report_agent import build_morning_report
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\morning_report_agent.py", line 25, in <module>
+    from cnyes_news_agent import CnyesNewsDigestAgent
+ImportError: cannot import name 'CnyesNewsDigestAgent' from 'cnyes_news_agent' (C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\cnyes_news_agent.py). Did you mean: 'CnyesNewsAgent'?
+CHILD_RETURN_CODE=1
+FINAL_RETURN_CODE=1
+END=2026-10-06T00:27:49+08:00
+========================================================================
+JOB=morning
+START=2026-10-06T00:38:26+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_morning_report.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+[2026-10-06T00:38:26+08:00] ========================================================================
+[2026-10-06T00:38:26+08:00] AI TW STOCK MORNING REPORT
+[2026-10-06T00:38:26+08:00] BASE=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+[2026-10-06T00:38:26+08:00] PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+[2026-10-06T00:38:26+08:00] OLLAMA_HOST=http://127.0.0.1:11434
+[2026-10-06T00:38:26+08:00] OLLAMA_MODEL=qwen3:8b
+[2026-10-06T00:38:26+08:00] WATCHLIST_COUNT=22
+[2026-10-06T00:38:26+08:00] [1/2] 建立早報研究資料
+[2026-10-06T00:38:30+08:00] REPORT_VALIDATION=True
+[2026-10-06T00:38:30+08:00] REPORT_VALIDATION_MESSAGE=report_date=2026-10-06, CNYES=173, news_summary=10
+[2026-10-06T00:38:30+08:00] MORNING_AGENT_STATUS=morning_fallback_evidence
+[2026-10-06T00:38:30+08:00] CNYES_CACHE_DATES=['2026-10-05', '2026-10-04']
+[2026-10-06T00:38:30+08:00] CNYES_ARTICLES=173
+[2026-10-06T00:38:30+08:00] NEWS_SUMMARY_COUNT=10
+[2026-10-06T00:38:30+08:00] RECOMMENDED_INDUSTRIES=8
+[2026-10-06T00:38:30+08:00] RECOMMENDED_STOCKS=12
+[2026-10-06T00:38:30+08:00] [2/2] Email Agent
+[2026-10-06T00:38:30+08:00] EMAIL_CONFIGURED=True AUTO_SEND=True RECIPIENT=a1113359@mail.nuk.edu.tw
+[2026-10-06T00:38:30+08:00] EMAIL_METHOD=send_latest_morning_report
+[2026-10-06T00:38:48+08:00] EMAIL_RESULT={"sent": true, "skipped": false, "report_date": "2026-10-06", "recipient": "a1113359@mail.nuk.edu.tw", "recipients": ["a1113359@mail.nuk.edu.tw", "1628ming@gmail.com"], "failed_recipients": [], "subject": "【AI 台股盤後財報】2026-10-06｜AI早報 × 法說會 × 財經新聞", "attachments": ["morning_2026-10-06.json", "morning_2026-10-06.md"], "agent_summary_status": "morning_fallback_evidence", "smtp_log": ["a1113359@mail.nuk.edu.tw: CONNECT smtp.gmail.com:587 STARTTLS", "a1113359@mail.nuk.edu.tw: CONNECTED", "a1113359@mail.nuk.edu.tw: EHLO 250", "a1113359@mail.nuk.edu.tw: STARTTLS", "a1113359@mail.nuk.edu.tw: STARTTLS_OK", "a1113359@mail.nuk.edu.tw: EHLO_TLS 250", "a1113359@mail.nuk.edu.tw: LOGIN", "a1113359@mail.nuk.edu.tw: LOGIN_OK", "a1113359@mail.nuk.edu.tw: SEND_OK", "1628ming@gmail.com: CONNECT smtp.gmail.com:587 STARTTLS", "1628ming@gmail.com: CONNECTED", "1628ming@gmail.com: EHLO 250", "1628ming@gmail.com: STARTTLS", "1628ming@gmail.com: STARTTLS_OK", "1628ming@gmail.com: EHLO_TLS 250", "1628ming@gmail.com: LOGIN", "1628ming@gmail.com: LOGIN_OK", "1628ming@gmail.com: SEND_OK"], "status": {"enabled": true, "auto_send": true, "configured": true, "sender": "10501500978aaa@gmail.com", "recipient": "a1113359@mail.nuk.edu.tw", "smtp_host": "smtp.gmail.com", "smtp_port": 587, "use_ssl": false, "attach_reports": true, "missing": [], "ollama_host": "http://127.0.0.1:11434", "ollama_model": "qwen3:8b", "env_path": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\.env"}}
+[2026-10-06T00:38:48+08:00] AI TW STOCK MORNING REPORT COMPLETED
+CHILD_RETURN_CODE=0
+OUTPUT_VALIDATION=True
+OUTPUT_MESSAGE=Morning report OK: CNYES cache=173, summaries=10
+FINAL_RETURN_CODE=0
+END=2026-10-06T00:38:48+08:00
+========================================================================
+JOB=morning
+START=2026-10-06T01:12:50+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_morning_report.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+[2026-10-06T01:12:51+08:00] ========================================================================
+[2026-10-06T01:12:51+08:00] AI TW STOCK MORNING REPORT
+[2026-10-06T01:12:51+08:00] BASE=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+[2026-10-06T01:12:51+08:00] PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+[2026-10-06T01:12:51+08:00] OLLAMA_HOST=http://127.0.0.1:11434
+[2026-10-06T01:12:51+08:00] OLLAMA_MODEL=qwen3:8b
+[2026-10-06T01:12:51+08:00] WATCHLIST_COUNT=22
+[2026-10-06T01:12:51+08:00] [1/2] 建立早報研究資料
+[2026-10-06T01:12:54+08:00] REPORT_VALIDATION=True
+[2026-10-06T01:12:54+08:00] REPORT_VALIDATION_MESSAGE=report_date=2026-10-06, CNYES=78, news_summary=10
+[2026-10-06T01:12:54+08:00] MORNING_AGENT_STATUS=morning_fallback_evidence
+[2026-10-06T01:12:54+08:00] CNYES_CACHE_DATES=['2026-10-05', '2026-10-04']
+[2026-10-06T01:12:54+08:00] CNYES_ARTICLES=78
+[2026-10-06T01:12:54+08:00] NEWS_SUMMARY_COUNT=10
+[2026-10-06T01:12:54+08:00] RECOMMENDED_INDUSTRIES=3
+[2026-10-06T01:12:54+08:00] RECOMMENDED_STOCKS=3
+[2026-10-06T01:12:54+08:00] [2/2] Email Agent
+[2026-10-06T01:12:54+08:00] EMAIL_CONFIGURED=True AUTO_SEND=True RECIPIENT=a1113359@mail.nuk.edu.tw
+[2026-10-06T01:13:03+08:00] EMAIL_RESULT={"sent": true, "skipped": false, "report_date": "2026-10-06", "recipient": "a1113359@mail.nuk.edu.tw", "recipients": ["a1113359@mail.nuk.edu.tw", "1628ming@gmail.com"], "failed_recipients": [], "subject": "【AI 台股盤後財報】2026-10-06｜AI早報 × 法說會 × 財經資訊", "attachments": ["morning_2026-10-06.json", "morning_2026-10-06.md"], "agent_summary_status": "morning_fallback_evidence", "smtp_log": ["a1113359@mail.nuk.edu.tw: CONNECT smtp.gmail.com:587 STARTTLS", "a1113359@mail.nuk.edu.tw: CONNECTED", "a1113359@mail.nuk.edu.tw: EHLO 250", "a1113359@mail.nuk.edu.tw: STARTTLS", "a1113359@mail.nuk.edu.tw: STARTTLS_OK", "a1113359@mail.nuk.edu.tw: EHLO_TLS 250", "a1113359@mail.nuk.edu.tw: LOGIN", "a1113359@mail.nuk.edu.tw: LOGIN_OK", "a1113359@mail.nuk.edu.tw: SEND_OK", "1628ming@gmail.com: CONNECT smtp.gmail.com:587 STARTTLS", "1628ming@gmail.com: CONNECTED", "1628ming@gmail.com: EHLO 250", "1628ming@gmail.com: STARTTLS", "1628ming@gmail.com: STARTTLS_OK", "1628ming@gmail.com: EHLO_TLS 250", "1628ming@gmail.com: LOGIN", "1628ming@gmail.com: LOGIN_OK", "1628ming@gmail.com: SEND_OK"], "status": {"enabled": true, "auto_send": true, "configured": true, "sender": "10501500978aaa@gmail.com", "recipient": "a1113359@mail.nuk.edu.tw", "smtp_host": "smtp.gmail.com", "smtp_port": 587, "use_ssl": false, "attach_reports": true, "missing": [], "ollama_host": "http://127.0.0.1:11434", "ollama_model": "qwen3:8b", "env_path": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\.env"}}
+[2026-10-06T01:13:03+08:00] AI TW STOCK MORNING REPORT COMPLETED
+CHILD_RETURN_CODE=0
+OUTPUT_VALIDATION=True
+OUTPUT_MESSAGE=Morning report OK: CNYES cache=78, summaries=10
+FINAL_RETURN_CODE=0
+END=2026-10-06T01:13:03+08:00
+========================================================================
+JOB=morning
+START=2026-10-06T08:11:31+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_morning_report.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+[2026-10-06T08:11:33+08:00] ========================================================================
+[2026-10-06T08:11:33+08:00] AI TW STOCK MORNING REPORT
+[2026-10-06T08:11:33+08:00] BASE=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+[2026-10-06T08:11:33+08:00] PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+[2026-10-06T08:11:33+08:00] OLLAMA_HOST=http://127.0.0.1:11434
+[2026-10-06T08:11:33+08:00] OLLAMA_MODEL=qwen3:8b
+[2026-10-06T08:11:33+08:00] WATCHLIST_COUNT=22
+[2026-10-06T08:11:33+08:00] [1/2] 建立早報研究資料
+[2026-10-06T08:11:37+08:00] REPORT_VALIDATION=True
+[2026-10-06T08:11:37+08:00] REPORT_VALIDATION_MESSAGE=report_date=2026-10-06, CNYES=78, news_summary=10
+[2026-10-06T08:11:37+08:00] MORNING_AGENT_STATUS=morning_fallback_evidence
+[2026-10-06T08:11:37+08:00] CNYES_CACHE_DATES=['2026-10-05', '2026-10-04']
+[2026-10-06T08:11:37+08:00] CNYES_ARTICLES=78
+[2026-10-06T08:11:37+08:00] NEWS_SUMMARY_COUNT=10
+[2026-10-06T08:11:37+08:00] RECOMMENDED_INDUSTRIES=3
+[2026-10-06T08:11:37+08:00] RECOMMENDED_STOCKS=3
+[2026-10-06T08:11:37+08:00] [2/2] Email Agent
+[2026-10-06T08:11:37+08:00] EMAIL_CONFIGURED=True AUTO_SEND=True RECIPIENT=a1113359@mail.nuk.edu.tw
+[2026-10-06T08:11:37+08:00] EMAIL_METHOD=send_report(fresh_report)
+[2026-10-06T08:11:47+08:00] EMAIL_RESULT={"sent": true, "skipped": false, "report_date": "2026-10-06", "recipient": "a1113359@mail.nuk.edu.tw", "recipients": ["a1113359@mail.nuk.edu.tw", "1628ming@gmail.com"], "failed_recipients": [], "subject": "【AI 台股盤後財報】2026-10-06｜AI早報 × 法說會 × 財經資訊", "attachments": ["morning_2026-10-06.json", "morning_2026-10-06.md"], "agent_summary_status": "morning_fallback_evidence", "smtp_log": ["a1113359@mail.nuk.edu.tw: CONNECT smtp.gmail.com:587 STARTTLS", "a1113359@mail.nuk.edu.tw: CONNECTED", "a1113359@mail.nuk.edu.tw: EHLO 250", "a1113359@mail.nuk.edu.tw: STARTTLS", "a1113359@mail.nuk.edu.tw: STARTTLS_OK", "a1113359@mail.nuk.edu.tw: EHLO_TLS 250", "a1113359@mail.nuk.edu.tw: LOGIN", "a1113359@mail.nuk.edu.tw: LOGIN_OK", "a1113359@mail.nuk.edu.tw: SEND_OK", "1628ming@gmail.com: CONNECT smtp.gmail.com:587 STARTTLS", "1628ming@gmail.com: CONNECTED", "1628ming@gmail.com: EHLO 250", "1628ming@gmail.com: STARTTLS", "1628ming@gmail.com: STARTTLS_OK", "1628ming@gmail.com: EHLO_TLS 250", "1628ming@gmail.com: LOGIN", "1628ming@gmail.com: LOGIN_OK", "1628ming@gmail.com: SEND_OK"], "status": {"enabled": true, "auto_send": true, "configured": true, "sender": "10501500978aaa@gmail.com", "recipient": "a1113359@mail.nuk.edu.tw", "smtp_host": "smtp.gmail.com", "smtp_port": 587, "use_ssl": false, "attach_reports": true, "missing": [], "ollama_host": "http://127.0.0.1:11434", "ollama_model": "qwen3:8b", "env_path": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\.env"}}
+[2026-10-06T08:11:47+08:00] AI TW STOCK MORNING REPORT COMPLETED
+CHILD_RETURN_CODE=0
+OUTPUT_VALIDATION=True
+OUTPUT_MESSAGE=Morning report OK: CNYES cache=78, summaries=10
+FINAL_RETURN_CODE=0
+END=2026-10-06T08:11:47+08:00
+========================================================================
+JOB=morning
+START=2026-10-06T08:30:00+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_morning_report.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+[2026-10-06T08:30:01+08:00] ========================================================================
+[2026-10-06T08:30:01+08:00] AI TW STOCK MORNING REPORT
+[2026-10-06T08:30:01+08:00] BASE=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+[2026-10-06T08:30:01+08:00] PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+[2026-10-06T08:30:01+08:00] OLLAMA_HOST=http://127.0.0.1:11434
+[2026-10-06T08:30:01+08:00] OLLAMA_MODEL=qwen3:8b
+[2026-10-06T08:30:01+08:00] WATCHLIST_COUNT=22
+[2026-10-06T08:30:01+08:00] [1/2] 建立早報研究資料
+[2026-10-06T08:30:04+08:00] REPORT_VALIDATION=True
+[2026-10-06T08:30:04+08:00] REPORT_VALIDATION_MESSAGE=report_date=2026-10-06, CNYES=78, news_summary=10
+[2026-10-06T08:30:04+08:00] MORNING_AGENT_STATUS=morning_fallback_evidence
+[2026-10-06T08:30:04+08:00] CNYES_CACHE_DATES=['2026-10-05', '2026-10-04']
+[2026-10-06T08:30:04+08:00] CNYES_ARTICLES=78
+[2026-10-06T08:30:04+08:00] NEWS_SUMMARY_COUNT=10
+[2026-10-06T08:30:04+08:00] RECOMMENDED_INDUSTRIES=3
+[2026-10-06T08:30:04+08:00] RECOMMENDED_STOCKS=3
+[2026-10-06T08:30:04+08:00] [2/2] Email Agent
+[2026-10-06T08:30:04+08:00] EMAIL_CONFIGURED=True AUTO_SEND=True RECIPIENT=a1113359@mail.nuk.edu.tw
+[2026-10-06T08:30:04+08:00] EMAIL_METHOD=send_report(fresh_report)
+[2026-10-06T08:30:14+08:00] EMAIL_RESULT={"sent": true, "skipped": false, "report_date": "2026-10-06", "recipient": "a1113359@mail.nuk.edu.tw", "recipients": ["a1113359@mail.nuk.edu.tw", "1628ming@gmail.com"], "failed_recipients": [], "subject": "【AI 台股盤後財報】2026-10-06｜AI早報 × 法說會 × 財經資訊", "attachments": ["morning_2026-10-06.json", "morning_2026-10-06.md"], "agent_summary_status": "morning_fallback_evidence", "smtp_log": ["a1113359@mail.nuk.edu.tw: CONNECT smtp.gmail.com:587 STARTTLS", "a1113359@mail.nuk.edu.tw: CONNECTED", "a1113359@mail.nuk.edu.tw: EHLO 250", "a1113359@mail.nuk.edu.tw: STARTTLS", "a1113359@mail.nuk.edu.tw: STARTTLS_OK", "a1113359@mail.nuk.edu.tw: EHLO_TLS 250", "a1113359@mail.nuk.edu.tw: LOGIN", "a1113359@mail.nuk.edu.tw: LOGIN_OK", "a1113359@mail.nuk.edu.tw: SEND_OK", "1628ming@gmail.com: CONNECT smtp.gmail.com:587 STARTTLS", "1628ming@gmail.com: CONNECTED", "1628ming@gmail.com: EHLO 250", "1628ming@gmail.com: STARTTLS", "1628ming@gmail.com: STARTTLS_OK", "1628ming@gmail.com: EHLO_TLS 250", "1628ming@gmail.com: LOGIN", "1628ming@gmail.com: LOGIN_OK", "1628ming@gmail.com: SEND_OK"], "status": {"enabled": true, "auto_send": true, "configured": true, "sender": "10501500978aaa@gmail.com", "recipient": "a1113359@mail.nuk.edu.tw", "smtp_host": "smtp.gmail.com", "smtp_port": 587, "use_ssl": false, "attach_reports": true, "missing": [], "ollama_host": "http://127.0.0.1:11434", "ollama_model": "qwen3:8b", "env_path": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\.env"}}
+[2026-10-06T08:30:14+08:00] AI TW STOCK MORNING REPORT COMPLETED
+CHILD_RETURN_CODE=0
+OUTPUT_VALIDATION=True
+OUTPUT_MESSAGE=Morning report OK: CNYES cache=78, summaries=10
+FINAL_RETURN_CODE=0
+END=2026-10-06T08:30:14+08:00
+========================================================================
+JOB=morning
+START=2026-10-06T19:03:20+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_morning_report.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+[2026-10-06T19:03:20+08:00] ========================================================================
+[2026-10-06T19:03:20+08:00] AI TW STOCK MORNING REPORT
+[2026-10-06T19:03:20+08:00] BASE=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+[2026-10-06T19:03:20+08:00] PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+[2026-10-06T19:03:20+08:00] OLLAMA_HOST=http://127.0.0.1:11434
+[2026-10-06T19:03:20+08:00] OLLAMA_MODEL=qwen3:8b
+[2026-10-06T19:03:20+08:00] WATCHLIST_COUNT=22
+[2026-10-06T19:03:20+08:00] [0/2] 08:30 財經資訊快取更新
+[2026-10-06T19:04:31+08:00] FINANCE_UPDATE_RC=0
+[2026-10-06T19:04:31+08:00] FINANCE_UPDATE_WARNING=UnicodeEncodeError: 'cp950' codec can't encode character '\ufffd' in position 600: illegal multibyte sequence
+[2026-10-06T19:04:31+08:00] [1/2] 建立早報研究資料
+[2026-10-06T19:04:41+08:00] REPORT_VALIDATION=True
+[2026-10-06T19:04:41+08:00] REPORT_VALIDATION_MESSAGE=report_date=2026-10-06, CNYES=143, news_summary=10
+[2026-10-06T19:04:41+08:00] MORNING_AGENT_STATUS=morning_fallback_evidence
+[2026-10-06T19:04:41+08:00] CNYES_CACHE_DATES=['2026-10-06', '2026-10-05']
+[2026-10-06T19:04:41+08:00] CNYES_ARTICLES=143
+[2026-10-06T19:04:41+08:00] NEWS_SUMMARY_COUNT=10
+[2026-10-06T19:04:41+08:00] RECOMMENDED_INDUSTRIES=8
+[2026-10-06T19:04:41+08:00] RECOMMENDED_STOCKS=12
+[2026-10-06T19:04:41+08:00] [2/2] Email Agent
+[2026-10-06T19:04:41+08:00] EMAIL_CONFIGURED=True AUTO_SEND=True RECIPIENT=a1113359@mail.nuk.edu.tw
+[2026-10-06T19:04:41+08:00] EMAIL_METHOD=send_report(fresh_report)
+[2026-10-06T19:05:00+08:00] EMAIL_RESULT={"sent": true, "skipped": false, "report_date": "2026-10-06", "recipient": "a1113359@mail.nuk.edu.tw", "recipients": ["a1113359@mail.nuk.edu.tw", "1628ming@gmail.com"], "failed_recipients": [], "subject": "【AI 台股盤後財報】2026-10-06｜AI早報 × 法說會 × 財經資訊", "attachments": ["morning_2026-10-06.json", "morning_2026-10-06.md"], "agent_summary_status": "morning_fallback_evidence", "smtp_log": ["a1113359@mail.nuk.edu.tw: CONNECT smtp.gmail.com:587 STARTTLS", "a1113359@mail.nuk.edu.tw: CONNECTED", "a1113359@mail.nuk.edu.tw: EHLO 250", "a1113359@mail.nuk.edu.tw: STARTTLS", "a1113359@mail.nuk.edu.tw: STARTTLS_OK", "a1113359@mail.nuk.edu.tw: EHLO_TLS 250", "a1113359@mail.nuk.edu.tw: LOGIN", "a1113359@mail.nuk.edu.tw: LOGIN_OK", "a1113359@mail.nuk.edu.tw: SEND_OK", "1628ming@gmail.com: CONNECT smtp.gmail.com:587 STARTTLS", "1628ming@gmail.com: CONNECTED", "1628ming@gmail.com: EHLO 250", "1628ming@gmail.com: STARTTLS", "1628ming@gmail.com: STARTTLS_OK", "1628ming@gmail.com: EHLO_TLS 250", "1628ming@gmail.com: LOGIN", "1628ming@gmail.com: LOGIN_OK", "1628ming@gmail.com: SEND_OK"], "status": {"enabled": true, "auto_send": true, "configured": true, "sender": "10501500978aaa@gmail.com", "recipient": "a1113359@mail.nuk.edu.tw", "smtp_host": "smtp.gmail.com", "smtp_port": 587, "use_ssl": false, "attach_reports": true, "missing": [], "ollama_host": "http://127.0.0.1:11434", "ollama_model": "qwen3:8b", "env_path": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\.env"}}
+[2026-10-06T19:05:00+08:00] AI TW STOCK MORNING REPORT COMPLETED
+CHILD_RETURN_CODE=0
+OUTPUT_VALIDATION=True
+OUTPUT_MESSAGE=Morning report OK: CNYES cache=143, summaries=10, earnings=1
+FINAL_RETURN_CODE=0
+END=2026-10-06T19:05:00+08:00
+========================================================================
+JOB=morning
+START=2026-10-06T20:28:40+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_morning_report.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+[2026-10-06T20:28:41+08:00] ========================================================================
+[2026-10-06T20:28:41+08:00] AI TW STOCK MORNING REPORT
+[2026-10-06T20:28:41+08:00] BASE=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+[2026-10-06T20:28:41+08:00] PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+[2026-10-06T20:28:41+08:00] OLLAMA_HOST=http://127.0.0.1:11434
+[2026-10-06T20:28:41+08:00] OLLAMA_MODEL=qwen3:8b
+[2026-10-06T20:28:41+08:00] WATCHLIST_COUNT=22
+[2026-10-06T20:28:41+08:00] [0/2] 08:30 財經資訊快取更新
+[2026-10-06T20:29:32+08:00] FINANCE_UPDATE_RC=0
+[2026-10-06T20:29:32+08:00] FINANCE_UPDATE_WARNING=UnicodeEncodeError: 'cp950' codec can't encode character '\ufffd' in position 600: illegal multibyte sequence
+[2026-10-06T20:29:32+08:00] [1/2] 建立早報研究資料
+[2026-10-06T20:29:42+08:00] REPORT_VALIDATION=True
+[2026-10-06T20:29:42+08:00] REPORT_VALIDATION_MESSAGE=report_date=2026-10-06, CNYES=143, news_summary=10
+[2026-10-06T20:29:42+08:00] MORNING_AGENT_STATUS=morning_fallback_evidence
+[2026-10-06T20:29:42+08:00] CNYES_CACHE_DATES=['2026-10-06', '2026-10-05']
+[2026-10-06T20:29:42+08:00] CNYES_ARTICLES=143
+[2026-10-06T20:29:42+08:00] NEWS_SUMMARY_COUNT=10
+[2026-10-06T20:29:42+08:00] RECOMMENDED_INDUSTRIES=8
+[2026-10-06T20:29:42+08:00] RECOMMENDED_STOCKS=12
+[2026-10-06T20:29:42+08:00] [2/2] Email Agent
+[2026-10-06T20:29:42+08:00] EMAIL_CONFIGURED=True AUTO_SEND=True RECIPIENT=a1113359@mail.nuk.edu.tw
+[2026-10-06T20:29:42+08:00] EMAIL_METHOD=send_report(fresh_report)
+[2026-10-06T20:30:00+08:00] EMAIL_RESULT={"sent": true, "skipped": false, "report_date": "2026-10-06", "recipient": "a1113359@mail.nuk.edu.tw", "recipients": ["a1113359@mail.nuk.edu.tw", "1628ming@gmail.com"], "failed_recipients": [], "subject": "【AI 台股盤後財報】2026-10-06｜AI早報 × 法說會 × 財經資訊", "attachments": ["morning_2026-10-06.json", "morning_2026-10-06.md"], "agent_summary_status": "morning_fallback_evidence", "smtp_log": ["a1113359@mail.nuk.edu.tw: CONNECT smtp.gmail.com:587 STARTTLS", "a1113359@mail.nuk.edu.tw: CONNECTED", "a1113359@mail.nuk.edu.tw: EHLO 250", "a1113359@mail.nuk.edu.tw: STARTTLS", "a1113359@mail.nuk.edu.tw: STARTTLS_OK", "a1113359@mail.nuk.edu.tw: EHLO_TLS 250", "a1113359@mail.nuk.edu.tw: LOGIN", "a1113359@mail.nuk.edu.tw: LOGIN_OK", "a1113359@mail.nuk.edu.tw: SEND_OK", "1628ming@gmail.com: CONNECT smtp.gmail.com:587 STARTTLS", "1628ming@gmail.com: CONNECTED", "1628ming@gmail.com: EHLO 250", "1628ming@gmail.com: STARTTLS", "1628ming@gmail.com: STARTTLS_OK", "1628ming@gmail.com: EHLO_TLS 250", "1628ming@gmail.com: LOGIN", "1628ming@gmail.com: LOGIN_OK", "1628ming@gmail.com: SEND_OK"], "status": {"enabled": true, "auto_send": true, "configured": true, "sender": "10501500978aaa@gmail.com", "recipient": "a1113359@mail.nuk.edu.tw", "smtp_host": "smtp.gmail.com", "smtp_port": 587, "use_ssl": false, "attach_reports": true, "missing": [], "ollama_host": "http://127.0.0.1:11434", "ollama_model": "qwen3:8b", "env_path": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\.env"}}
+[2026-10-06T20:30:00+08:00] AI TW STOCK MORNING REPORT COMPLETED
+CHILD_RETURN_CODE=0
+OUTPUT_VALIDATION=True
+OUTPUT_MESSAGE=Morning report OK: CNYES cache=143, summaries=10, earnings=1
+FINAL_RETURN_CODE=0
+END=2026-10-06T20:30:00+08:00

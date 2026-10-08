@@ -1,0 +1,40 @@
+========================================================================
+JOB=afterclose
+START=2026-10-03T14:30:01+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_after_close_research.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\pythonw.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+========================================================================
+AI TW STOCK AFTER-CLOSE RESEARCH
+========================================================================
+時間：2026-10-03 14:30:14.750828+08:00
+專案：C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+Python：C:\Users\10501\AppData\Local\Programs\Python\Python313\pythonw.exe
+Watchlist：3481, 2327, 2492, 3037, 3044, 3533, 2303, 2330, 2344, 2408, 6515, 7769, 6488, 3374, 2377, 3450, 0050, 3006, 3661, 8299, 2308, 6274
+FUGLE_API_KEY：由 stock_api.py / 環境提供的 Key 未確認
+OLLAMA_MODEL：qwen3:8b
+EARNINGS_MEMO_LOOKBACK_DAYS：5
+CNYES_RESEARCH_LOOKBACK_DAYS：2
+CNYES：盤後只讀夜間快取，不重新爬網站
+盤後模式：快速模式，不重複做 CNYES 新聞摘要／Google News 搜尋／法說會全文分析
+
+[1/2] Research Agent 啟動（FAST MODE）
+C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\urllib3\connectionpool.py:1110: InsecureRequestWarning: Unverified HTTPS request is being made to host 'www.twse.com.tw'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#tls-warnings
+  warnings.warn(
+ResearchAgent 市場行情不足，啟動直接行情 recovery...
+C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\urllib3\connectionpool.py:1110: InsecureRequestWarning: Unverified HTTPS request is being made to host 'www.twse.com.tw'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#tls-warnings
+  warnings.warn(
+ERROR: 今日沒有取得可驗證的市場行情日期。
+已停止寄送，避免把空資料或前一交易日行情誤標為今日盤後資料。
+MARKET_ERRORS:
+  - TWSE RWD：JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+  - TPEx OpenAPI：無法解析或回應為空
+  - TWSE OpenAPI：無法解析或回應為空
+  - FugleClient TSE: APIError: Fugle 認證失敗 HTTP 403：{"message":"Forbidden","statusCode":403}
+  - Fugle REST TSE: HTTPError: 403 Client Error: Forbidden for url: https://api.fugle.tw/marketdata/v1.0/stock/snapshot/quotes/TSE?type=ALLBUT0999
+  - FugleClient OTC: APIError: Fugle 認證失敗 HTTP 403：{"message":"Forbidden","statusCode":403}
+  - Fugle REST OTC: HTTPError: 403 Client Error: Forbidden for url: https://api.fugle.tw/marketdata/v1.0/stock/snapshot/quotes/OTC?type=ALLBUT0999
+CHILD_RETURN_CODE=4
+FINAL_RETURN_CODE=4
+END=2026-10-03T14:41:00+08:00

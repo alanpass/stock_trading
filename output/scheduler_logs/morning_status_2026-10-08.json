@@ -1,0 +1,8 @@
+{
+  "job": "morning",
+  "status": "running",
+  "updated_at": "2026-10-08T08:30:02.225868+08:00",
+  "pid": 19960,
+  "script": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\run_morning_report.py",
+  "python": "C:\\Users\\10501\\AppData\\Local\\Programs\\Python\\Python313\\python.exe"
+}

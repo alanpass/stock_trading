@@ -1,0 +1,26 @@
+========================================================================
+JOB=finance
+START=2026-10-07T18:00:02+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_finance_info_update.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+========================================================================
+AI TW STOCK FINANCE INFO UPDATE
+TIME=2026-10-07T18:00:03.065112+08:00
+{
+  "ok": true,
+  "updated_at": "2026-10-07T18:00:03.065680+08:00",
+  "latest": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\output\\research_reports\\finance_info_latest.json",
+  "snapshot": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\output\\research_reports\\finance_info_20261007_180003.json",
+  "earnings_count": 6,
+  "news_count": 2,
+  "errors": [
+    "CNYES refresh failed"
+  ]
+}
+CHILD_RETURN_CODE=0
+OUTPUT_VALIDATION=True
+OUTPUT_MESSAGE=Finance info OK: earnings=6, news=2
+FINAL_RETURN_CODE=0
+END=2026-10-07T18:00:45+08:00

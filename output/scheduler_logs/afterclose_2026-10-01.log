@@ -1,0 +1,48 @@
+========================================================================
+JOB=afterclose
+START=2026-10-01T22:00:28+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_after_close_research.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+Traceback (most recent call last):
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_after_close_research.py", line 13, in <module>
+    from research_agent import ResearchAgent
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\research_agent.py", line 46, in <module>
+    from cnyes_news_agent import CnyesNewsDigestAgent
+ImportError: cannot import name 'CnyesNewsDigestAgent' from 'cnyes_news_agent' (C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\cnyes_news_agent.py). Did you mean: 'CnyesNewsAgent'?
+CHILD_RETURN_CODE=1
+FINAL_RETURN_CODE=1
+END=2026-10-01T22:00:30+08:00
+========================================================================
+JOB=afterclose
+START=2026-10-01T22:08:26+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_after_close_research.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+Traceback (most recent call last):
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_after_close_research.py", line 13, in <module>
+    from research_agent import ResearchAgent
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\research_agent.py", line 46, in <module>
+    from cnyes_news_agent import CnyesNewsDigestAgent
+ImportError: cannot import name 'CnyesNewsDigestAgent' from 'cnyes_news_agent' (C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\cnyes_news_agent.py). Did you mean: 'CnyesNewsAgent'?
+CHILD_RETURN_CODE=1
+FINAL_RETURN_CODE=1
+END=2026-10-01T22:08:28+08:00
+========================================================================
+JOB=afterclose
+START=2026-10-01T22:36:37+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_after_close_research.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\pythonw.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+Traceback (most recent call last):
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_after_close_research.py", line 13, in <module>
+    from research_agent import ResearchAgent
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\research_agent.py", line 46, in <module>
+    from cnyes_news_agent import CnyesNewsDigestAgent
+ImportError: cannot import name 'CnyesNewsDigestAgent' from 'cnyes_news_agent' (C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\cnyes_news_agent.py). Did you mean: 'CnyesNewsAgent'?
+CHILD_RETURN_CODE=1
+FINAL_RETURN_CODE=1
+END=2026-10-01T22:36:51+08:00

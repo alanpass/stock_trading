@@ -1,0 +1,20 @@
+========================================================================
+JOB=cnyes
+START=2026-10-03T23:00:01+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_cnyes_news_nightly.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\pythonw.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+========================================================================
+CNYES NIGHTLY NEWS CRAWLER
+========================================================================
+研究日期 = 2026-10-03
+方法 = api
+文章數 = 64
+檔案 = None
+時間窗 = 2026-10-03T00:00:00+08:00 ~ 2026-10-03T23:00:03.062946+08:00
+CHILD_RETURN_CODE=0
+OUTPUT_VALIDATION=True
+OUTPUT_MESSAGE=CNYES output OK: 64 articles
+FINAL_RETURN_CODE=0
+END=2026-10-03T23:00:03+08:00

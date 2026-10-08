@@ -1,0 +1,7 @@
+{
+  "job": "afterclose",
+  "status": "child_failed",
+  "updated_at": "2026-10-04T14:31:34.394074+08:00",
+  "pid": 8092,
+  "child_return_code": 4
+}

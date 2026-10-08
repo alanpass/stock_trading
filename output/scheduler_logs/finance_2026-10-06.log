@@ -1,0 +1,56 @@
+========================================================================
+JOB=finance
+START=2026-10-06T00:58:05+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_finance_info_update.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+========================================================================
+AI TW STOCK FINANCE INFO UPDATE
+TIME=2026-10-06T00:58:05.886015+08:00
+{
+  "ok": true,
+  "updated_at": "2026-10-06T00:58:05.886457+08:00",
+  "latest": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\output\\research_reports\\finance_info_latest.json",
+  "snapshot": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\output\\research_reports\\finance_info_20261006_005805.json",
+  "earnings_count": 0,
+  "news_count": 78,
+  "errors": [
+    "Fugle 最近 2 天沒有可用法說會 memo",
+    "CNYES 最近 2 天快取沒有可用文章",
+    "CNYES 無可用最近 2 天文章，財經資訊改用 Google News RSS 備援。"
+  ]
+}
+CHILD_RETURN_CODE=0
+OUTPUT_VALIDATION=True
+OUTPUT_MESSAGE=Finance info OK: earnings=0, news=78, updated=2026-10-06T00:58:05.886457+08:00
+FINAL_RETURN_CODE=0
+END=2026-10-06T00:58:10+08:00
+========================================================================
+JOB=finance
+START=2026-10-06T18:00:00+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_finance_info_update.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+========================================================================
+AI TW STOCK FINANCE INFO UPDATE
+TIME=2026-10-06T18:00:01.176919+08:00
+{
+  "ok": true,
+  "updated_at": "2026-10-06T18:00:01.177453+08:00",
+  "latest": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\output\\research_reports\\finance_info_latest.json",
+  "snapshot": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\output\\research_reports\\finance_info_20261006_180001.json",
+  "earnings_count": 0,
+  "news_count": 80,
+  "errors": [
+    "Fugle 最近 2 天沒有可用法說會 memo",
+    "CNYES 最近 2 天快取沒有可用文章",
+    "CNYES 無可用最近 2 天文章，財經資訊改用 Google News RSS 備援。"
+  ]
+}
+CHILD_RETURN_CODE=0
+OUTPUT_VALIDATION=True
+OUTPUT_MESSAGE=Finance info OK: earnings=0, news=80
+FINAL_RETURN_CODE=0
+END=2026-10-06T18:00:05+08:00

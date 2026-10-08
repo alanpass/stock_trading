@@ -1,0 +1,18 @@
+[2026-10-07T14:30:05+08:00] ========================================================================
+[2026-10-07T14:30:05+08:00] AI TW STOCK AFTER-CLOSE RESEARCH v3
+[2026-10-07T14:30:05+08:00] BASE=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+[2026-10-07T14:30:05+08:00] PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+[2026-10-07T14:30:05+08:00] WATCHLIST_COUNT=22
+[2026-10-07T14:30:05+08:00] WATCHLIST=2327,2492,3037,3044,3533,2303,2330,2344,2408,6515,7769,6488,3374,2377,3450,0050,3006,3661,8299,2308,6274,7822
+[2026-10-07T14:30:05+08:00] OLLAMA_HOST=http://127.0.0.1:11434
+[2026-10-07T14:30:05+08:00] OLLAMA_MODEL=qwen3:8b
+[2026-10-07T14:30:05+08:00] MARKET_STATUS=2026-10-07｜交易日／盤後｜可執行研究；行情以今日收盤為主
+[2026-10-07T14:30:05+08:00] CNYES=盤後只讀夜間快取，不重新爬網站
+[2026-10-07T14:30:05+08:00] [1/4] ResearchAgent 建立原始研究包
+[2026-10-07T14:31:26+08:00] [2/4] 官方 TWSE / TPEx 財務與公告 recovery
+[2026-10-07T14:31:52+08:00] OFFICIAL_COUNTS={"twse_announcements_rows": 54, "twse_revenue_rows": 1086, "tpex_announcements_rows": 29, "tpex_revenue_rows": 892, "twse_income_rows": 1049, "tpex_income_rows": 885, "cnyes_news_articles": 143, "twse_supply_chain_rows": 757, "tpex_supply_chain_rows": 585}
+[2026-10-07T14:31:52+08:00] FINANCIAL_SNAPSHOTS=21
+[2026-10-07T14:31:52+08:00] [2/4] 市場行情 recovery
+[2026-10-07T14:32:10+08:00] MARKET_ASOF=
+[2026-10-07T14:32:10+08:00] MARKET_UNIVERSE=0 CANDIDATES=0
+[2026-10-07T14:32:10+08:00] ERROR=官方今日行情仍為空，停止寄送，避免空白假報。

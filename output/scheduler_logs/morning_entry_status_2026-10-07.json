@@ -1,0 +1,57 @@
+{
+  "status": "success",
+  "updated_at": "2026-10-07T08:30:52.488333+08:00",
+  "report_path": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\output\\research_reports\\morning_2026-10-07.json",
+  "email": {
+    "sent": true,
+    "skipped": false,
+    "report_date": "2026-10-07",
+    "recipient": "a1113359@mail.nuk.edu.tw",
+    "recipients": [
+      "a1113359@mail.nuk.edu.tw",
+      "1628ming@gmail.com"
+    ],
+    "failed_recipients": [],
+    "subject": "【AI 台股盤後財報】2026-10-07｜AI早報 × 法說會 × 財經資訊",
+    "attachments": [
+      "morning_2026-10-07.json",
+      "morning_2026-10-07.md"
+    ],
+    "agent_summary_status": "morning_fallback_evidence",
+    "smtp_log": [
+      "a1113359@mail.nuk.edu.tw: CONNECT smtp.gmail.com:587 STARTTLS",
+      "a1113359@mail.nuk.edu.tw: CONNECTED",
+      "a1113359@mail.nuk.edu.tw: EHLO 250",
+      "a1113359@mail.nuk.edu.tw: STARTTLS",
+      "a1113359@mail.nuk.edu.tw: STARTTLS_OK",
+      "a1113359@mail.nuk.edu.tw: EHLO_TLS 250",
+      "a1113359@mail.nuk.edu.tw: LOGIN",
+      "a1113359@mail.nuk.edu.tw: LOGIN_OK",
+      "a1113359@mail.nuk.edu.tw: SEND_OK",
+      "1628ming@gmail.com: CONNECT smtp.gmail.com:587 STARTTLS",
+      "1628ming@gmail.com: CONNECTED",
+      "1628ming@gmail.com: EHLO 250",
+      "1628ming@gmail.com: STARTTLS",
+      "1628ming@gmail.com: STARTTLS_OK",
+      "1628ming@gmail.com: EHLO_TLS 250",
+      "1628ming@gmail.com: LOGIN",
+      "1628ming@gmail.com: LOGIN_OK",
+      "1628ming@gmail.com: SEND_OK"
+    ],
+    "status": {
+      "enabled": true,
+      "auto_send": true,
+      "configured": true,
+      "sender": "10501500978aaa@gmail.com",
+      "recipient": "a1113359@mail.nuk.edu.tw",
+      "smtp_host": "smtp.gmail.com",
+      "smtp_port": 587,
+      "use_ssl": false,
+      "attach_reports": true,
+      "missing": [],
+      "ollama_host": "http://127.0.0.1:11434",
+      "ollama_model": "qwen3:8b",
+      "env_path": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\.env"
+    }
+  }
+}

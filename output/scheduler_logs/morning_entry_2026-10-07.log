@@ -1,0 +1,38 @@
+[2026-10-07T08:30:02+08:00] ========================================================================
+[2026-10-07T08:30:02+08:00] AI TW STOCK MORNING REPORT
+[2026-10-07T08:30:02+08:00] BASE=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+[2026-10-07T08:30:02+08:00] PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+[2026-10-07T08:30:02+08:00] OLLAMA_HOST=http://127.0.0.1:11434
+[2026-10-07T08:30:02+08:00] OLLAMA_MODEL=qwen3:8b
+[2026-10-07T08:30:02+08:00] WATCHLIST_COUNT=22
+[2026-10-07T08:30:02+08:00] [0/2] 08:30 財經資訊快取更新
+[2026-10-07T08:30:39+08:00] FINANCE_UPDATE_RC=0
+[2026-10-07T08:30:39+08:00] ========================================================================
+AI TW STOCK FINANCE INFO UPDATE
+TIME=2026-10-07T08:30:03.500330+08:00
+{
+  "ok": true,
+  "updated_at": "2026-10-07T08:30:03.500729+08:00",
+  "latest": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\output\\research_reports\\finance_info_latest.json",
+  "snapshot": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\output\\research_reports\\finance_info_20261007_083003.json",
+  "earnings_count": 6,
+  "news_count": 2,
+  "errors": [
+    "CNYES refresh failed"
+  ]
+}
+
+[2026-10-07T08:30:39+08:00] [1/2] 建立早報研究資料
+[2026-10-07T08:30:40+08:00] REPORT_VALIDATION=True
+[2026-10-07T08:30:40+08:00] REPORT_VALIDATION_MESSAGE=report_date=2026-10-07, CNYES=2, news_summary=2
+[2026-10-07T08:30:40+08:00] MORNING_AGENT_STATUS=morning_fallback_evidence
+[2026-10-07T08:30:40+08:00] CNYES_CACHE_DATES=['2026-10-06']
+[2026-10-07T08:30:40+08:00] CNYES_ARTICLES=2
+[2026-10-07T08:30:40+08:00] NEWS_SUMMARY_COUNT=2
+[2026-10-07T08:30:40+08:00] RECOMMENDED_INDUSTRIES=0
+[2026-10-07T08:30:40+08:00] RECOMMENDED_STOCKS=0
+[2026-10-07T08:30:40+08:00] [2/2] Email Agent
+[2026-10-07T08:30:40+08:00] EMAIL_CONFIGURED=True AUTO_SEND=True RECIPIENT=a1113359@mail.nuk.edu.tw
+[2026-10-07T08:30:40+08:00] EMAIL_METHOD=send_report(fresh_report)
+[2026-10-07T08:30:52+08:00] EMAIL_RESULT={"sent": true, "skipped": false, "report_date": "2026-10-07", "recipient": "a1113359@mail.nuk.edu.tw", "recipients": ["a1113359@mail.nuk.edu.tw", "1628ming@gmail.com"], "failed_recipients": [], "subject": "【AI 台股盤後財報】2026-10-07｜AI早報 × 法說會 × 財經資訊", "attachments": ["morning_2026-10-07.json", "morning_2026-10-07.md"], "agent_summary_status": "morning_fallback_evidence", "smtp_log": ["a1113359@mail.nuk.edu.tw: CONNECT smtp.gmail.com:587 STARTTLS", "a1113359@mail.nuk.edu.tw: CONNECTED", "a1113359@mail.nuk.edu.tw: EHLO 250", "a1113359@mail.nuk.edu.tw: STARTTLS", "a1113359@mail.nuk.edu.tw: STARTTLS_OK", "a1113359@mail.nuk.edu.tw: EHLO_TLS 250", "a1113359@mail.nuk.edu.tw: LOGIN", "a1113359@mail.nuk.edu.tw: LOGIN_OK", "a1113359@mail.nuk.edu.tw: SEND_OK", "1628ming@gmail.com: CONNECT smtp.gmail.com:587 STARTTLS", "1628ming@gmail.com: CONNECTED", "1628ming@gmail.com: EHLO 250", "1628ming@gmail.com: STARTTLS", "1628ming@gmail.com: STARTTLS_OK", "1628ming@gmail.com: EHLO_TLS 250", "1628ming@gmail.com: LOGIN", "1628ming@gmail.com: LOGIN_OK", "1628ming@gmail.com: SEND_OK"], "status": {"enabled": true, "auto_send": true, "configured": true, "sender": "10501500978aaa@gmail.com", "recipient": "a1113359@mail.nuk.edu.tw", "smtp_host": "smtp.gmail.com", "smtp_port": 587, "use_ssl": false, "attach_reports": true, "missing": [], "ollama_host": "http://127.0.0.1:11434", "ollama_model": "qwen3:8b", "env_path": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\.env"}}
+[2026-10-07T08:30:52+08:00] AI TW STOCK MORNING REPORT COMPLETED

@@ -1,0 +1,7 @@
+{
+  "job": "afterclose",
+  "status": "success",
+  "updated_at": "2026-10-02T19:02:24.463750+08:00",
+  "pid": 12252,
+  "message": "After-close status OK: success"
+}

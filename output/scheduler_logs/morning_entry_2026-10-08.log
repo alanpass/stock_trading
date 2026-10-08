@@ -1,0 +1,9 @@
+[2026-10-08T08:30:03+08:00] ========================================================================
+[2026-10-08T08:30:03+08:00] AI TW STOCK MORNING REPORT
+[2026-10-08T08:30:03+08:00] BASE=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+[2026-10-08T08:30:03+08:00] PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+[2026-10-08T08:30:03+08:00] OLLAMA_HOST=http://127.0.0.1:11434
+[2026-10-08T08:30:03+08:00] OLLAMA_MODEL=qwen3:8b
+[2026-10-08T08:30:03+08:00] WATCHLIST_COUNT=22
+[2026-10-08T08:30:03+08:00] [0/2] 檢查財經資訊快取
+[2026-10-08T08:30:03+08:00] FINANCE_CACHE_STALE age=827.9534924333333，補更新一次

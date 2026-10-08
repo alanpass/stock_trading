@@ -1,0 +1,11 @@
+{
+  "report_date": "2026-10-08",
+  "status": "error_no_market_data",
+  "updated_at": "2026-10-08T14:47:27.377577+08:00",
+  "diagnostics": {
+    "errors": [
+      "MarketMoverAnalyzer 未取得今日 movers",
+      "官方行情沒有可驗證的 2026-10-08 資料"
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "report_date": "2026-10-06",
+  "status": "success",
+  "updated_at": "2026-10-06T19:17:17.376950+08:00",
+  "market_asof": "2026-10-06",
+  "market_universe": 6828,
+  "market_candidates": 44,
+  "financial_snapshots": 21,
+  "cnyes_articles": 143,
+  "agent_status": "fallback_afterclose_recovery",
+  "email_sent": true
+}

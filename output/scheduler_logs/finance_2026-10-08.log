@@ -1,0 +1,218 @@
+========================================================================
+JOB=finance
+START=2026-10-08T08:24:59+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_finance_info_update.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+========================================================================
+AI TW STOCK FINANCE INFO UPDATE
+TIME=2026-10-08T08:25:00.274095+08:00
+Traceback (most recent call last):
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_finance_info_update.py", line 339, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_finance_info_update.py", line 329, in main
+    result = update_finance_info(BASE, watchlist=load_watchlist(BASE), refresh_news="--no-crawl" not in sys.argv)
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_finance_info_update.py", line 264, in update_finance_info
+    earnings_raw = _load_earnings(base, previous, symbols, errors)
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_finance_info_update.py", line 212, in _load_earnings
+    payload = agent.daily_run(
+        days=LOOKBACK_DAYS,
+    ...<3 lines>...
+        skip_urls=skip or None,
+    )
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\earnings_call_agent.py", line 517, in daily_run
+    a=self.analyze_one(x["url"])
+  File "C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\earnings_call_agent.py", line 446, in analyze_one
+    resp2=client.chat(model=self.ollama_model,messages=[{"role":"system","content":prompt},{"role":"user","content":context[:48000]}],options={"temperature":0},format="json",think=False)
+  File "C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\ollama\_client.py", line 387, in chat
+    return self._request(
+           ~~~~~~~~~~~~~^
+      ChatResponse,
+      ^^^^^^^^^^^^^
+    ...<14 lines>...
+      stream=stream,
+      ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\ollama\_client.py", line 199, in _request
+    return cls(**self._request_raw(*args, **kwargs).json())
+                 ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\ollama\_client.py", line 139, in _request_raw
+    r = self._client.request(*args, **kwargs)
+  File "C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpx\_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpx\_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpx\_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpx\_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpx\_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpx\_transports\default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpcore\_sync\connection.py", line 103, in handle_request
+    return self._connection.handle_request(request)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpcore\_sync\http11.py", line 136, in handle_request
+    raise exc
+  File "C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpcore\_sync\http11.py", line 106, in handle_request
+    ) = self._receive_response_headers(**kwargs)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpcore\_sync\http11.py", line 177, in _receive_response_headers
+    event = self._receive_event(timeout=timeout)
+  File "C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpcore\_sync\http11.py", line 217, in _receive_event
+    data = self._network_stream.read(
+        self.READ_NUM_BYTES, timeout=timeout
+    )
+  File "C:\Users\10501\AppData\Local\Programs\Python\Python313\Lib\site-packages\httpcore\_backends\sync.py", line 128, in read
+    return self._sock.recv(max_bytes)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^
+KeyboardInterrupt
+========================================================================
+JOB=finance
+START=2026-10-08T08:33:25+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_finance_info_update.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+========================================================================
+AI TW STOCK FINANCE INFO UPDATE
+TIME=2026-10-08T08:33:26.372775+08:00
+{
+  "ok": true,
+  "updated_at": "2026-10-08T08:33:26+08:00",
+  "latest": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\output\\research_reports\\finance_info_latest.json",
+  "earnings_count": 4,
+  "news_count": 357,
+  "per_category_count": {
+    "headline": 192,
+    "tw_stock": 159,
+    "wd_stock": 184,
+    "forex": 4,
+    "future": 38
+  },
+  "agent_stats": {
+    "input": 357,
+    "after_dedupe": 357,
+    "llm_summarized": 40,
+    "llm_cached": 0,
+    "llm_failed": 0,
+    "seconds": 776.3,
+    "llm_note": "ok"
+  },
+  "stale": false,
+  "errors": []
+}
+CHILD_RETURN_CODE=0
+OUTPUT_VALIDATION=True
+OUTPUT_MESSAGE=Finance info OK: news=357, earnings=4, crawl={'headline': 192, 'tw_stock': 159, 'wd_stock': 184, 'forex': 4, 'future': 38}
+FINAL_RETURN_CODE=0
+END=2026-10-08T08:52:48+08:00
+========================================================================
+JOB=finance
+START=2026-10-08T18:00:02+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_finance_info_update.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+========================================================================
+AI TW STOCK FINANCE INFO UPDATE
+TIME=2026-10-08T18:00:04.345970+08:00
+{
+  "ok": true,
+  "updated_at": "2026-10-08T18:00:04+08:00",
+  "latest": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\output\\research_reports\\finance_info_latest.json",
+  "earnings_count": 4,
+  "news_count": 553,
+  "per_category_count": {
+    "headline": 287,
+    "tw_stock": 309,
+    "wd_stock": 225,
+    "forex": 6,
+    "future": 45
+  },
+  "agent_stats": {
+    "input": 553,
+    "after_dedupe": 553,
+    "llm_summarized": 26,
+    "llm_cached": 40,
+    "llm_failed": 0,
+    "seconds": 490.0,
+    "llm_note": "ok"
+  },
+  "stale": false,
+  "errors": []
+}
+CHILD_RETURN_CODE=0
+OUTPUT_VALIDATION=True
+OUTPUT_MESSAGE=Finance info OK: news=553, earnings=4, crawl={'headline': 287, 'tw_stock': 309, 'wd_stock': 225, 'forex': 6, 'future': 45}
+FINAL_RETURN_CODE=0
+END=2026-10-08T18:09:02+08:00
+========================================================================
+JOB=finance
+START=2026-10-08T19:55:47+08:00
+SCRIPT=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard\run_finance_info_update.py
+PYTHON=C:\Users\10501\AppData\Local\Programs\Python\Python313\python.exe
+WORKDIR=C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
+========================================================================
+========================================================================
+AI TW STOCK FINANCE INFO UPDATE
+TIME=2026-10-08T19:55:48.288098+08:00
+[19:55:48 +    0s] �s�D�G�}�l�����d��]�Y�����x�ѡ���ڪѡ��~�ס����f�A�e�@�� 00:00 �ܲ{�b�^
+[19:56:22 +   34s] �s�D�G���� 600 �g�A�U���� {'headline': 314, 'tw_stock': 408, 'wd_stock': 230, 'forex': 6, 'future': 46}
+[19:56:22 +   35s] �s�D�G�i�J Agent ���R�]600 �g�^
+[agent] Qwen3 �K�n�i�� 1/40�]�w�� 26 ���^
+[agent] Qwen3 �K�n�i�� 6/40�]�w�� 127 ���^
+[20:00:36 +  289s] �s�D�GAgent ���� {'input': 600, 'after_dedupe': 600, 'llm_summarized': 10, 'llm_cached': 60, 'llm_failed': 0, 'seconds': 254.1, 'llm_note': 'ok'}
+[20:00:36 +  289s] �w���g�J�s�D���G�]�����O�{�b�N��ݨ�^
+[20:00:37 +  289s] �k���|�G�}�l�]�w�� 4 ���F�����̦h�s���R 12 ���A�O�� 600 ���^
+[20:00:37 +  290s] �k���|�G�s�W 0 ��
+[20:00:37 +  290s] �����G�s�D 600 �g�B�k���| 4 ��
+{
+  "ok": true,
+  "updated_at": "2026-10-08T19:55:48+08:00",
+  "latest": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\output\\research_reports\\finance_info_latest.json",
+  "earnings_count": 4,
+  "news_count": 600,
+  "per_category_count": {
+    "headline": 314,
+    "tw_stock": 408,
+    "wd_stock": 230,
+    "forex": 6,
+    "future": 46
+  },
+  "agent_stats": {
+    "input": 600,
+    "after_dedupe": 600,
+    "llm_summarized": 10,
+    "llm_cached": 60,
+    "llm_failed": 0,
+    "seconds": 254.1,
+    "llm_note": "ok"
+  },
+  "stale": false,
+  "errors": []
+}
+CHILD_RETURN_CODE=0
+OUTPUT_VALIDATION=True
+OUTPUT_MESSAGE=Finance info OK: news=600, earnings=4, crawl={'headline': 314, 'tw_stock': 408, 'wd_stock': 230, 'forex': 6, 'future': 46}
+FINAL_RETURN_CODE=0
+END=2026-10-08T20:00:38+08:00
