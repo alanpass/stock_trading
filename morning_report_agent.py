@@ -15,6 +15,8 @@ from __future__ import annotations
 
 import json
 import os
+
+MORNING_NEWS_MAX = int(os.getenv("MORNING_NEWS_MAX", "15"))  # 晨報最多列幾則新聞摘要
 import re
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -73,6 +75,33 @@ def _safe_float(v: Any, default: float | None = None) -> float | None:
         return default
 
 
+def _first_meaningful_text(item: dict[str, Any], limit: int = 900) -> str:
+    """從新聞/法說資料中找出第一段可閱讀內容。"""
+    keys = (
+        "one_line_summary", "summary", "brief_summary", "description", "abstract",
+        "content", "memo_text", "text", "ollama_summary", "agent_summary"
+    )
+    for key in keys:
+        value = item.get(key)
+        if isinstance(value, list):
+            value = "；".join(str(x) for x in value if str(x).strip())
+        value = re.sub(r"\\s+", " ", str(value or "")).strip()
+        if value:
+            return value[:limit]
+    return ""
+
+
+def _news_fallback_summary(item: dict[str, Any]) -> str:
+    text = _first_meaningful_text(item, 1000)
+    title = _clean_text(item.get("title") or item.get("headline") or "財經事件", 160)
+    if text and text != title:
+        return text
+    content = _clean_text(item.get("content") or item.get("summary") or "", 1000)
+    if content:
+        return content
+    return f"{title}：已進入最近兩日鉅亨新聞研究範圍，請回看原文確認影響。"
+
+
 class MorningResearchAgent:
     def __init__(self, base_dir: str | Path = ".", ollama_host: str | None = None, ollama_model: str | None = None):
         self.base = Path(base_dir).resolve()
@@ -92,86 +121,106 @@ class MorningResearchAgent:
                 continue
         return {}
 
-    def _load_recent_earnings_cache(self, days: int = 5, watchlist: list[str] | None = None) -> dict[str, Any]:
-        """讀取最近 N 天所有 Fugle 法說 memo，依實際 event_date 過濾，不只取單一日檔。"""
+    def _load_recent_earnings_cache(self, days: int = 2, watchlist: list[str] | None = None) -> dict[str, Any]:
+        """讀取最近 N 個日曆日內的全部法說 memo，以實際事件日期過濾。
+
+        不直接相信 cache 檔名日期；若 08:30/18:00 財經快取只有舊事件，
+        會繼續往 Fugle memo 日檔搜尋，避免早報顯示舊資料或誤判為沒有資料。
+        """
         today = datetime.now(TAIPEI).date()
-        cutoff = today - timedelta(days=max(1, int(days)))
-        records: list[dict[str, Any]] = []
-        errors: list[dict[str, str]] = []
+        cutoff = today - timedelta(days=max(0, int(days) - 1))
 
-        def extract_items(data: Any) -> list[dict[str, Any]]:
-            if isinstance(data, dict):
-                for key in ("items", "earnings_calls", "events", "data"):
-                    value = data.get(key)
-                    if isinstance(value, list):
-                        return [x for x in value if isinstance(x, dict)]
-                return [data] if data.get("event_date") or data.get("symbol") else []
-            if isinstance(data, list):
-                return [x for x in data if isinstance(x, dict)]
-            return []
+        def _extract_recent(raw_items: list[dict[str, Any]], source: str) -> list[dict[str, Any]]:
+            out: list[dict[str, Any]] = []
+            seen: set[tuple[str, str, str]] = set()
+            for item in raw_items:
+                if not isinstance(item, dict):
+                    continue
+                raw_date = (
+                    item.get("event_date") or item.get("eventDate") or item.get("published_date")
+                    or item.get("published_at") or item.get("published_time") or item.get("published_ts")
+                    or item.get("published") or item.get("date") or item.get("created_at") or item.get("modified_date")
+                )
+                match = re.search(r"(20\d{2}-\d{2}-\d{2})", str(raw_date or ""))
+                if not match:
+                    continue
+                try:
+                    event_date = datetime.strptime(match.group(1), "%Y-%m-%d").date()
+                except Exception:
+                    continue
+                if not (cutoff <= event_date <= today):
+                    continue
+                symbol = _clean_symbol(item.get("symbol") or item.get("code") or "")
+                title = str(item.get("title") or item.get("name") or item.get("url") or item.get("source_url") or "")
+                key = (event_date.isoformat(), symbol, title)
+                if key in seen:
+                    continue
+                seen.add(key)
+                row = dict(item)
+                row["event_date"] = event_date.isoformat()
+                row["_cache_file"] = source
+                out.append(row)
+            return out
 
-        for path in sorted(self.output_dir.glob("fugle_earnings_memo_*.json"), reverse=True):
+        # 第一層：08:30 / 18:00 財經資訊快取。只有真正落在時間窗內的項目才採用。
+        finance_path = self.output_dir / "finance_info_latest.json"
+        try:
+            if finance_path.exists():
+                finance = json.loads(finance_path.read_text(encoding="utf-8"))
+                items = _extract_recent(
+                    [x for x in (finance.get("earnings", []) or []) if isinstance(x, dict)],
+                    str(finance_path),
+                )
+                if items:
+                    return {
+                        "items": items,
+                        "errors": [],
+                        "daily_digest": {},
+                        "cache_file": str(finance_path),
+                    }
+        except Exception:
+            pass
+
+        # 第二層：合併所有 Fugle memo 日檔；使用事件實際日期，不用檔名日期。
+        files = sorted(self.output_dir.glob("fugle_earnings_memo_*.json"), reverse=True)
+        merged_items: list[dict[str, Any]] = []
+        errors: list[dict[str, Any]] = []
+        seen = set()
+
+        for path in files:
             try:
                 data = json.loads(path.read_text(encoding="utf-8"))
             except Exception as exc:
-                errors.append({"error": f"{path.name}: {exc}"})
+                errors.append({"error": f"讀取法說會 cache 失敗：{path.name}: {exc}"})
                 continue
 
-            for item in extract_items(data):
-                event_dt = None
-                for key in ("event_date", "eventDate", "date", "published_at", "published_time", "created_at"):
-                    raw = item.get(key)
-                    if raw:
-                        try:
-                            event_dt = pd.to_datetime(raw, errors="coerce")
-                            if pd.notna(event_dt):
-                                event_dt = event_dt.date()
-                                break
-                        except Exception:
-                            pass
-                if event_dt is None:
-                    # 檔名只作最後 fallback，不作主要日期依據。
-                    m = re.search(r"fugle_earnings_memo_(20\d{2}-\d{2}-\d{2})\.json$", path.name)
-                    if m:
-                        try:
-                            event_dt = datetime.strptime(m.group(1), "%Y-%m-%d").date()
-                        except Exception:
-                            pass
-                if event_dt is None or not (cutoff <= event_dt <= today):
+            raw_items: list[dict[str, Any]] = []
+            if isinstance(data, dict):
+                for key in ("items", "earnings_calls", "events", "memos", "data"):
+                    if isinstance(data.get(key), list):
+                        raw_items = [x for x in data[key] if isinstance(x, dict)]
+                        break
+            elif isinstance(data, list):
+                raw_items = [x for x in data if isinstance(x, dict)]
+
+            for row in _extract_recent(raw_items, str(path)):
+                key = (str(row.get("event_date", "")), _clean_symbol(row.get("symbol") or row.get("code") or ""), str(row.get("title") or row.get("url") or row.get("source_url") or ""))
+                if key in seen:
                     continue
+                seen.add(key)
+                merged_items.append(row)
 
-                row = dict(item)
-                row["event_date"] = event_dt.isoformat()
-                row["cache_file"] = str(path)
-                records.append(row)
+        merged_items.sort(key=lambda x: (str(x.get("event_date", "")), str(x.get("symbol", ""))), reverse=True)
 
-        # 依日期＋股票＋來源去重。
-        dedup: dict[tuple[str, str, str], dict[str, Any]] = {}
-        for row in records:
-            key = (
-                str(row.get("event_date", "")),
-                _clean_symbol(row.get("symbol") or row.get("code") or row.get("stock_code")),
-                str(row.get("source_url") or row.get("url") or row.get("title") or ""),
-            )
-            dedup[key] = row
-        records = sorted(
-            dedup.values(),
-            key=lambda x: (
-                str(x.get("event_date", "")),
-                str(x.get("symbol", "")),
-            ),
-            reverse=True,
-        )
-
-        if records:
+        if merged_items:
             return {
-                "items": records,
+                "items": merged_items,
                 "errors": errors,
                 "daily_digest": {},
-                "cache_file": "multiple_fugle_earnings_memo_files",
+                "cache_file": "merged_from_recent_fugle_memo_caches",
             }
 
-        # 沒有現成 cache：補抓一次，EarningsCallAgent 內部 DB 會避免重複。
+        # 沒有現成 cache：補抓一次，但 EarningsCallAgent 本身使用 DB 避免重複分析。
         try:
             agent = EarningsCallAgent(self.base, ollama_model=self.ollama_model)
             out = agent.daily_run(
@@ -180,29 +229,39 @@ class MorningResearchAgent:
                 force=_clean_text(os.getenv("EARNINGS_FORCE_REFRESH", "false")).lower() in {"1", "true", "yes", "on"},
                 watchlist=watchlist or [],
             )
-            if isinstance(out, dict):
-                # 再次依實際事件日期過濾，防止 Agent 回傳舊 memo。
-                items = []
-                for item in out.get("items", []) or []:
-                    if not isinstance(item, dict):
-                        continue
-                    raw = item.get("event_date") or item.get("date") or item.get("published_at")
-                    try:
-                        dt = pd.to_datetime(raw, errors="coerce").date()
-                    except Exception:
-                        dt = None
-                    if dt is not None and cutoff <= dt <= today:
-                        item = dict(item)
-                        item["event_date"] = dt.isoformat()
-                        items.append(item)
-                out["items"] = items
-                return out
-            return {}
+            return out if isinstance(out, dict) else {"items": [], "errors": errors}
         except Exception as exc:
-            return {"items": [], "errors": errors + [{"error": f"早報法說會 cache 補抓失敗：{exc}"}], "daily_digest": {}}
-
+            errors.append({"error": f"早報法說會 cache 補抓失敗：{exc}"})
+            return {"items": [], "errors": errors, "daily_digest": {}}
 
     def _load_cnyes_cache(self, report_date: str) -> dict[str, Any]:
+        """優先讀取 08:30/18:00 財經資訊快取；沒有才回到 23:00 夜間快取。"""
+        finance_path = self.output_dir / "finance_info_latest.json"
+        try:
+            if finance_path.exists():
+                finance = json.loads(finance_path.read_text(encoding="utf-8"))
+                updated_at = str(finance.get("updated_at", ""))
+                news = [x for x in (finance.get("news", []) or []) if isinstance(x, dict)]
+                if news:
+                    dates = sorted({str(x.get("_date") or x.get("published_at") or x.get("date") or "")[:10] for x in news if str(x.get("_date") or x.get("published_at") or x.get("date") or "")}, reverse=True)
+                    return {
+                        "source_url": "https://news.cnyes.com/news/cat/headline",
+                        "source_method": "finance_info_cache",
+                        "cache_dates": [x for x in dates if x],
+                        "cache_files": [str(finance_path)],
+                        "article_count": len(news),
+                        "articles": news,
+                        "errors": [],
+                        "loaded_from_cache": True,
+                        "updated_at": updated_at,
+                        "content_quality": {
+                            "with_content": sum(1 for x in news if len(str(x.get("content") or "")) >= 320),
+                            "with_summary": sum(1 for x in news if bool(str(x.get("summary") or "").strip())),
+                        },
+                    }
+        except Exception:
+            pass
+
         crawler = CnyesNewsCrawler(
             self.base,
             max_articles=int(os.getenv("CNYES_NIGHTLY_MAX_ARTICLES", "600")),
@@ -226,11 +285,34 @@ class MorningResearchAgent:
                 "loaded_from_cache": True,
             }
 
+    def _fallback_news_from_raw_cache(self, payload: dict[str, Any], watchlist: list[str]) -> list[dict[str, Any]]:
+        articles = [x for x in (payload.get("cnyes_news", {}).get("articles", []) or []) if isinstance(x, dict)]
+        rows: list[dict[str, Any]] = []
+        for article in articles[:60]:
+            summary = _news_fallback_summary(article)
+            title = _clean_text(article.get("title") or article.get("headline") or "財經事件", 120)
+            published = _clean_text(
+                article.get("published_at") or article.get("published_ts") or article.get("published")
+                or article.get("date") or article.get("created_at") or "", 80
+            )
+            tags = [str(v).strip() for v in (article.get("tags") or []) if str(v).strip()][:8]
+            rows.append({
+                "title": title,
+                "summary": summary[:900],
+                "published_at": published,
+                "impact": "待查證",
+                "industries": tags,
+                "evidence": [f"鉅亨新聞：{title}"],
+                "source_links": [str(article.get("url") or "").strip()] if article.get("url") else [],
+                "confidence": 0.35,
+            })
+        return rows
+
     def _build_payload(self, watchlist: list[str]) -> dict[str, Any]:
         now = datetime.now(TAIPEI)
         report_date = now.strftime("%Y-%m-%d")
         research = self._load_latest_research()
-        earnings = self._load_recent_earnings_cache(5, watchlist)
+        earnings = self._load_recent_earnings_cache(2, watchlist)
         cnyes = self._load_cnyes_cache(report_date)
 
         try:
@@ -353,6 +435,26 @@ class MorningResearchAgent:
         news_summary: list[dict[str, Any]] = []
         seen_news: set[str] = set()
 
+        def resolve_news_date(item: dict[str, Any], title: str) -> str:
+            for key in ("published_at", "published_time", "date", "created_at", "updated_at", "publishedAt"):
+                value = str(item.get(key, "") or "").strip()
+                if re.search(r"20\d{2}-\d{2}-\d{2}", value):
+                    return re.search(r"20\d{2}-\d{2}-\d{2}", value).group(0)
+            links = {str(v).strip() for v in (item.get("source_links") or []) if str(v).strip()}
+            title_norm = re.sub(r"\s+", "", title).lower()
+            for article in raw_articles:
+                if not isinstance(article, dict):
+                    continue
+                article_url = str(article.get("url") or article.get("source_url") or "").strip()
+                article_title = re.sub(r"\s+", "", str(article.get("title") or "")).lower()
+                if (links and article_url and article_url in links) or (title_norm and article_title == title_norm):
+                    for key in ("published_at", "published_time", "published_ts", "published", "published_date", "date", "created_at", "updated_at", "modified_date"):
+                        value = str(article.get(key, "") or "").strip()
+                        m = re.search(r"20\d{2}-\d{2}-\d{2}", value)
+                        if m:
+                            return m.group(0)
+            return ""
+
         for item in digest_findings:
             title = _clean_text(item.get("title", "財經事件"), 120)
             summary = _clean_text(item.get("summary", ""), 900)
@@ -375,13 +477,14 @@ class MorningResearchAgent:
             news_summary.append({
                 "title": title,
                 "summary": summary,
+                "published_at": resolve_news_date(item, title),
                 "impact": _clean_text(item.get("impact", "待查證"), 20) or "待查證",
                 "industries": industries[:8],
                 "evidence": [_clean_text(v, 500) for v in (item.get("evidence") or []) if str(v).strip()][:6],
                 "source_links": [str(v).strip() for v in (item.get("source_links") or []) if str(v).strip()][:4],
                 "confidence": max(0.0, min(1.0, _safe_float(item.get("confidence"), 0.20) or 0.20)),
             })
-            if len(news_summary) >= 10:
+            if len(news_summary) >= MORNING_NEWS_MAX:
                 break
 
         # ---------------------------------------------------------------
@@ -390,7 +493,7 @@ class MorningResearchAgent:
         # 若摘要欄位缺失，明確標示內容不足，不虛構新聞內容。
         # ---------------------------------------------------------------
         for article in raw_articles:
-            if len(news_summary) >= 10:
+            if len(news_summary) >= MORNING_NEWS_MAX:
                 break
             title = _clean_text(article.get("title", ""), 120)
             if not title:
@@ -422,6 +525,7 @@ class MorningResearchAgent:
             news_summary.append({
                 "title": title,
                 "summary": summary,
+                "published_at": _clean_text(article.get("published_at") or article.get("published_time") or article.get("date") or article.get("created_at") or article.get("updated_at"), 80),
                 "impact": "待查證",
                 "industries": industries[:8],
                 "evidence": [f"鉅亨新聞：{title}"],
@@ -536,8 +640,7 @@ class MorningResearchAgent:
         watch_items = [_clean_text(x, 500) for x in (digest.get("watch_topics") or []) if str(x).strip()][:10]
         if not watch_items:
             watch_items = [_clean_text(x, 500) for x in (digest.get("market_drivers") or []) if str(x).strip()][:6]
-        if error:
-            watch_items.append(f"早報主 Agent 本次未完成完整整合：{_clean_text(error, 450)}")
+        # Agent 內部例外只寫入 report metadata；不可混入使用者的待追蹤事項。
 
         overview = "早報主 Agent 本次未完成完整自主整合，已改用夜間 CNYES 快取與新聞 Agent 結果建立證據保底；未有證據的股票不列入觀察名單。"
         if news_summary:
@@ -550,7 +653,7 @@ class MorningResearchAgent:
             "model": self.ollama_model,
             "generated_at": datetime.now(TAIPEI).isoformat(),
             "overview": overview,
-            "news_summary": news_summary[:10],
+            "news_summary": news_summary[:MORNING_NEWS_MAX],
             "recommended_industries": recommended_industries[:8],
             "recommended_stocks": recommended_stocks[:12],
             "watch_items": list(dict.fromkeys(watch_items))[:10],
@@ -604,8 +707,8 @@ class MorningResearchAgent:
 研究自選股：{watchlist}
 
 早報只有三個任務：
-1. 最近 5 天法說會：法說會完整內容會由 Email 的獨立區塊呈現；你只需抓跨公司共同趨勢或值得特別注意的因素，不要逐篇重複。
-2. 最近 2 天財經報導摘要：必須根據已經由 23:00 夜間爬蟲保存的鉅亨新聞與 CNYES News Agent 摘要，整理真正重要的市場／產業事件。
+1. 前一日 00:00 至目前的法說會：法說會完整內容會由 Email 的獨立區塊呈現；你只需抓跨公司共同趨勢或值得特別注意的因素，不要逐篇重複。
+2. 前一日 00:00 至目前的財經報導摘要：必須根據已經由 23:00 夜間爬蟲保存的鉅亨新聞與 CNYES News Agent 摘要，整理真正重要的市場／產業事件。
 3. Agent 觀察的產業與股票：自行判斷近期值得關注的產業類別（例如 PCB、CCL、MLCC、IC 代工、封測、記憶體、AI 伺服器等），並從自選股中挑出與這些產業有直接業務關聯的股票，說明「它做什麼＋為什麼值得早報關注」。不要使用買進／賣出指令，也不要寫成投資保證。
 
 重要規則：
@@ -623,6 +726,7 @@ class MorningResearchAgent:
     {{
       "title": "財經事件",
       "summary": "事件摘要",
+      "published_at": "原始新聞發布日期（YYYY-MM-DD HH:MM，能取得就必須保留）",
       "impact": "利多|利空|混合|待查證",
       "industries": ["產業"],
       "evidence": ["鉅亨新聞標題／日期"],
@@ -693,15 +797,34 @@ class MorningResearchAgent:
             if not isinstance(raw, dict):
                 raise ValueError("早報 Agent 輸出不是 JSON object")
 
-            valid_urls = {str(a.get("url", "")).strip() for a in (payload.get("cnyes_news", {}).get("articles", []) or []) if isinstance(a, dict) and a.get("url")}
+            raw_articles = [a for a in (payload.get("cnyes_news", {}).get("articles", []) or []) if isinstance(a, dict)]
+            valid_urls = {str(a.get("url", "")).strip() for a in raw_articles if a.get("url")}
+            article_meta = {}
+            for article in raw_articles:
+                title_key = _clean_text(article.get("title") or article.get("headline") or "", 160).lower()
+                url_key = str(article.get("url") or "").strip()
+                published = _clean_text(article.get("published_at") or article.get("published_time") or article.get("date") or article.get("created_at") or article.get("updated_at") or "", 80)
+                if title_key:
+                    article_meta[title_key] = published
+                if url_key:
+                    article_meta[url_key] = published
+
             news_summary = []
             for x in raw.get("news_summary", []) or []:
                 if not isinstance(x, dict):
                     continue
-                links = [u for u in (x.get("source_links") or []) if str(u).strip() in valid_urls]
+                links = [str(u).strip() for u in (x.get("source_links") or []) if str(u).strip() in valid_urls]
+                title = _clean_text(x.get("title", "財經事件"), 120)
+                published = _clean_text(x.get("published_at") or x.get("published_time") or "", 80)
+                if not published:
+                    published = article_meta.get(title.lower(), "")
+                    for link in links[:1]:
+                        if not published:
+                            published = article_meta.get(link, "")
                 news_summary.append({
-                    "title": _clean_text(x.get("title", "財經事件"), 120),
+                    "title": title,
                     "summary": _clean_text(x.get("summary", ""), 900),
+                    "published_at": published,
                     "impact": _clean_text(x.get("impact", "待查證"), 20),
                     "industries": [_clean_text(v, 80) for v in (x.get("industries") or []) if str(v).strip()][:8],
                     "evidence": [_clean_text(v, 500) for v in (x.get("evidence") or []) if str(v).strip()][:6],
@@ -746,7 +869,7 @@ class MorningResearchAgent:
                 "model": self.ollama_model,
                 "generated_at": datetime.now(TAIPEI).isoformat(),
                 "overview": _clean_text(raw.get("overview", ""), 1200),
-                "news_summary": news_summary[:10],
+                "news_summary": news_summary[:MORNING_NEWS_MAX],
                 "recommended_industries": recommended_industries[:10],
                 "recommended_stocks": recommended_stocks[:12],
                 "watch_items": [_clean_text(x, 500) for x in (raw.get("watch_items") or []) if str(x).strip()][:10],
@@ -755,8 +878,21 @@ class MorningResearchAgent:
                 "earnings_count": len(earnings),
             }
             raw_article_count = int(payload.get("cnyes_news", {}).get("article_count", 0) or 0)
-            if raw_article_count > 0 and not result["news_summary"]:
-                raise ValueError("CNYES 夜間快取已有新聞，但早報 Agent 沒有產生新聞摘要；啟用原始快取保底。")
+            if raw_article_count > 0:
+                raw_fallback = self._fallback_news_from_raw_cache(payload, watchlist)
+                if not result["news_summary"]:
+                    result["news_summary"] = raw_fallback[:MORNING_NEWS_MAX]
+                    result["agent_status"] = "qwen3_morning_agent_raw_news_fallback"
+                else:
+                    # Qwen 有時只輸出標題，保留其判斷，但把空摘要用原始文章補齊。
+                    by_title = {str(x.get("title") or "").strip().lower(): x for x in raw_fallback}
+                    for item in result["news_summary"]:
+                        if not isinstance(item, dict):
+                            continue
+                        summary = str(item.get("summary") or "").strip()
+                        key = str(item.get("title") or "").strip().lower()
+                        if len(summary) < 40 and key in by_title:
+                            item["summary"] = by_title[key].get("summary", summary)
             if not result["news_summary"] and not result["recommended_industries"] and not result["recommended_stocks"]:
                 raise ValueError("早報 Agent 沒有產生有效內容")
             return result
@@ -798,7 +934,7 @@ def build_morning_report(base_dir: str | Path = ".", watchlist: list[str] | None
     if not payload.get("earnings_calls"):
         lines.append("- 最近 5 天沒有可用的法說會快取資料。")
     lines += ["", "## 2. 最近 2 天財經報導摘要"]
-    for x in morning.get("news_summary", [])[:10]:
+    for x in morning.get("news_summary", [])[:MORNING_NEWS_MAX]:
         if isinstance(x, dict):
             lines.append(f"- **{x.get('title','')}**｜{x.get('impact','待查證')}｜{x.get('summary','')}")
     lines += ["", "## 3. Agent 觀察產業"]

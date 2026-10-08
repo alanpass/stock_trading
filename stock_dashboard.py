@@ -20,6 +20,7 @@ from __future__ import annotations
 from pathlib import Path
 from datetime import datetime, time as dt_time
 from zoneinfo import ZoneInfo
+import re
 import json
 import os
 
@@ -127,7 +128,7 @@ def save_watchlist(items):
 
 
 
-st.set_page_config(page_title="台股即時互動式分析系統", page_icon="📈", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="台股即時互動式分析系統", page_icon="📈", layout="wide", initial_sidebar_state="expanded")
 
 
 # ---- 所有 Plotly 圖表統一使用與網頁背景相配的淺色系 ----
@@ -954,7 +955,7 @@ body,.stApp{background:#fff!important;color:var(--site-ink)!important;}
 header[data-testid="stHeader"]{background:rgba(255,255,255,.96)!important;min-height:0!important;}
 #MainMenu{visibility:hidden!important;}
 footer:not(.site-footer){display:none!important;}
-[data-testid="stSidebar"]{display:none!important;}
+
 .brand-block{text-align:center;padding:0 0 0}.brand-mark{width:54px;height:54px;margin:0 auto 8px;position:relative}.brand-mark:before{content:"";position:absolute;inset:8px;border:4px solid var(--site-red);border-radius:50% 50% 46% 54%;transform:rotate(-22deg)}.brand-mark:after{content:"";position:absolute;width:23px;height:15px;border-left:4px solid var(--site-red);border-bottom:4px solid var(--site-red);left:17px;top:21px;transform:rotate(32deg);border-radius:0 0 0 8px}.brand-mark span{position:absolute;width:12px;height:12px;background:#fff;left:15px;top:16px;border-radius:50%;z-index:2}.brand-name{font-family:Georgia,"Noto Serif TC","Microsoft JhengHei",serif;font-size:20px;letter-spacing:1.5px;color:#555}.site-status-line{text-align:center;font-size:10px;color:#989898;margin:4px 0 10px;letter-spacing:.4px}.site-nav{display:flex;justify-content:center;align-items:center;gap:28px;flex-wrap:wrap;padding:8px 4px 12px}.site-nav-link{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;color:#777!important;text-decoration:none!important;font-size:11px;letter-spacing:.6px;padding:3px 0;border-bottom:1px solid transparent;transition:.18s ease}.site-nav-link:hover{color:var(--site-red)!important}.site-nav-link.active{color:var(--site-red)!important;border-bottom-color:var(--site-red);font-weight:800}.site-rule{border-top:1px dashed #a9a1a1;margin:1px 0 20px}
 .page-image-banner{position:relative;width:100%;height:180px;border-radius:10px;overflow:hidden;margin:0 0 24px;box-shadow:0 8px 24px rgba(0,0,0,.08)}.page-image-banner>img{display:block;width:100%;height:100%;object-fit:cover}.page-image-shade{position:absolute;inset:0;background:rgba(15,15,20,.42)}.page-image-title{position:absolute;left:34px;bottom:24px;color:#fff;font-family:Georgia,"Noto Serif TC","Microsoft JhengHei",serif;font-size:28px;font-weight:500;letter-spacing:1px}.contact-page-banner{margin-bottom:20px}.hero-visual{width:100%;height:350px;border-radius:10px;overflow:hidden;margin:0 0 0;box-shadow:0 8px 25px rgba(0,0,0,.08)}
 .home-band{padding:48px 42px;margin:0}.home-band.blush{background:var(--site-blush)}.home-band.white-band{background:#fff}.home-two-col{width:100%;margin:0;display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center}.home-two-col.reverse-on-mobile{grid-template-columns:.92fr 1.08fr}.home-copy{max-width:540px}.eyebrow{color:var(--site-red);font-size:10px;letter-spacing:2px;font-weight:800;margin-bottom:7px}.home-copy h2,.content-heading h1{font-family:Georgia,"Noto Serif TC","Microsoft JhengHei",serif;color:var(--site-red);font-size:32px;line-height:1.2;margin:0 0 14px;font-weight:500}.home-copy p,.content-heading p{font-size:13px;line-height:1.9;color:#5f5a5a;margin:0 0 10px}.home-link,.contact-link{display:inline-block;margin-top:8px;color:var(--site-red)!important;text-decoration:none!important;font-size:12px;font-weight:800;letter-spacing:.5px;border-bottom:1px solid rgba(142,43,47,.45);padding-bottom:3px}.home-image-stack{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end}.small-visual{height:170px;border-radius:8px;overflow:hidden;box-shadow:0 5px 14px rgba(0,0,0,.12)}.home-image-grid{display:grid;gap:10px}.home-image-grid.three-grid{grid-template-columns:repeat(3,1fr)}.home-image-grid.six-grid{grid-template-columns:repeat(3,1fr)}.home-image-grid>div,.focus-mini{min-width:0;border-radius:8px;overflow:hidden;box-shadow:0 5px 12px rgba(0,0,0,.09)}.home-image-grid.three-grid>div{height:142px}.home-image-grid.six-grid>div{height:118px}.home-accordion-hints{margin:14px 0 8px;border-top:1px solid #ded4d4}.home-accordion-hints>div{display:flex;justify-content:space-between;gap:16px;padding:12px 2px;border-bottom:1px solid #ded4d4;font-size:12px}.home-accordion-hints span{color:#8b8282}
@@ -1100,7 +1101,7 @@ def render_strategy_search() -> None:
             key="stock_search",
         )
     with right:
-        do_search = st.button("搜尋", use_container_width=True, key="do_stock_search_site")
+        do_search = st.button("\u200b", use_container_width=True, key="do_stock_search_site", help="搜尋")
 
     if do_search:
         found = search_stock(search_text)
@@ -1196,7 +1197,11 @@ def _flatten_records(obj):
 
 
 def _finance_cache_path() -> Path:
-    return OUTPUT / "research_reports" / "finance_info_latest.json"
+    # 網站優先讀「公開精簡版」，避免 Streamlit Cloud 依賴本機完整爬蟲快取。
+    # 本機若尚未產生公開版，才退回完整快取，維持舊流程相容。
+    public = OUTPUT / "research_reports" / "finance_info_public.json"
+    full = OUTPUT / "research_reports" / "finance_info_latest.json"
+    return public if public.exists() else full
 
 
 def _load_finance_info_cache() -> dict:
@@ -1213,7 +1218,7 @@ def _load_finance_info_cache() -> dict:
 def _recent_earnings_items(days: int = 2):
     """讀取 08:30 / 18:00 財經資訊快取，並以實際事件日期過濾。"""
     today = taiwan_now().date()
-    cutoff = today - pd.Timedelta(days=max(1, int(days)))
+    cutoff = today - pd.Timedelta(days=max(0, int(days) - 1))
     cache = _load_finance_info_cache()
     items = cache.get("earnings", []) if isinstance(cache, dict) else []
 
@@ -1222,10 +1227,14 @@ def _recent_earnings_items(days: int = 2):
             return None
         dt = _as_date(
             item.get("event_date")
+            or item.get("published_date")
             or item.get("date")
             or item.get("published_at")
             or item.get("published_time")
+            or item.get("published_ts")
+            or item.get("published")
             or item.get("created_at")
+            or item.get("modified_date")
         )
         if dt is None or not (cutoff <= dt <= today):
             return None
@@ -1262,7 +1271,7 @@ def _recent_earnings_items(days: int = 2):
 def _recent_news_items(days: int = 2):
     """讀取 08:30 / 18:00 財經資訊快取，並以實際發佈日期過濾。"""
     today = taiwan_now().date()
-    cutoff = today - pd.Timedelta(days=max(1, int(days)))
+    cutoff = today - pd.Timedelta(days=max(0, int(days) - 1))
     cache = _load_finance_info_cache()
     items = cache.get("news", []) if isinstance(cache, dict) else []
 
@@ -1272,8 +1281,11 @@ def _recent_news_items(days: int = 2):
         dt = _as_date(
             item.get("published_at")
             or item.get("published_time")
+            or item.get("published_ts")
+            or item.get("published")
             or item.get("date")
             or item.get("created_at")
+            or item.get("updated_at")
         )
         if dt is None or not (cutoff <= dt <= today):
             return None
@@ -1313,14 +1325,172 @@ def _record_company(item: dict) -> str:
 
 
 def _record_summary(item: dict) -> str:
+    """財經資訊頁永遠優先顯示實際正文／Agent 摘要，避免只剩「快取尚未更新」。"""
     for key in (
-        "one_line_summary", "summary", "description", "abstract",
-        "content", "text", "ollama_summary", "agent_summary"
+        "one_line_summary", "summary", "brief_summary", "description", "abstract",
+        "content", "memo_text", "text", "ollama_summary", "agent_summary"
     ):
         value = item.get(key)
+        if isinstance(value, list):
+            value = "；".join(str(x) for x in value if str(x).strip())
         if value:
-            return str(value).strip()
-    return "目前只有事件資料，尚未取得可顯示的摘要內容。"
+            text = re.sub(r"\s+", " ", str(value)).strip()
+            if text:
+                return text[:1800]
+    title = str(item.get("title") or item.get("headline") or item.get("company") or item.get("name") or "財經事件").strip()
+    return f"{title}：已列入最近兩日財經資訊更新範圍；目前只有標題資料，請查看原文確認。"
+
+
+_FIN_SCHEDULE_TEXT = "08:10、11:00、13:30、16:00、18:00、23:00"
+
+
+def _fin_hl(text, terms) -> str:
+    """HTML 跳脫後，把關鍵詞用螢光紅字標出（單次比對，避免巢狀標籤）。"""
+    from html import escape as _esc
+    safe = _esc(str(text or ""))
+    words = sorted({str(t).strip() for t in (terms or []) if str(t).strip()}, key=len, reverse=True)
+    words = [_esc(w) for w in words if _esc(w) in safe]
+    if not words:
+        return safe
+    pattern = "|".join(re.escape(w) for w in words)
+    return re.sub(pattern, lambda m: f'<mark class="fin-hl">{m.group(0)}</mark>', safe)
+
+
+def _fin_badge(sentiment: str) -> str:
+    s = str(sentiment or "中性")
+    cls = {"利多": "up", "利空": "down", "混合": "mix"}.get(s, "flat")
+    return f'<span class="fin-badge {cls}">{s}</span>'
+
+
+def _fin_chips(items, cls: str = "") -> str:
+    from html import escape as _esc
+    return "".join(f'<span class="fin-chip {cls}">{_esc(str(x))}</span>' for x in items if str(x).strip())
+
+
+def _inject_finance_css() -> None:
+    """樣式已移到全站樣式區塊（檔案最底部 V16），這裡不再於頁面內插入 <style>。"""
+    return None
+
+
+def _render_news_digest(digest: dict, total_news: int) -> None:
+    if not digest:
+        return
+    stats = digest.get("stats", {}) or {}
+    headline = digest.get("agent_headline") or digest.get("headline") or ""
+    by = "Qwen3 Agent" if digest.get("generated_by") == "qwen3" else "規則摘要"
+    parts = [f'<div class="fin-digest"><h3>📌 AI 今日重點 <small style="font-weight:400;font-size:12px">（{by}整理）</small></h3>']
+    if headline:
+        parts.append(f'<div class="fin-headline">{_fin_hl(headline, [])}</div>')
+    parts.append(
+        '<div class="fin-stats">'
+        f'<div class="fin-stat">新聞<b>{stats.get("total", total_news)}</b></div>'
+        f'<div class="fin-stat">利多<b style="color:#b3121a">{stats.get("利多", 0)}</b></div>'
+        f'<div class="fin-stat">利空<b style="color:#14532d">{stats.get("利空", 0)}</b></div>'
+        f'<div class="fin-stat">中性／混合<b>{stats.get("中性", 0) + stats.get("混合", 0)}</b></div></div>'
+    )
+    points = digest.get("agent_key_points") or []
+    if points:
+        parts.append('<ul class="fin-list">' + "".join(f"<li>{_fin_hl(p, [])}</li>" for p in points) + "</ul>")
+    else:
+        rows = digest.get("key_points", []) or []
+        parts.append(
+            '<ul class="fin-list">'
+            + "".join(f'<li>{_fin_badge(x.get("sentiment"))}{_fin_hl(x.get("point") or x.get("title"), x.get("highlights"))}</li>' for x in rows[:8])
+            + "</ul>"
+        )
+    bull, bear = digest.get("bullish", []) or [], digest.get("bearish", []) or []
+    if bull or bear:
+        def col(title, rows, cls):
+            body = "".join(f'<li>{_fin_hl(x.get("theme", ""), [])}</li>' for x in rows[:4]) or "<li>—</li>"
+            return f'<div><div class="fin-sub">{_fin_badge(cls)}{title}</div><ul class="fin-list">{body}</ul></div>'
+        parts.append('<div class="fin-two">' + col("利多主題", bull, "利多") + col("利空主題", bear, "利空") + "</div>")
+    heat = digest.get("sector_heat", []) or []
+    if heat:
+        chips = "".join(
+            f'<span class="fin-chip {"hot" if i < 3 else ""}">{x["sector"]} {x["count"]}'
+            f'{"　▲" if x.get("tone") == "偏多" else "　▼" if x.get("tone") == "偏空" else ""}</span>'
+            for i, x in enumerate(heat[:10])
+        )
+        parts.append(f'<div class="fin-sub" style="margin-top:12px">產業熱度（則數）</div>{chips}')
+    watch, risks = digest.get("watch_items", []) or [], digest.get("risks", []) or []
+    if watch or risks:
+        def col2(title, rows):
+            body = "".join(f"<li>{_fin_hl(x, [])}</li>" for x in rows) or "<li>—</li>"
+            return f'<div><div class="fin-sub">{title}</div><ul class="fin-list">{body}</ul></div>'
+        parts.append('<div class="fin-two">' + col2("👀 待追蹤", watch) + col2("⚠️ 風險", risks) + "</div>")
+    parts.append("</div>")
+    st.markdown('<div translate="no" class="notranslate">' + "".join(parts) + "</div>", unsafe_allow_html=True)
+
+
+def _safe_url(url) -> str:
+    from html import escape as _esc
+    u = str(url or "").strip()
+    return _esc(u, quote=True) if u.startswith(("http://", "https://")) else ""
+
+
+def _news_item_html(item: dict, is_open: bool = False) -> str:
+    from html import escape as _esc
+    title = str(item.get("title") or item.get("headline") or "未命名新聞").strip()
+    hl = item.get("highlights") or []
+    badge = _fin_badge(item.get("sentiment")) if item.get("sentiment") else ""
+    imp = item.get("importance")
+    stars = ""
+    if isinstance(imp, (int, float)):
+        n = max(1, min(5, int(round(float(imp) / 2))))
+        stars = f'<span class="fin-meta" style="margin-left:8px">{"★" * n}{"☆" * (5 - n)}</span>'
+    body = []
+    points = item.get("ai_points") or []
+    if points:
+        body.append('<ul class="fin-list">' + "".join(f"<li>{_fin_hl(p, hl)}</li>" for p in points) + "</ul>")
+    else:
+        body.append(f'<div>{_esc(str(_record_summary(item)))}</div>')
+    if item.get("why"):
+        body.append(f'<div class="fin-why">💡 {_fin_hl(item["why"], hl)}</div>')
+    meta = []
+    when = str(item.get("published") or item.get("published_at") or "")[:16].replace("T", " ")
+    if when:
+        meta.append(_esc(when))
+    if item.get("category"):
+        meta.append(_esc(str(item["category"])))
+    if meta:
+        body.append(f'<div class="fin-meta">{"　｜　".join(meta)}</div>')
+    chips = _fin_chips(item.get("sectors") or []) + _fin_chips(item.get("stocks") or [], "stock")
+    if chips:
+        body.append(f"<div>{chips}</div>")
+    url = _safe_url(item.get("url") or item.get("source_url"))
+    if url:
+        body.append(f'<div style="margin-top:6px"><a href="{url}" target="_blank" rel="noopener noreferrer">查看原文 ↗</a></div>')
+    return (
+        f'<details class="fin-item"{" open" if is_open else ""}>'
+        f'<summary>{badge}{_esc(title)}{stars}</summary><div class="fin-body">{"".join(body)}</div></details>'
+    )
+
+
+def _earning_item_html(item: dict, label: str, is_open: bool = False) -> str:
+    from html import escape as _esc
+    hl = item.get("highlights") or []
+    pts = item.get("ai_points") or []
+    body = []
+    if pts:
+        body.append('<ul class="fin-list">' + "".join(f"<li>{_fin_hl(p, hl)}</li>" for p in pts) + "</ul>")
+    else:
+        body.append(f'<div>{_esc(str(_record_summary(item)))}</div>')
+    signal = item.get("impact") or item.get("signal") or item.get("judgement") or item.get("sentiment")
+    if signal:
+        body.append(f'<div class="fin-meta"><b>判斷：</b>{_esc(str(signal))}</div>')
+    url = _safe_url(item.get("source_url") or item.get("url"))
+    if url:
+        body.append(f'<div><a href="{url}" target="_blank" rel="noopener noreferrer">查看來源 ↗</a></div>')
+    badge = _fin_badge(item.get("sentiment")) if item.get("sentiment") else ""
+    return (
+        f'<details class="fin-item"{" open" if is_open else ""}>'
+        f'<summary>{badge}{_esc(label)}</summary><div class="fin-body">{"".join(body)}</div></details>'
+    )
+
+
+def _render_news_item(item: dict, expanded: bool = False) -> None:
+    """相容舊呼叫：單篇新聞。"""
+    st.markdown(f'<div translate="no" class="notranslate">{_news_item_html(item, expanded)}</div>', unsafe_allow_html=True)
 
 
 def render_finance_workspace() -> None:
@@ -1328,56 +1498,170 @@ def render_finance_workspace() -> None:
         '<div class="content-heading"><div class="eyebrow">DAILY FINANCE</div><h1>財經資訊</h1></div>',
         unsafe_allow_html=True,
     )
-
     cache = _load_finance_info_cache()
     earnings = _recent_earnings_items(days=2)
     news = _recent_news_items(days=2)
 
     if cache.get("updated_at"):
-        updated = str(cache["updated_at"]).replace("T", " ")
-        st.markdown(
-            f"<div class='finance-refresh-time'>最後更新：{updated}（台灣時間）</div>",
-            unsafe_allow_html=True,
-        )
+        updated = str(cache["updated_at"]).replace("T", " ")[:19]
+        st.markdown(f"<div class='finance-refresh-time'>最後更新：{updated}（台灣時間）</div>", unsafe_allow_html=True)
+    if cache.get("stale"):
+        st.markdown("<div class='fin-stale'>⚠️ 最近一次更新沒有取得新資料，目前顯示的是上一個時間點的內容。</div>", unsafe_allow_html=True)
 
-    left, right = st.columns(2, gap="large")
+    st.markdown(
+        f"<div class='info-strip'>法說會：{len(earnings)} 筆｜財經新聞：{len(news)} 筆｜"
+        f"自動更新：每天 {_FIN_SCHEDULE_TEXT}（涵蓋前一日 00:00 至現在）。晨報 08:30、盤後分析 14:30。</div>",
+        unsafe_allow_html=True,
+    )
 
+    _render_news_digest(cache.get("news_digest") or {}, len(news))
+
+    left, right = st.columns([1, 1.45], gap="large")
+
+    # ---------------- 法說會 ----------------
     with left:
         st.markdown('<div class="finance-card-title">法說會摘要</div>', unsafe_allow_html=True)
+        edig = cache.get("earnings_digest") or {}
+        if edig.get("headline"):
+            st.markdown(f'<div class="fin-meta">{_fin_hl(edig["headline"], [])}</div>', unsafe_allow_html=True)
         if not earnings:
-            st.info("最近 2 天沒有可顯示的法說會摘要，或目前的研究快取尚未更新。")
+            st.info("最近 2 天目前沒有發現新的可用 Fugle 法說會摘要；這不代表財經資訊快取未更新。")
         else:
-            for i, item in enumerate(earnings[:12]):
-                title = f"{item['_date'].strftime('%Y-%m-%d')}｜{_record_company(item)}"
-                with st.expander(title, expanded=(i == 0)):
-                    st.markdown(_record_summary(item))
-                    signal = item.get("impact") or item.get("signal") or item.get("judgement") or item.get("sentiment")
-                    if signal:
-                        st.markdown(f"**判斷：** {signal}")
-                    source = item.get("source_url") or item.get("url")
-                    if source:
-                        st.markdown(f"[查看來源]({source})")
+            html_items = "".join(
+                _earning_item_html(item, f"{item['_date'].strftime('%Y-%m-%d')}｜{_record_company(item)}", i == 0)
+                for i, item in enumerate(earnings[:20])
+            )
+            st.markdown(f'<div translate="no" class="notranslate">{html_items}</div>', unsafe_allow_html=True)
 
+    # ---------------- 新聞 ----------------
     with right:
         st.markdown('<div class="finance-card-title">財經新聞摘要</div>', unsafe_allow_html=True)
         if not news:
-            st.info("最近 2 天沒有可顯示的新聞摘要，或目前的新聞快取尚未更新。")
+            st.info("最近 2 天目前沒有可用的財經新聞；請確認 08:10 等排程是否有執行（output/scheduler_logs）。")
+            return
+
+        sectors_all = sorted({s for n in news for s in (n.get("sectors") or [])})
+        c1, c2, c3 = st.columns([1.3, 1, 1])
+        senti = c1.radio("情緒", ["全部", "利多", "利空", "中性／混合"], horizontal=True, key="fin_senti")
+        order = c2.selectbox("排序", ["重要度", "最新時間"], key="fin_order")
+        sector = c3.selectbox("產業", ["全部產業"] + sectors_all, key="fin_sector")
+
+        rows = list(news)
+        if senti == "利多":
+            rows = [x for x in rows if x.get("sentiment") == "利多"]
+        elif senti == "利空":
+            rows = [x for x in rows if x.get("sentiment") == "利空"]
+        elif senti == "中性／混合":
+            rows = [x for x in rows if x.get("sentiment") in (None, "中性", "混合")]
+        if sector != "全部產業":
+            rows = [x for x in rows if sector in (x.get("sectors") or [])]
+        if order == "重要度":
+            rows.sort(key=lambda x: float(x.get("importance") or 0), reverse=True)
         else:
-            for i, item in enumerate(news[:12]):
-                title = str(item.get("title") or item.get("headline") or "未命名新聞").strip()
-                with st.expander(title, expanded=(i == 0)):
-                    st.markdown(_record_summary(item))
-                    source = item.get("url") or item.get("source_url")
-                    if source:
-                        st.markdown(f"[查看原文]({source})")
+            rows.sort(key=lambda x: str(x.get("published_ts") or x.get("published") or ""), reverse=True)
+
+        shown = int(st.session_state.get("fin_news_n", 15))
+        st.caption(f"符合條件 {len(rows)} 則，顯示前 {min(shown, len(rows))} 則")
+        html_items = "".join(_news_item_html(item, i == 0) for i, item in enumerate(rows[:shown]))
+        # translate="no"：避免瀏覽器自動翻譯改動文字節點，造成 React removeChild 錯誤
+        st.markdown(f'<div translate="no" class="notranslate">{html_items}</div>', unsafe_allow_html=True)
+        if len(rows) > shown:
+            if st.button(f"顯示更多（再 15 則，尚有 {len(rows) - shown} 則）", key="fin_more"):
+                st.session_state["fin_news_n"] = shown + 15
+                st.rerun()
+
+
+HERO_DRIVE_FOLDER_ID = "1oSa6fv8F7YrVbUmX5UXVs8v0r4sNO9Fy"
+HERO_LOCAL_DIR = BASE / "assets" / "hero_images"
+HERO_INTERVAL_SEC = 5
+
+
+@st.cache_data(show_spinner=False)
+def _hero_local_image_uris() -> list:
+    """讀取 assets/hero_images 內的圖片（依檔名排序），轉成 data URI。"""
+    import base64
+    out = []
+    try:
+        if HERO_LOCAL_DIR.exists():
+            mimes = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".gif": "image/gif"}
+            for f in sorted(HERO_LOCAL_DIR.iterdir()):
+                if f.suffix.lower() in mimes:
+                    out.append(f"data:{mimes[f.suffix.lower()]};base64," + base64.b64encode(f.read_bytes()).decode("ascii"))
+    except Exception:
+        pass
+    return out
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def _drive_folder_image_urls(folder_id: str) -> list:
+    """備援：讀取公開 Google Drive 資料夾內的圖片；失敗時回傳空清單。"""
+    import urllib.request
+    try:
+        req = urllib.request.Request(
+            f"https://drive.google.com/embeddedfolderview?id={folder_id}",
+            headers={"User-Agent": "Mozilla/5.0"},
+        )
+        html = urllib.request.urlopen(req, timeout=8).read().decode("utf-8", "ignore")
+        ids = []
+        for m in re.finditer(r'id="entry-([A-Za-z0-9_-]{15,})"(.*?)(?=id="entry-|$)', html, re.S):
+            title = re.search(r'flip-entry-title">([^<]+)<', m.group(2))
+            name = (title.group(1) if title else "").lower()
+            if name and not name.endswith((".jpg", ".jpeg", ".png", ".webp", ".gif")):
+                continue
+            ids.append(m.group(1))
+        return [f"https://drive.google.com/thumbnail?id={i}&sz=w1920" for i in dict.fromkeys(ids)]
+    except Exception:
+        return []
+
+
+def _render_hero_carousel() -> None:
+    """首頁第一張圖：每 5 秒交叉淡入換圖，緩慢推近 + 底部進度條 + 圓點指示，循環播放（純 CSS）。"""
+    urls = _hero_local_image_uris() or _drive_folder_image_urls(HERO_DRIVE_FOLDER_ID)
+    if len(urls) < 2:
+        st.markdown(f'<div class="hero-visual">{_site_image_html(0, wide=True)}</div>', unsafe_allow_html=True)
+        return
+    n = len(urls)
+    total = n * HERO_INTERVAL_SEC
+    slides, dots = [], []
+    for i, u in enumerate(urls):
+        slides.append(f'<div class="hero-slide" style="background-image:url(\'{u}\');animation-delay:{i * HERO_INTERVAL_SEC}s"></div>')
+        dots.append(f'<span style="animation-delay:{i * HERO_INTERVAL_SEC}s"></span>')
+    a = 100 / n                              # 每張圖佔的比例
+    trans = 0.9                              # 滑動耗時（秒）
+    e = trans / total * 100
+    for i in range(n):                       # 第 1 張一載入就在定位，其餘依序從右側滑入
+        slides[i] = slides[i].replace(f"animation-delay:{i * HERO_INTERVAL_SEC}s", f"animation-delay:{i * HERO_INTERVAL_SEC - trans:.2f}s")
+    css = f"""
+    .hero-carousel{{position:relative;width:100%;height:350px;border-radius:10px;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,.08);background:#e9edf1;}}
+    .hero-slide{{position:absolute;inset:0;background-size:cover;background-position:center;transform:translateX(100%);
+      will-change:transform;animation:heroSlide {total}s infinite;animation-fill-mode:backwards;}}
+    @keyframes heroSlide{{
+      0%{{transform:translateX(100%);animation-timing-function:cubic-bezier(.65,0,.25,1)}}
+      {e:.2f}%{{transform:translateX(0)}}
+      {a:.2f}%{{transform:translateX(0);animation-timing-function:cubic-bezier(.65,0,.25,1)}}
+      {a + e:.2f}%{{transform:translateX(-100%)}}
+      100%{{transform:translateX(-100%)}}
+    }}
+    .hero-carousel::after{{content:"";position:absolute;left:0;bottom:0;height:3px;width:100%;
+      background:linear-gradient(90deg,#8e2b2f,#58758e);transform-origin:left;animation:heroBar {HERO_INTERVAL_SEC}s linear infinite;}}
+    @keyframes heroBar{{from{{transform:scaleX(0)}}to{{transform:scaleX(1)}}}}
+    .hero-dots{{position:absolute;right:16px;bottom:14px;display:flex;gap:7px;z-index:3;}}
+    .hero-dots span{{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.55);border:1px solid rgba(0,0,0,.25);
+      animation:heroDot {total}s infinite;}}
+    @keyframes heroDot{{0%{{background:#8e2b2f;transform:scale(1.35)}}{a:.2f}%{{background:#8e2b2f;transform:scale(1.35)}}{a + .01:.2f}%{{background:rgba(255,255,255,.55);transform:scale(1)}}100%{{background:rgba(255,255,255,.55);transform:scale(1)}}}}
+    @media(max-width:600px){{.hero-carousel{{height:220px}}}}
+    """
+    # 樣式與圖片分開送出：含 <style> 的區塊會被「收掉頂端空白」的規則隱藏
+    st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
+    st.markdown(f'<div class="hero-carousel">{"".join(slides)}<div class="hero-dots">{"".join(dots)}</div></div>', unsafe_allow_html=True)
 
 
 def render_home_workspace() -> None:
     """首頁：依 PDF 的節點節奏，以實際提供的六張台股圖片做視覺主體。"""
-    st.markdown(f'<div class="hero-visual">{_site_image_html(0, wide=True)}</div>', unsafe_allow_html=True)
+    _render_hero_carousel()
 
     st.markdown('''
-    <section class="home-band blush"><div class="home-two-col">
+    <section translate="no" class="home-band blush"><div class="home-two-col">
       <div class="home-image-stack">
         <div class="small-visual">''' + _site_image_html(1, wide=False) + '''</div>
         <div class="small-visual">''' + _site_image_html(2, wide=False) + '''</div>
@@ -1389,7 +1673,7 @@ def render_home_workspace() -> None:
     </div></section>''', unsafe_allow_html=True)
 
     st.markdown('''
-    <section class="home-band white-band"><div class="home-two-col reverse-on-mobile">
+    <section translate="no" class="home-band white-band"><div class="home-two-col reverse-on-mobile">
       <div class="home-image-grid three-grid">
         <div>''' + _site_image_html(3, wide=False) + '''</div>
         <div>''' + _site_image_html(4, wide=False) + '''</div>
@@ -1404,14 +1688,14 @@ def render_home_workspace() -> None:
     # 專注台股左側只保留一張主視覺，佔整個節點約一半寬。
     six = _site_image_html(6, wide=True)
     st.markdown(f'''
-    <section class="home-band blush"><div class="home-two-col focus-taiwan-layout"><div class="focus-main-visual">{six}</div>
+    <section translate="no" class="home-band blush"><div class="home-two-col focus-taiwan-layout"><div class="focus-main-visual">{six}</div>
       <div class="home-copy"><div class="eyebrow">FOCUS ON TAIWAN STOCKS</div><h2>專注台股</h2>
       <p>未來分析把 AI 隔日預測、市場情報與利多／利空分析、模型研究 Agent 串在一起，讓使用者從今日資料延伸到明日的可能方向。</p>
       <a class="home-link" href="?section=future" target="_self">未來分析 →</a></div>
     </div></section>''' , unsafe_allow_html=True)
 
     st.markdown(f'''
-    <section class="contact-band"><div class="contact-overlay">{_site_image_html(5, wide=True, dark=True)}<div class="contact-shade"></div></div>
+    <section translate="no" class="contact-band"><div class="contact-overlay">{_site_image_html(5, wide=True, dark=True)}<div class="contact-shade"></div></div>
       <div class="contact-content"><div class="eyebrow">CONTACT</div><h2>聯絡資訊</h2>
       <p>對股票資料、操作策略、財經資訊或 AI 研究功能有問題，可從訂閱系統頁面的聯絡表單留下訊息。</p>
       <a class="contact-link" href="?section=subscribe" target="_self">訂閱系統／聯絡我們 →</a></div>
@@ -1450,9 +1734,11 @@ def render_subscription_workspace() -> None:
         with st.form("site_contact_form", clear_on_submit=False):
             name = st.text_input("姓名 *", key="contact_name")
             email = st.text_input("電子郵件 *", key="contact_email")
-            message = st.text_area("訊息 *", height=150, key="contact_message")
+            message = st.text_area("訊息（可選）", height=150, key="contact_message")
+            subscribe = st.checkbox("訂閱每日晨報與盤後分析（可選）", value=True, key="contact_subscribe")
             st.markdown(
-                "<div class='subscribe-note'>提交此表單即加入每日晨報與盤後分析收件名單。</div>",
+                "<div class='subscribe-note'>勾選後會加入每日晨報（08:30）與盤後分析（14:30）收件名單，"
+                "並自動寄一封「訂閱成功」信到你的信箱；不勾選則只送出訊息，不會加入名單。</div>",
                 unsafe_allow_html=True,
             )
             submitted = st.form_submit_button("送出")
@@ -1462,8 +1748,10 @@ def render_subscription_workspace() -> None:
             email_v = email.strip()
             message_v = message.strip()
 
-            if not name_v or not email_v or not message_v:
-                st.warning("請完整填寫姓名、電子郵件與訊息。")
+            if not name_v or not email_v:
+                st.warning("請填寫姓名與電子郵件。")
+            elif not subscribe and not message_v:
+                st.warning("沒有勾選訂閱時，請至少留下訊息。")
             else:
                 try:
                     result = register_subscriber(
@@ -1471,21 +1759,33 @@ def render_subscription_workspace() -> None:
                         name=name_v,
                         email=email_v,
                         message=message_v,
-                        subscribed=True,
+                        subscribed=bool(subscribe),
                     )
-                    if result.get("saved"):
-                        if result.get("remote_saved"):
-                            st.success("資料已保存並完成訂閱；之後的晨報與盤後分析會寄送到此電子郵件。")
-                        else:
-                            st.success("資料已保存並完成訂閱；目前使用本機訂閱名單。")
-                        if result.get("owner_notified"):
-                            st.info("登記資訊已通知網站管理者。")
-                        elif result.get("owner_notify_error"):
-                            st.warning(f"登記已保存，但管理者通知失敗：{result['owner_notify_error']}")
+                    if not result.get("saved"):
+                        st.error(result.get("error", "資料保存失敗。"))
                     else:
-                        st.error(result.get("error", "訂閱資料保存失敗。"))
+                        if result.get("requested_subscribe"):
+                            if result.get("already_subscribed"):
+                                st.info("這個信箱已經在訂閱名單內，不會重複寄送確認信。")
+                            elif result.get("welcome_sent"):
+                                st.success(f"訂閱完成！訂閱成功信已寄到 {result.get('email')}，沒看到的話請檢查垃圾郵件匣。")
+                            else:
+                                st.success("訂閱完成；之後的晨報與盤後分析會寄到此電子郵件。")
+                                st.warning(f"訂閱成功信沒有寄出：{result.get('welcome_error') or '原因不明'}")
+                        else:
+                            st.success("訊息已送出，謝謝你！（未加入訂閱）")
+                        if result.get("owner_notify_error") and not result.get("owner_notified"):
+                            st.caption("（管理者通知暫時失敗，資料已保存。）")
+                        if result.get("persistence_warning"):
+                            st.caption(result["persistence_warning"])
                 except Exception as exc:
                     st.error(f"訂閱系統錯誤：{type(exc).__name__}: {exc}")
+    try:
+        sub_status = subscription_status(BASE)
+        st.caption(f"目前有效訂閱者：{int(sub_status.get('active_count', 0) or 0)} 人")
+    except Exception:
+        pass
+
 def _get_nav_section() -> str:
     default = str(st.session_state.get("nav_section", "home"))
     try:
@@ -1515,7 +1815,7 @@ def render_site_navigation() -> str:
     for key, label in nav:
         active = " active" if current == key else ""
         links.append(f'<a class="site-nav-link{active}" href="?section={key}" target="_self">{label}</a>')
-    st.markdown('<nav class="site-nav">' + ''.join(links) + '</nav>', unsafe_allow_html=True)
+    st.markdown('<nav translate="no" class="site-nav">' + ''.join(links) + '</nav>', unsafe_allow_html=True)
     st.markdown('<div class="site-rule"></div>', unsafe_allow_html=True)
     return current
 
@@ -1523,7 +1823,7 @@ def render_site_navigation() -> str:
 def _render_footer() -> None:
     """每一頁固定放頁尾；外觀依設計稿採深色、雙欄、細紅色點綴。"""
     st.markdown('''
-    <footer class="site-footer"><div class="footer-inner"><div class="footer-contact">
+    <footer translate="no" class="site-footer"><div class="footer-inner"><div class="footer-contact">
       <div class="footer-title">台股即時互動式分析系統</div><p>股票即時行情、操作策略、未來分析與每日財經資訊。</p>
       <div class="footer-small">電子郵件：a1113359@mail.nuk.edu.tw</div><div class="footer-small">聯絡電話：+886-907-611-728</div>
     </div><div class="footer-form-note"><div class="footer-title">訂閱每日財經資訊</div>
@@ -1536,40 +1836,41 @@ def render_strategy_workspace() -> None:
     st.markdown(f'<div class="page-image-banner">{_site_image_html(7, wide=True)}</div>', unsafe_allow_html=True)
     render_strategy_search()
 
-    with st.container(key="strategy-01-watchlist"):
-        st.markdown('<div class="feature-section-title">01｜自選股即時行情</div>', unsafe_allow_html=True)
-        render_watchlist()
+    # 自選股固定在左側欄（Streamlit 側邊欄本身固定、可獨立捲動），不會蓋到右側的分析圖表。
+    with st.sidebar:
+        st.markdown('<div class="feature-section-title side-watch-title">自選股即時行情</div>', unsafe_allow_html=True)
+        render_watchlist(compact=True)
 
     with st.container(key="strategy-02-selected"):
-        st.markdown('<div class="feature-section-title">02｜分析標的</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">01｜分析標的</div>', unsafe_allow_html=True)
         render_selected_and_live(show_heading=False)
 
     with st.container(key="strategy-03-trend"):
-        st.markdown('<div class="feature-section-title">03｜股價趨勢</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">02｜股價趨勢</div>', unsafe_allow_html=True)
         render_trend()
 
     with st.container(key="strategy-04-kline"):
-        st.markdown('<div class="feature-section-title">04｜技術 K 線</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">03｜技術 K 線</div>', unsafe_allow_html=True)
         render_kline()
 
     with st.container(key="strategy-05-volume"):
-        st.markdown('<div class="feature-section-title">05｜成交量</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">04｜成交量</div>', unsafe_allow_html=True)
         render_volume_snapshot()
 
     with st.container(key="strategy-06-entry"):
-        st.markdown('<div class="feature-section-title">06｜進場建議分析系統</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">05｜進場建議分析系統</div>', unsafe_allow_html=True)
         render_entry_prediction()
 
     with st.container(key="strategy-07-tdcc"):
-        st.markdown('<div class="feature-section-title">07｜大戶 VS 散戶持有股比率</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">06｜大戶 VS 散戶持有股比率</div>', unsafe_allow_html=True)
         render_tdcc()
 
     with st.container(key="strategy-08-trades"):
-        st.markdown('<div class="feature-section-title">08｜交易明細（台灣時間）</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">07｜交易明細（台灣時間）</div>', unsafe_allow_html=True)
         render_trades()
 
     with st.container(key="strategy-09-institutions"):
-        st.markdown('<div class="feature-section-title">09｜三大法人 10 交易日買賣超</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">08｜三大法人 10 交易日買賣超</div>', unsafe_allow_html=True)
         render_institutions()
 
 def render_future_workspace() -> None:
@@ -1679,21 +1980,26 @@ button[title^='從自選股移除']:hover{background-color:rgba(239,68,68,.16)!i
 </style>
 """, unsafe_allow_html=True)
 
-def render_watchlist():
+def render_watchlist(compact: bool = False):
     rows, errors = watch_rows(tuple(st.session_state.watchlist))
-    st.subheader("自選股即時行情")
+    if not compact:
+        st.subheader("自選股即時行情")
     if not rows.empty and "data_date" in rows.columns:
         valid_dates = sorted({str(v) for v in rows["data_date"].tolist() if str(v).strip()})
-    with st.container(height=500, border=True):
-        heads = st.columns([3.25, 0.82, 0.82, 1.7, 1.65, 1.75], gap="small")
-        head_labels = ["股票中文名", "查看", "刪除", "當前市價", "+/−價格", "+/−價格%"]
-        for i, (c, t) in enumerate(zip(heads, head_labels)):
-            with c:
-                sep = " border-left:2px solid rgba(148,163,184,.28); padding-left:18px;" if i else ""
-                st.markdown(
-                    f"<div class='watch-head' style='{sep}'>{t}</div>",
-                    unsafe_allow_html=True,
-                )
+    # compact=True：放在左側欄，不需要固定高度（側邊欄自己會捲動）
+    with (st.container() if compact else st.container(height=500, border=True)):
+        if not compact:
+            heads = st.columns([3.25, 0.82, 0.82, 1.7, 1.65, 1.75], gap="small")
+            head_labels = ["股票中文名", "查看", "刪除", "當前市價", "+/−價格", "+/−價格%"]
+            for i, (c, t) in enumerate(zip(heads, head_labels)):
+                with c:
+                    sep = " border-left:2px solid rgba(148,163,184,.28); padding-left:18px;" if i else ""
+                    st.markdown(
+                        f"<div class='watch-head' style='{sep}'>{t}</div>",
+                        unsafe_allow_html=True,
+                    )
+        else:
+            st.markdown("<div class='watch-cv-legend'><span>現價</span><span>漲跌</span><span>漲跌%</span></div>", unsafe_allow_html=True)
         # 使用「樣式名稱 + 選取按鈕」組合，避免 Streamlit button 的預設 CSS 覆蓋股票名稱顏色。
         # 名稱欄位會真正呈現：上漲紅字／下跌綠字；漲停深紅底白字；跌停深綠底白字。
         # 第一層依官方產業分類；第二層依公司主要業務／產業鏈子分類。
@@ -1748,11 +2054,19 @@ def render_watchlist():
                         name_class = "flat"
 
                     vcolor = "#ef4444" if pd.notna(ch) and ch > 0 else "#10b981" if pd.notna(ch) and ch < 0 else "#64748b"
+                    value_class = ""
+                    if name_class in ("limit-up", "limit-down"):
+                        vcolor = "#ffffff"
+                        value_class = " " + name_class
                     price_txt = "--" if pd.isna(price) else f"{price:,.2f}"
                     ch_txt = "--" if pd.isna(ch) else f"{ch:+,.2f}"
                     cp_txt = "--" if pd.isna(cp) else f"{cp:+.2f}%"
 
-                    b1,b2,b3,b4,b5,b6 = st.columns([3.25, 0.82, 0.82, 1.7, 1.65, 1.75], gap="small")
+                    if compact:
+                        b1, b2, b3 = st.columns([3.1, 1.0, 1.0], gap="small")
+                        b4 = b5 = b6 = None
+                    else:
+                        b1,b2,b3,b4,b5,b6 = st.columns([3.25, 0.82, 0.82, 1.7, 1.65, 1.75], gap="small")
                     with b1:
                         st.markdown(
                             f"<div class='watch-name-display {name_class}'>{r['name']}（{r['code']}）</div>",
@@ -1777,12 +2091,22 @@ def render_watchlist():
                             st.session_state.ai_selected = None
                             st.session_state.ai_result = None
                             st.rerun()
-                    with b4:
-                        st.markdown(f"<div class='watch-value watch-price-cell' style='color:{vcolor}'>{price_txt}</div>", unsafe_allow_html=True)
-                    with b5:
-                        st.markdown(f"<div class='watch-value watch-price-cell' style='color:{vcolor}'>{ch_txt}</div>", unsafe_allow_html=True)
-                    with b6:
-                        st.markdown(f"<div class='watch-value watch-price-cell' style='color:{vcolor}'>{cp_txt}</div>", unsafe_allow_html=True)
+                    if compact:
+                        st.markdown(
+                            "<div class='watch-cv'>"
+                            f"<div class='{value_class.strip()}' style='color:{vcolor}'>{price_txt}</div>"
+                            f"<div class='{value_class.strip()}' style='color:{vcolor}'>{ch_txt}</div>"
+                            f"<div class='{value_class.strip()}' style='color:{vcolor}'>{cp_txt}</div>"
+                            "</div>",
+                            unsafe_allow_html=True,
+                        )
+                    else:
+                        with b4:
+                            st.markdown(f"<div class='watch-value watch-price-cell{value_class}' style='color:{vcolor}'>{price_txt}</div>", unsafe_allow_html=True)
+                        with b5:
+                            st.markdown(f"<div class='watch-value watch-price-cell{value_class}' style='color:{vcolor}'>{ch_txt}</div>", unsafe_allow_html=True)
+                        with b6:
+                            st.markdown(f"<div class='watch-value watch-price-cell{value_class}' style='color:{vcolor}'>{cp_txt}</div>", unsafe_allow_html=True)
                     # 只有同一產業內的股票之間使用細分隔線；產業之間使用更醒目的分組線。
                     if original_idx != group_records[-1][0]:
                         st.markdown("<div class='watch-row-divider'></div>", unsafe_allow_html=True)
@@ -2552,6 +2876,15 @@ def render_ai():
 
 def render_model_research_agent():
     """盤後模型研究 Agent：研究模型健康、特徵漂移、產業新聞與官方證據，不自動改 production model。"""
+    # Email Agent：保留「手動執行後依設定自動寄信」與「最近一次寄送結果」提示；
+    # 原本的「AI 盤後財報 Email Agent」寄送面板已依需求移除，所以寄送按鈕固定為 False。
+    try:
+        email_agent = EmailAgent(BASE)
+        email_status = email_agent.status()
+    except Exception:
+        email_agent, email_status = None, {}
+    email_send_latest = False
+    email_force = False
     st.markdown("## 模型研究 Agent")
     c1, c2, c3 = st.columns([1, 1, 2])
     now = taiwan_now()
@@ -2585,7 +2918,7 @@ def render_model_research_agent():
                 report = agent.run_daily_research(symbols=symbols, sector_codes=["24", "26", "28"])
             st.session_state.research_result = report
             # Dashboard 手動執行也可沿用與 Windows 排程相同的 Email Agent。
-            if email_status.get("configured") and email_status.get("auto_send"):
+            if email_agent is not None and email_status.get("configured") and email_status.get("auto_send"):
                 mail_result = email_agent.send_report(report)
                 st.session_state.email_send_result = mail_result
         except Exception as exc:
@@ -3618,9 +3951,221 @@ html{scroll-behavior:smooth;}
 *{scrollbar-width:thin;scrollbar-color:#b9c6d2 transparent;}
 </style>''', unsafe_allow_html=True)
 
+
+st.markdown(r'''<style>
+/* ============================================================
+   V15 搜尋欄新樣式 / 表單淺膚色 / 按鈕特效 / 漲跌停整列
+   ============================================================ */
+
+/* ---------- 搜尋欄：灰框膠囊 + 藍色放大鏡端蓋 ---------- */
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]){
+  column-gap:0 !important;gap:0 !important;align-items:stretch !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-baseweb="input"],
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-baseweb="base-input"]{
+  background:#fff !important;
+  border:4px solid #b3b3b3 !important;
+  border-right:0 !important;
+  border-radius:999px 0 0 999px !important;
+  height:52px !important;
+  box-shadow:none !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) input{
+  background:transparent !important;border:0 !important;border-radius:0 !important;
+  height:44px !important;padding:0 20px !important;color:#263746 !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-testid="stButton"] > button,
+.st-key-do_stock_search_site button{
+  height:52px !important;min-height:52px !important;width:100% !important;
+  background:#0072c6 !important;border:0 !important;
+  border-radius:0 999px 999px 0 !important;
+  font-size:0 !important;color:transparent !important;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='20' cy='20' r='11' fill='none' stroke='white' stroke-width='5'/><line x1='28.5' y1='28.5' x2='40' y2='40' stroke='white' stroke-width='6' stroke-linecap='round'/></svg>") !important;
+  background-repeat:no-repeat !important;background-position:center !important;background-size:26px 26px !important;
+  box-shadow:none !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-testid="stButton"] > button:hover,
+.st-key-do_stock_search_site button:hover{background-color:#005fa8 !important;}
+/* 按鈕內任何文字／段落一律不顯示，只留放大鏡圖示 */
+.st-key-do_stock_search_site button *,
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-testid="stButton"] > button *{
+  display:none !important;font-size:0 !important;color:transparent !important;
+}
+.st-key-do_stock_search_site button::before,
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-testid="stButton"] > button::before{display:none !important;}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-baseweb="input"]:focus-within{
+  border-color:#0072c6 !important;
+}
+
+/* ---------- 訂閱／聯絡表單：淺膚色（與頁面 blush 同色），去掉深色底 ---------- */
+[data-testid="stForm"]{background:#fff !important;}
+[data-testid="stForm"] [data-testid="stTextInputRootElement"],
+[data-testid="stForm"] [data-testid="stTextAreaRootElement"],
+[data-testid="stForm"] [data-baseweb="input"],
+[data-testid="stForm"] [data-baseweb="base-input"],
+[data-testid="stForm"] [data-baseweb="textarea"],
+[data-testid="stForm"] [data-baseweb="textarea"] > div{
+  background:var(--site-blush) !important;
+  background-color:var(--site-blush) !important;
+}
+[data-testid="stForm"] [data-testid="stTextInputRootElement"],
+[data-testid="stForm"] [data-testid="stTextAreaRootElement"]{
+  border:1px solid #e6d3d3 !important;border-radius:10px !important;overflow:hidden;
+}
+[data-testid="stForm"] [data-baseweb="input"],
+[data-testid="stForm"] [data-baseweb="textarea"]{border:0 !important;}
+[data-testid="stForm"] input,[data-testid="stForm"] textarea{
+  background:transparent !important;background-color:transparent !important;
+  color:#3a2f2f !important;-webkit-text-fill-color:#3a2f2f !important;caret-color:#8e2b2f;
+}
+[data-testid="stForm"] input::placeholder,[data-testid="stForm"] textarea::placeholder{color:#a89a9a !important;}
+[data-testid="stForm"] [data-testid="stTextInputRootElement"]:focus-within,
+[data-testid="stForm"] [data-testid="stTextAreaRootElement"]:focus-within{
+  border-color:#8e2b2f !important;box-shadow:0 0 0 3px rgba(142,43,47,.12) !important;
+}
+[data-testid="stCheckbox"] label > span:first-child,
+[data-testid="stCheckbox"] [data-baseweb="checkbox"] > span:first-child,
+[data-testid="stCheckbox"] [data-baseweb="checkbox"] > div:first-child{
+  background:var(--site-blush) !important;background-color:var(--site-blush) !important;
+  border:1.5px solid #8e2b2f !important;border-radius:5px !important;
+}
+[data-testid="stCheckbox"] label:has(input:checked) > span:first-child,
+[data-testid="stCheckbox"] [data-baseweb="checkbox"]:has(input:checked) > span:first-child,
+[data-testid="stCheckbox"] [data-baseweb="checkbox"]:has(input:checked) > div:first-child{
+  background:#8e2b2f !important;background-color:#8e2b2f !important;
+}
+
+/* ---------- 所有按鈕特效：掃光 + 浮起 + 按下回彈 + 聚焦光環 ---------- */
+.stButton > button,
+[data-testid="stFormSubmitButton"] > button,
+[data-testid="stDownloadButton"] > button,
+a[data-testid^="stBaseLinkButton"]{
+  position:relative !important;overflow:hidden !important;
+  transition:transform .18s ease, box-shadow .18s ease, background-color .18s ease, border-color .18s ease !important;
+}
+.stButton > button::before,
+[data-testid="stFormSubmitButton"] > button::before,
+[data-testid="stDownloadButton"] > button::before{
+  content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;
+  background:linear-gradient(105deg,rgba(255,255,255,0),rgba(255,255,255,.55),rgba(255,255,255,0));
+  transform:skewX(-20deg);pointer-events:none;
+}
+.stButton > button:hover::before,
+[data-testid="stFormSubmitButton"] > button:hover::before,
+[data-testid="stDownloadButton"] > button:hover::before{
+  left:130%;transition:left .6s ease;
+}
+.stButton > button:hover,
+[data-testid="stFormSubmitButton"] > button:hover,
+[data-testid="stDownloadButton"] > button:hover{
+  transform:translateY(-2px) !important;
+  box-shadow:0 8px 18px rgba(37,55,70,.18) !important;
+}
+.stButton > button:active,
+[data-testid="stFormSubmitButton"] > button:active,
+[data-testid="stDownloadButton"] > button:active{
+  transform:translateY(0) scale(.96) !important;
+  box-shadow:0 2px 6px rgba(37,55,70,.18) !important;
+}
+.stButton > button:focus-visible,
+[data-testid="stFormSubmitButton"] > button:focus-visible{
+  outline:0 !important;box-shadow:0 0 0 3px rgba(0,114,198,.35) !important;
+}
+
+/* ---------- 自選股：漲停深紅底白字／跌停深綠底白字（整列） ---------- */
+.watch-name-display.limit-up,.watch-value.limit-up{
+  background:#7f1d1d !important;color:#fff !important;border:1px solid #5f1414 !important;
+}
+.watch-name-display.limit-down,.watch-value.limit-down{
+  background:#14532d !important;color:#fff !important;border:1px solid #0b3a1f !important;
+}
+.watch-value.limit-up *,.watch-value.limit-down *,
+.watch-name-display.limit-up *,.watch-name-display.limit-down *{color:#fff !important;}
+
+/* ---------- V16 財經資訊頁 ---------- */
+
+        .fin-digest{background:#fff;border:1px solid #dde3ea;border-left:4px solid #8e2b2f;border-radius:12px;padding:18px 22px;margin:8px 0 18px;box-shadow:0 4px 16px rgba(15,23,42,.05);}
+        .fin-digest h3{margin:0 0 6px;font-size:18px;letter-spacing:.5px;}
+        .fin-digest .fin-headline{font-size:16px;font-weight:800;line-height:1.7;margin-bottom:10px;}
+        .fin-stats{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 12px;}
+        .fin-stat{background:#f4f6f9;border:1px solid #dde3ea;border-radius:10px;padding:6px 14px;font-size:13px;}
+        .fin-stat b{font-size:18px;margin-left:4px;}
+        .fin-list{margin:6px 0 0 0;padding-left:20px;line-height:1.85;font-size:14.5px;}
+        .fin-two{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:12px;}
+        @media(max-width:800px){.fin-two{grid-template-columns:1fr;}}
+        .fin-sub{font-weight:800;font-size:14px;margin:4px 0;letter-spacing:.5px;}
+        .fin-chip{display:inline-block;background:#ebecef;border:1px solid #dde3ea;border-radius:999px;padding:2px 10px;margin:2px 4px 2px 0;font-size:12.5px;}
+        .fin-chip.stock{background:#fbf1f1;border-color:#e6d3d3;}
+        .fin-chip.hot{background:#fde8e8;border-color:#e6b9b9;font-weight:800;}
+        .fin-badge{display:inline-block;border-radius:6px;padding:1px 8px;margin-right:6px;font-size:12px;font-weight:800;color:#fff;}
+        .fin-badge.up{background:#b3121a;} .fin-badge.down{background:#14532d;} .fin-badge.mix{background:#8a6d1d;} .fin-badge.flat{background:#64748b;}
+        mark.fin-hl{background:linear-gradient(transparent 55%,#ffd3d3 55%);color:#b3121a !important;font-weight:800;padding:0 1px;}
+        .fin-meta{font-size:12.5px;opacity:.85;margin:6px 0;}
+        .fin-why{font-size:13.5px;margin:6px 0;padding:6px 10px;background:#fbf1f1;border-radius:8px;}
+        .fin-stale{background:#fff4e5;border:1px solid #f0c27a;border-radius:10px;padding:8px 14px;margin:8px 0;font-size:13.5px;}
+        
+        details.fin-item{background:#fff;border:1px solid #dde3ea;border-radius:10px;margin:8px 0;overflow:hidden;}
+        details.fin-item > summary{cursor:pointer;list-style:none;padding:10px 14px;background:#ebecef;font-weight:700;line-height:1.6;transition:background .15s ease;}
+        details.fin-item > summary::-webkit-details-marker{display:none;}
+        details.fin-item > summary::before{content:"▸";display:inline-block;margin-right:8px;color:#8e2b2f;transition:transform .15s ease;}
+        details.fin-item[open] > summary::before{transform:rotate(90deg);}
+        details.fin-item > summary:hover{background:#dde5ef;}
+        details.fin-item .fin-body{padding:8px 16px 12px;}
+        details.fin-item a{color:#0072c6 !important;font-weight:700;}
+
+/* ============================================================
+   V17 操作策略：自選股固定在左側欄
+   ============================================================ */
+[data-testid="stSidebar"]{background:#fbf1f1 !important;border-right:1px solid #e6d3d3 !important;}
+[data-testid="stSidebar"][aria-expanded="true"]{min-width:360px !important;max-width:360px !important;width:360px !important;}
+[data-testid="stSidebar"] [data-testid="stSidebarHeader"]{padding:10px 14px 0 !important;min-height:0 !important;}
+[data-testid="stSidebar"] [data-testid="stSidebarContent"]{padding-bottom:24px;}
+[data-testid="stSidebar"] [data-testid="stSidebarUserContent"]{padding:4px 14px 20px !important;}
+[data-testid="stSidebar"] [data-testid="stVerticalBlock"]{gap:.35rem !important;}
+[data-testid="stSidebar"] .side-watch-title{margin:2px 0 8px !important;font-size:18px !important;}
+.watch-cv-legend{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:6px;padding:0 4px 2px;font-size:11.5px;letter-spacing:1px;opacity:.7;text-align:right;}
+.watch-cv{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:6px;margin:-2px 0 4px;}
+.watch-cv > div{background:#fff;border:1px solid #e6d3d3;border-radius:8px;padding:6px 8px;font-size:14px;font-weight:900;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.watch-cv > div.limit-up{background:#7f1d1d;border-color:#5f1414;color:#fff !important;}
+.watch-cv > div.limit-down{background:#14532d;border-color:#0b3a1f;color:#fff !important;}
+[data-testid="stSidebar"] .watch-name-display{font-size:14px;padding:8px 10px;}
+[data-testid="stSidebar"] .watch-industry-header{margin:8px 0 5px;padding:7px 10px;font-size:15px !important;}
+[data-testid="stSidebar"] .watch-business-header{font-size:13px !important;padding:4px 10px;}
+/* 查看／刪除：側邊欄裡縮成小按鈕（保留淺藍底＋黑框） */
+[data-testid="stSidebar"] [data-testid="stButton"] > button{
+  height:36px !important;min-height:36px !important;width:100% !important;
+  padding:0 4px !important;font-size:13px !important;line-height:1 !important;
+  display:flex !important;align-items:center !important;justify-content:center !important;
+  white-space:nowrap !important;
+}
+[data-testid="stSidebar"] [data-testid="stButton"] > button p{font-size:13px !important;margin:0 !important;}
+
+/* 不翻譯用的零高度元件：不要佔版面 */
+[data-testid="stElementContainer"]:has(iframe[height="0"]),
+.element-container:has(iframe[height="0"]){height:0 !important;min-height:0 !important;margin:0 !important;overflow:hidden !important;}
+</style>''', unsafe_allow_html=True)
+
 # ============================================================
 # App entry point
 # ============================================================
+# Streamlit 預設把 <html lang="en"> 送給瀏覽器，Chrome 會把中文頁面當成英文並跳出「翻譯」，
+# 翻譯後會重排中文字（例如「操作策略 →」變成「操作→策略」）並造成 React removeChild 錯誤。
+# 這裡改成 zh-TW 並加上 notranslate。
+import streamlit.components.v1 as _components
+_components.html(
+    """<script>
+    try {
+      const d = window.parent.document;
+      d.documentElement.setAttribute('lang', 'zh-TW');
+      d.documentElement.setAttribute('translate', 'no');
+      if (!d.querySelector('meta[name="google"]')) {
+        const m = d.createElement('meta'); m.name = 'google'; m.content = 'notranslate'; d.head.appendChild(m);
+      }
+      d.body.classList.add('notranslate');
+    } catch (e) {}
+    </script>""",
+    height=0,
+)
 render_header_and_search()
 current_section = render_site_navigation()
 

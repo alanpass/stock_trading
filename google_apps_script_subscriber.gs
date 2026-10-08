@@ -20,7 +20,7 @@
  * 版本化 deployment 適合正式使用。
  */
 
-const OWNER_EMAIL = 'YOUR_OWNER_EMAIL@example.com';
+const OWNER_EMAIL = 'a1113359@mail.nuk.edu.tw';
 const SYNC_TOKEN = 'CHANGE_THIS_TO_A_LONG_RANDOM_TOKEN';
 const SHEET_NAME = 'Subscribers';
 const SPREADSHEET_PROPERTY = 'SUBSCRIBER_SPREADSHEET_ID';
@@ -147,11 +147,11 @@ function doPost(e) {
 
   const name = String(payload.name || '').trim().slice(0, 120);
   const email = String(payload.email || '').trim().toLowerCase().slice(0, 200);
-  const message = String(payload.message || '').trim().slice(0, 5000);
+  const message = (String(payload.message || '').trim() || '訂閱每日晨報與盤後分析').slice(0, 5000);
   const subscribed = Boolean(payload.subscribed);
   const now = new Date().toISOString();
 
-  if (!name || !email || !message || !validEmail_(email)) {
+  if (!name || !email || !validEmail_(email)) {
     return jsonOutput_({
       ok: false,
       error: 'invalid_fields'

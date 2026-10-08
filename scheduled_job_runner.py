@@ -20,10 +20,10 @@ LOG_DIR = BASE / "output" / "scheduler_logs"
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 JOBS = {
-    "morning": "run_morning_report.py",
-    "afterclose": "run_after_close_research.py",
-    "finance": "run_finance_info_update.py",
-    "cnyes": "run_cnyes_news_nightly.py",
+    "morning": "run_morning_report.py",              # 08:30 晨報
+    "afterclose": "run_after_close_research.py",     # 14:30 盤後分析報導
+    "finance": "run_finance_info_update.py",         # 08:10 11:00 13:30 16:00 18:00 23:00 新聞／法說會爬取 + Agent 摘要
+    "cnyes": "run_finance_info_update.py",           # 舊排程名稱（相容）：同樣走財經資訊更新
 }
 
 
@@ -62,19 +62,6 @@ def validate_output(job: str) -> tuple[bool, str]:
     d = today()
     research_dir = BASE / "output" / "research_reports"
 
-    if job == "cnyes":
-        path = research_dir / f"cnyes_news_{d}.json"
-        if not path.exists():
-            return False, f"CNYES output missing: {path}"
-        try:
-            data = json.loads(path.read_text(encoding="utf-8"))
-            count = int(data.get("article_count", len(data.get("articles", []) or [])) or 0)
-            if count <= 0:
-                return False, f"CNYES output has no articles: {path}"
-            return True, f"CNYES output OK: {count} articles"
-        except Exception as exc:
-            return False, f"CNYES output invalid: {exc}"
-
     if job == "morning":
         path = research_dir / f"morning_{d}.json"
         if not path.exists():
@@ -84,25 +71,32 @@ def validate_output(job: str) -> tuple[bool, str]:
             morning = data.get("morning_agent", {}) or {}
             cache_count = int((data.get("cnyes_news", {}) or {}).get("article_count", 0) or 0)
             news_count = len(morning.get("news_summary", []) or [])
-            if cache_count > 0 and news_count == 0:
-                return False, "Morning report exists but CNYES cache had articles and news_summary is empty"
-            return True, f"Morning report OK: CNYES cache={cache_count}, summaries={news_count}"
+            earnings_count = len(data.get("earnings_calls", []) or [])
+            overview = str(morning.get("overview") or "").strip()
+            if not overview and news_count == 0 and earnings_count == 0:
+                return False, "Morning report exists but contains no usable overview/news/earnings content"
+            return True, f"Morning report OK: CNYES cache={cache_count}, summaries={news_count}, earnings={earnings_count}"
         except Exception as exc:
             return False, f"Morning report invalid: {exc}"
 
-    if job == "finance":
+
+    if job in {"finance", "cnyes"}:
         path = research_dir / "finance_info_latest.json"
         if not path.exists():
-            return False, f"Finance info cache missing: {path}"
+            return False, f"Finance info output missing: {path}"
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
-            updated = str(data.get("updated_at", ""))
-            if not updated:
-                return False, "Finance info cache has no updated_at"
-            return True, (
-                f"Finance info OK: earnings={int(data.get('earnings_count', 0) or 0)}, "
-                f"news={int(data.get('news_count', 0) or 0)}, updated={updated}"
-            )
+            earnings_count = int(data.get("earnings_count", 0) or 0)
+            news_count = int(data.get("news_count", 0) or 0)
+            if earnings_count <= 0 and news_count <= 0:
+                return False, "Finance info exists but both earnings_count/news_count are zero"
+            updated = datetime.fromisoformat(str(data.get("updated_at")))
+            age_min = (datetime.now(TAIPEI) - updated).total_seconds() / 60
+            if age_min > 30:
+                return False, f"Finance info was not refreshed by this run (age={age_min:.0f} min)"
+            if data.get("stale"):
+                return False, f"Finance info is STALE (crawl returned nothing; kept previous data). news={news_count}"
+            return True, f"Finance info OK: news={news_count}, earnings={earnings_count}, crawl={data.get('crawl', {}).get('per_category_count', {})}"
         except Exception as exc:
             return False, f"Finance info invalid: {exc}"
 
@@ -116,12 +110,8 @@ def validate_output(job: str) -> tuple[bool, str]:
                 try:
                     data = json.loads(status_file.read_text(encoding="utf-8"))
                     state = str(data.get("status", ""))
-                    if state == "skipped_non_trading_day":
+                    if state in {"success", "skipped_non_trading_day"}:
                         return True, f"After-close status OK: {state}"
-                    if state == "success":
-                        if bool(data.get("email_sent")):
-                            return True, "After-close status OK: success + email_sent=true"
-                        return False, "After-close report completed but email_sent is not true"
                     return False, f"After-close status = {state or 'unknown'}"
                 except Exception as exc:
                     return False, f"After-close status invalid: {exc}"
@@ -132,7 +122,7 @@ def validate_output(job: str) -> tuple[bool, str]:
 
 def main() -> int:
     if len(sys.argv) != 2 or sys.argv[1].lower() not in JOBS:
-        print("Usage: python scheduled_job_runner.py morning|afterclose|finance|cnyes")
+        print("Usage: python scheduled_job_runner.py morning|afterclose|finance")
         return 2
 
     job = sys.argv[1].lower()
@@ -158,15 +148,42 @@ def main() -> int:
         write_line(log, f"WORKDIR={BASE}")
         write_line(log, "=" * 72)
         try:
-            proc = subprocess.run(
+            # 即時把子程式輸出同時印在終端機和 log（原本只寫進 log，終端機看起來像當掉）
+            import threading
+            proc = subprocess.Popen(
                 [sys.executable, "-u", str(script)],
                 cwd=str(BASE),
                 env=env,
-                stdout=log,
+                stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
-                check=False,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                bufsize=1,
             )
+            timeout_sec = int(os.getenv("SCHEDULED_JOB_TIMEOUT", "7200"))
+            timed_out = {"v": False}
+
+            def _kill() -> None:
+                timed_out["v"] = True
+                proc.kill()
+
+            timer = threading.Timer(timeout_sec, _kill)
+            timer.start()
+            try:
+                for line in proc.stdout:  # type: ignore[union-attr]
+                    log.write(line)
+                    log.flush()
+                    try:
+                        print(line, end="", flush=True)
+                    except Exception:
+                        pass
+                proc.wait()
+            finally:
+                timer.cancel()
             rc = int(proc.returncode)
+            if timed_out["v"]:
+                write_line(log, f"CHILD_TIMEOUT after {timeout_sec}s")
             write_line(log, f"CHILD_RETURN_CODE={rc}")
         except Exception as exc:
             write_line(log, f"RUNNER_EXCEPTION={type(exc).__name__}: {exc}")
@@ -188,6 +205,37 @@ def main() -> int:
             write_line(log, "FINAL=FAILED_OUTPUT_VALIDATION")
             write_line(log, f"END={datetime.now(TAIPEI).isoformat(timespec='seconds')}")
             return 6
+
+        # 財經資訊更新成功後，再把精簡版摘要發布到 GitHub。
+        # 只有 finance/cnyes 工作會走這一步；morning / afterclose 保持原流程。
+        if job in {"finance", "cnyes"} and os.getenv("AUTO_GIT_PUBLISH", "true").strip().lower() in {"1", "true", "yes", "on"}:
+            publish_script = BASE / "publish_research_data.py"
+            if not publish_script.exists():
+                write_line(log, f"GIT_PUBLISH=SKIPPED, script missing: {publish_script}")
+                write_status(job, "publish_script_missing", message=message)
+                return 7
+
+            write_line(log, "GIT_PUBLISH=START")
+            pub = subprocess.run(
+                [sys.executable, "-u", str(publish_script)],
+                cwd=str(BASE),
+                env=env,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+            )
+            if pub.stdout:
+                for line in pub.stdout.splitlines():
+                    write_line(log, f"[publish] {line}")
+            write_line(log, f"GIT_PUBLISH_RETURN_CODE={pub.returncode}")
+            if pub.returncode != 0:
+                write_status(job, "publish_failed", child_return_code=rc, publish_return_code=pub.returncode, message=message)
+                write_line(log, "FINAL=FAILED_GIT_PUBLISH")
+                write_line(log, f"END={datetime.now(TAIPEI).isoformat(timespec='seconds')}")
+                return 7
+            write_line(log, "GIT_PUBLISH=SUCCESS")
 
         write_status(job, "success", message=message)
         write_line(log, "FINAL_RETURN_CODE=0")

@@ -347,14 +347,29 @@ class MarketMoverAnalyzer:
             previous = df["previousClose"].map(MarketMoverAnalyzer._float)
         elif "previous_close" in df.columns:
             previous = df["previous_close"].map(MarketMoverAnalyzer._float)
-        if previous is not None:
-            missing_pct = ~np.isfinite(df["change_percent"])
-            calc_pct = np.where(
-                np.isfinite(df["change"]) & np.isfinite(previous) & (previous != 0),
-                df["change"] / previous * 100.0,
+        # 漲跌幅一律優先由「現價 + 漲跌額 / 昨收」重新計算，
+        # 不直接相信 wrapper 轉換後的 changePercent。
+        # 這可避免 API 欄位是比例值(0.0988)卻被當成百分比 0.10%，
+        # 也可避免某些錯誤欄位造成 100%~1000% 的假漲跌。
+        if previous is None:
+            previous = pd.Series(np.nan, index=df.index, dtype=float)
+        derived_previous = df["close"] - df["change"]
+        previous = previous.where(np.isfinite(previous), derived_previous)
+        calc_pct = np.where(
+            np.isfinite(df["change"]) & np.isfinite(previous) & (previous != 0),
+            df["change"] / previous * 100.0,
+            np.nan,
+        )
+        df["change_percent"] = np.where(
+            np.isfinite(calc_pct),
+            calc_pct,
+            np.where(
+                np.isfinite(df["change_percent"]),
+                np.where(np.abs(df["change_percent"]) <= 1, df["change_percent"] * 100.0, df["change_percent"]),
                 np.nan,
-            )
-            df.loc[missing_pct, "change_percent"] = calc_pct[missing_pct]
+            ),
+        )
+        df["previous_close"] = previous
 
         # 還原實際日期。
         date_series = pd.Series([top_date] * len(df), index=df.index, dtype="object")
@@ -417,9 +432,12 @@ class MarketMoverAnalyzer:
             warrant_terms = r"認購|認售|購[0-9A-Za-z]*|售[0-9A-Za-z]*|牛證|熊證|權證"
             out = out[~name.str.contains(warrant_terms, regex=True, na=False)].copy()
 
-        # 明確排除常見指數／非個股代碼。
+        # 明確排除常見指數／非個股代碼，以及臺股市場常見 6 碼權證。
+        # 一般上市櫃股票與 ETF 的代號通常為 4 碼；這裡只讓 4 碼現貨進入
+        # 「今日市場漲跌重點」，避免再次把權證倍率列入股票排名。
         sym = out["symbol"].astype(str).str.upper().str.strip()
         out = out[~sym.str.startswith(("IX", "TX"), na=False)].copy()
+        out = out[sym.str.len().eq(4)].copy()
 
         return out
 
@@ -681,7 +699,11 @@ class MarketMoverAnalyzer:
                 "is_trading_day": None,
                 "data_date_verified": False,
             }
-        universe = universe[np.isfinite(universe["change_percent"])].copy()
+        universe = self._filter_tradeable_equity_rows(universe)
+        # 第二道防線：只允許四碼現貨代號進入市場漲跌排名。
+        universe = universe[universe["symbol"].astype(str).str.fullmatch(r"\d{4}", na=False)].copy()
+        # 漲跌幅若極端異常，多半是權證／比例誤讀；直接排除，避免污染 Email。
+        universe = universe[np.isfinite(universe["change_percent"]) & (universe["change_percent"].abs() <= 30)].copy()
         if universe.empty:
             return {"generated_at": pd.Timestamp.now().isoformat(), "movers": [], "industry_summary": [], "errors": ["目前 snapshot 沒有有效漲跌幅；可能是休市日。"]}
         up = universe.sort_values("change_percent", ascending=False).head(max_candidates // 2)

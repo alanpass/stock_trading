@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import html as html_lib
 import json
+import os
 import re
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -43,6 +44,10 @@ DEFAULT_MAX_API_PAGES = 40
 DEFAULT_MAX_SCROLLS = 18
 DEFAULT_DETAIL_WORKERS = 3
 DEFAULT_TIMEOUT = 25
+CATEGORY_API_URL = "https://api.cnyes.com/media/api/v1/newslist/category/{category}"
+# 大、小新聞都要：頭條 + 台股 + 國際股 + 外匯 + 期貨（可用環境變數 CNYES_CATEGORIES 覆寫；不存在的分類會被略過）
+DEFAULT_CATEGORIES = ("headline", "tw_stock", "wd_stock", "forex", "future")
+KEEP_DAILY_FILES = 10
 DEFAULT_SLEEP = 0.35
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) TaiwanStockResearchAgent/2.0"
 
@@ -62,6 +67,11 @@ class CnyesArticle:
     crawled_at: str
     source: str = "鉅亨網"
     source_type: str = "CNYES headline"
+    content_length: int = 0
+    summary_length: int = 0
+    detail_enriched: bool = False
+    detail_enriched_at: str = ""
+    list_category: str = "headline"
 
 
 class CnyesNewsCrawler:
@@ -186,15 +196,17 @@ class CnyesNewsCrawler:
     # ------------------------------------------------------------------
     # CNYES API：頁面實際使用的新聞列表介面
     # ------------------------------------------------------------------
-    def _api_page(self, start: datetime, end: datetime, page: int, limit: int) -> dict[str, Any]:
+    def _api_page(self, start: datetime, end: datetime, page: int, limit: int, category: str = "headline") -> dict[str, Any]:
         params = {
             "page": page,
             "limit": min(30, max(10, int(limit))),
-            "isCategoryHeadline": 1,
             "startAt": int(start.timestamp()),
             "endAt": int(end.timestamp()),
         }
-        response = self._get(API_URL, params=params, accept_json=True)
+        if category == "headline":
+            params["isCategoryHeadline"] = 1
+        url = API_URL if category == "headline" else CATEGORY_API_URL.format(category=category)
+        response = self._get(url, params=params, accept_json=True)
         try:
             payload = response.json()
         except Exception as exc:
@@ -259,9 +271,11 @@ class CnyesNewsCrawler:
             tags=tags,
             stock_refs=stock_refs,
             crawled_at=datetime.now(TAIPEI).isoformat(),
+            content_length=len(content),
+            summary_length=len(summary),
         )
 
-    def crawl_api(self, days: int) -> tuple[list[CnyesArticle], dict[str, Any]]:
+    def crawl_api(self, days: int, category: str = "headline") -> tuple[list[CnyesArticle], dict[str, Any]]:
         start, end = self._date_window(days)
         articles: list[CnyesArticle] = []
         errors: list[str] = []
@@ -272,7 +286,7 @@ class CnyesNewsCrawler:
         page_size = DEFAULT_API_PAGE_SIZE
 
         for _ in range(DEFAULT_MAX_API_PAGES):
-            payload = self._api_page(start, end, page, page_size)
+            payload = self._api_page(start, end, page, page_size, category)
             rows, meta = self._api_data(payload)
             if total is None:
                 total = meta.get("total")
@@ -285,6 +299,7 @@ class CnyesNewsCrawler:
                 article = self._api_item_to_article(row)
                 if not article or article.article_id in seen:
                     continue
+                article.list_category = category
                 seen.add(article.article_id)
                 dt = self._parse_datetime(article.published_ts or article.published)
                 if dt:
@@ -312,7 +327,7 @@ class CnyesNewsCrawler:
             reverse=True,
         )[: self.max_articles]
         return articles, {
-            "api_url": API_URL,
+            "api_url": API_URL if category == "headline" else CATEGORY_API_URL.format(category=category),
             "api_total": total,
             "api_last_page": last_page,
             "api_pages_fetched": page,
@@ -517,6 +532,8 @@ class CnyesNewsCrawler:
             tags=tags,
             stock_refs=[],
             crawled_at=datetime.now(TAIPEI).isoformat(),
+            content_length=len(self._clean_text(content, 7000)),
+            summary_length=len(self._clean_text(description, 1600)),
         )
 
     def _fetch_detail(self, row: dict[str, str]) -> CnyesArticle | None:
@@ -525,6 +542,235 @@ class CnyesNewsCrawler:
             return self._parse_article_html(response.text, row.get("url", ""), row.get("title_hint", ""))
         except Exception:
             return None
+
+    @staticmethod
+    def _content_quality(article: dict[str, Any]) -> int:
+        """估算新聞正文品質；API 只有摘要時，分數通常很低。"""
+        content = str(article.get("content") or "").strip()
+        summary = str(article.get("summary") or "").strip()
+        return max(len(content), len(summary))
+
+    def enrich_articles(
+        self,
+        articles: list[dict[str, Any]],
+        max_articles: int | None = None,
+        workers: int = DEFAULT_DETAIL_WORKERS,
+    ) -> tuple[list[dict[str, Any]], list[str]]:
+        """用文章頁補齊 API 缺少的正文。
+
+        只對正文過短／只有標題摘要的新聞補抓，避免每次更新都重抓全部新聞。
+        失敗時保留原資料，不讓單篇新聞影響整批資料。
+        """
+        rows = [dict(x) for x in articles if isinstance(x, dict)]
+        limit = max_articles if max_articles is not None else len(rows)
+        candidates = [
+            x for x in rows
+            if str(x.get("url") or "").strip()
+            and self._content_quality(x) < 320
+        ][:max(0, int(limit))]
+        errors: list[str] = []
+        if not candidates:
+            return rows, errors
+
+        def fetch_one(row: dict[str, Any]) -> tuple[dict[str, Any], str | None]:
+            try:
+                detail = self._fetch_detail({
+                    "url": str(row.get("url") or ""),
+                    "title_hint": str(row.get("title") or ""),
+                })
+                if detail and self._content_quality(asdict(detail)) >= self._content_quality(row):
+                    merged = dict(row)
+                    for key in ("title", "category", "published", "published_ts", "summary", "content", "tags", "stock_refs", "crawled_at", "source", "source_type"):
+                        value = getattr(detail, key, None)
+                        if value not in (None, "", [], {}):
+                            merged[key] = value
+                    merged["content_length"] = len(str(merged.get("content") or ""))
+                    merged["summary_length"] = len(str(merged.get("summary") or ""))
+                    merged["detail_enriched"] = True
+                    merged["detail_enriched_at"] = datetime.now(TAIPEI).isoformat()
+                    return merged, None
+                return dict(row), None
+            except Exception as exc:
+                return dict(row), f"{row.get('url')}: {type(exc).__name__}: {exc}"
+
+        index = {str(row.get("url") or row.get("article_id") or ""): i for i, row in enumerate(rows)}
+        with ThreadPoolExecutor(max_workers=max(1, int(workers))) as pool:
+            futures = [pool.submit(fetch_one, row) for row in candidates]
+            for future in as_completed(futures):
+                merged, error = future.result()
+                key = str(merged.get("url") or merged.get("article_id") or "")
+                if key in index:
+                    rows[index[key]] = merged
+                if error:
+                    errors.append(error)
+
+        return rows, errors
+
+
+    # ------------------------------------------------------------------
+    # 滾動式爬取：每次都抓「前一日 00:00 ～ 現在」，爬完直接取代上一個時間點的資料
+    # ------------------------------------------------------------------
+    @staticmethod
+    def _atomic_write(path: Path, text: str) -> None:
+        tmp = path.with_suffix(path.suffix + ".tmp")
+        tmp.write_text(text, encoding="utf-8")
+        os.replace(tmp, path)
+
+    def _load_prior_articles(self) -> dict[str, dict[str, Any]]:
+        """讀上一次的滾動快取，已補齊正文的文章不必重抓內文頁。"""
+        path = self.output_dir / "cnyes_news_latest.json"
+        try:
+            obj = json.loads(path.read_text(encoding="utf-8"))
+            return {
+                str(a.get("article_id") or a.get("url")): a
+                for a in obj.get("articles", []) if isinstance(a, dict)
+            }
+        except Exception:
+            return {}
+
+    def _html_fallback_articles(self, days: int, errors: list[str]) -> list[CnyesArticle]:
+        listing: list[dict[str, str]] = []
+        try:
+            response = self._get(BASE_URL)
+            listing = self._extract_links(response.text)
+        except Exception as exc:
+            errors.append(f"鉅亨頭條 HTML 讀取失敗：{exc}")
+        if len(listing) < min(30, self.max_articles):
+            rows = self._selenium_listing()
+            if rows and not rows[0].get("error"):
+                listing.extend(rows)
+            elif rows and rows[0].get("error"):
+                errors.append(str(rows[0].get("error")))
+        dedup = {row.get("url"): row for row in listing if ARTICLE_PATTERN.match(row.get("url", ""))}
+        out: list[CnyesArticle] = []
+        with ThreadPoolExecutor(max_workers=DEFAULT_DETAIL_WORKERS) as pool:
+            futures = [pool.submit(self._fetch_detail, row) for row in list(dedup.values())[: self.max_articles]]
+            for future in as_completed(futures):
+                article = future.result()
+                if article and self._within_window(article.published_ts or article.published, days):
+                    out.append(article)
+        return out
+
+    def crawl_rolling(
+        self,
+        days: int = 2,
+        categories: tuple[str, ...] | list[str] | None = None,
+        max_articles: int | None = None,
+    ) -> dict[str, Any]:
+        """爬取最近 days 個日曆日（預設：前一日 00:00 至現在）的新聞並取代舊快取。
+
+        輸出：
+        - cnyes_news_latest.json：本次完整結果（財經資訊頁、晨報、盤後都讀這份）
+        - cnyes_news_YYYY-MM-DD.json：依發佈日切成日檔（相容舊程式），同日檔直接被取代
+        """
+        days = max(1, int(days))
+        if max_articles is not None:
+            self.max_articles = max(30, int(max_articles))
+        if categories is None:
+            env = os.getenv("CNYES_CATEGORIES", "").strip()
+            categories = [x.strip() for x in env.split(",") if x.strip()] or list(DEFAULT_CATEGORIES)
+
+        errors: list[str] = []
+        per_category: dict[str, int] = {}
+        merged: dict[str, CnyesArticle] = {}
+        api_meta: dict[str, Any] = {}
+        for cat in categories:
+            try:
+                rows, meta = self.crawl_api(days, category=cat)
+            except Exception as exc:
+                errors.append(f"[{cat}] API 失敗：{exc}")
+                per_category[cat] = 0
+                continue
+            per_category[cat] = len(rows)
+            api_meta[cat] = {k: meta.get(k) for k in ("api_total", "api_last_page", "api_pages_fetched")}
+            for a in rows:
+                if a.article_id not in merged:
+                    merged[a.article_id] = a
+            time.sleep(self.sleep_seconds)
+
+        source_method = "api"
+        if not merged:
+            source_method = "html"
+            errors.append("鉅亨 API 在指定日期範圍沒有回傳新聞，改用 HTML fallback。")
+            for a in self._html_fallback_articles(days, errors):
+                merged[a.article_id] = a
+
+        articles = sorted(merged.values(), key=lambda x: x.published_ts or x.published or "", reverse=True)[: self.max_articles]
+        rows = [asdict(x) for x in articles]
+
+        # 沿用上一次已補齊的正文，只對新文章補抓內文頁
+        prior = self._load_prior_articles()
+        reused = 0
+        for row in rows:
+            old = prior.get(str(row.get("article_id") or row.get("url")))
+            if old and self._content_quality(old) > self._content_quality(row):
+                for key in ("content", "summary", "tags", "stock_refs", "detail_enriched", "detail_enriched_at", "content_length", "summary_length"):
+                    if old.get(key) not in (None, "", [], {}):
+                        row[key] = old[key]
+                reused += 1
+        enrich_limit = int(os.getenv("CNYES_DETAIL_ENRICH_MAX", "150"))
+        detail_errors: list[str] = []
+        if enrich_limit > 0 and rows:
+            rows, detail_errors = self.enrich_articles(rows, max_articles=enrich_limit)
+
+        now = datetime.now(TAIPEI)
+        start, end = self._date_window(days)
+        by_date: dict[str, list[dict[str, Any]]] = {}
+        for row in rows:
+            dt = self._parse_datetime(row.get("published_ts") or row.get("published"))
+            by_date.setdefault(dt.date().isoformat() if dt else now.date().isoformat(), []).append(row)
+
+        categories_count: dict[str, int] = {}
+        for row in rows:
+            categories_count[row.get("category") or "未分類"] = categories_count.get(row.get("category") or "未分類", 0) + 1
+
+        result = {
+            "source_url": BASE_URL,
+            "source_method": source_method,
+            "crawl_date": now.date().isoformat(),
+            "crawl_started_at": now.isoformat(),
+            "days": days,
+            "window_start": start.isoformat(),
+            "window_end": end.isoformat(),
+            "categories": list(categories),
+            "per_category_count": per_category,
+            "api_meta": api_meta,
+            "article_count": len(rows),
+            "category_counts": dict(sorted(categories_count.items(), key=lambda x: (-x[1], x[0]))),
+            "reused_from_previous_run": reused,
+            "articles": rows,
+            "errors": errors + detail_errors,
+            "content_quality": {
+                "articles_with_content": sum(1 for x in rows if len(str(x.get("content") or "")) >= 320),
+                "articles_with_summary": sum(1 for x in rows if str(x.get("summary") or "").strip()),
+                "detail_enriched_count": sum(1 for x in rows if x.get("detail_enriched")),
+            },
+        }
+        latest = self.output_dir / "cnyes_news_latest.json"
+        self._atomic_write(latest, json.dumps(result, ensure_ascii=False, indent=2))
+        # 依發佈日寫日檔（取代同日舊檔），相容 load_recent_cached 與舊程式
+        for d, items in by_date.items():
+            daily = dict(result)
+            daily.update({"crawl_date": d, "article_count": len(items), "articles": items})
+            self._atomic_write(self.output_dir / f"cnyes_news_{d}.json", json.dumps(daily, ensure_ascii=False, indent=2))
+        # 清掉太舊的日檔，避免資料夾無限增長
+        try:
+            files = sorted(self.output_dir.glob("cnyes_news_20??-??-??.json"))
+            for old_file in files[:-KEEP_DAILY_FILES]:
+                old_file.unlink(missing_ok=True)
+        except Exception:
+            pass
+        result["cache_path"] = str(latest)
+        result["cache_exists"] = latest.exists()
+        return result
+
+    def load_latest(self) -> dict[str, Any]:
+        path = self.output_dir / "cnyes_news_latest.json"
+        try:
+            obj = json.loads(path.read_text(encoding="utf-8"))
+            return obj if isinstance(obj, dict) else {}
+        except Exception:
+            return {}
 
     # ------------------------------------------------------------------
     # main crawl + cache
@@ -538,7 +784,29 @@ class CnyesNewsCrawler:
         if cache_path.exists() and not force:
             try:
                 cached = json.loads(cache_path.read_text(encoding="utf-8"))
-                if isinstance(cached, dict) and cached.get("articles") is not None:
+                if isinstance(cached, dict) and isinstance(cached.get("articles"), list):
+                    # 舊版快取可能只有 title/URL/很短摘要；新版本啟動時先升級正文，不直接沿用低品質 cache。
+                    cached_articles = [x for x in cached.get("articles", []) if isinstance(x, dict)]
+                    weak_count = sum(1 for x in cached_articles if self._content_quality(x) < 320)
+                    if weak_count == 0:
+                        return cached
+
+                    upgraded, enrich_errors = self.enrich_articles(
+                        cached_articles,
+                        max_articles=int(os.getenv("CNYES_DETAIL_ENRICH_MAX", "120")),
+                    )
+                    cached["articles"] = upgraded
+                    cached["article_count"] = len(upgraded)
+                    cached["content_quality"] = {
+                        "articles_with_content": sum(1 for x in upgraded if len(str(x.get("content") or "")) >= 320),
+                        "articles_with_summary": sum(1 for x in upgraded if bool(str(x.get("summary") or "").strip())),
+                        "detail_enriched_count": sum(1 for x in upgraded if bool(x.get("detail_enriched"))),
+                        "upgraded_existing_cache": True,
+                    }
+                    if enrich_errors:
+                        cached.setdefault("errors", [])
+                        cached["errors"].extend(enrich_errors)
+                    cache_path.write_text(json.dumps(cached, ensure_ascii=False, indent=2), encoding="utf-8")
                     return cached
             except Exception:
                 pass
@@ -592,6 +860,14 @@ class CnyesNewsCrawler:
             dedup[article.article_id] = article
         articles = sorted(dedup.values(), key=lambda x: x.published_ts or x.published or "", reverse=True)[: self.max_articles]
 
+        # API 常見只有 title/summary；夜間完整快取再補一批正文，讓早報與 18:00 財經資訊有可閱讀內容。
+        detail_errors: list[str] = []
+        enrich_limit = int(os.getenv("CNYES_DETAIL_ENRICH_MAX", "120"))
+        if enrich_limit > 0 and articles:
+            raw_rows = [asdict(x) for x in articles]
+            raw_rows, detail_errors = self.enrich_articles(raw_rows, max_articles=enrich_limit)
+            articles = [CnyesArticle(**{k: row.get(k) for k in CnyesArticle.__dataclass_fields__.keys()}) for row in raw_rows]
+
         categories: dict[str, int] = {}
         for x in articles:
             categories[x.category] = categories.get(x.category, 0) + 1
@@ -611,9 +887,17 @@ class CnyesNewsCrawler:
             "category_counts": dict(sorted(categories.items(), key=lambda x: (-x[1], x[0]))),
             "api_meta": api_meta,
             "articles": [asdict(x) for x in articles],
-            "errors": errors,
+            "errors": errors + detail_errors,
+            "content_quality": {
+                "articles_with_content": sum(1 for x in articles if len(str(x.content or "")) >= 320),
+                "articles_with_summary": sum(1 for x in articles if bool(str(x.summary or "").strip())),
+                "detail_enriched_count": sum(1 for x in articles if bool(getattr(x, "detail_enriched", False))),
+            },
         }
         cache_path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        # 明確把實際快取檔案路徑寫回結果，讓夜間排程與人工測試可以直接驗證。
+        result["cache_path"] = str(cache_path)
+        result["cache_exists"] = cache_path.exists()
         return result
 
 

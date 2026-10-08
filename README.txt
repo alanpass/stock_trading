@@ -1,33 +1,37 @@
-V72：最近 5 日法說會 Agent 真正修復
+AI 台股研究中心｜Email / 財經資訊 / 排程 v16
 
-這版只替換：
-- earnings_call_agent.py
-- stock_dashboard.py
-- test_earnings_agent.py
+本包刻意不包含 stock_dashboard.py。
+本版只更新：
+- email_agent.py
+- morning_report_agent.py
+- run_morning_report.py
+- run_after_close_research.py
+- run_finance_info_update.py
+- scheduled_job_runner.py
+- subscriber_service.py
+- setup_research_task_v10.ps1（排程設定原檔）
 
-不碰：output/、data/、models/、.env。
+請將以上檔案放回原專案根目錄：
+C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
 
-V72 修正：
-1. 不再只讀最後一個 fugle_earnings_memo/probe JSON；會合併最近 5 日全部資料。
-2. probe 不會覆蓋正式 Agent 結果。
-3. Fugle 主題頁若延遲更新，最近 5 日會用日期搜尋補齊文章 URL。
-4. Dashboard 若沒有最新的 Agent 法說包，session 首次進入會自動執行一次 5 日 Earnings Agent。
-5. 每篇先由 Qwen3 呼叫 read_fugle_memo，再輸出一句話摘要、財務、營運、展望、利多、利空、風險、Q&A。
-6. 原文只放在「已驗證正文」區塊，摘要成為主要內容。
-7. UI 最多顯示 50 篇近期法說卡片，不再只顯示一篇。
-8. +1/+5 交易日反應仍由 Fugle 歷史日K計算，不足未來交易日就留空。
+手動測試：
+python .\scheduled_job_runner.py morning
+python .\scheduled_job_runner.py afterclose
+python .\scheduled_job_runner.py finance
 
-套用：
-cd C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard_patch_v72
-Set-ExecutionPolicy -Scope Process Bypass
-.\APPLY_V72.ps1
+正確指令不要寫成：
+python run scheduled_job_runner.py morning
 
-測試 Agent：
-cd C:\Users\10501\OneDrive\Desktop\stock_trading\stock_dashboard
-python test_earnings_agent.py --days 5 --limit 100
+排程：
+08:30 Morning + Finance info
+14:30 After-close + Email
+18:00 Finance info
+23:00 CNYES nightly crawl
 
-只測正文：
-python test_earnings_agent.py 6582 --days 5 --crawl-only
-
-啟動：
-python -m streamlit run stock_dashboard.py
+Email：
+- 晨報新聞與法說會只取前一日 00:00 至目前
+- 每則新聞壓成 1~3 點
+- 關鍵詞以紅字突出
+- 法說會壓成 1~3 點
+- 發送時自動加入目前有效訂閱者
+- 訂閱者由 subscriber_service.py 保存，可選擇遠端同步

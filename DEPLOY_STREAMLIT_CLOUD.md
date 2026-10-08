@@ -90,3 +90,81 @@ Set-ExecutionPolicy -Scope Process Bypass
 ```powershell
 .\check_research_task.cmd
 ```
+
+## 9. Windows → GitHub → 網站自動更新（新增）
+
+本專案現在加入 `publish_research_data.py` 與 `GITHUB_AUTO_PUBLISH.md`。
+
+Windows 仍然負責：
+
+- CNYES 新聞爬蟲
+- Fugle 法說會
+- Ollama / Qwen3 8B 摘要
+- 產生完整 `finance_info_latest.json`
+
+完成後會再產生：
+
+```text
+output/research_reports/finance_info_public.json
+```
+
+這是給網站使用的精簡版，只保留標題、原文網址、AI 摘要、AI 重點、情緒、產業、個股、重要度、時間等，不發布完整新聞／法說會正文。
+
+`scheduled_job_runner.py finance` 在本次財經資訊驗證成功後會自動執行：
+
+```text
+python publish_research_data.py
+```
+
+由 Git 將 `finance_info_public.json` commit + push 到 GitHub。
+
+### 一次性設定
+
+```powershell
+cd "$HOME\OneDrive\Desktop\stock_trading\stock_dashboard"
+git remote -v
+git config --global credential.helper manager
+powershell -ExecutionPolicy Bypass -File .\setup_github_auto_publish.ps1
+```
+
+如果 `origin` 尚未存在：
+
+```powershell
+git remote add origin https://github.com/你的帳號/你的Repository.git
+```
+
+完成 GitHub 認證後測試：
+
+```powershell
+python run_finance_info_update.py --quick
+python publish_research_data.py --dry-run
+python publish_research_data.py
+```
+
+### 正式排程
+
+確認 Task Scheduler 最後執行的是：
+
+```powershell
+python scheduled_job_runner.py finance
+```
+
+而不是直接執行 `run_finance_info_update.py`。這樣才能在研究完成後自動發布。
+
+### 網站端
+
+`stock_dashboard.py` 已改為優先讀：
+
+```text
+output/research_reports/finance_info_public.json
+```
+
+Cloud 上不需要 Ollama，也不需要本機 CNYES cache。
+
+### 暫時關閉自動發布
+
+```powershell
+$env:AUTO_GIT_PUBLISH = "false"
+```
+
+不設定時預設為 `true`。

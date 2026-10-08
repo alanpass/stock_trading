@@ -803,3 +803,23 @@ Windows Task Scheduler
 ## 💡 Project Concept
 
 > **不是讓 AI 猜股票，而是讓 AI 像研究助理一樣閱讀大量市場資料，發現不知道的地方就繼續查，最後形成有證據、有脈絡、可持續累積的台股研究筆記。**
+
+## 網站財經資訊自動同步
+
+本專案已加入 Windows → GitHub → Streamlit Cloud 自動發布層：
+
+```text
+CNYES + Fugle + Qwen3 8B
+        ↓
+finance_info_latest.json（本機完整研究資料）
+        ↓
+finance_info_public.json（網站精簡版）
+        ↓
+git commit / push
+        ↓
+GitHub
+        ↓
+Streamlit Community Cloud
+```
+
+網站不需要連到你的 Windows，也不需要連到本機 Ollama；Windows 只負責研究與發布，Cloud 只負責展示。完整設定請看 `GITHUB_AUTO_PUBLISH.md`。

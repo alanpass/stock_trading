@@ -803,28 +803,14 @@ def main() -> int:
     report["market_data_recovery"] = market_diag
     write_log(today, f"MARKET_ASOF={market_movers.get('data_asof','')}")
     write_log(today, f"MARKET_UNIVERSE={market_movers.get('universe_count',0)} CANDIDATES={market_movers.get('candidate_count',0)}")
-    market_warning = ""
     if not market_movers.get("movers"):
-        market_warning = "官方當日行情 recovery 未取得 movers；本次研究不使用前一交易日行情冒充今日，仍繼續產生研究報告並寄送。"
-        write_log(today, "WARNING=" + market_warning)
-        report["market_data_status"] = "unavailable_today"
-        report["market_data_warning"] = market_warning
-        # 維持空白 movers，禁止用舊資料補齊。後續 Agent 與 Email 會知道今日行情不可用。
-    elif str(market_movers.get("data_asof", ""))[:10] != today:
-        market_warning = f"官方行情日期 {market_movers.get('data_asof')} 與報告日期 {today} 不一致；不採用該行情，仍繼續寄送研究報告。"
-        write_log(today, "WARNING=" + market_warning)
-        report["market_data_status"] = "date_mismatch_rejected"
-        report["market_data_warning"] = market_warning
-        report["market_movers"] = {
-            "movers": [],
-            "industry_summary": [],
-            "data_asof": "",
-            "is_trading_day": True,
-            "data_source": "rejected_date_mismatch",
-            "errors": list((market_movers.get("errors") or [])) + [market_warning],
-        }
-    else:
-        report["market_data_status"] = "verified_today"
+        write_log(today, "ERROR=官方今日行情仍為空，停止寄送，避免空白假報。")
+        write_status(today, "error_no_market_data", diagnostics=market_diag)
+        return 4
+    if str(market_movers.get("data_asof", ""))[:10] != today:
+        write_log(today, f"ERROR=market data date {market_movers.get('data_asof')} != report date {today}")
+        write_status(today, "error_market_date_mismatch", market_asof=market_movers.get("data_asof"))
+        return 4
 
     write_log(today, "[2/4] CNYES 夜間快取 recovery")
     cnyes_news, morning_cnyes_digest, cnyes_path, cnyes_errors = _load_cnyes_cache(today)
@@ -903,7 +889,7 @@ def main() -> int:
         email_result = {"sent": False, "skipped": False, "error": f"Email Agent 執行失敗：{type(exc).__name__}: {exc}"}
 
     write_log(today, "EMAIL_RESULT=" + json.dumps(email_result, ensure_ascii=False, default=str))
-    if email_result.get("error"):
+    if email_result.get("error") or not email_result.get("sent"):
         write_status(today, "error_email", email_result=email_result)
         return 3
 
@@ -911,8 +897,6 @@ def main() -> int:
         today,
         "success",
         market_asof=market_movers.get("data_asof", ""),
-        market_data_status=report.get("market_data_status", ""),
-        market_warning=report.get("market_data_warning", ""),
         market_universe=market_movers.get("universe_count", 0),
         market_candidates=market_movers.get("candidate_count", 0),
         financial_snapshots=len(report.get("financial_snapshots", []) or []),

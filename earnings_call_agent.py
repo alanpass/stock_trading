@@ -456,9 +456,33 @@ class FugleEarningsCallAgent:
 
     @staticmethod
     def _fallback(article):
-        t=article.get("memo_text",""); p=[x for x in POSITIVE_WORDS if x in t]; n=[x for x in NEGATIVE_WORDS if x in t]
-        impact="利多" if len(p)>len(n)+2 else ("利空" if len(n)>len(p)+2 else "混合")
-        return {"impact":impact,"confidence":40+min(45,abs(len(p)-len(n))*5),"one_line_summary":f"{article.get('title','')}：已讀取 Fugle 法說會備忘錄正文。","financial_highlights":[],"operating_highlights":[],"guidance":[],"positive_factors":p[:8],"negative_factors":n[:8],"key_risks":[],"qa_highlights":[],"reasoning":"Ollama 無法完成結構化輸出，使用正文關鍵訊號做保守 fallback。","agent_tool_used":False}
+        t = str(article.get("memo_text") or "").strip()
+        sections = article.get("sections") or {}
+        base_text = str(sections.get("營運摘要") or sections.get("財務表現") or t).strip()
+        # 去掉站內註冊提示與多餘空白，只保留可直接閱讀的一段。
+        base_text = re.sub(r"\s+", " ", base_text)
+        base_text = re.sub(r"註冊富果會員.*?(?=\d+\. |$)", "", base_text)
+        summary = base_text[:620].strip(" ：:；;")
+        if not summary:
+            summary = f"{article.get('title','')}：已讀取 Fugle 法說會備忘錄正文。"
+        p = [x for x in POSITIVE_WORDS if x in t]
+        n = [x for x in NEGATIVE_WORDS if x in t]
+        impact = "利多" if len(p) > len(n) + 2 else ("利空" if len(n) > len(p) + 2 else "混合")
+        return {
+            "impact": impact,
+            "confidence": 45 + min(40, abs(len(p) - len(n)) * 5),
+            "one_line_summary": summary,
+            "financial_highlights": [str(sections.get("財務表現"))[:320]] if sections.get("財務表現") else [],
+            "operating_highlights": [str(sections.get("營運摘要"))[:320]] if sections.get("營運摘要") else [],
+            "guidance": [str(sections.get("展望與指引"))[:320]] if sections.get("展望與指引") else [],
+            "positive_factors": p[:8],
+            "negative_factors": n[:8],
+            "key_risks": n[:8],
+            "qa_highlights": [str(sections.get("Q&A 重點") or sections.get("Q&A"))[:360]] if (sections.get("Q&A 重點") or sections.get("Q&A")) else [],
+            "reasoning": "Ollama 無法完成結構化輸出，改用已成功讀取的 Fugle 正文與段落內容做保守摘要。",
+            "agent_tool_used": False,
+            "memo_read_success": True,
+        }
 
     @staticmethod
     def _validate(a):
@@ -474,24 +498,31 @@ class FugleEarningsCallAgent:
         if sym: rows=[x for x in rows if str(x.get("symbol","")).upper()==sym]
         return rows[:max_events]
 
-    def daily_run(self,days=14,limit=80,force=False,watchlist=None):
-        discovered=self.crawler.discover(); cutoff=(datetime.now()-timedelta(days=days)).date(); chosen=[]
+    def daily_run(self,days=14,limit=80,force=False,watchlist=None,skip_urls=None):
+        discovered=self.crawler.discover(); cutoff=(datetime.now()-timedelta(days=max(0, int(days)-1))).date(); chosen=[]
         for x in discovered:
             d=x.get("published_date",""); inside=True
             if d:
                 try:inside=datetime.fromisoformat(d).date()>=cutoff
                 except Exception:pass
+            if skip_urls and x["url"] in skip_urls:
+                continue
             old_hash,_=self.crawler.db_get(x["url"])
             if inside or not old_hash:chosen.append(x)
         chosen=chosen[:limit]; items=[]; errors=[]
         for x in chosen:
             try:
-                # Do not pre-open the article here; the Agent itself must perform the tool call.
-                a=self.analyze_one(x["url"])
-                # read_memo_tool has already saved the article; recover it from DB for final report.
-                article=self.crawler.extract_article(x["url"])
+                try:
+                    # 主要路徑：由 Qwen3 Agent 自己呼叫 read_fugle_memo。
+                    a=self.analyze_one(x["url"])
+                    article=self.crawler.extract_article(x["url"])
+                except Exception as agent_exc:
+                    # 保底路徑：即使 Ollama tool-calling / JSON 輸出失敗，也不要丟掉已成功取得的法說正文。
+                    article=self.crawler.extract_article(x["url"])
+                    a=self._fallback(article)
+                    errors.append({"url":x.get("url"),"title":x.get("title"),"warning":f"Ollama 分析失敗，使用正文 fallback：{agent_exc}"})
                 self.crawler.db_save(article,a)
-                items.append({**article,**a,"memo_opened":True,"source_type":"Fugle 法說會備忘錄","agent_source":"Ollama Tool Calling -> read_fugle_memo(url) -> detailed article正文","detail_read_verified":True})
+                items.append({**article,**a,"memo_opened":True,"source_type":"Fugle 法說會備忘錄","agent_source":"Ollama Tool Calling -> read_fugle_memo(url) -> detailed article正文 / fallback","detail_read_verified":True})
             except Exception as exc:errors.append({"url":x.get("url"),"title":x.get("title"),"error":str(exc)})
         watch={str(s).strip().upper() for s in (watchlist or [])}
         for x in items:x["in_watchlist"]=str(x.get("symbol","")) in watch

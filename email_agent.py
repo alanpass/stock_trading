@@ -9,7 +9,7 @@ AI 台股盤後財報 Email Agent v4
    財報、法說會、題材與模型證據整合成使用者容易閱讀的重點。
 3. Email 本文固定保留研究結果需要的區塊：
       - 今日市場重點
-      - 最近 5 天法說會（不在 Agent 摘要重複）
+      - 前一日 00:00 至目前法說會（不在 Agent 摘要重複）
       - Agent 研究筆記
       - 目前主要利多題材
       - 營收成長重點（若結構化資料不足，由 Agent 先查新聞再補充）
@@ -34,6 +34,8 @@ import re
 import smtplib
 import ssl
 from dataclasses import dataclass
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from email.message import EmailMessage
 from email.utils import formataddr
 from pathlib import Path
@@ -41,7 +43,7 @@ from typing import Any
 
 import requests
 
-from subscriber_service import report_recipient_emails, load_subscribers
+EMAIL_NEWS_MAX = int(os.getenv("EMAIL_NEWS_MAX", "12"))  # 晨報 Email 最多列幾則新聞
 
 
 TAIPEI_TZ = "Asia/Taipei"
@@ -178,18 +180,6 @@ class EmailAgent:
             use_ssl=_as_bool(first("EMAIL_USE_SSL", default="false"), False),
         )
 
-    def report_recipients(self) -> list[str]:
-        """取得目前所有有效訂閱者；管理者主收件者永遠保留在 To。"""
-        recipients = []
-        owner = str(self.config.recipient or "").strip().lower()
-        if owner:
-            recipients.append(owner)
-        try:
-            recipients.extend(report_recipient_emails(self.base))
-        except Exception:
-            pass
-        return list(dict.fromkeys(x for x in recipients if x))
-
     def status(self) -> dict[str, Any]:
         c = self.config
         missing: list[str] = []
@@ -203,18 +193,12 @@ class EmailAgent:
 
         configured = c.enabled and not missing
 
-        try:
-            subscriber_count = len(load_subscribers(self.base, include_remote=True))
-        except Exception:
-            subscriber_count = 0
-
         return {
             "enabled": c.enabled,
             "auto_send": c.auto_send,
             "configured": configured,
             "sender": c.sender,
             "recipient": c.recipient,
-            "subscriber_count": subscriber_count,
             "smtp_host": c.smtp_host,
             "smtp_port": c.smtp_port,
             "use_ssl": c.use_ssl,
@@ -334,7 +318,7 @@ class EmailAgent:
 
         # 市場強弱
         mm = report.get("market_movers", {}) or {}
-        movers = [x for x in mm.get("movers", []) if isinstance(x, dict)]
+        movers = self._reportable_market_rows(report)
         movers = sorted(
             movers,
             key=lambda x: abs(self._safe_float(x.get("today_change_percent"), 0) or 0),
@@ -422,13 +406,95 @@ class EmailAgent:
 
         return "\n".join(lines)
 
+
+
+    # =======================================================================
+    # Reportable market rows / bad-data defense
+    # =======================================================================
+    @staticmethod
+    def _is_reportable_market_symbol(symbol: Any, name: Any = "", security_type: Any = "") -> bool:
+        """盤後 Email 只呈現一般四碼現貨股票／ETF；排除權證、指數與其他衍生商品。"""
+        code = str(symbol or "").strip().upper().replace(".TW", "")
+        n = str(name or "").strip()
+        t = str(security_type or "").strip().upper()
+        if not re.fullmatch(r"\d{4}", code):
+            return False
+        if t and t not in {"EQUITY", "STOCK", "ETF"}:
+            return False
+        if re.search(r"認購|認售|購\w*|售\w*|牛證|熊證|權證", n):
+            return False
+        return True
+
+    @classmethod
+    def _reportable_market_rows(cls, report: dict[str, Any]) -> list[dict[str, Any]]:
+        """過濾報告中的市場漲跌候選，並重新驗證今日漲跌幅。"""
+        mm = report.get("market_movers", {}) or {}
+        raw = mm.get("movers", []) or []
+        out: list[dict[str, Any]] = []
+        for row in raw:
+            if not isinstance(row, dict):
+                continue
+            symbol = row.get("symbol") or row.get("code")
+            name = row.get("name") or row.get("stock_name") or ""
+            if not cls._is_reportable_market_symbol(symbol, name, row.get("type", "")):
+                continue
+
+            x = dict(row)
+            close = cls._safe_float(x.get("close") or x.get("closePrice") or x.get("lastPrice") or x.get("price"), None)
+            change = cls._safe_float(x.get("change") or x.get("change_value"), None)
+            previous = cls._safe_float(x.get("previous_close") or x.get("previousClose") or x.get("referencePrice"), None)
+            if previous is None and close is not None and change is not None:
+                previous = close - change
+            pct = None
+            if change is not None and previous not in (None, 0):
+                pct = change / previous * 100.0
+            if pct is None:
+                pct = cls._safe_float(x.get("today_change_percent") or x.get("change_percent"), None)
+                # 某些來源把 0.0988 表示成比例值；僅在合理範圍才轉百分比。
+                if pct is not None and abs(pct) <= 1:
+                    pct *= 100.0
+            if pct is None or abs(pct) > 30:
+                # 台股一般股票／ETF不應出現 +100%/+1000% 這類盤後日漲跌幅。
+                continue
+
+            x["today_change_percent"] = round(float(pct), 3)
+            if change is not None:
+                x["change"] = round(float(change), 4)
+            if close is not None:
+                x["close"] = round(float(close), 4)
+            if previous is not None:
+                x["previous_close"] = round(float(previous), 4)
+            x["symbol"] = str(symbol).strip().upper().replace(".TW", "")
+            out.append(x)
+        return out
+
+    @staticmethod
+    def _sanitize_watch_items(items: Any) -> list[str]:
+        """禁止把模型／Ollama 例外堆疊當成使用者的「待追蹤事項」。"""
+        if not isinstance(items, list):
+            items = [items] if items else []
+        bad_terms = (
+            "ResponseError", "Traceback", "llama-server", "binary not found",
+            "status code: 500", "Exception:", "Error:", "ResearchOrchestratorAgent 失敗",
+            "未完成自主研究：", "python", "cmake -S", "OLLAMA",
+        )
+        result: list[str] = []
+        for item in items:
+            text = str(item or "").strip()
+            if not text:
+                continue
+            if any(term.lower() in text.lower() for term in bad_terms):
+                continue
+            result.append(text[:500])
+        return result[:8]
+
     # =======================================================================
     # Qwen3 Agent digest
     # =======================================================================
     def _fallback_digest(self, report: dict[str, Any]) -> dict[str, Any]:
         """Qwen3 無法使用時的保守摘要；只從結構化資料抽重點。"""
         mm = report.get("market_movers", {}) or {}
-        movers = [x for x in mm.get("movers", []) if isinstance(x, dict)]
+        movers = self._reportable_market_rows(report)
         ups = sorted(
             [x for x in movers if (self._safe_float(x.get("today_change_percent"), 0) or 0) > 0],
             key=lambda x: self._safe_float(x.get("today_change_percent"), 0) or 0,
@@ -471,9 +537,8 @@ class EmailAgent:
             for x in downs
         ]
 
-        watch = []
-        if report.get("research_conclusion"):
-            watch.append(str(report.get("research_conclusion")))
+        watch: list[str] = []
+        # 不把整段研究結論／模型錯誤當成「待追蹤」。
         for x in calls[:3]:
             if x.get("negative_factors"):
                 watch.append(f"{x.get('symbol', '')} 法說風險：{'; '.join((x.get('negative_factors') or [])[:2])}")
@@ -498,7 +563,7 @@ class EmailAgent:
             "key_takeaways": (positives[:3] + negatives[:2])[:5],
             "positives": positives[:5],
             "negatives": negatives[:5],
-            "watchlist": watch[:5] or ["請查看附件中的完整查證狀態。"],
+            "watchlist": self._sanitize_watch_items(watch[:5]),
             "earnings_summary": earnings_summary,
             "financial_focus": financial_focus[:5],
             "model_alert": str(report.get("research_conclusion", "")),
@@ -520,7 +585,7 @@ class EmailAgent:
                 "key_takeaways": self._as_list(agent.get("key_takeaways")),
                 "positives": self._as_list(agent.get("positive_signals")),
                 "negatives": self._as_list(agent.get("negative_signals")),
-                "watchlist": self._as_list(agent.get("watch_items")),
+                "watchlist": self._sanitize_watch_items(agent.get("watch_items")),
                 "earnings_summary": str(agent.get("earnings_digest", "")).strip(),
                 "financial_focus": self._as_list(agent.get("financial_focus")),
                 "cnyes_news_digest": self._as_list(agent.get("cnyes_news_digest")),
@@ -540,6 +605,109 @@ class EmailAgent:
         if isinstance(value, str):
             return [value.strip()] if value.strip() else []
         return [str(value).strip()]
+
+
+    # =======================================================================
+    # Email time window / compact highlights
+    # =======================================================================
+    @staticmethod
+    def _date_only(value: Any):
+        """把常見 ISO/RFC 日期值轉成 date；無法解析則回傳 None。"""
+        if value is None:
+            return None
+        text = str(value).strip()
+        if not text:
+            return None
+        # 最常見：YYYY-MM-DD...
+        m = re.search(r"(20\d{2}-\d{2}-\d{2})", text)
+        if m:
+            try:
+                return datetime.strptime(m.group(1), "%Y-%m-%d").date()
+            except Exception:
+                pass
+        try:
+            # RFC 2822 等格式
+            from email.utils import parsedate_to_datetime
+            dt = parsedate_to_datetime(text)
+            return dt.date()
+        except Exception:
+            return None
+
+    def _previous_day_to_now_window(self) -> tuple[datetime.date, datetime.date]:
+        now = datetime.now(ZoneInfo(TAIPEI_TZ))
+        return now.date() - timedelta(days=1), now.date()
+
+    def _filter_previous_day_to_now(self, items: list[dict[str, Any]], date_keys: tuple[str, ...]) -> list[dict[str, Any]]:
+        start_date, end_date = self._previous_day_to_now_window()
+        result = []
+        seen = set()
+
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            item_date = None
+            for key in date_keys:
+                item_date = self._date_only(item.get(key))
+                if item_date is not None:
+                    break
+            if item_date is None or not (start_date <= item_date <= end_date):
+                continue
+
+            key = (
+                item_date.isoformat(),
+                str(item.get("symbol") or item.get("code") or item.get("stock_code") or ""),
+                str(item.get("title") or item.get("headline") or item.get("source_url") or item.get("url") or ""),
+            )
+            if key in seen:
+                continue
+            seen.add(key)
+
+            row = dict(item)
+            row["_mail_date"] = item_date.isoformat()
+            result.append(row)
+
+        result.sort(key=lambda x: str(x.get("_mail_date", "")), reverse=True)
+        return result
+
+    @staticmethod
+    def _summary_points(text: Any, max_points: int = 3, max_chars: int = 150) -> list[str]:
+        """把長篇新聞摘要整理成 1~3 個可掃讀的重點。"""
+        raw = re.sub(r"\s+", " ", str(text or "")).strip()
+        if not raw:
+            return []
+
+        parts = re.split(r"(?<=[。！？!?；;])\s*", raw)
+        parts = [p.strip(" -•　") for p in parts if p.strip(" -•　")]
+
+        if len(parts) == 1 and len(parts[0]) > max_chars:
+            parts = [p.strip() for p in re.split(r"[，,]", parts[0]) if p.strip()]
+
+        cleaned = []
+        for part in parts:
+            part = part[:max_chars]
+            if part and part not in cleaned:
+                cleaned.append(part)
+            if len(cleaned) >= max_points:
+                break
+
+        return cleaned or [raw[:max_chars]]
+
+
+    @staticmethod
+    def _highlight_keywords(text: Any) -> str:
+        """Email HTML 中僅標示少量真正關鍵詞，避免整段變成粗體。"""
+        raw = str(text or "").strip()
+        if not raw:
+            return ""
+        safe = html.escape(raw)
+        keywords = [
+            "AI", "半導體", "矽光子", "記憶體", "HBM", "ASIC", "PCB", "CCL",
+            "訂單", "接單", "報價", "營收", "EPS", "需求", "供需", "資本支出",
+            "升息", "殖利率", "關稅", "風險", "利多", "利空",
+        ]
+        for kw in keywords:
+            safe = re.sub(re.escape(kw), f"<span class='key-highlight'>{kw}</span>", safe, flags=re.IGNORECASE)
+        return safe
 
     # =======================================================================
     # Executive HTML
@@ -563,6 +731,12 @@ class EmailAgent:
 
         note_blocks = []
         for n in notes[:30]:
+            note_symbol = str(n.get("symbol", "")).strip()
+            note_name = str(n.get("title", ""))
+            if note_symbol and not self._is_reportable_market_symbol(note_symbol, note_name):
+                continue
+            if any(term.lower() in str(n.get("note", "")).lower() for term in ("ResponseError", "llama-server", "Traceback", "binary not found")):
+                continue
             tags = "、".join(str(x) for x in (n.get("tags") or [])[:10]) or "—"
             evidence = "；".join(str(x) for x in (n.get("evidence") or [])[:8]) or "—"
             follow = "；".join(str(x) for x in (n.get("follow_up") or [])[:8]) or "—"
@@ -735,7 +909,7 @@ class EmailAgent:
     # =======================================================================
     def _market_section(self, report: dict[str, Any]) -> str:
         mm = report.get("market_movers", {}) or {}
-        movers = [x for x in mm.get("movers", []) if isinstance(x, dict)]
+        movers = self._reportable_market_rows(report)
 
         ups = sorted(
             [x for x in movers if (self._safe_float(x.get("today_change_percent"), 0) or 0) > 0],
@@ -783,22 +957,44 @@ class EmailAgent:
                 f"{self._safe_float(x.get('ret_5d'), 0):+.2f}%" if x.get("ret_5d") is not None else "—",
             ])
 
-        industries = [x for x in mm.get("industry_summary", []) if isinstance(x, dict)]
-        industries = sorted(
-            industries,
-            key=lambda x: self._safe_float(x.get("today_avg_change"), 0) or 0,
-            reverse=True,
-        )[:6]
-        industry_rows = [
-            [
-                f"{x.get('industry_code', '')} {x.get('industry_name', '')}",
-                x.get("candidate_count", ""),
-                f"{self._safe_float(x.get('today_avg_change'), 0):+.2f}%",
-                f"{self._safe_float(x.get('ret_5d_avg'), 0):+.2f}%",
-                f"{x.get('rising_count', 0)} / {x.get('falling_count', 0)}",
-            ]
-            for x in industries
-        ]
+        # 產業強弱一定從「已過濾的一般四碼現貨」重新聚合，
+        # 絕不直接沿用舊報告中可能混入權證的 industry_summary。
+        industry_rows = []
+        if movers:
+            tmp = []
+            for x in movers:
+                ind_code = str(x.get("industry_code", "00")).zfill(2)
+                ind_name = str(x.get("industry_name", "其他"))
+                pct = self._safe_float(x.get("today_change_percent"), None)
+                ret5 = self._safe_float(x.get("ret_5d"), None)
+                if pct is None:
+                    continue
+                tmp.append({"code": ind_code, "name": ind_name, "pct": pct, "ret5": ret5})
+            if tmp:
+                idf = {}
+                for x in tmp:
+                    key = (x["code"], x["name"])
+                    idf.setdefault(key, []).append(x)
+                rows2 = []
+                for (code, name), grp in idf.items():
+                    pct_vals = [float(v["pct"]) for v in grp]
+                    ret5_vals = [float(v["ret5"]) for v in grp if v["ret5"] is not None]
+                    rows2.append({
+                        "code": code, "name": name, "count": len(grp),
+                        "today": sum(pct_vals) / len(pct_vals),
+                        "ret5": (sum(ret5_vals) / len(ret5_vals)) if ret5_vals else None,
+                        "up": sum(1 for v in pct_vals if v > 0),
+                        "down": sum(1 for v in pct_vals if v < 0),
+                    })
+                rows2.sort(key=lambda x: x["today"], reverse=True)
+                for x in rows2[:6]:
+                    industry_rows.append([
+                        f"{x['code']} {x['name']}",
+                        x["count"],
+                        f"{x['today']:+.2f}%",
+                        f"{x['ret5']:+.2f}%" if x["ret5"] is not None else "—",
+                        f"{x['up']} / {x['down']}",
+                    ])
 
         freshness_note = ""
         if data_date:
@@ -849,24 +1045,41 @@ class EmailAgent:
     # Earnings section
     # =======================================================================
     def _earnings_section(self, report: dict[str, Any]) -> str:
+        """早報法說會：只顯示前一日 00:00 至目前，並壓成 1~3 個可掃讀重點。"""
         calls = [
             x for x in report.get("earnings_calls", [])
             if isinstance(x, dict) and not x.get("error")
         ]
-        calls = sorted(calls, key=lambda x: str(x.get("event_date", "")), reverse=True)[:10]
+        calls = self._filter_previous_day_to_now(
+            calls,
+            ("event_date", "eventDate", "published_date", "modified_date", "date", "published_at", "published_time", "published_ts", "published", "created_at"),
+        )
+
+        # 若主報告沒有帶到法說，直接從財經資訊快取補一次，仍嚴格套用相同日期窗。
+        if not calls:
+            finance_path = self.output_dir / "finance_info_latest.json"
+            try:
+                if finance_path.exists():
+                    finance = json.loads(finance_path.read_text(encoding="utf-8"))
+                    finance_calls = [x for x in (finance.get("earnings", []) or []) if isinstance(x, dict)]
+                    calls = self._filter_previous_day_to_now(
+                        finance_calls,
+                        ("event_date", "eventDate", "published_date", "modified_date", "date", "published_at", "published_time", "published_ts", "published", "created_at"),
+                    )
+            except Exception:
+                calls = []
 
         if not calls:
             return """
             <section>
-              <h2>二、最近 5 天法說會</h2>
-              <div class='notice'>目前沒有成功擷取到可用的 Fugle 法說會摘要。</div>
+              <h2>1. 法說會摘要</h2>
+              <div class='notice'>前一日 00:00 至目前沒有成功擷取到可用的 Fugle 法說會摘要。</div>
             </section>
             """
 
         blocks: list[str] = []
-        for x in calls:
-            verified = bool(x.get("detail_read_verified") or x.get("memo_opened"))
-            impact = str(x.get("impact", "待確認"))
+        for x in calls[:8]:
+            impact = str(x.get("impact") or x.get("judgement") or x.get("signal") or "待查證")
             if "利多" in impact or "正" in impact:
                 signal_class = "positive-text"
             elif "利空" in impact or "負" in impact:
@@ -874,65 +1087,55 @@ class EmailAgent:
             else:
                 signal_class = "watch-text"
 
-            summary = x.get("one_line_summary") or x.get("summary") or "目前沒有 AI 摘要。"
-            financial = x.get("financial_highlights") or []
-            guidance = x.get("guidance") or []
-            positive = x.get("positive_factors") or []
-            negative = x.get("negative_factors") or []
-            qa = x.get("qa_highlights") or []
-            source = x.get("source_url") or x.get("url") or ""
+            candidates: list[str] = []
+            for key, label, limit in [
+                ("financial_highlights", "財務", 2),
+                ("guidance", "展望", 2),
+                ("positive_factors", "利多", 2),
+                ("negative_factors", "風險", 2),
+                ("qa_highlights", "Q&A", 1),
+            ]:
+                values = x.get(key) or []
+                if isinstance(values, list):
+                    for value in values[:limit]:
+                        text = str(value).strip()
+                        if text:
+                            candidates.append(f"{label}：{text}")
+            if not candidates:
+                candidates = self._summary_points(
+                    x.get("one_line_summary") or x.get("summary") or "",
+                    max_points=3,
+                    max_chars=150,
+                )
 
-            verification = (
-                "Fugle 詳細備忘錄＋Ollama Agent"
-                if verified
-                else "尚未完成詳細正文驗證"
-            )
+            point_html = "".join(
+                f"<li>{self._highlight_keywords(p)}</li>" for p in candidates[:3]
+            ) or "<li>目前沒有可用的摘要重點。</li>"
 
-            reaction = x.get("price_reaction_label") or "尚無法計算"
-            post1 = self._pct(x.get("post_1d_return")) if x.get("post_1d_return") is not None else "—"
-            post5 = self._pct(x.get("post_5d_return")) if x.get("post_5d_return") is not None else "—"
-
-            def lis(items: list[Any]) -> str:
-                clean = [str(i).strip() for i in items if str(i).strip()]
-                return "".join(f"<li>{self._esc(i)}</li>" for i in clean[:5]) or "<li>無資料</li>"
-
+            source = str(x.get("source_url") or x.get("url") or "").strip()
             source_html = (
                 f"<p><a href='{self._esc(source)}'>查看 Fugle 原始法說會備忘錄</a></p>"
-                if source
-                else ""
+                if source else ""
             )
 
+            confidence = self._safe_float(x.get("confidence"), None)
+            conf_text = "—" if confidence is None else (f"{confidence * 100:.0f}%" if confidence <= 1 else f"{confidence:.0f}%")
+            name = x.get("name") or x.get("company") or x.get("symbol") or "未知公司"
+            symbol = x.get("symbol") or x.get("code") or ""
+
             blocks.append(
-                f"""
-                <details class='earnings-card'>
-                  <summary>
-                    <strong>{self._esc(x.get('event_date',''))}｜{self._esc(x.get('name', x.get('symbol','')))}({self._esc(x.get('symbol',''))})</strong>
-                    <span class='{signal_class}'>　{self._esc(impact)}</span>
-                    <span class='muted'>　信心 {self._safe_float(x.get('confidence'),0):.0f}%</span>
-                  </summary>
-                  <div class='details-body'>
-                    <p class='summary-line'><strong>一句話摘要：</strong>{self._esc(summary)}</p>
-                    <p><strong>證據：</strong>{self._esc(verification)}</p>
-                    <div class='grid2'>
-                      <div><h4>財務重點</h4><ul>{lis(financial)}</ul></div>
-                      <div><h4>展望／指引</h4><ul>{lis(guidance)}</ul></div>
-                    </div>
-                    <div class='grid2'>
-                      <div><h4 class='positive-text'>利多因素</h4><ul>{lis(positive)}</ul></div>
-                      <div><h4 class='negative-text'>利空／風險</h4><ul>{lis(negative)}</ul></div>
-                    </div>
-                    {f"<h4>Q&A 重點</h4><ul>{lis(qa)}</ul>" if qa else ""}
-                    <p><strong>法說後反應：</strong>{self._esc(reaction)}｜後1日 {post1}｜後5日 {post5}</p>
-                    {source_html}
-                  </div>
-                </details>
-                """
+                f"""<div class='research-note'>
+                  <div><strong>{self._esc(x.get('_mail_date', x.get('event_date', '')))}｜{self._esc(name)}（{self._esc(symbol)}）</strong>
+                  <span class='note-meta {signal_class}'>{self._esc(impact)}｜信心 {conf_text}</span></div>
+                  <ul class='news-points'>{point_html}</ul>
+                  {source_html}
+                </div>"""
             )
 
         return """
         <section>
-          <h2>二、最近 5 天法說會</h2>
-          <p class='muted'>只顯示最近 5 天的法說事件。摘要由 Fugle 詳細備忘錄經 Ollama Agent 整理；原始內容不直接塞進 Email 本文。</p>
+          <h2>1. 法說會摘要</h2>
+          <p class='muted'>前一日 00:00 至目前；每場僅保留最重要的 1～3 個重點。</p>
           <div class='earnings-list'>%s</div>
         </section>
         """ % "".join(blocks)
@@ -1073,14 +1276,14 @@ class EmailAgent:
             f"TPEx營收 {sources.get('tpex_revenue_rows', 0)} 筆、"
             f"TWSE財報 {sources.get('twse_income_rows', 0)} 筆、"
             f"TPEx財報 {sources.get('tpex_income_rows', 0)} 筆、"
-            f"鉅亨近兩日新聞 {sources.get('cnyes_news_articles', 0)} 篇"
+            f"前一日～目前鉅亨新聞 {sources.get('cnyes_news_articles', 0)} 篇"
         )
         return f"""
         <section>
           <h2>五、資料來源與查證</h2>
           <p>{self._esc(source_text)}</p>
           <p class='muted'>法說會、重大訊息與財報/營收以公開原始資料為優先；新聞與題材僅作研究線索。未完成官方交叉驗證者標示為待查證。</p>
-          <p class='muted'>鉅亨新聞由前一晚 23:00 夜間爬蟲建立日檔；盤後讀取最近兩份快取，再由新聞 Agent 與主研究 Agent 整合，盤後不重新爬網站。新聞屬研究線索，重大事項仍需回看原始公告。</p>
+          <p class='muted'>鉅亨新聞由前一晚 23:00 夜間爬蟲建立日檔；盤後讀取前一日～目前快取，再由新聞 Agent 與主研究 Agent 整合，盤後不重新爬網站。新聞屬研究線索，重大事項仍需回看原始公告。</p>
           <p class='muted'>完整 research JSON / Markdown 已附加於本信；需要更完整證據時請查看附件與原始來源。</p>
         </section>
         """
@@ -1110,6 +1313,9 @@ ul,ol{{margin-top:6px}}
 .muted{{color:#6b7280;font-size:13px}}
 .legend{{font-size:13px;margin:6px 0 12px}}
 .positive-text{{color:#dc2626!important}}
+.key-label{{color:#dc2626;font-weight:800;margin-right:6px}}
+.key-highlight{{color:#b91c1c;font-weight:800}}
+.news-points{{margin:8px 0 10px;padding-left:22px}}
 .negative-text{{color:#16a34a!important}}
 .watch-text{{color:#d97706!important}}
 .positive-row{{background:#fff7f7}}
@@ -1150,7 +1356,7 @@ a:hover{{text-decoration:underline}}
 
   {self._digest_html(digest, report)}
   {self._market_section(report)}
-  {self._earnings_section(report)}
+  {self._earnings_section(report) if str(report.get('report_type','')).lower() == 'morning' else ''}
   {self._themes_section(report)}
   {self._financial_section(report)}
   {self._source_section(report)}
@@ -1192,7 +1398,7 @@ a:hover{{text-decoration:underline}}
 
         cnyes_digest = self._as_list(digest.get("cnyes_news_digest"))
         if cnyes_digest:
-            lines += ["", "鉅亨近兩日新聞｜Agent 研究摘要"]
+            lines += ["", "前一日～目前鉅亨新聞｜Agent 研究摘要"]
             lines += [f"- {x}" for x in cnyes_digest[:15]]
 
         lines += ["", "④ 目前主要利多題材"]
@@ -1221,30 +1427,68 @@ a:hover{{text-decoration:underline}}
             financial_focus = self._as_list(digest.get("financial_focus"))
             lines += [f"- {x}" for x in financial_focus[:10]] if financial_focus else ["- Agent 已查詢但目前仍無可驗證的財報／營收資料。"]
 
-        lines += ["", "最近 5 天法說會請見 Email 的②區塊。", "完整研究 JSON / Markdown 已附檔。"]
+        lines += ["", "完整研究 JSON / Markdown 已附檔。"]
         return "\n".join(lines)
 
     # =======================================================================
     # Morning report
     # =======================================================================
     def _morning_news_section(self, report: dict[str, Any]) -> str:
+        """早報新聞：只取前一日 00:00 至目前，摘要轉成 1~3 點並標紅關鍵詞。"""
         morning = report.get("morning_agent", {}) or {}
         news = [x for x in (morning.get("news_summary", []) or []) if isinstance(x, dict)]
+        # MorningResearchAgent 已在建立早報時把新聞限制在前一日 00:00～目前；
+        # CNYES Agent 的結構化摘要通常沒有再次帶回 published 欄位，因此這裡不能二次過濾。
+        news = news[:EMAIL_NEWS_MAX]
+
         if not news:
-            return "<div class='notice'>夜間 CNYES 新聞快取已讀取，但早報 Agent 本次沒有形成可驗證的新聞摘要。</div>"
-        blocks = []
-        for x in news[:10]:
+            cache_news = [x for x in ((report.get("cnyes_news", {}) or {}).get("articles", []) or []) if isinstance(x, dict)]
+            news = self._filter_previous_day_to_now(
+                cache_news,
+                ("published_at", "published_time", "published_ts", "published", "date", "created_at", "updated_at"),
+            )[:EMAIL_NEWS_MAX]
+            news = [
+                {
+                    "title": x.get("title") or x.get("headline") or "財經事件",
+                    "summary": x.get("summary") or x.get("description") or x.get("content") or "目前只有新聞標題，請查看原文查證。",
+                    "impact": "待查證",
+                    "industries": [],
+                    "evidence": [f"鉅亨新聞：{x.get('title') or x.get('headline') or '財經事件'}"],
+                    "source_links": [str(x.get("url") or x.get("source_url") or "").strip()] if str(x.get("url") or x.get("source_url") or "").strip() else [],
+                    "confidence": 0.20,
+                    "published_at": x.get("published_at") or x.get("published_time") or x.get("published_ts") or x.get("published") or x.get("date") or x.get("created_at"),
+                }
+                for x in news
+            ]
+
+        if not news:
+            return "<div class='notice'>前一日 00:00 至目前沒有可用的鉅亨新聞摘要。</div>"
+
+        blocks: list[str] = []
+        for x in news:
             conf = self._safe_float(x.get("confidence"), None)
-            conf_text = "—" if conf is None else (f"{conf*100:.0f}%" if conf <= 1 else f"{conf:.0f}%")
+            conf_text = "—" if conf is None else (f"{conf * 100:.0f}%" if conf <= 1 else f"{conf:.0f}%")
+            impact = str(x.get("impact") or "待查證")
+            impact_class = "positive-text" if ("利多" in impact or "正" in impact) else "negative-text" if ("利空" in impact or "負" in impact) else "watch-text"
+
+            points = self._summary_points(x.get("summary", ""), max_points=3, max_chars=150)
+            point_html = "".join(
+                f"<li><span class='key-label'>重點 {i}</span>{self._highlight_keywords(p)}</li>"
+                for i, p in enumerate(points, 1)
+            ) or "<li>目前沒有可用摘要重點。</li>"
+
+            industries = self._esc("、".join(map(str, x.get("industries") or [])) or "—")
             links = [str(v).strip() for v in (x.get("source_links") or []) if str(v).strip()]
-            source_html = "".join(f"<a href='{self._esc(u)}'>來源{i}</a>　" for i, u in enumerate(links[:3], 1))
+            source_html = "　".join(f"<a href='{self._esc(u)}'>來源{i}</a>" for i, u in enumerate(links[:2], 1))
+            evidence = self._esc("；".join(map(str, x.get("evidence") or [])) or "—")
+
             blocks.append(
                 f"<div class='research-note'>"
-                f"<div><strong>{self._esc(x.get('title','財經事件'))}</strong> "
-                f"<span class='note-meta'>{self._esc(x.get('impact','待查證'))}｜信心 {conf_text}</span></div>"
-                f"<p>{self._esc(x.get('summary',''))}</p>"
-                f"<p><strong>影響產業：</strong>{self._esc('、'.join(map(str, x.get('industries') or [])) or '—')}</p>"
-                f"<p><strong>🔎 證據：</strong>{self._esc('；'.join(map(str, x.get('evidence') or [])) or '—')}</p>"
+                f"<div><strong>{self._esc(x.get('title', '財經事件'))}</strong> "
+                f"<span class='note-meta {impact_class}'>{self._esc(impact)}｜信心 {conf_text}</span></div>"
+                f"<ul class='news-points'>{point_html}</ul>"
+                f"<p><strong>影響產業：</strong>{industries}</p>"
+                f"<p><strong>🔎 證據：</strong>{evidence}</p>"
                 f"{('<p>'+source_html+'</p>') if source_html else ''}</div>"
             )
         return "<div class='earnings-list'>" + "".join(blocks) + "</div>"
@@ -1274,7 +1518,7 @@ a:hover{{text-decoration:underline}}
             )
         watch_html = "<ul>" + "".join(f"<li>{self._esc(x)}</li>" for x in watch[:10]) + "</ul>" if watch else ""
         cache = report.get("cnyes_news", {}) or {}
-        cache_note = f"夜間快取日期：{'、'.join(map(str, cache.get('cache_dates', []) or [])) or '—'}｜共 {int(cache.get('article_count', 0) or 0)} 篇"
+        cache_note = "本信內容範圍：前一日 00:00 至目前；新聞與法說會僅呈現此時間窗。"
         return f"""<!doctype html>
 <html lang='zh-Hant'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
 <style>
@@ -1286,11 +1530,11 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
 .positive-text{{color:#dc2626}} .negative-text{{color:#16a34a}} a{{color:#2563eb;text-decoration:none}} .footer{{margin-top:30px;padding-top:14px;border-top:1px solid #e5e7eb;color:#6b7280;font-size:12px}}
 </style></head><body><div class='container'>
 <h1>AI 台股早報</h1>
-<div class='muted'>研究日期：{report_date}｜本機 Qwen3 8B｜Fugle 法說會＋鉅亨近兩日財經新聞</div>
+<div class='muted'>研究日期：{report_date}｜本機 Qwen3 8B｜前一日 00:00 至目前</div>
 <p><strong>研究自選股：</strong>{self._esc('、'.join(map(str, watchlist)))}</p>
 <div class='research-note'><strong>🤖 AI 早報研究助理</strong><p>{self._esc(morning.get('overview','今天早報研究已完成。'))}</p><p class='muted'>{self._esc(cache_note)}</p></div>
-{self._earnings_section(report).replace('二、最近 5 天法說會','1. 最近 5 天法說會')}
-<section><h2>2. 最近 2 天財經報導摘要</h2>{self._morning_news_section(report)}</section>
+{self._earnings_section(report).replace('二、法說會摘要','1. 法說會摘要')}
+<section><h2>2. 財經新聞摘要</h2>{self._morning_news_section(report)}</section>
 <section><h2>3. Agent 看好的產業類別與股票</h2><h3>看好的產業類別</h3><ul>{industry_html}</ul><h3>看好的股票</h3>{''.join(stock_blocks) or '<div class="notice">本次沒有形成足夠證據的股票觀察名單。</div>'}</section>
 {('<section><h2>需要持續追蹤</h2>'+watch_html+'</section>') if watch_html else ''}
 <div class='footer'>新聞在前一晚 23:00 由夜間爬蟲完成；早報只讀本機快取。重大消息請回看原始公告。<br>本報告為研究工具，不構成投資建議。</div>
@@ -1298,20 +1542,71 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
 
     def build_morning_text(self, report: dict[str, Any]) -> str:
         morning = report.get("morning_agent", {}) or {}
-        lines = [f"AI 台股早報｜{report.get('report_date','')}", "", "【1. 最近 5 天法說會】"]
+        lines = [
+            f"AI 台股早報｜{report.get('report_date','')}",
+            "研究範圍：前一日 00:00 至目前",
+            "",
+            "【1. 法說會摘要｜前一日 00:00 至目前】",
+        ]
+
         calls = [x for x in (report.get("earnings_calls", []) or []) if isinstance(x, dict) and not x.get("error")]
-        for x in calls[:20]:
-            lines.append(f"- {x.get('event_date')} {x.get('name',x.get('symbol'))}({x.get('symbol')})｜{x.get('impact')}｜{x.get('one_line_summary') or x.get('summary','')}")
-        if not calls: lines.append("- 最近 5 天沒有可用法說會資料。")
-        lines += ["", "【2. 最近 2 天財經報導摘要】"]
-        for x in (morning.get("news_summary", []) or [])[:10]:
-            if isinstance(x, dict): lines.append(f"- {x.get('title','')}｜{x.get('impact','待查證')}｜{x.get('summary','')}")
-        lines += ["", "【3. Agent 看好的產業類別與股票】", "", "看好的產業類別："]
+        calls = self._filter_previous_day_to_now(
+            calls,
+            ("event_date", "eventDate", "published_date", "modified_date", "date", "published_at", "published_time", "published_ts", "published", "created_at"),
+        )
+        if not calls:
+            finance_path = self.output_dir / "finance_info_latest.json"
+            try:
+                if finance_path.exists():
+                    finance = json.loads(finance_path.read_text(encoding="utf-8"))
+                    calls = self._filter_previous_day_to_now(
+                        [x for x in (finance.get("earnings", []) or []) if isinstance(x, dict)],
+                        ("event_date", "eventDate", "published_date", "modified_date", "date", "published_at", "published_time", "published_ts", "published", "created_at"),
+                    )
+            except Exception:
+                calls = []
+
+        if calls:
+            for x in calls[:8]:
+                summary = x.get("one_line_summary") or x.get("summary") or ""
+                candidates: list[str] = []
+                for key, label, limit in [("financial_highlights","財務",2),("guidance","展望",2),("positive_factors","利多",2),("negative_factors","風險",2)]:
+                    vals = x.get(key) or []
+                    if isinstance(vals, list):
+                        candidates.extend([f"{label}：{str(v).strip()}" for v in vals[:limit] if str(v).strip()])
+                if not candidates:
+                    candidates = self._summary_points(summary, max_points=3, max_chars=150)
+                lines.append(
+                    f"- {x.get('_mail_date', x.get('event_date',''))} "
+                    f"{x.get('name',x.get('symbol'))}（{x.get('symbol','')}）｜{x.get('impact') or x.get('judgement') or '待查證'}"
+                )
+                for p in candidates[:3]:
+                    lines.append(f"  • {p}")
+        else:
+            lines.append("- 前一日 00:00 至目前沒有成功擷取到可用的 Fugle 法說會摘要。")
+
+        lines += ["", "【2. 財經新聞摘要｜前一日 00:00 至目前】"]
+        news = [x for x in (morning.get("news_summary", []) or []) if isinstance(x, dict)]
+        news = news[:EMAIL_NEWS_MAX]
+        if not news:
+            raw = [x for x in ((report.get("cnyes_news", {}) or {}).get("articles", []) or []) if isinstance(x, dict)]
+            news = self._filter_previous_day_to_now(raw, ("published_at", "published_time", "published_ts", "published", "date", "created_at", "updated_at"))[:EMAIL_NEWS_MAX]
+        if news:
+            for x in news:
+                lines.append(f"- {x.get('title') or x.get('headline') or '財經事件'}｜{x.get('impact','待查證')}")
+                for p in self._summary_points(x.get("summary") or x.get("description") or x.get("content") or "", max_points=3, max_chars=150):
+                    lines.append(f"  • {p}")
+        else:
+            lines.append("- 前一日 00:00 至目前沒有可用的財經新聞摘要。")
+
+        lines += ["", "【3. Agent 觀察的產業類別與股票】", "", "觀察產業："]
         for x in (morning.get("recommended_industries", []) or [])[:10]:
-            if isinstance(x, dict): lines.append(f"- {x.get('industry','')}｜{x.get('why','')}")
-        lines += ["", "看好的股票："]
+            if isinstance(x, dict):
+                lines.append(f"- {x.get('industry','')}｜{x.get('why','')}")
+        lines += ["", "觀察股票："]
         for x in (morning.get("recommended_stocks", []) or [])[:12]:
-            if isinstance(x, dict): lines.append(f"- {x.get('name',x.get('symbol'))}（{x.get('symbol')}）｜{x.get('industry','')}｜{x.get('reason','')}")
+            if isinstance(x, dict):
+                lines.append(f"- {x.get('name',x.get('symbol'))}（{x.get('symbol')}）｜{x.get('industry','')}｜{x.get('reason','')}")
         return "\n".join(lines)
 
     # =======================================================================
@@ -1455,20 +1750,16 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
         digest = self._agent_digest(report)
         is_morning = str(report.get("report_type", "")).lower() == "morning"
         subject = (
-            f"{self.config.subject_prefix}{report_date}｜AI早報 × 法說會 × 財經新聞"
+            f"{self.config.subject_prefix}{report_date}｜AI早報 × 法說會 × 財經資訊"
             if is_morning
             else f"{self.config.subject_prefix}{report_date}｜AI盤後重點 × 財報"
         )
 
+        recipients = self.report_recipients()
+
         msg = EmailMessage()
         msg["Subject"] = subject
         msg["From"] = formataddr((self.config.display_name, self.config.sender))
-        recipients = self.report_recipients()
-        owner = str(self.config.recipient or "").strip()
-        msg["To"] = owner or recipients[0]
-        bcc = [x for x in recipients if x.lower() != owner.lower()]
-        if bcc:
-            msg["Bcc"] = ", ".join(bcc)
         if is_morning:
             msg.set_content(self.build_morning_text(report), charset="utf-8")
             msg.add_alternative(self.build_morning_html(report), subtype="html", charset="utf-8")
@@ -1500,18 +1791,58 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
                     continue
 
         try:
-            smtp_log = self._smtp_send(msg)
+            send_logs = []
+            sent_recipients = []
+            failed_recipients = []
+
+            for idx, recipient in enumerate(recipients):
+                if idx == 0:
+                    message = msg
+                else:
+                    message = EmailMessage()
+                    message["Subject"] = subject
+                    message["From"] = formataddr((self.config.display_name, self.config.sender))
+                    if is_morning:
+                        message.set_content(self.build_morning_text(report), charset="utf-8")
+                        message.add_alternative(self.build_morning_html(report), subtype="html", charset="utf-8")
+                    else:
+                        message.set_content(self.build_text(report), charset="utf-8")
+                        message.add_alternative(self.build_html(report), subtype="html", charset="utf-8")
+                    for attachment in attachments:
+                        # 重新從安全 output 目錄讀取附件。
+                        path = self.output_dir / attachment
+                        if path.exists():
+                            maintype = "application" if path.suffix.lower() == ".json" else "text"
+                            subtype = "json" if path.suffix.lower() == ".json" else "markdown"
+                            message.add_attachment(path.read_bytes(), maintype=maintype, subtype=subtype, filename=path.name)
+
+                message["To"] = recipient
+                try:
+                    smtp_log = self._smtp_send(message)
+                    send_logs.extend([f"{recipient}: {x}" for x in smtp_log])
+                    sent_recipients.append(recipient)
+                except Exception as exc:
+                    failed_recipients.append(f"{recipient}: {type(exc).__name__}: {exc}")
+
+            if not sent_recipients:
+                return {
+                    "sent": False,
+                    "skipped": False,
+                    "error": "所有收件者寄送失敗：" + " | ".join(failed_recipients),
+                    "status": status,
+                }
+
             result = {
                 "sent": True,
                 "skipped": False,
                 "report_date": report_date,
-                "recipient": self.config.recipient,
-                "recipients": recipients,
-                "subscriber_count": max(0, len(recipients) - 1),
+                "recipient": sent_recipients[0],
+                "recipients": sent_recipients,
+                "failed_recipients": failed_recipients,
                 "subject": subject,
                 "attachments": attachments,
                 "agent_summary_status": digest.get("agent_status", "fallback"),
-                "smtp_log": smtp_log,
+                "smtp_log": send_logs,
                 "status": status,
             }
             self._write_marker(report_date, result)
@@ -1532,38 +1863,66 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
                 "status": status,
             }
 
+
+    def report_recipients(self) -> list[str]:
+        """回傳管理者收件地址＋目前所有有效訂閱者，支援多收件者環境設定。"""
+        candidates: list[str] = []
+        raw_values = [self.config.recipient, _cfg_value(self.env, "EMAIL_REPORT_RECIPIENTS", "")]
+        for raw in raw_values:
+            for value in re.split(r"[,;\s]+", str(raw or "")):
+                value = value.strip().lower()
+                if value and re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", value):
+                    candidates.append(value)
+
+        try:
+            from subscriber_service import report_recipient_emails
+            candidates.extend(report_recipient_emails(self.base))
+        except Exception:
+            # subscriber_service 失效時仍維持原本管理者收件流程。
+            pass
+
+        return list(dict.fromkeys(candidates))
+
     def send_subscription_notice(
         self,
         *,
         name: str,
         email: str,
         message: str,
-        subscribed: bool,
+        subscribed: bool = True,
     ) -> dict[str, Any]:
-        """把訂閱／聯絡登記通知寄到管理者，不寄給訂閱者。"""
+        """將網站訂閱／聯絡登記通知寄給管理者。"""
         status = self.status()
-        if not status["enabled"]:
-            return {"sent": False, "skipped": True, "reason": "EMAIL_ENABLED=false", "status": status}
-        if not status["configured"]:
+        if not status.get("configured"):
             return {
                 "sent": False,
-                "skipped": True,
-                "reason": f"Email 尚未設定：缺少 {', '.join(status['missing'])}",
+                "error": f"Email 尚未設定：{status.get('missing', [])}",
                 "status": status,
             }
 
-        msg = EmailMessage()
-        msg["Subject"] = f"{self.config.subject_prefix}網站訂閱／聯絡登記｜{name}"
-        msg["From"] = formataddr((self.config.display_name, self.config.sender))
-        msg["To"] = self.config.recipient
+        admin_recipient = _cfg_value(
+            self.env,
+            "EMAIL_ADMIN_RECIPIENT",
+            self.config.recipient,
+        ).strip()
 
+        if not admin_recipient:
+            return {"sent": False, "error": "沒有設定 EMAIL_ADMIN_RECIPIENT 或 EMAIL_RECIPIENT。", "status": status}
+
+        safe_name = str(name or "").strip()
+        safe_email = str(email or "").strip()
+        safe_message = str(message or "").strip()
+
+        msg = EmailMessage()
+        msg["Subject"] = f"【AI 台股網站】新的訂閱／聯絡登記｜{safe_name}"
+        msg["From"] = formataddr((self.config.display_name, self.config.sender))
+        msg["To"] = admin_recipient
         body = (
-            "網站收到新的訂閱／聯絡資料\n\n"
-            f"姓名：{name}\n"
-            f"電子郵件：{email}\n"
-            f"訂閱每日晨報／盤後分析：{'是' if subscribed else '否'}\n\n"
-            "訊息：\n"
-            f"{message}\n"
+            "網站收到新的訂閱／聯絡資訊\\n\\n"
+            f"姓名：{safe_name}\\n"
+            f"電子郵件：{safe_email}\\n"
+            f"訂閱每日晨報／盤後分析：{'是' if subscribed else '否'}\\n"
+            f"訊息：{safe_message}\\n"
         )
         msg.set_content(body, charset="utf-8")
 
@@ -1571,20 +1930,68 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
             smtp_log = self._smtp_send(msg)
             return {
                 "sent": True,
-                "recipient": self.config.recipient,
-                "subject": msg["Subject"],
+                "recipient": admin_recipient,
                 "smtp_log": smtp_log,
             }
-        except smtplib.SMTPAuthenticationError as exc:
+        except Exception as exc:
             return {
                 "sent": False,
-                "error": f"Gmail SMTP 驗證失敗：{exc}",
+                "error": f"SMTP 寄送管理者通知失敗：{type(exc).__name__}: {exc}",
             }
-        except (smtplib.SMTPException, OSError) as exc:
-            return {
-                "sent": False,
-                "error": f"SMTP 寄信失敗：{exc}",
-            }
+
+    def send_subscription_welcome(self, *, name: str, email: str) -> dict[str, Any]:
+        """訂閱成功後，自動寄一封確認信到訂閱者自己的信箱。"""
+        status = self.status()
+        if not status.get("configured"):
+            return {"sent": False, "error": f"Email 尚未設定：{status.get('missing', [])}"}
+
+        to_addr = re.sub(r"[\r\n]+", "", str(email or "")).strip()
+        if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", to_addr):
+            return {"sent": False, "error": "收件者電子郵件格式不正確。"}
+        safe_name = re.sub(r"[\r\n]+", " ", str(name or "")).strip() or "訂閱者"
+        admin = _cfg_value(self.env, "EMAIL_ADMIN_RECIPIENT", self.config.recipient).strip()
+
+        morning = _cfg_value(self.env, "MORNING_REPORT_TIME", "08:30")
+        after = _cfg_value(self.env, "AFTER_CLOSE_REPORT_TIME", "14:30")
+        unsub = "若想取消訂閱，直接回覆這封信並寫上「取消訂閱」即可。" if admin else "若想取消訂閱，請與網站管理者聯絡。"
+
+        text = (
+            f"{safe_name} 您好，\n\n"
+            "感謝您訂閱「AI 台股即時互動式分析系統」，訂閱已完成。\n\n"
+            "您之後會收到：\n"
+            f"・每日晨報（約 {morning}）：前一日至現在的財經新聞重點、法說會摘要、值得觀察的產業與個股\n"
+            f"・盤後分析報導（約 {after}）：當日盤勢、AI 研究助理的重點與風險提醒\n\n"
+            "內容由 AI 依公開資料整理，僅供研究參考，不構成任何投資建議。\n\n"
+            f"{unsub}\n"
+            "如果這不是您本人的操作，請忽略這封信，或回覆告知，我們會立即移除。\n"
+        )
+        esc = html.escape
+        body_html = (
+            '<div style="font-family:\'Microsoft JhengHei\',Arial,sans-serif;max-width:560px;margin:auto;color:#2b2b2b;line-height:1.8">'
+            '<div style="border-left:4px solid #8e2b2f;padding:4px 14px;margin-bottom:14px">'
+            '<div style="font-size:12px;letter-spacing:2px;color:#8e2b2f">SUBSCRIPTION CONFIRMED</div>'
+            '<div style="font-size:22px;color:#8e2b2f">訂閱成功</div></div>'
+            f"<p>{esc(safe_name)} 您好，</p>"
+            "<p>感謝您訂閱「AI 台股即時互動式分析系統」，訂閱已完成。您之後會收到：</p>"
+            f'<ul><li><b>每日晨報（約 {esc(morning)}）</b>：前一日至現在的財經新聞重點、法說會摘要、值得觀察的產業與個股</li>'
+            f'<li><b>盤後分析報導（約 {esc(after)}）</b>：當日盤勢、AI 研究助理的重點與風險提醒</li></ul>'
+            '<p style="font-size:12.5px;color:#666">內容由 AI 依公開資料整理，僅供研究參考，不構成任何投資建議。</p>'
+            f'<p style="font-size:12.5px;color:#666">{esc(unsub)}<br>如果這不是您本人的操作，請忽略這封信，或回覆告知，我們會立即移除。</p></div>'
+        )
+
+        msg = EmailMessage()
+        msg["Subject"] = "【AI 台股】訂閱成功｜每日晨報與盤後分析"
+        msg["From"] = formataddr((self.config.display_name, self.config.sender))
+        msg["To"] = to_addr
+        if admin:
+            msg["Reply-To"] = admin
+        msg.set_content(text, charset="utf-8")
+        msg.add_alternative(body_html, subtype="html", charset="utf-8")
+        try:
+            smtp_log = self._smtp_send(msg)
+            return {"sent": True, "recipient": to_addr, "smtp_log": smtp_log}
+        except Exception as exc:
+            return {"sent": False, "error": f"SMTP 寄送訂閱成功信失敗：{type(exc).__name__}: {exc}"}
 
     def load_latest_morning_report(self) -> dict[str, Any] | None:
         files = sorted(self.output_dir.glob("morning_*.json"))

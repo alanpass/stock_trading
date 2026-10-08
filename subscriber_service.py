@@ -94,9 +94,17 @@ def load_subscribers(base: str | Path = ".", include_remote: bool = True) -> lis
         email = _clean_email(row.get("email"))
         if not EMAIL_RE.match(email):
             continue
-        old = merged.get(email, {})
-        item = {**old, **row, "email": email}
-        merged[email] = item
+        old = merged.get(email)
+        if old is None:
+            merged[email] = {**row, "email": email}
+            continue
+        # 以 updated_at 較新的來源為準，避免雲端舊紀錄覆蓋本機剛更新的訂閱狀態。
+        def stamp(v: Any) -> str:
+            return str(v or "")
+        if stamp(row.get("updated_at")) >= stamp(old.get("updated_at")):
+            merged[email] = {**old, **row, "email": email}
+        else:
+            merged[email] = {**row, **old, "email": email}
 
     return [
         row for row in merged.values()
@@ -121,19 +129,23 @@ def register_subscriber(
     subscribed: bool,
 ) -> dict[str, Any]:
     base = Path(base).resolve()
-    clean_name = str(name or "").strip()[:120]
+    clean_name = re.sub(r"[\r\n\t]+", " ", str(name or "")).strip()[:120]  # 姓名會用在信件標題，不能含換行
     clean_email = _clean_email(email)
-    clean_message = str(message or "").strip()[:5000]
+    clean_message = str(message or "").strip()[:5000] or ("訂閱每日晨報與盤後分析" if subscribed else "（未留下訊息）")
 
-    if not clean_name or not clean_email or not clean_message:
-        return {"saved": False, "error": "姓名、電子郵件與訊息不可為空白。"}
+    if not clean_name or not clean_email:
+        return {"saved": False, "error": "姓名與電子郵件不可為空白。"}
     if not EMAIL_RE.match(clean_email):
         return {"saved": False, "error": "電子郵件格式不正確。"}
 
     path = base / "data" / "subscribers.json"
     rows = _load_local(path)
     now = _now_iso()
-    active = bool(subscribed)
+    requested = bool(subscribed)
+    existing = next((r for r in rows if _clean_email(r.get("email")) == clean_email), None)
+    was_active = bool(existing and existing.get("active", existing.get("subscribed", False)))
+    # 只是留言（沒勾訂閱）不會取消既有訂閱；也不會把沒訂閱的人加進收件名單
+    active = requested or was_active
 
     record = {
         "name": clean_name,
@@ -142,6 +154,8 @@ def register_subscriber(
         "subscribed": active,
         "active": active,
         "updated_at": now,
+        "persistence": "local",
+        "persistence_warning": "",
     }
 
     replaced = False
@@ -166,6 +180,10 @@ def register_subscriber(
         "owner_notify_error": "",
         "email": clean_email,
         "subscribed": active,
+        "requested_subscribe": requested,
+        "already_subscribed": bool(requested and was_active),
+        "welcome_sent": False,
+        "welcome_error": "",
         "updated_at": now,
     }
 
@@ -196,6 +214,8 @@ def register_subscriber(
             result["remote_saved"] = bool(
                 isinstance(remote_data, dict) and remote_data.get("ok", remote_data.get("saved", False))
             )
+            if result["remote_saved"]:
+                result["persistence"] = "local+remote"
             result["owner_notified"] = bool(
                 isinstance(remote_data, dict) and remote_data.get("owner_notified", False)
             )
@@ -203,7 +223,11 @@ def register_subscriber(
                 result["owner_notify_error"] = str(remote_data["error"])
         except Exception as exc:
             result["remote_saved"] = False
+            result["persistence_warning"] = "SUBSCRIBER_SYNC_URL 已設定但遠端保存失敗；本機資料仍已保存。"
             result["owner_notify_error"] = f"{type(exc).__name__}: {exc}"
+
+    if not url:
+        result["persistence_warning"] = "未設定 SUBSCRIBER_SYNC_URL；若網站部署在 Streamlit Cloud，建議啟用 Google Apps Script 共享名單以避免重新部署後本機檔案遺失。"
 
     # 沒有遠端服務或遠端失敗時，使用本機 SMTP 通知網站管理者。
     if not result["owner_notified"]:
@@ -223,6 +247,17 @@ def register_subscriber(
                 )
         except Exception as exc:
             result["owner_notify_error"] = f"{type(exc).__name__}: {exc}"
+
+    # 新訂閱（或重新訂閱）才寄「訂閱成功」確認信；已在名單內的人不會重複收到
+    if requested and not was_active:
+        try:
+            from email_agent import EmailAgent
+            welcome = EmailAgent(base).send_subscription_welcome(name=clean_name, email=clean_email)
+            result["welcome_sent"] = bool(welcome.get("sent"))
+            if not welcome.get("sent"):
+                result["welcome_error"] = str(welcome.get("error") or "訂閱成功信未寄出")
+        except Exception as exc:
+            result["welcome_error"] = f"{type(exc).__name__}: {exc}"
 
     return result
 

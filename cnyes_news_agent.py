@@ -1,404 +1,313 @@
 # -*- coding: utf-8 -*-
-"""鉅亨網（cnyes）頭條新聞 Agent — 爬取／快取／本機 Qwen3 8B 摘要
+"""
+鉅亨新聞研究 Agent
+============================================================
+用途：
+1. 讀取「前一晚 23:00 已完成」的鉅亨網每日新聞快取。
+2. 在盤後研究時間由本機 Ollama / Qwen3 8B 做新聞摘要與市場因果研究。
+3. 只閱讀已快取新聞，不在盤後重新爬網站，因此不拖慢盤後研究。
+4. 產出結構化新聞研究結果，供 ResearchAgent 與 EmailAgent 使用。
 
-用法設計成兩個獨立階段，對應你描述的排程：
-
-1. **23:00 排程（只爬取，不摘要）**：
-       python cnyes_news_agent.py --refresh
-   呼叫 `CnyesNewsAgent.refresh_cache()`：掃 https://news.cnyes.com/news/cat/headline
-   等分類頁，抓到的文章併入本機快取 data/news/cnyes_seen.json（依文章 id 去重），
-   同時清掉太舊的紀錄。這一步不呼叫 Ollama，跑起來快、也不怕 Ollama 還沒啟動。
-
-2. **早報時（只讀快取＋摘要）**：
-       python cnyes_news_agent.py --digest --days 2
-   呼叫 `CnyesNewsAgent.build_digest(days=2)`：只讀快取裡最近 2 天的文章（不重新爬網頁），
-   交給本機 Qwen3 8B 合併、篩選成「財經報導摘要」。
-
-`collect()` = `refresh_cache()` + `build_digest()`，保留給想一次做完（例如手動測試、
-或還沒排 23:00 排程之前先跑跑看）的情境用。
-
-已知限制（本機沙盒沒有對外網路，以下是依實際觀察到的鉅亨網頁面結構撰寫，
-尚未實際連線跑過，接進排程前務必先跑 `python test_cnyes_news_agent.py --dry-run` 確認）：
-
-- 列表頁（/news/cat/headline）看起來是新聞聚合頁，一次 GET 大概只能看到目前最新的一批文章
-  （可能是最近幾小時到大半天），不保證單次就能看到完整 48 小時。這裡改用更穩定的策略：
-  只從列表頁掃出 `/news/id/<id>` 這種永久連結當「候選清單」，交給每天固定跑 --refresh
-  的排程反覆累積快取，涵蓋度會隨每天執行逐步補齊到 2 天、而不是靠單次爬取。
-- 標題／發布時間／分類／關鍵字一律讀文章詳細頁的 meta 標籤（og:title、
-  article:published_time、meta name=category/keywords），這些比列表頁版面穩定，
-  但如果鉅亨網改版拿掉這些 meta 標籤，這裡就會抓不到，請用 --dry-run 檢查。
-- 如果 --refresh 抓到 0 篇候選，很可能是被 User-Agent／頻率限制擋下、或分類頁版面已改版；
-  可以先調高 REQUEST_DELAY，或比照本專案 Fugle 備忘錄的三層讀取（requests → curl_cffi
-  Chrome 偽裝 → Selenium headless）在 `_get()` 裡加第二層，這裡先只用 requests 保持簡單。
+注意：
+- 夜間爬蟲負責「資料蒐集」。
+- 本 Agent 負責「新聞研究」。
+- 新聞是市場線索；重大事項仍需回到 TWSE / TPEx / MOPS / 公司原始資料查證。
 """
 from __future__ import annotations
 
-import argparse
-import html
 import json
 import re
-import time
-from dataclasses import asdict, dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
-try:
-    import requests
-except ImportError as exc:  # pragma: no cover
-    raise SystemExit("需要 requests：pip install requests") from exc
+import requests
 
-try:
-    from bs4 import BeautifulSoup
-except ImportError as exc:  # pragma: no cover
-    raise SystemExit("需要 beautifulsoup4：pip install beautifulsoup4") from exc
+DEFAULT_OLLAMA_HOST = "http://127.0.0.1:11434"
+DEFAULT_OLLAMA_MODEL = "qwen3:8b"
+TAIPEI = ZoneInfo("Asia/Taipei")
 
 
-TAIPEI_TZ = timezone(timedelta(hours=8))
-LISTING_URL_TMPL = "https://news.cnyes.com/news/cat/{slug}"
-ARTICLE_URL_TMPL = "https://news.cnyes.com/news/id/{aid}"
-ARTICLE_ID_RE = re.compile(r"/news/id/(\d+)")
-DEFAULT_HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-        "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"
-    ),
-    "Accept-Language": "zh-TW,zh;q=0.9",
-}
-VALID_IMPACT = ("偏利多", "偏利空", "中性", "待觀察")
-VALID_RELEVANCE = ("台股", "總經", "產業", "其他")
+def _safe_float(value: Any, default: float | None = None) -> float | None:
+    try:
+        x = float(value)
+        return x if x == x and abs(x) != float("inf") else default
+    except Exception:
+        return default
 
 
-@dataclass
-class CnyesArticle:
-    id: str
-    url: str
-    title: str = ""
-    published_at: str | None = None  # ISO 字串，已轉台北時間
-    category: str = ""
-    keywords: list[str] = field(default_factory=list)
-    summary_points: list[str] = field(default_factory=list)  # 鉅亨網自家摘要或退回的本文前段
-    lead_text: str = ""
-
-    def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+def _clean_text(value: Any, limit: int = 1200) -> str:
+    return re.sub(r"\s+", " ", str(value or "")).strip()[:limit]
 
 
-class CnyesNewsAgent:
-    """鉅亨網頭條新聞：refresh_cache() 爬取存檔、build_digest() 讀快取＋本機 Qwen3 8B 摘要重點。"""
+class CnyesNewsDigestAgent:
+    """使用本機 Qwen3 對已快取 CNYES 新聞進行盤後研究。"""
 
-    def __init__(
-        self,
-        base_dir: str | Path = ".",
-        categories: list[str] | None = None,
-        max_new_per_run: int = 40,
-        request_delay: float = 0.6,
-        ollama_model: str = "qwen3:8b",
-        ollama_host: str = "http://127.0.0.1:11434",
-        timeout: int = 15,
-        cache_keep_days: int = 4,
-    ):
+    def __init__(self, base_dir: str | Path = ".", ollama_host: str | None = None, ollama_model: str | None = None):
         self.base = Path(base_dir).resolve()
-        self.categories = categories or ["headline"]
-        self.max_new_per_run = max_new_per_run
-        self.request_delay = request_delay
-        self.ollama_model = ollama_model
-        self.ollama_host = ollama_host.rstrip("/")
-        self.timeout = timeout
-        self.cache_keep_days = max(cache_keep_days, 2)
-        self.cache_path = self.base / "data" / "news" / "cnyes_seen.json"
-        self.cache_path.parent.mkdir(parents=True, exist_ok=True)
-        self.session = requests.Session()
-        self.session.headers.update(DEFAULT_HEADERS)
-
-    # ------------------------------- 底層抓取 -------------------------------
-    def _get(self, url: str) -> str | None:
-        """單一 GET，失敗回傳 None。若之後發現被擋（整批 403 或空內容），可仿照本專案
-        Fugle 備忘錄的三層讀取，在這裡加 curl_cffi／Selenium 備援。"""
-        try:
-            resp = self.session.get(url, timeout=self.timeout)
-            if resp.status_code != 200 or not resp.text:
-                return None
-            resp.encoding = resp.encoding or "utf-8"
-            return resp.text
-        except requests.RequestException:
-            return None
-
-    def _candidate_ids(self) -> list[str]:
-        """掃過設定的分類列表頁，取得候選文章 id（新到舊、依出現順序）。只依賴
-        `/news/id/<id>` 這種穩定永久連結，不依賴列表頁版面（較容易改版）。"""
-        seen: dict[str, None] = {}
-        for slug in self.categories:
-            text = self._get(LISTING_URL_TMPL.format(slug=slug))
-            if text:
-                for m in ARTICLE_ID_RE.finditer(text):
-                    seen.setdefault(m.group(1), None)
-            time.sleep(self.request_delay)
-        return list(seen.keys())
+        self.ollama_host = (ollama_host or DEFAULT_OLLAMA_HOST).rstrip("/")
+        self.ollama_model = ollama_model or DEFAULT_OLLAMA_MODEL
 
     @staticmethod
-    def _meta(soup: BeautifulSoup, *, prop: str | None = None, name: str | None = None) -> str | None:
-        tag = soup.find("meta", attrs={"property": prop} if prop else {"name": name})
-        if tag and tag.get("content"):
-            return html.unescape(tag["content"]).strip()
-        return None
+    def _article_blob(article: dict[str, Any]) -> str:
+        return " ".join([
+            str(article.get("title", "")),
+            str(article.get("summary", "")),
+            str(article.get("content", ""))[:1800],
+            str(article.get("category", "")),
+            " ".join(map(str, article.get("tags", []) or [])),
+        ]).lower()
 
-    def _parse_article(self, article_id: str) -> CnyesArticle | None:
-        """讀單篇文章詳細頁。刻意只依賴 meta 標籤（og:title / article:published_time /
-        category / keywords）取得核心欄位，這些比正文版面穩定很多；本文前幾段只當
-        補充（抓不到摘要時的退路），解析失敗不會讓整批爬取中斷。"""
-        url = ARTICLE_URL_TMPL.format(aid=article_id)
-        text = self._get(url)
-        if not text:
-            return None
-        try:
-            soup = BeautifulSoup(text, "html.parser")
+    def _select_articles(self, articles: list[dict[str, Any]], payload: dict[str, Any], limit: int = 100) -> list[dict[str, Any]]:
+        movers = (payload.get("market_movers", {}) or {}).get("movers", []) or []
+        focus_symbols = [str(x).strip().upper() for x in payload.get("symbols", []) or []]
+        focus_keywords = [
+            "AI", "AI伺服器", "伺服器", "GPU", "ASIC", "HPC", "資料中心",
+            "半導體", "記憶體", "HBM", "DRAM", "NAND", "晶圓", "先進製程",
+            "封裝", "Chiplet", "PCB", "載板", "ABF", "BT", "CCL", "高速材料",
+            "電子零組件", "光電", "OLED", "面板", "散熱", "電源", "BBU", "UPS",
+            "營收", "獲利", "接單", "訂單", "漲價", "降價", "關稅", "原油", "油價",
+            "Fed", "利率", "出口", "台股",
+        ]
+        for x in focus_symbols:
+            focus_keywords.append(x)
+        mover_names = []
+        for m in movers:
+            if isinstance(m, dict):
+                focus_keywords.append(str(m.get("symbol", "")).strip())
+                mover_names.append(str(m.get("name", "")).strip())
+        focus_keywords.extend([x for x in mover_names if x])
 
-            published_at = None
-            published_raw = self._meta(soup, prop="article:published_time")
-            if published_raw:
-                try:
-                    dt_utc = datetime.fromisoformat(published_raw.replace("Z", "+00:00"))
-                    published_at = dt_utc.astimezone(TAIPEI_TZ).isoformat()
-                except ValueError:
-                    published_at = None
-
-            title = self._meta(soup, prop="og:title") or (soup.title.get_text(strip=True) if soup.title else "")
-            title = re.sub(r"\s*[|｜]\s*鉅亨網\s*$", "", title).strip()
-
-            category = self._meta(soup, name="category") or ""
-            keywords = [k.strip() for k in (self._meta(soup, name="keywords") or "").split(",") if k.strip()]
-
-            # 鉅亨網自家「AI新聞摘要」常整段塞進 og:description（\n 分行的條列句），
-            # 比在正文找特定 class 穩定很多；抓不到就退回本文前幾段。
-            desc = self._meta(soup, prop="og:description") or self._meta(soup, name="description") or ""
-            summary_points = [re.sub(r"^\d+[.、]\s*", "", ln).strip() for ln in desc.split("\n") if ln.strip()]
-
-            lead_text = ""
-            try:
-                paras = [p.get_text(" ", strip=True) for p in soup.find_all("p")]
-                paras = [p for p in paras if len(p) >= 15 and not p.startswith("鉅亨網")]
-                lead_text = " ".join(paras[:3])[:400]
-            except Exception:
-                pass
-            if not summary_points and lead_text:
-                summary_points = [lead_text[:150]]
-
-            return CnyesArticle(
-                id=article_id, url=url, title=title, published_at=published_at,
-                category=category, keywords=keywords[:8], summary_points=summary_points[:6],
-                lead_text=lead_text,
-            )
-        except Exception:
-            return None
-
-    # -------------------------------- 快取 ----------------------------------
-    def _load_cache(self) -> dict[str, Any]:
-        if self.cache_path.exists():
-            try:
-                data = json.loads(self.cache_path.read_text(encoding="utf-8"))
-                if isinstance(data, dict) and isinstance(data.get("articles"), dict):
-                    return data
-            except Exception:
-                pass
-        return {"articles": {}}
-
-    def _save_cache(self, articles: dict[str, Any]) -> None:
-        payload = {"updated_at": datetime.now(TAIPEI_TZ).isoformat(), "articles": articles}
-        try:
-            self.cache_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-        except Exception:
-            pass
-
-    def _prune(self, articles: dict[str, Any], now: datetime) -> dict[str, Any]:
-        keep_after = now - timedelta(days=self.cache_keep_days)
-        kept = {}
-        for aid, rec in articles.items():
-            try:
-                pub = datetime.fromisoformat(rec["published_at"])
-            except Exception:
+        scored: list[tuple[float, dict[str, Any]]] = []
+        for article in articles:
+            if not isinstance(article, dict) or not article.get("title"):
                 continue
-            if pub >= keep_after:
-                kept[aid] = rec
-        return kept
+            title = str(article.get("title", "" )).lower()
+            blob = self._article_blob(article)
+            score = 0.0
+            for kw in focus_keywords:
+                kw = kw.strip().lower()
+                if len(kw) < 2:
+                    continue
+                if kw in title:
+                    score += 5.0
+                elif kw in blob:
+                    score += 2.0
+            # 市場方向詞讓盤後市場解釋更容易被選入。
+            for kw in ("大漲", "大跌", "漲停", "跌停", "領漲", "領跌", "爆量", "新高", "新低", "升息", "降息"):
+                if kw in title:
+                    score += 2.0
+            # 讓較新的新聞稍微優先，但不以日期取代內容相關度。
+            published = str(article.get("published_ts", "") or article.get("published", ""))
+            score += min(1.5, 0.05 * len(published)) if published else 0
+            scored.append((score, article))
 
-    # -------------------------------- 階段一 ---------------------------------
-    def refresh_cache(self) -> dict[str, Any]:
-        """23:00 排程呼叫這個：只爬取＋寫快取，不呼叫 Ollama。回傳這次執行的簡單統計，
-        方便排程記 log。"""
-        now = datetime.now(TAIPEI_TZ)
-        cache = self._load_cache()
-        articles: dict[str, Any] = cache.get("articles", {})
-
-        ids = self._candidate_ids()
-        new_count = 0
-        for aid in ids:
-            if aid in articles:
+        scored.sort(key=lambda x: (x[0], str(x[1].get("published_ts", ""))), reverse=True)
+        chosen = []
+        seen = set()
+        for _, article in scored:
+            aid = str(article.get("article_id", ""))
+            if aid and aid in seen:
                 continue
-            art = self._parse_article(aid)
-            time.sleep(self.request_delay)
-            if art and art.published_at:
-                articles[aid] = art.to_dict()
-                new_count += 1
-            if new_count >= self.max_new_per_run:
+            if aid:
+                seen.add(aid)
+            chosen.append(article)
+            if len(chosen) >= limit:
                 break
+        # 若相關度候選太少，仍保留最新新聞的一部分，讓 Agent 可以看到市場背景。
+        if len(chosen) < min(40, len(articles)):
+            for article in sorted(articles, key=lambda x: str(x.get("published_ts", "")), reverse=True):
+                aid = str(article.get("article_id", ""))
+                if aid and aid in seen:
+                    continue
+                chosen.append(article)
+                if len(chosen) >= min(limit, max(40, len(chosen))):
+                    break
+        return chosen[:limit]
 
-        articles = self._prune(articles, now)
-        self._save_cache(articles)
-        return {
-            "as_of": now.isoformat(),
-            "candidates_seen": len(ids),
-            "new_articles": new_count,
-            "cache_size": len(articles),
-        }
-
-    # -------------------------------- 階段二 ---------------------------------
-    def _articles_in_window(self, days: int) -> list[CnyesArticle]:
-        now = datetime.now(TAIPEI_TZ)
-        since = now - timedelta(days=days)
-        cache = self._load_cache()
+    def _build_context(self, articles: list[dict[str, Any]]) -> list[dict[str, Any]]:
         rows = []
-        for rec in cache.get("articles", {}).values():
-            try:
-                pub = datetime.fromisoformat(rec["published_at"])
-            except Exception:
-                continue
-            if pub >= since:
-                rows.append(rec)
-        rows.sort(key=lambda r: r["published_at"], reverse=True)
-        return [CnyesArticle(**r) for r in rows]
+        for a in articles:
+            rows.append({
+                "article_id": a.get("article_id", ""),
+                "title": _clean_text(a.get("title", ""), 300),
+                "published": a.get("published", ""),
+                "category": a.get("category", ""),
+                "summary": _clean_text(a.get("summary", "") or a.get("content", ""), 900),
+                "content_excerpt": _clean_text(a.get("content", ""), 1500),
+                "content_length": len(str(a.get("content") or "")),
+                "tags": (a.get("tags") or [])[:12],
+                "url": a.get("url", ""),
+            })
+        return rows
 
-    @staticmethod
-    def _safe_json(raw: str) -> dict[str, Any] | None:
-        text = (raw or "").strip()
-        text = re.sub(r"^```(json)?", "", text).strip()
-        text = re.sub(r"```$", "", text).strip()
-        try:
-            return json.loads(text)
-        except Exception:
-            m = re.search(r"\{.*\}", text, re.S)
-            if not m:
-                return None
-            try:
-                return json.loads(m.group(0))
-            except Exception:
-                return None
-
-    def _build_prompt(self, articles: list[CnyesArticle], days: int) -> str:
-        lines = []
-        for i, a in enumerate(articles):
-            facts = "；".join(a.summary_points) if a.summary_points else (a.lead_text or "(無摘要)")
-            lines.append(
-                f"[{i}] {a.title}\n時間：{a.published_at}｜分類：{a.category}｜關鍵字：{'、'.join(a.keywords)}\n重點：{facts}"
-            )
-        joined = "\n\n".join(lines)
-        return f"""你是台股盤後研究團隊的新聞編輯。以下是鉅亨網最近 {days} 天的頭條新聞清單（依編號 [0]、[1]...），
-每則已附上鉅亨網原始標題、時間、分類、關鍵字與重點摘要。
-
-請完成：
-1. 找出對台股投資人真正重要的新聞（總經／Fed／利率／匯率／關稅／地緣政治／AI供應鏈／半導體／記憶體等），
-   同一事件被多篇報導時合併成一則，用你自己的話寫，不要照抄標題。
-2. 不重要或純娛樂/單一則八卦可以略過；輸出 6~12 則即可，不必每篇都收錄。
-3. 每則標註 impact（{"|".join(VALID_IMPACT)}，站在台股角度）與 relevance（{"|".join(VALID_RELEVANCE)}）。
-4. 最後給一句 overall_take：這 {days} 天新聞對台股的整體意義。
-5. 只能使用清單中出現的事實，不要編造清單以外的數字或事件。
-
-只輸出下面這個 JSON 結構，不要有任何額外文字、不要用 ```：
-{{"items": [{{"headline": "string", "summary": "string（1-2句）", "impact": "{VALID_IMPACT[0]}",
-"relevance": "{VALID_RELEVANCE[0]}", "keywords": ["string"], "source_indices": [0]}}],
-"overall_take": "string"}}
-
-新聞清單：
-{joined}
-"""
-
-    def _run_qwen_digest(self, articles: list[CnyesArticle], days: int) -> dict[str, Any]:
-        prompt = self._build_prompt(articles, days)
-        try:
-            resp = requests.post(
-                f"{self.ollama_host}/api/generate",
-                json={
-                    "model": self.ollama_model, "prompt": prompt, "stream": False,
-                    "format": "json", "options": {"temperature": 0.2},
-                },
-                timeout=max(self.timeout, 90),
-            )
-            resp.raise_for_status()
-            raw = resp.json().get("response", "")
-        except Exception as exc:
-            return {"available": False, "model": self.ollama_model, "error": f"呼叫本機 Ollama 失敗：{exc}",
-                    "items": [], "overall_take": ""}
-
-        parsed = self._safe_json(raw)
-        if not isinstance(parsed, dict):
-            return {"available": False, "model": self.ollama_model, "validation": "failed",
-                    "error": "Qwen 回傳內容不是合法 JSON，已捨棄。", "items": [], "overall_take": ""}
-
-        items = []
-        for it in parsed.get("items", []) or []:
-            if not isinstance(it, dict) or not it.get("headline"):
-                continue
-            idxs = [i for i in (it.get("source_indices") or []) if isinstance(i, int) and 0 <= i < len(articles)]
-            sources = [{"title": articles[i].title, "url": articles[i].url} for i in idxs] or (
-                [{"title": articles[0].title, "url": articles[0].url}] if articles else []
-            )
-            items.append({
-                "headline": str(it.get("headline"))[:80],
-                "summary": str(it.get("summary", ""))[:300],
-                "impact": it.get("impact") if it.get("impact") in VALID_IMPACT else "待觀察",
-                "relevance": it.get("relevance") if it.get("relevance") in VALID_RELEVANCE else "其他",
-                "keywords": [str(k) for k in (it.get("keywords") or [])][:6],
-                "sources": sources,
+    def _fallback(self, selected: list[dict[str, Any]], cache_meta: dict[str, Any], error: str = "") -> dict[str, Any]:
+        findings = []
+        for a in selected[:8]:
+            findings.append({
+                "title": _clean_text(a.get("title", "新聞事件"), 100),
+                "summary": (_clean_text(a.get("content", "") or a.get("summary", ""), 780)
+                            or f"{_clean_text(a.get('title', '新聞事件'), 160)}：已進入最近兩日新聞研究範圍。"),
+                "why_relevant": "鉅亨近兩日新聞中出現，已取得文章內容；若尚未完成跨來源歸因，標記為待查證。",
+                "impact": "待查證",
+                "related_symbols": [],
+                "evidence": [f"鉅亨新聞：{_clean_text(a.get('title', ''), 200)}"],
+                "source_links": [str(a.get("url", ""))] if a.get("url") else [],
+                "confidence": 0.20,
             })
         return {
-            "available": True, "model": self.ollama_model, "items": items[:14],
-            "overall_take": str(parsed.get("overall_take", ""))[:200],
+            "agent_status": "cnyes_digest_fallback",
+            "model": self.ollama_model,
+            "generated_at": datetime.now(TAIPEI).isoformat(),
+            "cache_dates": cache_meta.get("cache_dates", []),
+            "input_article_count": cache_meta.get("article_count", 0),
+            "selected_article_count": len(selected),
+            "overview": "鉅亨近兩日新聞已完成離線快取，但本次 Qwen3 新聞摘要未完成；以下為研究候選，未視為已驗證結論。",
+            "key_findings": findings,
+            "market_drivers": [],
+            "watch_topics": [],
+            "error": error,
         }
 
-    def build_digest(self, days: int = 2) -> dict[str, Any]:
-        """早報呼叫這個：只讀快取＋跑 Qwen 摘要，不重新爬網頁（爬取交給 refresh_cache()）。"""
-        now = datetime.now(TAIPEI_TZ)
-        articles = self._articles_in_window(days)
-        source_url = LISTING_URL_TMPL.format(slug=self.categories[0])
+    def run(self, payload: dict[str, Any], limit: int = 100) -> dict[str, Any]:
+        corpus = payload.get("cnyes_news", {}) or {}
+        articles = [x for x in (corpus.get("articles", []) or []) if isinstance(x, dict)]
+        cache_dates = corpus.get("cache_dates", []) or ([corpus.get("crawl_date")] if corpus.get("crawl_date") else [])
+        cache_meta = {
+            "cache_dates": cache_dates,
+            "article_count": len(articles),
+        }
         if not articles:
             return {
-                "as_of": now.isoformat(), "source_url": source_url, "window_days": days,
-                "since": (now - timedelta(days=days)).isoformat(), "total_in_window": 0,
-                "articles": [],
-                "digest": {"available": False, "model": self.ollama_model,
-                           "error": "快取裡沒有近期文章，請確認 23:00 的 --refresh 排程有正常執行。",
-                           "items": [], "overall_take": ""},
+                "agent_status": "no_cnyes_cache",
+                "model": self.ollama_model,
+                "generated_at": datetime.now(TAIPEI).isoformat(),
+                "cache_dates": cache_dates,
+                "input_article_count": 0,
+                "selected_article_count": 0,
+                "overview": "目前沒有可供盤後 Agent 閱讀的鉅亨新聞夜間快取。",
+                "key_findings": [],
+                "market_drivers": [],
+                "watch_topics": [],
+                "error": "沒有 CNYES 日檔快取",
             }
-        digest = self._run_qwen_digest(articles, days)
-        return {
-            "as_of": now.isoformat(), "source_url": source_url, "window_days": days,
-            "since": (now - timedelta(days=days)).isoformat(), "total_in_window": len(articles),
-            "articles": [a.to_dict() for a in articles],
-            "digest": digest,
-        }
 
-    # -------------------------------- 便利入口 -------------------------------
-    def collect(self, days: int = 2) -> dict[str, Any]:
-        """= refresh_cache() + build_digest(days)。給手動測試或還沒排程前先跑跑看用；
-        正式排程請分開呼叫 refresh_cache()（23:00）與 build_digest()（早報時）。"""
-        self.refresh_cache()
-        return self.build_digest(days=days)
+        selected = self._select_articles(articles, payload, limit=max(40, int(limit)))
+        context = self._build_context(selected)
 
+        # 本機 Qwen3；不要把完整數百篇全文塞進 context。
+        try:
+            import ollama
+        except Exception as exc:
+            return self._fallback(selected, cache_meta, f"ollama 套件不可用：{exc}")
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="鉅亨網頭條新聞 Agent")
-    parser.add_argument("--refresh", action="store_true", help="只爬取＋寫快取（23:00 排程用）")
-    parser.add_argument("--digest", action="store_true", help="只讀快取＋跑 Qwen 摘要（早報用）")
-    parser.add_argument("--days", type=int, default=2, help="--digest 用：摘要涵蓋最近幾天")
-    parser.add_argument("--base-dir", default=".", help="專案根目錄（快取存在 <base-dir>/data/news/）")
-    args = parser.parse_args()
+        watchlist = payload.get("symbols", []) or []
+        movers = (payload.get("market_movers", {}) or {}).get("movers", [])[:30]
+        prompt = f"""
+你是「鉅亨新聞盤後研究 Agent」。
 
-    agent = CnyesNewsAgent(base_dir=args.base_dir)
-    if args.refresh:
-        print(json.dumps(agent.refresh_cache(), ensure_ascii=False, indent=2))
-    elif args.digest:
-        result = agent.build_digest(days=args.days)
-        print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
-    else:
-        result = agent.collect(days=args.days)
-        print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
+今天盤後研究日期：{payload.get('report_date', '')}
+研究股票範圍：{watchlist}
+今日市場異動候選：{movers}
+
+以下是『前一晚／前兩晚已經爬好並保存』的鉅亨網頭條新聞研究資料。你現在的任務不是逐篇摘要，而是把兩日新聞轉成盤後研究：
+1. 找出今天市場、產業或個股最值得注意的事件。
+2. 找出可能解釋今日產業漲跌的新聞脈絡。
+3. 特別檢查電子零組件、PCB、IC載板、ABF/BT、CCL、高速材料、半導體、記憶體、AI伺服器、光電等產業是否存在共同驅動因素。
+4. 找出互相呼應或互相矛盾的新聞。
+5. 不要重複法說會／財報模組已整理的完整內容；只補充新聞層面的新發現。
+6. 不確定時必須寫「待查證」，不得把單一新聞敘事當成事實。
+7. 每個重點盡量回答：「發生什麼、可能為什麼、影響誰、證據是哪篇新聞」。
+8. 只允許引用下面提供的新聞；不得引用你自己的記憶或杜撰資料。
+
+請只輸出 JSON：
+{{
+  "overview": "1~2句盤後新聞總結",
+  "key_findings": [
+    {{
+      "title": "新聞研究標題",
+      "summary": "發生什麼",
+      "why_relevant": "為什麼與今天市場或產業有關",
+      "impact": "利多|利空|混合|待查證",
+      "related_symbols": ["股票代號，可空"],
+      "evidence": ["具體新聞標題／日期／證據"],
+      "source_links": ["只能填輸入資料中的 URL"],
+      "confidence": 0.0
+    }}
+  ],
+  "market_drivers": ["從新聞歸納出的市場／產業驅動因素；每項都要有新聞證據"],
+  "watch_topics": ["值得盤後持續追蹤的新聞題材"]
+}}
+
+新聞資料：
+{json.dumps(context, ensure_ascii=False, default=str)}
+""".strip()
+
+        try:
+            client = ollama.Client(host=self.ollama_host)
+            try:
+                resp = client.chat(
+                    model=self.ollama_model,
+                    messages=[
+                        {"role": "system", "content": "你是完全本機的鉅亨新聞研究 Agent，只能使用使用者提供的新聞資料。"},
+                        {"role": "user", "content": prompt},
+                    ],
+                    options={"temperature": 0.05},
+                    format="json",
+                    think=True,
+                )
+            except TypeError:
+                resp = client.chat(
+                    model=self.ollama_model,
+                    messages=[
+                        {"role": "system", "content": "你是完全本機的鉅亨新聞研究 Agent，只能使用使用者提供的新聞資料。"},
+                        {"role": "user", "content": prompt},
+                    ],
+                    options={"temperature": 0.05},
+                    format="json",
+                )
+            content = getattr(getattr(resp, "message", None), "content", "") or ""
+            raw = json.loads(content)
+            if not isinstance(raw, dict):
+                raise ValueError("Qwen 新聞摘要不是 JSON object")
+
+            valid_urls = {str(a.get("url", "")).strip() for a in selected if a.get("url")}
+            key_findings = []
+            for item in raw.get("key_findings", []) or []:
+                if not isinstance(item, dict):
+                    continue
+                links = [u for u in (item.get("source_links") or []) if str(u).strip() in valid_urls]
+                if not links:
+                    title_text = str(item.get("title", "")).strip()
+                    best = next((a.get("url") for a in selected if title_text and title_text in str(a.get("title", ""))), "")
+                    if best:
+                        links = [best]
+                key_findings.append({
+                    "title": _clean_text(item.get("title", "新聞研究"), 120),
+                    "summary": _clean_text(item.get("summary", ""), 800),
+                    "why_relevant": _clean_text(item.get("why_relevant", ""), 800),
+                    "impact": _clean_text(item.get("impact", "待查證"), 30),
+                    "related_symbols": [str(x).strip() for x in (item.get("related_symbols") or []) if str(x).strip()][:15],
+                    "evidence": [_clean_text(x, 500) for x in (item.get("evidence") or []) if str(x).strip()][:8],
+                    "source_links": links[:5],
+                    "confidence": max(0.0, min(1.0, _safe_float(item.get("confidence"), 0.0) or 0.0)),
+                })
+
+            result = {
+                "agent_status": "qwen3_cnyes_news_agent",
+                "model": self.ollama_model,
+                "generated_at": datetime.now(TAIPEI).isoformat(),
+                "cache_dates": cache_dates,
+                "input_article_count": len(articles),
+                "selected_article_count": len(selected),
+                "overview": _clean_text(raw.get("overview", ""), 1600),
+                "key_findings": key_findings[:10],
+                "market_drivers": [_clean_text(x, 600) for x in (raw.get("market_drivers") or []) if str(x).strip()][:10],
+                "watch_topics": [_clean_text(x, 500) for x in (raw.get("watch_topics") or []) if str(x).strip()][:10],
+            }
+            if not result["key_findings"] and not result["market_drivers"]:
+                raise ValueError("Qwen 新聞摘要沒有產生有效研究內容")
+            return result
+        except Exception as exc:
+            return self._fallback(selected, cache_meta, str(exc))
