@@ -1,0 +1,15 @@
+{
+  "as_of": "2026-10-08T13:00:37.957115",
+  "topic_url": "https://blog.fugle.tw/topic/earnings-call-memo",
+  "discovered_count": 14,
+  "processed_count": 0,
+  "errors": [],
+  "items": [],
+  "daily_digest": {
+    "headline": "本次共取得 0 篇 Fugle 法說會備忘錄；利多 0、利空 0、中性 0、混合 0。",
+    "watchlist_count": 0,
+    "industry_signals": []
+  },
+  "primary_source": "Fugle 法說會備忘錄",
+  "agent_flow": "Ollama Agent -> read_fugle_memo(url) -> article正文 -> structured analysis"
+}

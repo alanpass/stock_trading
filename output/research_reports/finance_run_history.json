@@ -1,0 +1,49 @@
+{
+  "runs": [
+    {
+      "at": "2026-10-08T08:33:26+08:00",
+      "news": 357,
+      "earnings": 4,
+      "per_category": {
+        "headline": 192,
+        "tw_stock": 159,
+        "wd_stock": 184,
+        "forex": 4,
+        "future": 38
+      },
+      "llm": 40,
+      "stale": false,
+      "errors": 0
+    },
+    {
+      "at": "2026-10-08T18:00:04+08:00",
+      "news": 553,
+      "earnings": 4,
+      "per_category": {
+        "headline": 287,
+        "tw_stock": 309,
+        "wd_stock": 225,
+        "forex": 6,
+        "future": 45
+      },
+      "llm": 26,
+      "stale": false,
+      "errors": 0
+    },
+    {
+      "at": "2026-10-08T19:55:48+08:00",
+      "news": 600,
+      "earnings": 4,
+      "per_category": {
+        "headline": 314,
+        "tw_stock": 408,
+        "wd_stock": 230,
+        "forex": 6,
+        "future": 46
+      },
+      "llm": 10,
+      "stale": false,
+      "errors": 0
+    }
+  ]
+}

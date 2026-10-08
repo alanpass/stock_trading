@@ -1,0 +1,61 @@
+{
+  "as_of": "2026-10-05T18:12:54.564854",
+  "topic_url": "https://blog.fugle.tw/topic/earnings-call-memo",
+  "discovered_count": 13,
+  "processed_count": 0,
+  "errors": [
+    {
+      "url": "https://blog.fugle.tw/post/earnings-call-9908-2026-10-02",
+      "title": "4 天前 【大台北法說會重點內容備忘錄】未來展望趨勢 20261002",
+      "error": "error starting llama-server: llama-server binary not found (checked: C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\build\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\dist\\windows-amd64\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\dist\\windows_amd64\\lib\\ollama\\llama-server.exe). Run 'cmake -S llama/server --preset cpu && cmake --build --preset cpu' first  (status code: 500)"
+    },
+    {
+      "url": "https://blog.fugle.tw/post/earnings-call-2399-2026-10-02",
+      "title": "4 天前 【映泰法說會重點內容備忘錄】未來展望趨勢 20261002",
+      "error": "error starting llama-server: llama-server binary not found (checked: C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\build\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\dist\\windows-amd64\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\dist\\windows_amd64\\lib\\ollama\\llama-server.exe). Run 'cmake -S llama/server --preset cpu && cmake --build --preset cpu' first  (status code: 500)"
+    },
+    {
+      "url": "https://blog.fugle.tw/post/earnings-call-2329-2026-10-02",
+      "title": "4 天前 【華泰法說會重點內容備忘錄】未來展望趨勢 20261002",
+      "error": "error starting llama-server: llama-server binary not found (checked: C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\build\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\dist\\windows-amd64\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\dist\\windows_amd64\\lib\\ollama\\llama-server.exe). Run 'cmake -S llama/server --preset cpu && cmake --build --preset cpu' first  (status code: 500)"
+    },
+    {
+      "url": "https://blog.fugle.tw/post/earnings-call-6838-2026-10-01-2",
+      "title": "5 天前 【藍新資訊法說會重點內容備忘錄】未來展望趨勢 20261001",
+      "error": "error starting llama-server: llama-server binary not found (checked: C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\build\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\dist\\windows-amd64\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\dist\\windows_amd64\\lib\\ollama\\llama-server.exe). Run 'cmake -S llama/server --preset cpu && cmake --build --preset cpu' first  (status code: 500)"
+    },
+    {
+      "url": "https://blog.fugle.tw/post/earnings-call-6825-2026-10-01",
+      "title": "5 天前 【和暢科技法說會重點內容備忘錄】未來展望趨勢 20261001",
+      "error": "error starting llama-server: llama-server binary not found (checked: C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\build\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\dist\\windows-amd64\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\dist\\windows_amd64\\lib\\ollama\\llama-server.exe). Run 'cmake -S llama/server --preset cpu && cmake --build --preset cpu' first  (status code: 500)"
+    },
+    {
+      "url": "https://blog.fugle.tw/post/earnings-call-1338-2026-10-01",
+      "title": "5 天前 【廣華-KY 法說會重點內容備忘錄】未來展望趨勢 20261001",
+      "error": "error starting llama-server: llama-server binary not found (checked: C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\build\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\dist\\windows-amd64\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\dist\\windows_amd64\\lib\\ollama\\llama-server.exe). Run 'cmake -S llama/server --preset cpu && cmake --build --preset cpu' first  (status code: 500)"
+    },
+    {
+      "url": "https://blog.fugle.tw/post/earnings-call-8424-2026-09-30",
+      "title": "6 天前 【惠普法說會重點內容備忘錄】未來展望趨勢 20260930",
+      "error": "error starting llama-server: llama-server binary not found (checked: C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\build\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\dist\\windows-amd64\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\dist\\windows_amd64\\lib\\ollama\\llama-server.exe). Run 'cmake -S llama/server --preset cpu && cmake --build --preset cpu' first  (status code: 500)"
+    },
+    {
+      "url": "https://blog.fugle.tw/post/earnings-call-6901-2026-09-30",
+      "title": "6 天前 【鑽石投資法說會重點內容備忘錄】未來展望趨勢 20260930",
+      "error": "error starting llama-server: llama-server binary not found (checked: C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\build\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\dist\\windows-amd64\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\dist\\windows_amd64\\lib\\ollama\\llama-server.exe). Run 'cmake -S llama/server --preset cpu && cmake --build --preset cpu' first  (status code: 500)"
+    },
+    {
+      "url": "https://blog.fugle.tw/post/earnings-call-2354-2026-09-30",
+      "title": "6 天前 【鴻準法說會重點內容備忘錄】未來展望趨勢 20260930",
+      "error": "error starting llama-server: llama-server binary not found (checked: C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\build\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\dist\\windows-amd64\\lib\\ollama\\llama-server.exe, C:\\Users\\10501\\AppData\\Local\\Programs\\Ollama\\dist\\windows_amd64\\lib\\ollama\\llama-server.exe). Run 'cmake -S llama/server --preset cpu && cmake --build --preset cpu' first  (status code: 500)"
+    }
+  ],
+  "items": [],
+  "daily_digest": {
+    "headline": "本次共取得 0 篇 Fugle 法說會備忘錄；利多 0、利空 0、中性 0、混合 0。",
+    "watchlist_count": 0,
+    "industry_signals": []
+  },
+  "primary_source": "Fugle 法說會備忘錄",
+  "agent_flow": "Ollama Agent -> read_fugle_memo(url) -> article正文 -> structured analysis"
+}

@@ -1,0 +1,490 @@
+{
+  "report_type": "finance_info",
+  "report_date": "2026-10-06",
+  "updated_at": "2026-10-06T00:58:05.886457+08:00",
+  "lookback_days": 1,
+  "earnings": [],
+  "news": [
+    {
+      "title": "AI伺服器電源Q4加速出貨！「這檔」產品估漲價5%至10% 外資豪砸158億元、狂掃7.9千張 - Yahoo股市",
+      "url": "https://news.google.com/rss/articles/CBMiggNBVV95cUxQYUVMczVQZ2hJWUJYZEdLVThRUjl6SlJHa2NoUEJTWmd2M2NxdkJRdWJpaWQzbmw2M2ppNzlNOFdCVWZiR3gyUWpYUGpXdUNVWUlrbHRXSmN3bU9HMEtiT0p6U25Qc2hYWmdyNHdWUDlkMzhtZHlxQ2Rtc2pPUG9qU2JVOWdXbG9INGZUMDFFSU14XzRMVzZDWkl0UzZkVlgwUEszSS1EYnA0RU9iU3NzS1dWSnhmUU1FalFZMlR6MjJLMTZzZUlhYlRPTktNbEs5endVemxtN2Fid3V1ajNtWVdHY1FEMG5SRkJXdTQyYTNtSGl3UjNCdklqd3cwUFBvS0JvOGgwZUdia0FKY1BmWkwtVmc2ZmYxbHQ3MUpQeFJ1ZmdHRk5QUExuNTN0QTJMUktlWDAzcUN4eWs1bjBJUlFZZ3RDMXpQRUZmQUJWNWJtOGU3ZXR3YXhpcUo0dWlMY3NpOUtlSzJHMTlhc2Mwbm4zaWRnYWNzbE5HUVc0eWM1UQ?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI算力背後的能源革命 800V、48V配電重塑資料中心 - 電子工程專輯",
+      "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxPT0RSbGJoVmUwN0hGNVItaEJTcVVheUFUTDdOSGJILTJJakZoVE50djFaREMybmtlSlRJTXJDZXBZel94eFhubm9DVHA0NkJ5Sk01Nm1yalpHYjlTZEgzdXQ3MU9hUnphUnZfcW5RNk9xbVlfM1V3TDIteUNYQ0ZNU19FcFY1cHFidXRVVW03X2dwVzVHZE1ETzdRVQ?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI伺服器需求帶動半導體9月營收飆新高，鴻海單月狂攬破兆元創台股紀錄-財經焦點情報站 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxQXzNVeGVyaU8xbzlzbVppNUd1MTlWVlJ6QUlDR3lJcGZDS3JXNTRsaWFuNnN6TlpPdi0wNm1Sa0RzVDlfN1MzX3A1NmJReGlQcXlGRGFVRHNmUDlpM2FBaG5GOXUtZ2tOUC1uVk1qaEkteW5yRWQ0VEpqRU1ucHRfUG13?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "光模組轉單利多發酵、台股戰新高！投信重壓 AI 缺貨鏈力抗空軍 - finance.technews.tw",
+      "url": "https://news.google.com/rss/articles/CBMi9gFBVV95cUxNZDBuRF9rNDBGZDZNVVJCSkNRaWpza2xHR1ZjZllpcVZTdVVTc0l6dE5JM1dXREc4aENCTWUwMFlsQnVFRnk5ZG4ycUlUWUhGemdLM05OeVdMWld5enZ1bjVLR3N4Y0NJVmJmWVRkamJfN1NfMmo3RnltSXZfM3piMDdiQm9yYndSZTd0b3lRRzJYSVREeGlhdVp6Y3BLSXBIS0R0Wkl0QlpTVWhTenN3MmxybXFrRUZtMlpEckpERjBOUjdaQTFLWkcwMXZmbjJhSGlGbkZLT0otRUtYMk0zYkxqd2QzVXg5cWcyU3RjLWlxUGxKUmc?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "甲骨文奪騰訊70億美元大單！鴻海、廣達、緯創、神達、緯穎...AI伺服器台鏈誰最受惠法人目標價、EPS一次看- 上市櫃 - 旺得富理財網",
+      "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE9pWFZQdnBzbkozMVFJRm4tbFJvd2ZGRzZ0N3Y2c3k4eWFBVVV4OHhBSVdrUG85bDFXMklFcGV6dGl2S0xIMEJGTG1uMjZrOTh5ZzF1aWMwS0dFcnBKSXhYTHZpcTJXbm5nM3c?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "鴻海AI伺服器市占拚5成 把老師傅本事教給機器人 - 民報",
+      "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE44M2JqSG1wLUpMSGczN3pUbnFyME95djI3ZEZfN0hiN1dVWnVLOFlVZFNkRUhZVDZtRS04cENZTVFGbnV6NXJubXpHSkwwVnZNSDk3MGxLVFdRem1xRG5peFhCSWQ?oc=5",
+      "published_at": "2026-10-04",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "目標價340元！「AI伺服器大廠」EPS攻21元 輝達Vera Rubin放量營運看旺 - FTNN",
+      "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTFBkNWhzMWhJR1B2cnN2cldFZUtsdUZjUjloU2xOdDRNcmFkZUd4ZUtCUVl6LWpwUVNGYktPcVN0aHhHRU16M2ZaelBxVQ?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI浪潮 去年電子及半導體生產用機械設備業產值創高 - rti.org.tw",
+      "url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE1TazdPanNyTDcwV1JNT3lRM0x5TzJ0NzhDRDd3QlJEOFEzQjAyMm9hUXU3c2NIYzVCUnpEQTcyenNhaHN0YXdqRWpMQXIyTXphQnMtTVp3Zw?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI伺服器、蘋果新品帶動 鴻海9月營收首破兆元成台灣史上第一家 - mirrordaily.news",
+      "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTFBnR2t5STNKa0RTWTNoVzJZR3JOUlRrQ1RPbUctcTExQTdwNmp0RlBwZE5wM29wWTJZNmtLd0pubGF4bEtUc0hvNW9uSmF5Y1JTV3c?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI伺服器供應鏈發威！台股飆漲千點逼近五萬大關，鴻海單月營收首破兆-財經焦點情報站 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxOQ29McUhNWURMYkhHdWhFM2xnQ1pnNkE3RlIzZ2g0QnRMNnkxa0J3M2ZGd05JbmZEN2tTY2N6ZElzQTNZZlFmZklrby1JNzZsanNqcU5SQU1mRTVXSmFLWHp1aEk3UHRhaUM3aHFGNm9vS1I3ejM5VFRqZ0dsakZoakF3?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "中市多元職訓 AI、半導體到無人機一次學！ - Yahoo新聞",
+      "url": "https://news.google.com/rss/articles/CBMijgJBVV95cUxNTEdZZlZMSGVHdl9wRlJQOU9GdWtrdzg2SjR0VTlHQVoxRWo1RDlZdUl0TEZodnd1aktZSlRENUdya3NGbm9rTWZsdHRFaGtTYXhXS2VkZGcyNHZwQ3BGWE9FZTlBOVVDZDdOYmlIWVBlNTFHUkZoZjVEakVoOWVQYmN6cG1XeFlBa3FYZ0tnMDBMQWY5M05PYkVBRkN1TFQwNi1LNXV0aFl0LXBZT2cwUWRHdzZBWkRYUnlzbjRNa1Voa25LcXFzdG8yajdmY2h0QzdpNWtXSHB2N3Q3emhaTW1DNWFXQWpxWHJFTlRXcGxpRzdzOEdfSTBxSzNiaWhUR1ROU3dsSlJVamZFT0E?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "【13:24 即時新聞】勤誠(8210)股價走強，AI伺服器訂單動能受關注 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxOekEyVFBpUmEydy1qNkY3UC1wS1U2a3NnX1RXWTZlSktGUUR4aV9za243bWQzV0xaTVVtazRQNGJ6bjZBdlRJcTc2MElPc0hIWld6c0RWSDFxNzBqeHFDQWdfdHJMOXdjNVAzNmNQTmRXc0ZkUWNrRXZ3VkhnNlgxWU1PMG9mN1VlMmVTU1dB?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI伺服器與記憶體迎出貨旺季！台股受惠創歷史新高，鴻海9月營收首破兆元-財經焦點情報站 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxQb1BwRi1IVlZkaUtBNGtDV0gzbFV2cm9sQTQzSUZjTFE4eTh3bVVGa2hDdFI5TXNYY1ZUeU5NR3k0Y3dDRnFnTmhjQ2FaTVhWenNUcGZKaGRXMW44SVBNQXozbk9rUGtSbXhfM2JPYlFzS2JGYlhTcTd5TXAzc3B2SzVB?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "外資狂買718億點燃資金行情，AI伺服器概念多檔漲停，台積電再締新猷-財經焦點情報站 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNLVJIdnR6em8ydkpzamZIOGZLVnRNNGdOZWczNjlseWZHeVFqZVZXRnlCYXN4czdqcHlUUVZKdndsZW1vM2lrc0ZSZWR1V2NUTEVtNEJPbVdhVzc0cThudHRtc1JocVJMM3lDN1dkSjV6TkliVzllMnRXVWJuZlY4ZVJB?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI伺服器供應鏈產能盤點啟動！超微高層近日閃訪亞洲，這5大台廠成關鍵-財經焦點情報站 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPX2FxaW45Tl9ZY1FWSjhuV092V2FEMm9kOFRWYV82WmxBNW85RzNmWWJ1QzJTX1VQOUF0eWxOR1FHRlR1R0YybjRpTjhOR3VBWWMzT0xyRFJzWHNfdnVqZG1zZ2JCMm92Wk1KWktaMnphMjZxUW5HR3ljSm5MZzdyOEVB?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI 伺服器與消費電子迎旺季，最新 9 月營收出爐，鴻海單月首破兆元大關-財經焦點情報站 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNa3ktM29NZVFDUmJjYkNJa0FKaE9LOEFIWHR3Y3BJdlduenBWemtNSm5PZUdyUUhMQlZBSEFzTHBDNFZhaEMydk5oWXJqVnh3bWJTME55cnMzMzBfaHFTWFo1bW5rNUhaSzFVdW1DenNrS3diTThRTGpTd2RpUUdfX3RB?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI伺服器與記憶體需求發威，最新9月營收出爐，南亞科年增飆逾576%！-財經焦點情報站 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxQZlprcWRvN3hieGtnZE5qLXdRNWRvTXBMcUd2U0tTNTctbVBOVmdwRDFFREpDSTVMQW1pRGVpVmctSDQ5Y2F5OEdmZHNDVV9XRW03UnI4TTZDRG45UmE3WEhBUm5EeGlGdExLQUcwcFFxTEFlS3RlTFk1aWpkY0k0Z1BR?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "最新AI伺服器拉貨帶旺高階CCL！台股飆4.9萬點新高，56檔千金股同慶-財經焦點情報站 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNeG80X05YSFJSLWE2Z29oSVZmQzVmYk5sWjgyc3AyYXFiclA2cHltdzNKemVHa0NSVnNORlNJVGY3eXM4eXhVYlZ0emJhUExVX2xGWUs1enRsbXd4VnBfZ0hrWGNpNW9TVTdLM19hSVUzeUVIOTBaU0JjZGEtNW9ZOU9R?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI伺服器供應鏈拉貨爆發，9月台廠營收頻創新高，鴻海單月首破兆元-財經焦點情報站 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPYV9WMjV3NDZDMkdEblV2TnJEOENpLUh2QndQTEJObmlvN1FYcVhsTUR3YzB3ZU9tOWdndkdYSHVSSlB2YjJ0cV9MLWhSNkZ6Z0NSdzFGT0F1SmlXc2JRMkROdFNwcUJsdkExc0dQMWFVVU5DYm9UM1lLeUlwTnJ3THVn?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "半導體權值領軍台股飆漲逾千點！盤面資金分化浮現，台積電強勢創天價-財經焦點情報站 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxOTWtmb1VTeTBCMXFCWlpidmMxaUd5eWFERl9SSTNDOVRpS1hmOE9ubks5THBiOW5taFZpcHd6LTdQVkJqNmN6OGNraUJPck1teEV2Tkw2V193TjdQZENmWWZzNDdGbFBXeW4tdHNmY1p5RmNOcm0wVUhxUm5qMi1VQ2Vn?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "由半導體的發展來看AI資料中心未來的興起 - DIGITIMES",
+      "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE5MLUFLTjN1Y1gxaGlzUy1iRUZpMWx1dnZCUVRiMko1cXNXVG9QUHNUUjBLQXktNUUzVUN4M3Z5cjlQaE9BY0c3a2o3VWFwQ0FpMTNldkJvMXZkMXprVXZj?oc=5",
+      "published_at": "2026-10-04",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "IMPACT 2026 聚焦節能 AI，產學齊聚研討先進封裝、異質整合 - TechNews 科技新報",
+      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPejh0SFU2SHhiWXVxTGs5bzJOUzdDMElxTEhNRHNZdURFSklxbWZOMzNCNU9VLS1YM051VUw3SFh4MjVuQl9NMnd4U0pvdUhHMHhWNHhMMHdYc0dJQUxHUlFneEhyN1FsUVFiRzN1TEZYY2RWSXFUZ1F6VWktcVI4Rm1tUHYwSk9fcFZKa1NjbU90dlk?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI伺服器挹注和碩9月營收 擴充千人團隊備戰全年佔比拚1成 - DIGITIMES",
+      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE9NOGkzdTM5Z2JBMzkzSXM5NDd5bXVzQ1N0QVI5Z2dhUkZxY3A0RmpCVnFIZWtoUkNKaXlBa3hUd3k1WEVvYkM1aURXVzZUc2FTX2FoMDlzakV1ck4xYWxONTVoVEdZUnl6Nm00?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "科技業9月營收冷熱互見！低軌衛星與AI伺服器動能強勁，群電Q4訂單估倍增-財經焦點情報站 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPcGVEYUI3ZkU3Q3VQOTZ0dUR1S0FaSHhOT1lfLVFyTmViQ29wUlFneXl6VU9aYjlEUXI0azZuU3dnaVQwbThDOU1yUlUwcnJmVE1WNmFPaEQwVEFjUGVvZ1VVMG00aHZBekZyLTc2d3NhS3ZGUTc1anJYVlhyUlVWTTdn?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI、半導體到無人機一次學 中市多元職訓逾2,600人次參與 - more-news.tw",
+      "url": "https://news.google.com/rss/articles/CBMiQkFVX3lxTE56YncwTWJrQ0lyWTczYjNNem95U2pkVnVENGZWdGdSNERJa3JUd2NXTjZSTlpPLWxwNXZZYlpNVUN2UQ?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "台股創新高、三大法人狂買104億！瑤池金母卻爆賣「這AI伺服器」72億元 專家點3警訊 - Yahoo股市",
+      "url": "https://news.google.com/rss/articles/CBMilgNBVV95cUxNRVhJZWp6QVplNGJOYXFZQ18yekU5MG51a1VqMkxOMWhCUmJka3Y0OHRNWGktamhpbVNuUS1EN19HbmtRXzVVaTRhUXphYmwtdGFRWGk1VjFycHFYcmlFX2lWTEFrRE1oXzl3UWNvUWwwaG5yQzFoUVk1UVNWaEtpU2FjTzVXcEYxeDFmeW5paG1BNUxiOWVVSUJTYnc3TzZmNXh0Vjk1alAzcHp1NmhzOGtGMkZqN3k2MG1aRS1VRXdJNWpjNktyckdFb24zSFpncHpvUDd5T29waklBMmMtU1JOeGgzZUJYSDZ1dHRISjRJSkZFSDJzQ01aMmlSdHQ5WjdqUURZUUVHTENEaGZ3T2xxMFNsZHpkeHRsMjNwdGR0b3ZrbTA5QTNjYTAxZkxaZ2xXTVVnX1ZfNWUtY0NUcGpqc1pVMzJ6Z3FiSEc5SUVwQk5Dc2R2bFd5Mjh1cHlWbWstY1JudHhWM1VIbWxPcjBHMlFtakNxY0Z5YnZHTHJFMDNVS2RyN0hndlhZbE5FUUtHR3Zn?oc=5",
+      "published_at": "2026-10-04",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "【更新】AI半導體點火！日股收盤飆逾1600點 直逼7萬點大關 - Yahoo新聞",
+      "url": "https://news.google.com/rss/articles/CBMi0gJBVV95cUxOeVF1b0JsdUZhQXVaTEFZbUxsSE5kOTdVMDM2TmRpdHh3eGNxaS1vanQ5YmswXy1aSjJacjlxV3pxMC05bXBnQWpZTTVTSjM3cVdYZF9WbEx2S01uNmpjX21SUzY5RWM5WmNFWTVMOVNBM285ajc0WFV3VnNHOE1BQm1sZ1ZTRnhjQkVTY2tMa2FLN0hDNDcwV2h1MERXMnRuWFVtTDM3RG1nUXZHdFFDMmhHUzkzdU5uYndDVWNWdFE0Nk1HNG9fbVRKUzBMUGhQUEZjU1hTdkdUSDJMTU9xRlRJTzVEOF83aHhXUm5rbVlheW1ydUtHVGdFQld2UkpOZHhyaUx5ZWxXTHpoNmlGd051c2VxVzk1RkkwNW96N0pFdEdtNVp4UTdVVEdjWFRkZ2ZwX2xyaG1zRTVseTZFOFcwVkRWeEk4Z2J0WEZDdHFLUQ?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "應材與貝思半導體擴大合作攻AI先進封裝 混合鍵合延伸至3D IC與光子互連 - PChome Online 新聞",
+      "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxNQ0p5UzhxV2tkb2w2ZDlWSlYwWDZJRjVmX3lHOGlLSjU5OHFib2pLd2J3cHY5dGk2QVBmdkRHSDFvZGNBQkktVXltel82NmdGSHN3eElXc3NTeWQ3Sk1oQzVTUVd6YlNnckQ1VGxSRm5URUxzODY1TE5paDFQS3ZTLUMwRXNvZFRNa0Zhaw?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "法說會報佳音！「封測大廠」eSSD切AI伺服器、傳統封測訂單外溢 營運看俏 - Yahoo股市",
+      "url": "https://news.google.com/rss/articles/CBMioANBVV95cUxOcXlQck9mY00yNkhXRHJLR2RwZm5uTTZwWjNmZTBvNFhDWW5rM1pJVmxyRzdHVndoLTdPOE5KUm9GQ2FEeTVlUDdSQnVpcXhPM05YbU1DZ09EaWJ1OFh2TkFVZDllM0x4RldVS0twQWJlY0VjTzE1Nldrb0NYZzB0LWM2RkdXalFFVGJGY0g3Z25CTHEwX0lfaDNVenFTcGZrVjNVRXBudW9xeFlJd1RWeUkzdWJzVG82X0VHZXItQ1hfMUtEQXg4Q0xjNVZ6V09BenR2WlRHOGRqcjRKMG8tbnVwajFjLUNZZkxtMTlPOWJMX0sxQ1hJOXNSUWNENDdtSHo2a0xkUTZYdlRiTUZaM240MmJneDNNQi1sYmo1R2dGY2ZtcWE2VW84YmprOWNqelNzbjlxV2VfdFhDczd0Q2ZZUGpGT1RlQTY2dVpFa1Z4ekF5N2tFTUdRZWRmV3Q5NVYyS3BKR1RTd0h0cGlkZ1VSdHVvUWZlUWZsc3ZFUFI3ckR3eFNrTUJtNmZKQ0dBMWhDSUZyU29GM2lMTXVtLQ?oc=5",
+      "published_at": "2026-10-04",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "【11:50 即時新聞】富世達(6805)股價走強 AI 伺服器水冷題材受關注 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPZ3BJcTRaUjZHSjVXQ3h0aDFoVng1d2pOT25hVTRHUDJtTEhrSzN4SzNHcjYwTm14VWg2SGNJTFBhemx2U1JlaFVjSTlCLUhabG1XMzVhU1hiemRqZDRUMlBhcDA2aUsxMngtTGVwTHNnMDZmUFZ2VmhvUXlEY3Axd1FlVVhsSjNZMV9melh3?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "聯茂營收連7月創高！AI伺服器需求爆發、Q4漲價題材成焦點 | 下班經濟學 | 財經 - Storm.mg",
+      "url": "https://news.google.com/rss/articles/CBMiTkFVX3lxTE9FTzFwWWtVLWxfYjZVMFJ6OUMxQXMtTWNoWnRpck5oaGNWdXlTcExfX3JfdUVoOFdSYVdZeTBXNTVndmNkbXFObmo5amxkUQ?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI伺服器供應鏈先拚整櫃交付，AMD亞洲行能否催出量產時程？-柏宇 KD 獲利模式 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxPN29QQlRPUzFlcVlHSDI0aEY3Y1FXeEJVNE9Hd24xelROdDEwRGJXbEhMajd6c3BSRlRoMjZMQVdvNGVZZjFoaHJNcDdtYjI5UGxtVkF5SjdHVF9VWDVpdTh0ZVZEUGNHQUltdjl3R1M0R0ZVc2JpRWZtdnRSTF8yMw?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "台股大漲逾千點創新高！半導體與記憶體走勢分化，高股息ETF狂吸避險資金-財經焦點情報站 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxOQWtHbmhNWFdzV1NEWmMyYzNtbzdHV1hOeUFULWVQQVpWdlR4QmpXcnpnZnVzUmU3V1hHUG5KVjM4REtNN1dEbi1KWXBjcGJxbV84azZYTmV4WG53alUyVEw2c2tmN3UtU2VUX2hLSVJUUElTR3R3NzJfNGViclV6MmFR?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI、半導體委案增加！「檢測設備廠」9月年增36%創新高Q3達7.59億元同步攻頂、布建AI客戶專區擴充中長期量能 - Yahoo股市",
+      "url": "https://news.google.com/rss/articles/CBMivwJBVV95cUxOQU5iQzh6cTd5bzNZX3oybXJ2UmhBX1hYbTRYYklFV0pxMVQydTJjY2t1NDh3SWxERGxRYVd2bTVsTXFFbC1vR29yQ3hqX19JdGxJS281NjRkYW94ZGEybVAybV9SXzF0SThOZjcwcWhhc1pnaWhmLWZpVDgyN1I0YURXclhsaGo4UUw0UC0xOXp0UksyZTZUSWZMZXFZYlY2LUxjZGh3M2pUXzlBNkNwVnU2eXVUZFFhWnV3bHNsY0paNEU2b0Q0bjZvYkZMUnlUZXpEVXNhODlXRlpGdWctZks2VFlrTUF4SWJ4UTNHcmEzRy1WSWtMVENLUGFmUUhLRFZBcVJnRl8wOUVqTG5BRVJKYnJaNG5sTGh2NVUwQzhkbnRBb1lUaDhyU1kteWlkaFNUY0pISXdVYWMzTmpZ?oc=5",
+      "published_at": "2026-10-04",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "搶搭AI半導體建廠潮！ 電力二次配廠大易橙10/6以每股252元登興櫃 - 知新聞",
+      "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE9BMFNGeUl2MmEyd2hhTFVYM3g5MEpFUEU5eTZqOWR5RHlCNHZnNnpsb3Nld0ZWSEl1MEhwb2JxdHdiNUZLMXNXR1prbDAzV0xKcGJEMF90b1o2SXZtYjIxSVNUOURPcXhmbVBMbUtnVQ?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "【09:12 即時新聞】金像電(2368)攻上漲停 AI伺服器板材成盤中亮點 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPUmF5VnFqbEtQakRzX3d3ZGcwdGVsVGlmSloyNkRlNHA0MWl1SnhDOUZETExNam9yVHU4WjZ5Xy13MmQ3LWVfN3RhTEFqZENBTGo4UDJmekhocWgzZFlNRGh2eHROdUhDblgzWUMtVXVDaVRkQk0wbk5MeFRpU252UGhnVGZmU01lRUR5NWhR?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "【ETF投資分享📈】 00927今年來報酬衝104.1%！ 最新預估配息2元、年化配息率逾20% AI半導體動能持續受關注🔥 - facebook.com",
+      "url": "https://news.google.com/rss/articles/CBMiiwRBVV95cUxOb29UaUFsaHk3QmJGZ21hdlQ2TW4zZDdjWENIU2QyWWtLcGppQ3pzMThjRGlYSmFYMmtBdW04VVJaNU02U3dCeXlrc3l3NS1MQ3lkV2NtR0k3b1ZYS21CU1JtQV81bjY1Z2hqM1dkdXZzRDBuYm1mdUJFdWRxSDU3azJsY3JXeExBQzBfSlZ3SW9wdTlDcWc1UGFVdzFsNWNWdUd2RGI1NHhlelFPa1dBOXhVZ2ctZjdna3BIdS1NTEJ4ekhuQXJTeXVvQ1BYTlV4dGFsTE92Z3N6cUsxbmNNRU9TejVNamxnZnphOVRRUG1zdDNVNjJ4MXZ3YzBTS29qMGFkakdrRlBqY0pBY3NmUi1vVHRxbHgzM2M1NUwycWtRS1hLS01fN3JSV3REU0JUZF9PMm52TGF4RHhpOS1FUmJ2bWZGX3g4c3NZbndFVVRQQ08yczBWVU03ODduWFpBanlwUlhocDd1ZTdLWXJpUmNPN1VYRWpCUU9Sd2w4Ni02dG9iQW5DbVFTTUhwZVRkaHViTUFFSU9RV21Xa3laN29SRVFER2dHV25PUXFKdk1tTlFoT3pTeFROU2NCc3pOQTlTenNRZEtzQ2dJbzljQ0hLMmxucnVVMm5tT1VHSEludjh6WXM3V1pmTUV1c2lCdlRQYVowWnhMNjlGQktfMEZjUjhadDhaZTlB?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "半導體與AI伺服器輪動轉快，10月法說能否把台股撐在高檔？-思齊波段操盤手 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE1Ud1ZVWHNnb3ZSUnRkZ0l2RVpTbFV0QWJHeWVUZ0s2NVFMYzh5cVc4Y2RVM1lyaDJ4S2dTdjhLSDRQMXpkUzU1bzFUcGVLM0E1ZWZ4VTNMNXZfQmlqbTRsRl96UzRTZDlrWi1seEliU0M2bnY1ZGNJdHlibUhOZU0?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "台股盤中再創高 49,770 點：台積電領軍，PCB、ABF、功率半導體、光學齊揚 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTFBiWFAyU3oxeXhnYUtKMFR1N1ZsU2hwU2k5TE1DckFjMmZ1TFAtUWt6aHVwR3MxTm90WjRZcWZfczk4VXJwZzNubGxOR1lJVXB4UkFTVTExRHdoM1pJa1VDVnNTb0VjXzV0TnVtaXdCRmRaWDJsX0lYdVZ6RU9Vdw?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI伺服器鏈啟動最新升級，玻璃基板與高壓供電引爆商機，鴻海良率逾95%-財經焦點情報站 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxOQW9OS3VQMVh4RWlGcFJPdU5DUFlndnAtOVpsaDlwZFVTYkY1SWhSTTVfYjhleEJvOEZXRExscklTOWsxSHM4bFJsVF9zWEtYSUNSenBTbXRjN1otbzhXbGR3bFBjcXMtX3NGM0ViQVpUbkNRQXhCa05oamJiemdLWUlR?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI 資安與半導體版圖大洗牌：CrowdStrike搶食EDR、GlobalFoundries遭降評，歐債暗流與比特幣財務工程同步升溫 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxOMmx2MktZS2UwWnZvbmYtVll5bEloa19yLXVjQ1dqcVdtTFZtcmhCS1N2YXNyS2h5TWZFeFFPeW0yRnYxTHVBS21ZZFNhQzdOR1B5TUlXWFJHX1BUMks3T2pWelgtZUlxVzR2em9sRFNDOEExd1lGYU5pMTBmWXFtbi1qdGRickE3RzcxOFh3?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "中國人形機器人崛起背後的「華為軍團」 - 日經中文網",
+      "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE1OZkdyTzZUTDF0Z0N0aTB4ZWo2aGkyU2JFejJ6TzE0Q3h3M0F0RGVwOHNsU29FSE5BWHY0VThPZGVjUWd0TkQtd1ZpT0xEZm9DLUlWaHlEa2txaVdUMmtVNHRneHg5RXUzVnhMUERvaVowS292Q2xVdUtB?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "【12:06 即時新聞】永擎(7711) 股價走強站上648元，AI伺服器題材續受關注 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPc21nRzZvT3B2SU9tcGJjdUt4dmN0MS1RVWpkSjNMczVrMU1JcHhfMDk5WGxuSS0tODIzZ3JENXNCQ2tTY2YxTTRFZUk3Q1JrZTVfa3lGQzhCN0pjNjlEQzdCVGE0dHRNS1d4Rk0xcjJFdm1aa1VoekJlS3ZDNllfYk1tdERHdU1WSkFZZmR3?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "雲端伺服器推升PCB與載板供應鏈，台股創新高，台積電觸2580元天價-財經焦點情報站 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPWU9BTExCaG5QNzljSTcyZjNWYVZneWYzOUFCNjZaSm9HQUtraGEzRmpoY2R3dENwOHRaa1lBRHFKZWdOSzNuT0JPQTBuZ0xoUnl6bVNpTFVBdGotT18zQ1J2UTZhZjBZcjhKeDNnUl9NZWFHRnJWS3BwRGd0NUxqZWRR?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "無懼NB拉貨放緩！ 群電:Q4衛星電源翻倍、AI伺服器電源前進 | 太報 - LINE TODAY",
+      "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE5yZ3diTVdLeUNxN2xGZzByYzVSclpZeEdVSTNDb0F4UDhOMDVlMERWYVBsSDlsY2FhOHlZTmdGNlh6SS1vMFpremtHbEhjS3dhbWd3MHlR?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "【11:16 即時新聞】健策(3653) 股價走強逼近高檔 聚焦AI伺服器散熱題材 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQMXVZalJHMzhfUUt6bEdBR0pRQ0QyekxzaVRCdThmb191Y19CNFRPTkhvVVpPNnM4cWhoQVJId2ZpbURBWDRxZndUbGpDazRERkVsci1XcjdPYVVHMVZHT1Ruc2V5eDBWWkJCeHhGVUE5ZF9IR3g3dmgyNnlMSEJTOUx0MDJfd0M5dE5Xd2FB?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "科技主導全球市場週期！a16z：86%創投資金流向AI、半導體與電力基建成投資焦點 - news.cnyes.com",
+      "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5JY3hjT2RaNmZEQTlhS196SE9uSWplOWp1b0k4Rk1oM29QM2gtZHo1TFBOTnZFWFE3cVNuQi05R3hRSUViMXNyd3BGNWZyaW8?oc=5",
+      "published_at": "2026-10-04",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AMD亞洲催供應鏈會議升溫，AI伺服器交付能否換成營收？-跟著大資走 澤明 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxPUDBYdnZ5cTcyVVVUa3Q2YkJVZ3FTN1ZGRVZnNExlSmZWN3NOUGp3UTNVZnlyYkczTmktMXl4YmZQbDJNUTVLRDRDZndZZlZSQktzdi1DUHY4M3BsNHlLMVd3WXVGZW9PM1ZNV0JCbTlxTnFiWmNiNFBuenU1N29iVGs0dw?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "31檔台股ETF將除息，4檔年化配息率破20% - 基金 - 新聞 - MoneyDJ理財網",
+      "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOai13ZUNUbTNXYW5peHVYNmlvSjFhRlNtYzJ1ZmZSMDJJREptSnh5d1Zud0VBcVZ4VldlTUZYQXhMSy1ZV2dYUHdMMWJrbklGWm9Rd1VsMzVrdUE4cHlwelo4LWNuX25YbG9aaFM2aVYyZkdaQWVSUGQzcGZ4dXZRTnpHREhxT28?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "旭然看營收成長跟著AI及半導體相關趨勢走- 新聞 - MoneyDJ理財網",
+      "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxPRmQxNTdMRGxWZHF6NjR1RFRVUjhsSzZkMjU1YVgyRTd4RDdEUTFvX2I5bUhMR0xoamRaZDlVdnZXMFdCM3JGNnZISW5VTjNrQmhxVkI2UW5GRDRtVDFTUUV0MGtqSkVIUmZxUlRMWWNOSVphOVpwYnd0QUpERXc4bWp6ZnpLMlNoakluWmtYZnF4Zw?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "德淵熱熔膠需求穩健 AI 伺服器、新能源車應用續成長 - UDN",
+      "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE1xcVZOMGZXaFFEVjFXV1dGMEJxZm9vcUMxLXFldmswenFkV2dueEdEbmV4ZlhaZ1R2WV9KZTRuYTdhX2pEWENBN2Q5N0sxT2040gFWQVVfeXFMUEk5VFlxNVJpWEhBenpTLXZfaUdpMFlKVVZIazROd3NqSDFxaXFCMmlTMHhoWWdVSXFFVzE3RWI0aFJQTTlVQ2UwU01SMlpkby1RSk5oV1E?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "中國K型經濟（上）半導體企業凈利增至7.2倍 - 日經中文網",
+      "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxObFZjWFFOcF9pQjJpbjZ1V3drX3YzaWtWd0ZkakxLc1ByTnh4cmZjcXpGRXdORC1BQlFiRWVGOW9NVkpZRlNLUWFzVzdJOS0tQXV6WTJfeEhmWmRpUUh3Y0ZSMHJqZW5lMGdTWXltN2FQZjdZUllnaEMtTk4zaWg5OV9uVXo?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "【10/05 產業即時新聞】電子中游-散熱零組件強勢大漲 7.84%！AI 伺服器水冷商機點火、指標股獲資金青睞 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQYlItcmk4dk1lYzBEZUlJWGladDNjUkNGaVh0UGF4QmtrMXNiUkx3clQwejVIOUw5VFk1Z2Fxekx6YnpHODBNOE5nb0NocFJ0NnFyank2SU9YVGNDejdVSlk0YkRZbDkydjRQLUFnVnJSMEdyNk9SZ3JjR21hRWE2Qi1fbUFaWjBxQVJpRFZR?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "台股大盤逼近五萬點！外資高檔換股重壓半導體與面板，友達買超居冠-財經焦點情報站 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxQeEhUMmdoWkdiSlEzN2M1SVZGLVBBTWNnTWxaWkZ1eDVYdkR0NTZZeHNuQ2ZONkQ0N2p3NHJNOUczN0RTVnZ3aHlTOEpWeTBLdEhVd2hQV2w1NjB6S3gyNERmTHhVTXFPNVpvZGpiRjRSUEgxTlBIcElqR3IyaUlDLXJR?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "半導體擴廠帶旺2／大易橙跟著客戶打天下 見證AI電力需求刺激銅價飆升 - Yahoo新聞",
+      "url": "https://news.google.com/rss/articles/CBMitgNBVV95cUxQTHNZZngweHlKTlB2MURJWDFxZll2cTRvWGRJcHhIajNCWF9GODE1dDFPbl8zZjRGcUxXRnlqS0dwRFpIVHE2c1d6SEpmTUI4QnR6OEwteGp0cUhXaVNydlE5YWFZTzJmdXpJQzd3V2ZHY1AyRVFJamZLdDRKZGtpOWNrX2YtNGhzMktDV1Z2dU1pcHVIR3F2cnNMNWt4Ync5dDhrNU1FcGZZZXdCVEFKeWlPU1Z2VWx1VmVPVzJWYUQzc2pPa29nb0Z1OTh0OUpHZHJWZXYtNWRvRmJRa0ZNMEJRRWsyTk9CTFdUcC1JTnVaZjRnem1iREVqZzMzTTJXOVAwSHFteU9kZlFUM0RKRGlibUo5Z0NLeVlNUG9PVVF2V19Bd3pwZXdLRFF5ZEhiNHNaNEhoRlRXSWY4N3VQbEpGT0dxb0k5ZDhyb3hqb2VZUnJyaDZFQ2F3T0pCM1JVZ21DMHljakRrYjFhRS1ZNGgySjZlOXRzM3VEYkhfMlFOSHlNQ0dlRHRnWEw2c3VfREYzRzFjV2F4cmR0Y0VhM0pyeGJTUGg5Y0NQcWxZWkIzQ2Q1aWc?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "台股衝5萬看這天！神山喊上3200元台積電、三星、英特爾...半導體3強賽局1圖懂：最該提防是他- 上市櫃 - 旺得富理財網",
+      "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTE9aUFNyVnRvVFBoS0tFbjdId1pnaEtvQ056LU1pekpLVFl0YWlnVVVBaTQ0UkZCTjJkNVAyc2NoT1ExaERSTE0tS1liTXVncEtFREhzZVV2aGpxMlJHTklDb0Rud09nU2RUNFE?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI伺服器供應鏈全面升級！先進封裝玻璃基板發酵，鴻海德州廠啟動投產-財經焦點情報站 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxOcTFhM0JYd25KYXVnYmU2MEMzVkhFLXh3S193OFUyOFhqRnowMVVFTkViLWJNcXhOdndHR1dUSGNyc2FWXy16dDBFMDFYM2RYeGtOdFRsTUU3UUhWOEFNOWpTaXBnVXlYdVExWWVKN0NodTQwcmlKMTZQOGU1bmZhNWdB?oc=5",
+      "published_at": "2026-10-04",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "南韓拚全球AI三強 核心AI半導體研發預算8月底仍一毛未花 - DIGITIMES",
+      "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQV1J3QkVVU1Z6LUJETzJpSXZZOVpCeE9tODc3TTA1NEdlUjNyVzlCRlQzOVJLd19jbGs0V3FiWnNyZlZfRXd5RzNvRlNsblQ5cHBZRzZnS3hscTFSWmFXRjRVMXkyMC1NbzRUTldUQWJuQ21zZWkzT2paWFFsVnJpVFlDZ3NvaUUwU0w3eXVB?oc=5",
+      "published_at": "2026-10-04",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI算力投資浪潮向上游擴散！伯恩斯坦重磅報告：半導體設備迎「黃金時代」 日本廠商成焦點 - news.cnyes.com",
+      "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9sV2xJVlhUeFlqZDNHZzFwN056eXJZdnl2cTJoX3EtbEZ5OHNibTFyUTNxcGJibTVKUi1BWjVBNHVENjhZcEhET09PVlhya2c?oc=5",
+      "published_at": "2026-10-04",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "高虹安競選連任！將砸600億推「新竹好學2.0」 讓孩子站上AI、半導體、機器人新世界 - Yahoo新聞",
+      "url": "https://news.google.com/rss/articles/CBMi0gJBVV95cUxPYzRKY2MyM0xTT09KRlNBSUdSb1l2cXhxZkVPbHdQZFRPdURXQ0hMMDhDMXBLVFNKdXp2Mkdqc0RjeUZuSW1jdVZpSDlUSENwMGlFZ1hCSnNmdVdCZTBEWXRUMEppU3FCdWxPcnRwVGo4Ymptam40MFhOaEtVN3A2QkNud3NfR0I4RlkteU55YnNHNXNfNzNTazR5V1F2QlhqRDFyYUI4V3RQbHVvTE8xRWYzbDg1b1AtWS1qUmhsbldXekpKblBIcG5Yd2Z3clpvZHBRaTJrVUVxdGFrdzJFUm5tck40YVRTcUlNcHkzZWJXTVA1Q2d5OGdFbUwxT19QUUd0d0QwTmtvTG1OU1E1NzhPMVQ2cDRCWkJlX0lYbmxXNExkZ0pmTGNtNkt3b0E5dDV5SUJhRF9fMlc3cUlJbms4QmxpSEVHbHNvZ0NBUll0dw?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI新品動起來 貿聯-KY第3季營收創新高 - 自由財經",
+      "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTFBZaUNfTl9wczlNSTNiOHdGcHljSDRXUmg5OFpIM08zSkt3ZVVQOFZhUzZJWFNTV05GdW9BUDQ5WHN6UGtPWWpFcW5RQVM1VXFYNmFseVJuSmstRWVKQ00w0gFkQVVfeXFMT19kdU5Rb3ptYVZNQU9vRmNVT1pIVWpTVFJsbGdxOW4wTDBpYUN5SmZzQ28xM0JOYzVySzZHMFV2Q2lZZy10RFVhTnRoVzVKS0ZkLXNBcmg3V3kzV1VqNmkxaHdiWA?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI伺服器+800G交換器大拉貨！高階CCL缺貨效應擴大 它目標價喊出3010元 - Yahoo新聞",
+      "url": "https://news.google.com/rss/articles/CBMiiANBVV95cUxQeUtpQk5ZXzN3S0I2clJGQmdkanE3MEI1MHFYU0JaTVczNnJJSVc0RFp0TVBhUUJtb3lhb09lWF9SbTllNUxGOE9mcF9uaWZsVTBnb0xmOUpOQkpRZUlFWFV5VHVwM0p3aVNSb1pPOGt1NU9ybzNOYUNDRjJtc2hFS2k1QUYzS3VvQ3RTcnBHWlVGWDUwVTF5M2EzVkNmbHFWdTh6TnFVcngwS3NiMXNkZmVzNE9pSlN5VXhTY2tETU11eFpuWEhxZENwdXFTNHZaT0RhVE5QWlFIeWVKWXVXeHZEd0UwUzRvd2hRRXR0T0M3Vm1qRWx4VEw4NUdfaFppZ2Jlb1FCVU9pOHhURmgyWjVSZ19OZ3hMaWwwckV1U3VPSC1Zc1poSXZ4MTdEVlJqSUg4QzZDcVIxN1dFcklZTUhoYlhmS0ZFUV80a0JJMkVGZ0RaX2VCQzZicWFZLTdVZWdvUEk5akxvdGRyQ203bnNZa0NKQUNUUldkM0xnQ3VYbVJWa2Nqdg?oc=5",
+      "published_at": "2026-10-04",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "台電推半導體、AI中心差別電價？曾文生否認 - Yahoo新聞",
+      "url": "https://news.google.com/rss/articles/CBMipAJBVV95cUxQeVFGOTc2bXRzSnJYNlhIcS1ieHNRZGU3T1hZbXRZdWNJc0FhM2NjVHRmeV9aVzRzM2hsd2dmUVF4Z2l5SEZCcUdpY2hvNHVseVJHT0Q3UzREcGYyb0dXM1MzVnRWQmpGN0w3SmNiaUp6OTRYbFZmZjJQR2EtQW82MlFNbnBnZnhmZHhUbXo5aFRJV3FkMWtZRU5wSGVaWnJKaDRMYUdyRmR3Mm0xSGpqUFFVdi1NUUJtZmNIUUpYeFJ0ZGdlUTg0ZzY2X2QzeEE2RXFfdjJoT092eXFqVWVuSDE5dmVhWEpWNUhLTWF3b0lXS1hKa2ZtV0x5VWJWS2RuYkFXZ2Q0UWdSQ1hVdE5JVTVUZk1taHFGc203WTZLZG9pRmE2?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "龍華科大AI與半導體實作吸引國際參訪 深化國際交流及跨國人才培育 | 產學研訓 | 商情 - 經濟日報",
+      "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBrQ1ZJbk0wTUtMaFNBYUJoTHNnZ2dmdXJxYmpneWhvY0pXVnhFMHNVeWdlZGVOcmNaeUhFcTFBX1JKQjRubjgxRUdxZEVucl9KQjdpVlFONXg3dw?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "00927超狂！挾半導體績效翻倍勝0050　年化配息率20%連4季創高 - ETtoday財經雲",
+      "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTFBOWTRCMkh3RndlZjVVaWVrY01NemctZkhOS09sR2paUFJYdUFiZmhFM05pYXp6Z285bllrcjh1dEZjLWNVMndDRmZPallxUmlLVmfSAVBBVV95cUxQbFRvM2xFeF9uQXRub1hpbHEzbmNxX1ZUM1k2SFFGc2ptYXBHczBMZ19QS3IyRUpwQlFsWUhGbWlmaVhXYUYzbGctMlJkQ1RnXw?oc=5",
+      "published_at": "2026-10-04",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "輝達、鴻海秀AI伺服器自動化組裝實力 GB300機器人組裝成功率逾95% - news.cnyes.com",
+      "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFBLRkFTbldGemI2dHJZZjM5NkZXVWFZX1VmaHBQRk1YUTJQQUtac1JwOUY3SXdTbnRrQjR4QjR5bHl0ZmtFbFRfVHNiazBvYlE?oc=5",
+      "published_at": "2026-10-04",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "廣達槓上筆電大客戶 AI伺服器撐腰停工7天 - Yahoo新聞",
+      "url": "https://news.google.com/rss/articles/CBMipAJBVV95cUxNVTRKU2JsMUpEUGk5MjJfdnpCMmJDQ3BadTFSakhDSTBrTnRQMDlTNVJrODVmQWdGWU5sbUpoa3lNVy1KaGFKSXFEaHVwaDBCbjNqOWlwOVdWdW91dGR4TF9jbE9SendVZUVrUW1jX2F4VWdDU1JlOExTYkZmdmE3RVdaRGFpVjlaWEs3SDlTcWRBQVM5ZUIwRnJTOVM0cVlCVDFzakFvSHhvXy1hUHRYeERNdkFvZ2N3R2RERVpvQVliRG5zOEhIdmFMR29acnE4RkhDRUI5Vkc0Z0pTX0Z1blRHMVRnY05Yc1BhUlhtb3h5bE5Fb1BFTEJ5WV9GcThYZi1pSHVmdTVRNWRUN0FIZXc2dTlraHNuQkZkQU5mM2ZPYXZ4?oc=5",
+      "published_at": "2026-10-04",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI算力投資浪潮向上游擴散！伯恩斯坦重磅報告：半導體設備迎「黃金時代」 日本廠商成焦點 - Yahoo股市",
+      "url": "https://news.google.com/rss/articles/CBMikwRBVV95cUxPYkNFR29JNDh5Z1JONnd1SXc5WmppY2JaNWpTX1NNLVpaYXFfNV9vM2xDSnh1R29iVDJBeVdNajZVODhjOGplcGJPZFRwNmthejRWMnhsdU10S1N2YnZfQXlQd0hEaEFfd2FTNTBZZE9Bb0Z3bnV6LUFLR3N4SjRJZ3hOUU5pV3JyQngyNm9wTXZzOUgwYmQxT1hXSW1GUWprYmp3VjNYeURlM2ZoYm9fYTl4LWU5Z29lRzE2WFJMNENUQ0VlUE81cE1HWXlUdnh3M2hmc1RycGE2UXNCSl9EMVN3ZEthWUstbnVfSmR6YnpiZ2V2X3NaSGJKOXNfV2JEUnRXa1NqQkJ1WVozdUVOVFdrejRQRTRKbDJfc0FrbTNNM29yTjJ6dEZfTktoMnV1Z3BHUUhoakgwZGVBYWZrS3BsOVVCMEV6UWIzWGhBYzRsZVhRRjh3SlBCRnR6MzFVenlvSldyRHJtX3JoZm5PLWplb2RGQ1B1eG12Tk5YU3lfdG1ocWhJcUU3bWRLMzBUNExYRjliZXQ3NzdrOHVhY0JzMzR1Q0tmWlFDalNLRVNWcVNtbWlCaC10LUNfd3VWaVpIZHdZWG9hcFpMLXhXTkJLTmlMaFpwd0ZfcUtmcjE2TXlGbkNpMlhZbV9xU3V4NVIyUFBhY2d2WnA5TjR4a0gyV21XX3JEd0lOWVdIQkFkLUU?oc=5",
+      "published_at": "2026-10-04",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "先進製程領軍上攻，半導體狂潮推升台股叩關五萬點，台積電飆破2580元帶動千金股陣容！-財經焦點情報站 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNQk10eDV0QnVjanFYMGczMFpyRkY3TlFiOUpPNFFvbzNEeVV0YndpeXFaM2NGaHQ3YXoxVXZZeUFfR01qWHNDOTNlRE1BLWtHZUNnWlF6NDEtc1ZJU3hWN0t1MTVYcU9XT2RXZWlIOE9pNWRnN1RDVGlFdzRmZU5CSk5B?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "373萬領息大軍注意！10月31檔台股ETF除息 「這檔」手握半導體與高股息雙題材、年化配息率衝破20% - FTNN",
+      "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTFAwNUVLYmJpSUQxNndSWUs5OTJ1dkNHNk81aXpVRmdzeGlETk1fWFRsaGlGRGVPeUtiN1VOQkQzQ2RXd29QUG1oNnRHOA?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "《半導體》AI從雲端走進家庭！聯發科、達發秀下一代連網三大技術- 上市櫃 - 旺得富理財網",
+      "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBLdVBidjM2NV91OUg2aWJ0amJoejJTeHVRZEdsQjEtMUpFNVQ4aEhGMGh6NjU3M20xaTRLbk9IVW9LTURUNXdOUzFtN2dEaHlPNzZBQmlkbkV0eFJ6cHc4ZVlqNlZfb080dWc?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI資本支出擴張推升半導體鏈，財報能否接住這波估值？-思齊波段操盤手 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE1ESGJFNUN0c2R1Y05COFVMWXVvN0o4NjhTR2F6QXhNVy1IZkg1ekg5RFFkcFl0S3YyWE8xVXN5NWtNeWVPQkMybWd4YXRfQlQ4cV9aMDlpNlhzM1FNNzkzckdwSG9ReFczcnhQT1VlNXFqUGhNbE1OWjgyU2E0emc?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "資金可望湧向MLCC族群！AI伺服器單板用量增逾6倍、全球ETF接連布局 - 優分析UAnalyze",
+      "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFB0ZkpmdG4yVDBPcFBydVIwTDQ1allDT3hYb0txcHUxSUY3d2YycllzQ3UyMHpCTDhXcjc3SV8wRUhjS1cyNFc2RU43TXlrY0d5Z3l5eXBR?oc=5",
+      "published_at": "2026-10-04",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "AI伺服器引爆電子材料缺貨潮！最新加工費漲10%，受惠供應鏈營運大進補-財經焦點情報站 - CMoney投資網誌",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxOVGlLQUNuWkxXT0Yzd2hhQzFEdGRvWWQ5cFpEeHRIS25DM1U4NnRQODBUd0o5eEJiaHN2VUV3a3BrdDFTekRWZnRVb1lTRGNvTGZXX1MxUm1KZ3BwV3hiamxwalBnRFNieGtSbjJweTVfRnlxZ3ozcXhVMlJjeFViZ1Z3?oc=5",
+      "published_at": "2026-10-04",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "B300需求旺到年底！仁寶2027年伺服器營收占比拚4成 外資卻狂倒15萬張、提款56.5億元 - Yahoo股市",
+      "url": "https://news.google.com/rss/articles/CBMizwNBVV95cUxQOFM1U18wakJCbzRVenpvWmlJdkNjamd0TUQweHoyLV8zTGVzdEVPZk85ejNSUHJhczh5aW1TUXlhSU5UWDgxZ3VuUlhCNW9zdklKVS1MR0g0X0s3TWhTYl9hb3RNS1hxazNxMlZKSEtaZkZXanhGSmEyRlhnVWJCZllzMVpKaS14Y01rRjZ3TFQwMjlVQm1CU19fSDhCaUpHazhBVEJOUjNwVmFHVDE2RkQxTEdsdGRmTmZXQnVJOEpSNXFfZWNZZWp5WXdhSEF1OEhENTJpRm1QOVRVWGJWWGxBaFhNVzA0cG9kS1pQUHpydmlBR0VDejJKWDkxQUxRYnlUd2k4UTV0d0JKSVZrZ1ZPaElrajVzaEFpRXZvaWV2NzhxcEwyYTVPLUlmS0JVX1RlZVBwbWFKZlplSS1heTJhM1dHZW1mT0ppYXZVWjYwa25ISHQxM1BpZENmeU1BQ1Ztd1E4dTJHX241Nm1PVXlHLTVJM04taERtY2ZpQ2tRYWx4OTRFNUZNVEEzYktGUmpDNTZlbmtlSDR0XzVlOUNUbHZJZjJxYjZnUVJtQVYydWlXTVA2Zk9YMkVNYmpTS0FmNnVnZEJLTHIxS0Nz?oc=5",
+      "published_at": "2026-10-04",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "Trainium 3晶片放量發酵！「AI伺服器大廠」明年EPS上衝183.59元 亞馬遜成最大推手 - FTNN",
+      "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTFA1aU9ISDdPNHZtNUhVQ3lqeEo2bkNzUzdQb09iLWRILU9ueWVURC1uLU5ody14U0w2cTZ2Vno5cHJaQXJXNk0wczFybw?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "ODM 大廠硬起來！廣達狠斷惠普筆電產線逼談價，AI 伺服器營收爆量成底氣 - 鏈新聞 ABMedia",
+      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE5zcnBmRW9FNU5OaDZiZGJGeDF3aUg1MW9SNEE2MExQb1ZjQS1DeGFmLW9aSmIyTnZvVGt3MUpaT250NUZqYzY0a0RDN09SbldKbEgwUDVuUzMzc0txOGxlRmM4LVhQSXhuYU9v?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    },
+    {
+      "title": "00927、00406A、00992A…31檔台股ETF除息，這4檔年化配息率衝20%！它今年含息報酬翻倍，底氣在哪？ - businesstoday.com.tw",
+      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxNTHNhQXpIZmlraDluY0tnTkpEaHhWdk5CclJieUVZRGd3Tk15aDJpRGZkcE9Zbnc2MEFhbUVsWHhXMUt3cEJ2U0k2VEFhNC1ncHo4dlRtTjh3TENTWk9FaXdkZWFZQnFCNlN1aGtudGtOVXE0ajVOanEwSDVWckozZA?oc=5",
+      "published_at": "2026-10-05",
+      "source": "Google News RSS（CNYES備援）"
+    }
+  ],
+  "earnings_count": 0,
+  "news_count": 78,
+  "cnyes_refresh": {
+    "ok": true,
+    "returncode": 0,
+    "log": "C:\\Users\\10501\\OneDrive\\Desktop\\stock_trading\\stock_dashboard\\output\\scheduler_logs\\finance_cnyes_2026-10-06.log"
+  },
+  "errors": [
+    "Fugle 最近 2 天沒有可用法說會 memo",
+    "CNYES 最近 2 天快取沒有可用文章",
+    "CNYES 無可用最近 2 天文章，財經資訊改用 Google News RSS 備援。"
+  ],
+  "watchlist_count": 22
+}
