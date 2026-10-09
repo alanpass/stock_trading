@@ -269,7 +269,7 @@ def _fetch_tpex_market_turnover_month(session: requests.Session, month: pd.Times
             try:
                 response = session.get(TPEX_MONTHLY_MARKET_URL, params=params, timeout=30)
                 response.raise_for_status()
-                content = response.text.lstrip("\ufeff\\r\\n\\t ")
+                content = response.text.lstrip("\ufeff\r\n\t ")
                 if output_format == "json":
                     try:
                         harvest_json(response.json())
