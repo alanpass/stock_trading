@@ -2120,7 +2120,7 @@ def _render_published_rotation(payload: dict) -> None:
     def sign_style(value: object) -> str:
         """台股習慣：上漲／流入紅色、下跌／流出綠色。"""
         import re
-        match = re.search(r"[-+]?\\d+(?:\\.\\d+)?", str(value).replace(",", ""))
+        match = re.search(r"[-+]?\d+(?:\.\d+)?", str(value).replace(",", ""))
         if not match:
             return ""
         try:
@@ -2355,7 +2355,7 @@ def _render_published_rotation(payload: dict) -> None:
 
     component_names = [n for n in (selected or list(by_name)) if by_name.get(n, {}).get("components")]
     if component_names:
-        st.markdown('<div class="feature-section-title">04｜成分股技術資訊</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">05｜成分股技術資訊</div>', unsafe_allow_html=True)
         c1, c2 = st.columns([2, 1])
         with c1:
             chosen_label = st.selectbox(
