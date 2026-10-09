@@ -120,12 +120,37 @@ def validate_output(job: str) -> tuple[bool, str]:
     return False, f"Unknown job: {job}"
 
 
+def _finance_cache_age_minutes() -> float | None:
+    path = BASE / "output" / "research_reports" / "finance_info_latest.json"
+    try:
+        updated = datetime.fromisoformat(str(json.loads(path.read_text(encoding="utf-8")).get("updated_at")))
+        return (datetime.now(TAIPEI) - updated).total_seconds() / 60
+    except Exception:
+        return None
+
+
 def main() -> int:
-    if len(sys.argv) != 2 or sys.argv[1].lower() not in JOBS:
-        print("Usage: python scheduled_job_runner.py morning|afterclose|finance")
+    args = [a for a in sys.argv[1:]]
+    stale_minutes = None
+    if "--if-stale-minutes" in args:
+        i = args.index("--if-stale-minutes")
+        try:
+            stale_minutes = float(args[i + 1])
+        except Exception:
+            stale_minutes = 90.0
+        del args[i:i + 2]
+    if len(args) != 1 or args[0].lower() not in JOBS:
+        print("Usage: python scheduled_job_runner.py morning|afterclose|finance [--if-stale-minutes N]")
         return 2
 
-    job = sys.argv[1].lower()
+    job = args[0].lower()
+    # 開機／登入後補跑：資料還新鮮就不重爬（避免和整點排程重複）
+    if stale_minutes is not None and job in {"finance", "cnyes"}:
+        age = _finance_cache_age_minutes()
+        if age is not None and age <= stale_minutes:
+            print(f"財經資訊 {age:.0f} 分鐘前才更新過（門檻 {stale_minutes:.0f} 分鐘），略過補跑。")
+            return 0
+        print(f"財經資訊快取年齡={age}，開始補跑。")
     script = BASE / JOBS[job]
     if not script.exists():
         print(f"ERROR: script not found: {script}")
@@ -205,37 +230,6 @@ def main() -> int:
             write_line(log, "FINAL=FAILED_OUTPUT_VALIDATION")
             write_line(log, f"END={datetime.now(TAIPEI).isoformat(timespec='seconds')}")
             return 6
-
-        # 財經資訊更新成功後，再把精簡版摘要發布到 GitHub。
-        # 只有 finance/cnyes 工作會走這一步；morning / afterclose 保持原流程。
-        if job in {"finance", "cnyes"} and os.getenv("AUTO_GIT_PUBLISH", "true").strip().lower() in {"1", "true", "yes", "on"}:
-            publish_script = BASE / "publish_research_data.py"
-            if not publish_script.exists():
-                write_line(log, f"GIT_PUBLISH=SKIPPED, script missing: {publish_script}")
-                write_status(job, "publish_script_missing", message=message)
-                return 7
-
-            write_line(log, "GIT_PUBLISH=START")
-            pub = subprocess.run(
-                [sys.executable, "-u", str(publish_script)],
-                cwd=str(BASE),
-                env=env,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-            )
-            if pub.stdout:
-                for line in pub.stdout.splitlines():
-                    write_line(log, f"[publish] {line}")
-            write_line(log, f"GIT_PUBLISH_RETURN_CODE={pub.returncode}")
-            if pub.returncode != 0:
-                write_status(job, "publish_failed", child_return_code=rc, publish_return_code=pub.returncode, message=message)
-                write_line(log, "FINAL=FAILED_GIT_PUBLISH")
-                write_line(log, f"END={datetime.now(TAIPEI).isoformat(timespec='seconds')}")
-                return 7
-            write_line(log, "GIT_PUBLISH=SUCCESS")
 
         write_status(job, "success", message=message)
         write_line(log, "FINAL_RETURN_CODE=0")

@@ -6,9 +6,9 @@
 #   14:30  After-close analysis report
 #
 # Each finance run REPLACES the previous finance_info_latest.json.
-# After a successful finance run, scheduled_job_runner.py also publishes
-# finance_info_public.json to GitHub automatically.
-# WakeToRun ON, StartWhenAvailable OFF, no overlapping runs.
+# WakeToRun ON, no overlapping runs.
+# Finance: missed slots run when the PC is back (StartWhenAvailable) + a catch-up run after every logon.
+# Reports (morning / after-close): never caught up late.
 #
 # Usage (normal PowerShell, no admin needed):
 #   cd <project folder>
@@ -57,6 +57,16 @@ $Settings = New-ScheduledTaskSettingsSet `
     -MultipleInstances IgnoreNew `
     -ExecutionTimeLimit (New-TimeSpan -Hours 2)
 
+# Finance task: also run a missed slot as soon as the PC is available again (after sleep / power-off).
+# Reports (morning / after-close) are NOT caught up on purpose - a morning mail at 20:00 is useless.
+$FinanceSettings = New-ScheduledTaskSettingsSet `
+    -WakeToRun `
+    -StartWhenAvailable `
+    -AllowStartIfOnBatteries `
+    -DontStopIfGoingOnBatteries `
+    -MultipleInstances IgnoreNew `
+    -ExecutionTimeLimit (New-TimeSpan -Hours 2)
+
 $Principal = New-ScheduledTaskPrincipal -UserId $CurrentUser -LogonType Interactive -RunLevel Limited
 
 Write-Host ""
@@ -81,11 +91,12 @@ foreach ($task in $Tasks) {
         $triggers += New-ScheduledTaskTrigger -Daily -At $at
     }
 
+    $taskSettings = if ($task.Job -eq "finance") { $FinanceSettings } else { $Settings }
     Register-ScheduledTask `
         -TaskName $task.Name `
         -Action $action `
         -Trigger $triggers `
-        -Settings $Settings `
+        -Settings $taskSettings `
         -Principal $Principal `
         -Description "AI Taiwan stock scheduled job ($($task.Job))" `
         -Force | Out-Null
@@ -95,12 +106,30 @@ foreach ($task in $Tasks) {
     Write-Host ""
 }
 
+# Catch-up task: 2 minutes after every logon (= after every reboot), refresh finance info
+# only if the cache is older than 90 minutes.
+$catchupAction = New-ScheduledTaskAction `
+    -Execute $PythonPath `
+    -Argument "`"$Runner`" finance --if-stale-minutes 90" `
+    -WorkingDirectory $ProjectDir
+$logon = New-ScheduledTaskTrigger -AtLogOn -User $CurrentUser
+$logon.Delay = "PT2M"
+Register-ScheduledTask `
+    -TaskName "AI_TW_Stock_Finance_Catchup" `
+    -Action $catchupAction `
+    -Trigger $logon `
+    -Settings $FinanceSettings `
+    -Principal $Principal `
+    -Description "Refresh finance info after logon/reboot if it is stale" `
+    -Force | Out-Null
+Write-Host "Registered : AI_TW_Stock_Finance_Catchup (2 min after every logon, only if cache older than 90 min)"
+Write-Host ""
+
 Write-Host "============================================================"
-Write-Host "Done."
-Write-Host "  08:10 11:00 13:30 16:00 18:00 23:00 -> Finance info + GitHub publish (after success)"
+Write-Host "Done. Tasks are stored by Windows and survive shutdown / reboot."
+Write-Host "  08:10 11:00 13:30 16:00 18:00 23:00 -> Finance info (news + earnings + Agent)"
 Write-Host "  08:30                               -> Morning report"
 Write-Host "  14:30                               -> After-close report"
 Write-Host "============================================================"
 Write-Host "Test now:  python .\scheduled_job_runner.py finance"
-Write-Host "GitHub publish: AUTO_GIT_PUBLISH=true (default)"
 exit 0

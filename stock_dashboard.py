@@ -128,7 +128,19 @@ def save_watchlist(items):
 
 
 
-st.set_page_config(page_title="台股即時互動式分析系統", page_icon="📈", layout="wide", initial_sidebar_state="expanded")
+def _site_favicon():
+    """瀏覽器分頁圖示：使用網站 logo（assets/logo/favicon.png）；找不到檔案時退回 emoji。"""
+    try:
+        from PIL import Image
+        icon = BASE / "assets" / "logo" / "favicon.png"
+        if icon.exists():
+            return Image.open(icon)
+    except Exception:
+        pass
+    return "📈"
+
+
+st.set_page_config(page_title="台股即時互動式分析系統", page_icon=_site_favicon(), layout="wide", initial_sidebar_state="expanded")
 
 
 # ---- 所有 Plotly 圖表統一使用與網頁背景相配的淺色系 ----
@@ -1197,11 +1209,7 @@ def _flatten_records(obj):
 
 
 def _finance_cache_path() -> Path:
-    # 網站優先讀「公開精簡版」，避免 Streamlit Cloud 依賴本機完整爬蟲快取。
-    # 本機若尚未產生公開版，才退回完整快取，維持舊流程相容。
-    public = OUTPUT / "research_reports" / "finance_info_public.json"
-    full = OUTPUT / "research_reports" / "finance_info_latest.json"
-    return public if public.exists() else full
+    return OUTPUT / "research_reports" / "finance_info_latest.json"
 
 
 def _load_finance_info_cache() -> dict:
@@ -1541,10 +1549,11 @@ def render_finance_workspace() -> None:
             return
 
         sectors_all = sorted({s for n in news for s in (n.get("sectors") or [])})
-        c1, c2, c3 = st.columns([1.3, 1, 1])
-        senti = c1.radio("情緒", ["全部", "利多", "利空", "中性／混合"], horizontal=True, key="fin_senti")
-        order = c2.selectbox("排序", ["重要度", "最新時間"], key="fin_order")
-        sector = c3.selectbox("產業", ["全部產業"] + sectors_all, key="fin_sector")
+        with st.container(key="fin_filters"):
+            c1, c2, c3 = st.columns([1.3, 1, 1])
+            senti = c1.radio("情緒", ["全部", "利多", "利空", "中性／混合"], horizontal=True, key="fin_senti")
+            order = c2.selectbox("排序", ["重要度", "最新時間"], key="fin_order")
+            sector = c3.selectbox("產業", ["全部產業"] + sectors_all, key="fin_sector")
 
         rows = list(news)
         if senti == "利多":
@@ -1980,6 +1989,24 @@ button[title^='從自選股移除']:hover{background-color:rgba(239,68,68,.16)!i
 </style>
 """, unsafe_allow_html=True)
 
+def _watch_select(code: str) -> None:
+    st.session_state.selected = code
+    st.session_state.ai_selected = None
+    st.session_state.ai_result = None
+    st.rerun()
+
+
+def _watch_remove(code: str) -> None:
+    new_watchlist = [x for x in st.session_state.watchlist if x != code]
+    st.session_state.watchlist = new_watchlist
+    save_watchlist(new_watchlist)
+    if st.session_state.get('selected') == code:
+        st.session_state.selected = new_watchlist[0] if new_watchlist else WATCHLIST_DEFAULT[0]
+    st.session_state.ai_selected = None
+    st.session_state.ai_result = None
+    st.rerun()
+
+
 def render_watchlist(compact: bool = False):
     rows, errors = watch_rows(tuple(st.session_state.watchlist))
     if not compact:
@@ -1998,8 +2025,6 @@ def render_watchlist(compact: bool = False):
                         f"<div class='watch-head' style='{sep}'>{t}</div>",
                         unsafe_allow_html=True,
                     )
-        else:
-            st.markdown("<div class='watch-cv-legend'><span>現價</span><span>漲跌</span><span>漲跌%</span></div>", unsafe_allow_html=True)
         # 使用「樣式名稱 + 選取按鈕」組合，避免 Streamlit button 的預設 CSS 覆蓋股票名稱顏色。
         # 名稱欄位會真正呈現：上漲紅字／下跌綠字；漲停深紅底白字；跌停深綠底白字。
         # 第一層依官方產業分類；第二層依公司主要業務／產業鏈子分類。
@@ -2063,44 +2088,39 @@ def render_watchlist(compact: bool = False):
                     cp_txt = "--" if pd.isna(cp) else f"{cp:+.2f}%"
 
                     if compact:
-                        b1, b2, b3 = st.columns([3.1, 1.0, 1.0], gap="small")
-                        b4 = b5 = b6 = None
+                        # 一檔股票 = 一張完整卡片：名稱、操作按鈕、現價／漲跌／漲跌幅都在同一個框裡
+                        with st.container(key=f"wc_{r['code']}_{idx}"):
+                            b1, b2, b3 = st.columns([5.4, 1, 1], gap="small")
+                            with b1:
+                                st.markdown(
+                                    f"<div class='wc-info {name_class}'>"
+                                    f"<div class='wc-name'>{r['name']}<span>（{r['code']}）</span></div>"
+                                    "<div class='wc-vals'>"
+                                    f"<span class='wc-price' style='color:{vcolor}'>{price_txt}</span>"
+                                    f"<span style='color:{vcolor}'>{ch_txt}</span>"
+                                    f"<span style='color:{vcolor}'>{cp_txt}</span>"
+                                    "</div></div>",
+                                    unsafe_allow_html=True,
+                                )
+                            with b2:
+                                if st.button("\u200b", key=f"watch_select_{r['code']}_{idx}", icon=":material/check_circle:", help="選取此股票", use_container_width=True):
+                                    _watch_select(r['code'])
+                            with b3:
+                                if st.button("\u200b", key=f"watch_remove_{r['code']}_{idx}", icon=":material/delete:", help=f"從自選股移除 {r['code']}", use_container_width=True):
+                                    _watch_remove(r['code'])
                     else:
                         b1,b2,b3,b4,b5,b6 = st.columns([3.25, 0.82, 0.82, 1.7, 1.65, 1.75], gap="small")
-                    with b1:
-                        st.markdown(
-                            f"<div class='watch-name-display {name_class}'>{r['name']}（{r['code']}）</div>",
-                            unsafe_allow_html=True,
-                        )
-                    with b2:
-                        if st.button("查看", key=f"watch_select_{r['code']}_{idx}", use_container_width=True, type="secondary", help="查看此股票"):
-                            st.session_state.selected = r['code']
-                            st.session_state.ai_selected = None
-                            st.session_state.ai_result = None
-                            st.rerun()
-                    with b3:
-                        if st.button("刪除", key=f"watch_remove_{r['code']}_{idx}", use_container_width=True, type="secondary", help=f"從自選股移除 {r['code']}"):
-                            new_watchlist = [x for x in st.session_state.watchlist if x != r['code']]
-                            st.session_state.watchlist = new_watchlist
-                            save_watchlist(new_watchlist)
-                            if st.session_state.get('selected') == r['code']:
-                                if new_watchlist:
-                                    st.session_state.selected = new_watchlist[0]
-                                else:
-                                    st.session_state.selected = WATCHLIST_DEFAULT[0]
-                            st.session_state.ai_selected = None
-                            st.session_state.ai_result = None
-                            st.rerun()
-                    if compact:
-                        st.markdown(
-                            "<div class='watch-cv'>"
-                            f"<div class='{value_class.strip()}' style='color:{vcolor}'>{price_txt}</div>"
-                            f"<div class='{value_class.strip()}' style='color:{vcolor}'>{ch_txt}</div>"
-                            f"<div class='{value_class.strip()}' style='color:{vcolor}'>{cp_txt}</div>"
-                            "</div>",
-                            unsafe_allow_html=True,
-                        )
-                    else:
+                        with b1:
+                            st.markdown(
+                                f"<div class='watch-name-display {name_class}'>{r['name']}（{r['code']}）</div>",
+                                unsafe_allow_html=True,
+                            )
+                        with b2:
+                            if st.button("查看", key=f"watch_select_{r['code']}_{idx}", use_container_width=True, type="secondary", help="查看此股票"):
+                                _watch_select(r['code'])
+                        with b3:
+                            if st.button("刪除", key=f"watch_remove_{r['code']}_{idx}", use_container_width=True, type="secondary", help=f"從自選股移除 {r['code']}"):
+                                _watch_remove(r['code'])
                         with b4:
                             st.markdown(f"<div class='watch-value watch-price-cell{value_class}' style='color:{vcolor}'>{price_txt}</div>", unsafe_allow_html=True)
                         with b5:
@@ -4143,6 +4163,130 @@ a[data-testid^="stBaseLinkButton"]{
 /* 不翻譯用的零高度元件：不要佔版面 */
 [data-testid="stElementContainer"]:has(iframe[height="0"]),
 .element-container:has(iframe[height="0"]){height:0 !important;min-height:0 !important;margin:0 !important;overflow:hidden !important;}
+
+/* ---------- V18 自選股卡片：一檔一張整體卡片、圖示按鈕（資訊垂直置中） ---------- */
+[class*="st-key-wc_"]{
+  background:#fff;border:1px solid #e6d3d3;border-radius:12px;
+  padding:10px 12px !important;margin:0 0 8px;gap:0 !important;
+  box-shadow:0 2px 8px rgba(142,43,47,.06);
+  transition:box-shadow .15s ease,border-color .15s ease;
+}
+[class*="st-key-wc_"]:hover{border-color:#c98f8f;box-shadow:0 4px 14px rgba(142,43,47,.14);}
+[class*="st-key-wc_"]:has(.wc-info.limit-up){background:#7f1d1d;border-color:#5f1414;}
+[class*="st-key-wc_"]:has(.wc-info.limit-down){background:#14532d;border-color:#0b3a1f;}
+[class*="st-key-wc_"] [data-testid="stHorizontalBlock"]{align-items:center !important;gap:6px !important;margin:0 !important;}
+[class*="st-key-wc_"] [data-testid="stColumn"]{display:flex;flex-direction:column;justify-content:center;}
+[class*="st-key-wc_"] [data-testid="stElementContainer"],[class*="st-key-wc_"] .element-container{margin:0 !important;}
+.wc-info{display:flex;flex-direction:column;justify-content:center;gap:3px;min-height:56px;}
+.wc-name{font-size:15px;font-weight:900;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.wc-name span{font-weight:700;font-size:12.5px;opacity:.85;margin-left:2px;}
+.wc-info.up .wc-name{color:#c62828;} .wc-info.down .wc-name{color:#0f8a5f;} .wc-info.flat .wc-name{color:#475569;}
+.wc-info.limit-up .wc-name,.wc-info.limit-down .wc-name{color:#fff !important;}
+.wc-vals{display:flex;align-items:baseline;justify-content:space-between;gap:10px;font-variant-numeric:tabular-nums;font-weight:800;font-size:14px;line-height:1.2;}
+.wc-vals .wc-price{font-size:20px;font-weight:900;letter-spacing:.3px;}
+[class*="st-key-wc_"]:has(.wc-info.limit-up) .wc-vals span,
+[class*="st-key-wc_"]:has(.wc-info.limit-down) .wc-vals span{color:#fff !important;}
+/* 選取／刪除：設計感文字按鈕「選」「刪」（淺藍底＋黑框，圓角正方形，字在正中心）
+   注意：全站有 div[data-testid=stButton] > button[kind=secondary] 的 !important 規則，這裡的選擇器要更具體才蓋得過 */
+.stApp [class*="st-key-wc_"] div[data-testid="stButton"]{display:flex !important;justify-content:center !important;align-items:center !important;}
+.stApp [class*="st-key-wc_"] div[data-testid="stButton"] > button[kind]{
+  width:38px !important;min-width:38px !important;max-width:38px !important;
+  height:38px !important;min-height:38px !important;max-height:38px !important;
+  padding:0 !important;margin:0 !important;border-radius:10px !important;
+  background:#dbeafe !important;border:1.5px solid #000 !important;box-shadow:none !important;
+  display:flex !important;align-items:center !important;justify-content:center !important;
+  gap:0 !important;line-height:1 !important;
+}
+.stApp [class*="st-key-wc_"] div[data-testid="stButton"] > button[kind]:hover{background:#c7dcf8 !important;transform:translateY(-1px);}
+/* 圖示按鈕：圖示正中心。按鈕內所有層級的邊距／間距／行高一律歸零，標籤文字（零寬字元）縮到 0，
+   只留下 22px 的圖示；容器一律 flex 置中，且不裁切。 */
+.stApp [class*="st-key-wc_"] div[data-testid="stButton"] > button[kind] *{
+  margin:0 !important;padding:0 !important;gap:0 !important;
+  overflow:visible !important;min-width:0 !important;max-width:none !important;
+}
+.stApp [class*="st-key-wc_"] div[data-testid="stButton"] > button[kind] > div,
+.stApp [class*="st-key-wc_"] div[data-testid="stButton"] > button[kind] [data-testid="stMarkdownContainer"]{
+  display:flex !important;align-items:center !important;justify-content:center !important;
+  width:100% !important;height:100% !important;
+}
+.stApp [class*="st-key-wc_"] div[data-testid="stButton"] > button[kind] p{
+  display:flex !important;align-items:center !important;justify-content:center !important;
+  font-size:0 !important;line-height:0 !important;width:auto !important;height:auto !important;
+}
+.stApp [class*="st-key-wc_"] div[data-testid="stButton"] > button[kind] [data-testid="stIconMaterial"],
+.stApp [class*="st-key-wc_"] div[data-testid="stButton"] > button[kind] span{
+  display:inline-flex !important;align-items:center !important;justify-content:center !important;
+  width:22px !important;height:22px !important;font-size:22px !important;line-height:1 !important;
+  text-indent:0 !important;
+}
+.stApp [class*="st-key-watch_select_"] div[data-testid="stButton"] > button[kind] [data-testid="stIconMaterial"],
+.stApp [class*="st-key-watch_select_"] div[data-testid="stButton"] > button[kind] span{color:#0b5cad !important;}
+.stApp [class*="st-key-watch_remove_"] div[data-testid="stButton"] > button[kind] [data-testid="stIconMaterial"],
+.stApp [class*="st-key-watch_remove_"] div[data-testid="stButton"] > button[kind] span{color:#b3121a !important;}
+
+/* ============================================================
+   V19 淺色系：搜尋框、下拉選單、單選鈕、輸入框（不再出現深色底）
+   ============================================================ */
+/* 搜尋框：白底灰框膠囊，右接藍色放大鏡 */
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-testid="stTextInputRootElement"]{
+  background:#fff !important;background-color:#fff !important;
+  border:3px solid #c3ccd5 !important;border-right:0 !important;
+  border-radius:999px 0 0 999px !important;height:52px !important;
+  box-shadow:none !important;overflow:hidden;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-testid="stTextInputRootElement"]:focus-within{
+  border-color:#0072c6 !important;box-shadow:0 0 0 3px rgba(0,114,198,.14) !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-baseweb="input"],
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-baseweb="base-input"]{
+  background:transparent !important;background-color:transparent !important;border:0 !important;border-radius:0 !important;height:100% !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) input{
+  background:transparent !important;color:#263746 !important;-webkit-text-fill-color:#263746 !important;
+  caret-color:#0072c6;padding:0 22px !important;font-size:16px !important;
+}
+div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) input::placeholder{color:#8a97a3 !important;-webkit-text-fill-color:#8a97a3 !important;}
+
+/* 其他文字輸入框：淺膚色 */
+.stApp [data-testid="stTextInputRootElement"],
+.stApp [data-testid="stNumberInputContainer"],
+.stApp [data-testid="stTextAreaRootElement"]{
+  background:#fbf1f1 !important;border:1px solid #e6d3d3 !important;border-radius:10px !important;
+}
+.stApp [data-testid="stTextInputRootElement"] [data-baseweb],
+.stApp [data-testid="stNumberInputContainer"] [data-baseweb],
+.stApp [data-testid="stTextAreaRootElement"] [data-baseweb]{background:transparent !important;border:0 !important;}
+.stApp [data-testid="stTextInputRootElement"] input,
+.stApp [data-testid="stNumberInputContainer"] input,
+.stApp [data-testid="stTextAreaRootElement"] textarea{
+  background:transparent !important;color:#3a2f2f !important;-webkit-text-fill-color:#3a2f2f !important;
+}
+
+/* 下拉選單（selectbox / multiselect）：淺色 */
+.stApp [data-baseweb="select"] > div{
+  background:#fbf1f1 !important;background-color:#fbf1f1 !important;
+  border:1px solid #e6d3d3 !important;border-radius:10px !important;box-shadow:none !important;
+}
+.stApp [data-baseweb="select"] > div:hover,.stApp [data-baseweb="select"] > div:focus-within{border-color:#8e2b2f !important;}
+.stApp [data-baseweb="select"] *{color:#3a2f2f !important;-webkit-text-fill-color:#3a2f2f !important;}
+.stApp [data-baseweb="select"] svg{fill:#8e2b2f !important;color:#8e2b2f !important;}
+.stApp [data-baseweb="tag"]{background:#e6d3d3 !important;}
+/* 展開後的選項清單（浮在最上層，不在 .stApp 底下） */
+[data-baseweb="popover"] > div,
+[data-baseweb="popover"] [data-baseweb="menu"],
+[data-baseweb="popover"] ul{background:#fff !important;background-color:#fff !important;border-radius:10px !important;}
+[data-baseweb="popover"] li,[data-baseweb="popover"] li *{color:#3a2f2f !important;background:transparent !important;}
+[data-baseweb="popover"] li:hover,[data-baseweb="popover"] li[aria-selected="true"]{background:#fbf1f1 !important;}
+
+/* 單選鈕：未選取＝白底灰框（原本是黑色實心） */
+.stApp [data-testid="stRadio"] label[data-baseweb="radio"] > div:first-child{background:#fff !important;border:2px solid #9aa8b5 !important;}
+.stApp [data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) > div:first-child{background:#8e2b2f !important;border-color:#8e2b2f !important;}
+.stApp [data-testid="stRadio"] label p{color:#3a2f2f !important;}
+
+/* 財經新聞篩選列：淺膚色面板 */
+[class*="st-key-fin_filters"]{
+  background:#fbf1f1;border:1px solid #e6d3d3;border-radius:12px;padding:10px 14px 4px !important;margin:6px 0 10px;
+}
 </style>''', unsafe_allow_html=True)
 
 # ============================================================
