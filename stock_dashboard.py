@@ -1209,18 +1209,71 @@ def _flatten_records(obj):
 
 
 def _finance_cache_path() -> Path:
+    """本機完整財經資料的備援路徑。"""
     return OUTPUT / "research_reports" / "finance_info_latest.json"
 
 
+@st.cache_data(ttl=180, show_spinner=False)
 def _load_finance_info_cache() -> dict:
-    path = _finance_cache_path()
-    if not path.exists():
-        return {}
+    """
+    優先讀取 GitHub finance-data 分支的公開 JSON。
+    若 GitHub 無法連線或回傳格式異常，才回退本機完整 JSON。
+    快取 180 秒，避免每次 Streamlit rerun 都重新下載。
+    """
+    import urllib.request
+    import time
+
+    public_url = (
+        "https://raw.githubusercontent.com/"
+        "alanpass/stock_trading/finance-data/"
+        "output/research_reports/finance_info_public.json"
+    )
+    request_url = f"{public_url}?v={int(time.time())}"
+
+    # 第一優先：GitHub 公開財經資料
     try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-        return data if isinstance(data, dict) else {}
+        request = urllib.request.Request(
+            request_url,
+            headers={
+                "User-Agent": "Mozilla/5.0",
+                "Cache-Control": "no-cache",
+                "Pragma": "no-cache",
+            },
+        )
+
+        with urllib.request.urlopen(request, timeout=10) as response:
+            data = json.loads(response.read().decode("utf-8"))
+
+        if (
+            isinstance(data, dict)
+            and data.get("report_type") == "finance_info_public"
+            and data.get("updated_at")
+            and isinstance(data.get("news"), list)
+            and isinstance(data.get("earnings"), list)
+        ):
+            data["_data_source"] = (
+                "GitHub finance-data / finance_info_public.json"
+            )
+            return data
+
     except Exception:
-        return {}
+        # GitHub 讀取失敗時，繼續使用本機備援。
+        pass
+
+    # 第二優先：本機完整財經資料
+    path = _finance_cache_path()
+    try:
+        if path.exists():
+            data = json.loads(path.read_text(encoding="utf-8"))
+            if isinstance(data, dict) and data:
+                data["_data_source"] = (
+                    "本機備援 / finance_info_latest.json"
+                )
+                return data
+    except Exception:
+        pass
+
+    return {"_data_source": "資料讀取失敗"}
 
 
 def _recent_earnings_items(days: int = 2):
@@ -1513,6 +1566,13 @@ def render_finance_workspace() -> None:
     if cache.get("updated_at"):
         updated = str(cache["updated_at"]).replace("T", " ")[:19]
         st.markdown(f"<div class='finance-refresh-time'>最後更新：{updated}（台灣時間）</div>", unsafe_allow_html=True)
+
+    # 顯示實際讀取來源及發布時間，方便驗證上架網站是否同步
+    data_source = cache.get("_data_source", "未知資料來源")
+    published_at = cache.get("published_at", "無發布時間")
+    st.caption(
+        f"資料來源：{data_source}｜GitHub 發布時間：{published_at}"
+    )
     if cache.get("stale"):
         st.markdown("<div class='fin-stale'>⚠️ 最近一次更新沒有取得新資料，目前顯示的是上一個時間點的內容。</div>", unsafe_allow_html=True)
 
