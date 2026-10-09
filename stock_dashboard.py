@@ -2166,7 +2166,7 @@ def _render_published_rotation(payload: dict) -> None:
     with c:
         sort_by = st.selectbox(
             "排行依據",
-            ["族群平均漲跌幅", "前一日平均漲跌幅", "近 20 日", "近 5 日", "今日", "相對強弱", "相對動能"],
+            ["族群平均漲跌幅", "前一日平均漲跌幅", "近 20 日", "近 5 日", "相對強弱", "相對動能"],
             index=0,
             key="rotation_published_sort_v2",
         )
