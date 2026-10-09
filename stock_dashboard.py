@@ -2180,26 +2180,30 @@ def _render_published_rotation(payload: dict) -> None:
 
     # 資金流向圖：以代表股成交值在本頁樣本中的占比變化（百分點）作為資金聚焦代理。
     st.markdown('<div class="feature-section-title">01｜資金流向輪動圖</div>', unsafe_allow_html=True)
+    previous_date = str(payload.get("previous_data_asof") or "")
+    previous_previous_date = str(payload.get("previous_previous_data_asof") or "")
+    latest_flow_label = f"最新交易日 {asof[5:]}" if len(asof) >= 10 else "最新交易日"
+    previous_flow_label = f"前一交易日 {previous_date[5:]}" if len(previous_date) >= 10 else "前一交易日"
     has_yesterday_flow = any(
-        g.get("yesterday_sample_turnover_share_delta_pp") is not None for g in groups
+        g.get("yesterday_market_turnover_share_delta_pp") is not None for g in groups
     )
-    flow_options = ["今日", "昨日"] if has_yesterday_flow else ["今日"]
+    flow_options = [latest_flow_label, previous_flow_label] if has_yesterday_flow else [latest_flow_label]
     flow_day = st.radio(
-        "資金流向日期",
+        "資金流向資料日期（採最新已完成交易日，非日曆日）",
         flow_options,
         horizontal=True,
-        key="rotation_published_flow_day",
+        key="rotation_published_flow_day_v2",
     )
-    if flow_day == "昨日":
-        flow_delta_key = "yesterday_sample_turnover_share_delta_pp"
-        flow_share_key = "yesterday_sample_turnover_share_pct"
-        flow_date_label = payload.get("previous_data_asof") or "前一交易日"
-        flow_compare_label = payload.get("previous_previous_data_asof") or "再前一交易日"
+    if flow_day == previous_flow_label and has_yesterday_flow:
+        flow_delta_key = "yesterday_market_turnover_share_delta_pp"
+        flow_share_key = "yesterday_market_turnover_share_pct"
+        flow_date_label = previous_date or "前一交易日"
+        flow_compare_label = previous_previous_date or "再前一交易日"
     else:
-        flow_delta_key = "sample_turnover_share_delta_pp"
-        flow_share_key = "sample_turnover_share_pct"
+        flow_delta_key = "market_turnover_share_delta_pp"
+        flow_share_key = "market_turnover_share_pct"
         flow_date_label = asof
-        flow_compare_label = payload.get("previous_data_asof") or "前一交易日"
+        flow_compare_label = previous_date or "前一交易日"
 
     flow_rows = []
     for group in groups:
@@ -2218,7 +2222,11 @@ def _render_published_rotation(payload: dict) -> None:
         })
     flow_rows.sort(key=lambda row: row["delta"], reverse=True)
     if not flow_rows:
-        st.info("這份產業快照尚無資金流向資料。請執行一次最新版 run_industry_rotation_update.py --force 產生資料。")
+        st.info(
+            "這份快照尚未有完整的上市＋上櫃全市場成交值分母，故不顯示資金流向排名。"
+            "請在本機執行最新版 run_industry_rotation_update.py --force，成功後發布新的 JSON；"
+            "不再用樣本股票總成交值作分母，以免因追蹤股票組成而把記憶體等大型分類誤排為第一。"
+        )
     else:
         flow_colors = [
             "#c62828" if row["delta"] > 0 else "#16803c" if row["delta"] < 0 else "#94a3b8"
@@ -2258,8 +2266,8 @@ def _render_published_rotation(payload: dict) -> None:
         )
         st.caption(
             f"資料日期：{flow_date_label}；比較基準：{flow_compare_label}。"
-            "紅色代表本頁樣本成交值占比增加，綠色代表占比下降。"
-            "這是代表股樣本中的成交值占比變化，不等同全市場真實資金流入／流出或法人買賣超。"
+            "紅色代表主題代表股成交值占全市場比例增加，綠色代表比例下降。"
+            "此為成交值占比的相對變化，不等同真正資金淨流入／流出或法人買賣超。"
         )
 
     st.markdown('<div class="feature-section-title">02｜產業輪動圖</div>', unsafe_allow_html=True)
@@ -2309,7 +2317,7 @@ def _render_published_rotation(payload: dict) -> None:
     st.markdown('<div class="feature-section-title">02｜產業報酬與輪動狀態</div>', unsafe_allow_html=True)
     fields = {"近 20 日": "return_20d", "近 5 日": "return_5d", "今日": "today_return",
               "相對強弱": "relative_strength", "相對動能": "relative_momentum",
-              "資金流向": "sample_turnover_share_delta_pp"}
+              "資金流向": "market_turnover_share_delta_pp"}
     field = fields[sort_by]
     table_groups = [g for g in groups if not selected or g.get("name") in selected]
     table_groups.sort(key=lambda g: g.get(field) if g.get(field) is not None else -999999, reverse=True)
@@ -2318,8 +2326,8 @@ def _render_published_rotation(payload: dict) -> None:
         return f"{float(value):+.2f}%" if value is not None and np.isfinite(float(value)) else "—"
     table_rows = []
     for g in table_groups:
-        share = g.get("sample_turnover_share_pct")
-        delta = g.get("sample_turnover_share_delta_pp")
+        share = g.get("market_turnover_share_pct")
+        delta = g.get("market_turnover_share_delta_pp")
         rs, momentum = g.get("relative_strength"), g.get("relative_momentum")
         table_rows.append({
             "產業主題": rotation_label(g.get("name", "")),
@@ -2330,7 +2338,7 @@ def _render_published_rotation(payload: dict) -> None:
             "60 日": pct(g, "return_60d"), "今年以來": pct(g, "return_ytd"),
             "上漲／下跌": f"{g.get('rising', 0)}/{g.get('falling', 0)}",
             "52 週新高": g.get("year_high_count", 0),
-            "樣本成交值占比": f"{float(share):.1f}%" if share is not None else "—",
+            "成交值占比": f"{float(share):.1f}%" if share is not None else "—",
             "資金流向": f"{float(delta):+.2f} pp" if delta is not None else "—",
             "RS": f"{float(rs):.1f}" if rs is not None else "—",
             "動能": f"{float(momentum):.1f}" if momentum is not None else "—",
