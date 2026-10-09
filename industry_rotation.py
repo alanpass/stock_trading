@@ -216,25 +216,98 @@ def _fetch_twse_market_turnover_day(session: requests.Session, trade_date: pd.Ti
 
 
 def _fetch_tpex_market_turnover_month(session: requests.Session, month: pd.Timestamp) -> dict[str, float]:
-    """抓取櫃買中心指定月份的每日成交金額（JSON 月報）。"""
+    """抓取櫃買中心指定月份的每日成交金額；支援官方中英文及 JSON/CSV/HTML 輸出。"""
+    import io
+
     roc_year = int(month.year) - 1911
-    params = {"l": "zh-tw", "d": f"{roc_year}/{month.month:02d}", "s": "0,asc,0", "o": "json"}
-    response = session.get(TPEX_MONTHLY_MARKET_URL, params=params, timeout=30)
-    response.raise_for_status()
-    payload = response.json()
-    rows = payload.get("aaData", []) if isinstance(payload, dict) else []
+    month_texts = [
+        ("zh-tw", f"{roc_year}/{month.month:02d}"),
+        ("en-us", f"{month.year}/{month.month:02d}"),
+    ]
     output: dict[str, float] = {}
-    for row in rows or []:
-        if not isinstance(row, (list, tuple)) or len(row) < 3:
-            continue
-        dt = _parse_twse_date(row[0])
-        value = _parse_number(row[2])
+    diagnostics: list[str] = []
+
+    def add_row(row: Any) -> None:
+        if isinstance(row, dict):
+            lowered = {str(k).strip().lower(): v for k, v in row.items()}
+            raw_date = next((v for k, v in lowered.items() if k in {"日期", "資料日期", "date", "trade_date"}), None)
+            raw_value = next((v for k, v in lowered.items() if "成交金額" in k or "tradevalue" in k or "turnover" in k), None)
+        elif isinstance(row, (list, tuple, np.ndarray, pd.Series)) and len(row) >= 3:
+            raw_date, raw_value = row[0], row[2]
+        else:
+            return
+        dt = _parse_twse_date(raw_date)
+        value = _parse_number(raw_value)
         if pd.notna(dt) and np.isfinite(value) and value > 0:
             output[pd.Timestamp(dt).strftime("%Y-%m-%d")] = float(value)
-    if not output:
-        raise RuntimeError(f"TPEx {month.year}-{month.month:02d} 沒有可用的每日市場成交金額")
-    return output
 
+    def harvest_json(payload: Any) -> None:
+        if isinstance(payload, dict):
+            # TPEx 官方既有介面使用 aaData；也容忍其餘常見的資料鍵。
+            for key in ("aaData", "data", "rows", "items", "result"):
+                rows = payload.get(key)
+                if isinstance(rows, list):
+                    for row in rows:
+                        add_row(row)
+            # 新舊格式偶爾會把表格包在 tables 裡。
+            for table in payload.get("tables", []) if isinstance(payload.get("tables"), list) else []:
+                if not isinstance(table, dict):
+                    continue
+                rows = table.get("data", []) or table.get("aaData", []) or []
+                for row in rows:
+                    add_row(row)
+        elif isinstance(payload, list):
+            for row in payload:
+                add_row(row)
+
+    for language, date_value in month_texts:
+        common_params = {"l": language, "d": date_value, "s": "0,asc,0"}
+        # 先用 JSON；若官方回傳 schema 改版／空資料，再試 CSV 和 HTML 輸出。
+        for output_format in ("json", "csv", "htm"):
+            params = {**common_params, "o": output_format}
+            try:
+                response = session.get(TPEX_MONTHLY_MARKET_URL, params=params, timeout=30)
+                response.raise_for_status()
+                content = response.text.lstrip("\\ufeff\\r\\n\\t ")
+                if output_format == "json":
+                    try:
+                        harvest_json(response.json())
+                    except (ValueError, json.JSONDecodeError) as exc:
+                        diagnostics.append(f"{language}/json: 回應不是有效 JSON ({type(exc).__name__})")
+                elif output_format == "csv":
+                    try:
+                        frame = pd.read_csv(io.StringIO(content), header=None, dtype=str)
+                        for row in frame.itertuples(index=False, name=None):
+                            add_row(row)
+                    except Exception as exc:
+                        diagnostics.append(f"{language}/csv: {type(exc).__name__}: {exc}")
+                else:
+                    try:
+                        for frame in pd.read_html(io.StringIO(content), header=None):
+                            for row in frame.itertuples(index=False, name=None):
+                                add_row(row)
+                    except Exception as exc:
+                        diagnostics.append(f"{language}/html: {type(exc).__name__}: {exc}")
+                # 成交日期限定本月，避免回應含表頭或其他期間資料。
+                for date_key in list(output):
+                    if not date_key.startswith(pd.Timestamp(month).strftime("%Y-%m-")):
+                        output.pop(date_key, None)
+                if output:
+                    return output
+                diagnostics.append(
+                    f"{language}/{output_format}: HTTP {response.status_code}, "
+                    f"content-type={response.headers.get('Content-Type', 'unknown')}, "
+                    f"bytes={len(response.content)}"
+                )
+            except Exception as exc:
+                diagnostics.append(f"{language}/{output_format}: {type(exc).__name__}: {exc}")
+        time.sleep(0.5)
+
+    details = "；".join(diagnostics[-6:])
+    raise RuntimeError(
+        f"TPEx {month.year}-{month.month:02d} 沒有可解析的每日成交金額"
+        + (f"；診斷：{details}" if details else "")
+    )
 
 def _load_market_turnover_totals(base_dir: Path, trade_dates: pd.Series | pd.DatetimeIndex,
                                  errors: list[str] | None = None) -> dict[str, float]:
