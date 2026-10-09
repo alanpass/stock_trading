@@ -244,12 +244,30 @@ def main() -> int:
                 return 7
 
             write_line(log, "PUBLISH_START=publish_research_data.py")
+            # 使用者層級的 GITHUB_TOKEN 有時不會進入 Task Scheduler 的環境區塊；
+            # 發布時才讀取 HKCU\Environment 作為備援，且不把 Token 寫入 log。
+            publish_env = env.copy()
+            if os.name == "nt" and not (publish_env.get("GITHUB_TOKEN") or publish_env.get("GH_TOKEN")):
+                try:
+                    import winreg
+                    with winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Environment") as env_key:
+                        for token_name in ("GITHUB_TOKEN", "GH_TOKEN"):
+                            try:
+                                token_value, _ = winreg.QueryValueEx(env_key, token_name)
+                                if token_value:
+                                    publish_env[token_name] = str(token_value)
+                                    break
+                            except FileNotFoundError:
+                                continue
+                except Exception:
+                    pass
+
             try:
                 publish_timeout = int(os.getenv("GITHUB_PUBLISH_TIMEOUT", "180"))
                 publish_proc = subprocess.run(
                     [sys.executable, "-u", str(publisher)],
                     cwd=str(BASE),
-                    env=env,
+                    env=publish_env,
                     text=True,
                     encoding="utf-8",
                     errors="replace",
