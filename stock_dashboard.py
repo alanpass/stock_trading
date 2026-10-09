@@ -1555,6 +1555,8 @@ def _render_news_item(item: dict, expanded: bool = False) -> None:
 
 
 def render_finance_workspace() -> None:
+    # 財經頁在瀏覽器開啟期間每分鐘自動 rerun；180 秒資料快取到期後會重新向 GitHub 取最新 JSON。
+    st_autorefresh(interval=60_000, key="finance_data_auto_refresh")
     st.markdown(
         '<div class="content-heading"><div class="eyebrow">DAILY FINANCE</div><h1>財經資訊</h1></div>',
         unsafe_allow_html=True,
