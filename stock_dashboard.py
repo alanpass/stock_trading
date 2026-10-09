@@ -28,6 +28,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
+from plotly.subplots import make_subplots
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
@@ -2309,6 +2310,7 @@ def render_trend():
             title, x, y = f"{period}收盤價", d.date, d.close
         fig = go.Figure(go.Scatter(x=x, y=y, mode="lines", name="價格"))
         fig.update_layout(height=400, margin=dict(l=20,r=20,t=45,b=20), title=title, xaxis_title="時間", yaxis_title="價格")
+        fig.update_xaxes(type="category", categoryorder="trace")
         st.plotly_chart(fig, use_container_width=True, key=f"trend_{selected}_{period}")
     except Exception as e:
         st.error(f"股價趨勢資料取得失敗：{e}")
@@ -2317,31 +2319,198 @@ def render_trend():
 # Technical K
 # ============================================================
 def render_kline():
+    """互動式技術 K 線：交易日等距排列、價格與成交量共用時間軸。"""
     selected = st.session_state.selected
     st.subheader("技術 K 線")
-    k_period = st.radio("K線週期", ["日K", "當日 5 分K", "當日 30 分K", "當日 60 分K"], horizontal=True, key="technical_k_period")
+    k_period = st.radio(
+        "K 線週期",
+        ["日K", "當日 5 分K", "當日 30 分K", "當日 60 分K"],
+        horizontal=True,
+        key="technical_k_period",
+    )
+
+    # 日 K 支援快捷選擇歷史範圍；只取得使用者目前選取的區間，避免圖表塞滿多年資料。
+    period_days = {"3 個月": 100, "6 個月": 210, "1 年": 420, "2 年": 800, "5 年": 1850}
+    if k_period == "日K":
+        control_col, reset_col = st.columns([5, 1])
+        with control_col:
+            history_period = st.radio(
+                "顯示期間",
+                list(period_days.keys()),
+                index=1,
+                horizontal=True,
+                key=f"technical_history_period_{selected}",
+            )
+    else:
+        history_period = "當日"
+        control_col, reset_col = st.columns([5, 1])
+        with control_col:
+            st.caption("盤中 K 線顯示最近可用交易日；可縮放查看細節。")
+
+    reset_state_key = f"technical_chart_reset_version_{selected}_{k_period}"
+    with reset_col:
+        st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
+        if st.button("回到最新", key=f"technical_reset_latest_{selected}_{k_period}", help="重設圖表範圍，回到此期間的最新資料"):
+            st.session_state[reset_state_key] = int(st.session_state.get(reset_state_key, 0)) + 1
+    reset_version = int(st.session_state.get(reset_state_key, 0))
+
     try:
         if k_period == "日K":
-            d = get_history(selected, 180); title = "日 K 線"
+            d = get_history(selected, period_days[history_period])
+            title = f"{selected}｜日 K 線（{history_period}）"
         else:
-            tf = {"當日 5 分K":"5", "當日 30 分K":"30", "當日 60 分K":"60"}[k_period]
+            tf = {"當日 5 分K": "5", "當日 30 分K": "30", "當日 60 分K": "60"}[k_period]
             if is_market_open_now():
                 d = normalize_intraday(get_intraday(selected, tf))
             else:
                 prev = latest_trading_date(selected)
-                d = pd.DataFrame() if prev is None else normalize_intraday(client.historical_candles(selected, prev, prev, tf))
+                d = pd.DataFrame() if prev is None else normalize_intraday(
+                    client.historical_candles(selected, prev, prev, tf)
+                )
             day_label = pd.Timestamp(d.date.iloc[-1]).strftime("%Y-%m-%d") if not d.empty else ""
-            title = f"{day_label} {tf} 分鐘 K 線"
-        if d.empty: raise RuntimeError("目前無有效 K 線資料")
-        fig = go.Figure(go.Candlestick(x=d.date, open=d.open, high=d.high, low=d.low, close=d.close,
-                                        name="K線", increasing_line_color="#ef4444", decreasing_line_color="#10b981"))
-        if len(d) >= 5: fig.add_trace(go.Scatter(x=d.date, y=d.close.rolling(5).mean(), name="MA5", mode="lines"))
-        if len(d) >= 20: fig.add_trace(go.Scatter(x=d.date, y=d.close.rolling(20).mean(), name="MA20", mode="lines"))
-        if len(d) >= 60: fig.add_trace(go.Scatter(x=d.date, y=d.close.rolling(60).mean(), name="MA60", mode="lines"))
-        fig.update_layout(height=580, title=title, xaxis_rangeslider_visible=False, margin=dict(l=20,r=20,t=45,b=20), yaxis_title="價格")
-        st.plotly_chart(fig, use_container_width=True, key=f"kline_{selected}_{k_period}")
-        vf = go.Figure(go.Bar(x=d.date, y=d.volume, name="成交量")); vf.update_layout(height=220, title="成交量", margin=dict(l=20,r=20,t=40,b=20))
-        st.plotly_chart(vf, use_container_width=True, key=f"vol_{selected}_{k_period}")
+            title = f"{selected}｜{day_label} {tf} 分鐘 K 線"
+
+        if d.empty:
+            raise RuntimeError("目前沒有可用的 K 線資料")
+
+        # 清除真正無效的 OHLC 資料，並移除重複時間；成交量缺值視為 0。
+        d = d.copy()
+        d["date"] = pd.to_datetime(d["date"], errors="coerce")
+        for col in ["open", "high", "low", "close", "volume"]:
+            if col in d.columns:
+                d[col] = pd.to_numeric(d[col], errors="coerce")
+        d = (
+            d.dropna(subset=["date", "open", "high", "low", "close"])
+             .drop_duplicates(subset=["date"], keep="last")
+             .sort_values("date")
+             .reset_index(drop=True)
+        )
+        if d.empty:
+            raise RuntimeError("K 線資料中的開、高、低、收欄位皆無有效數值")
+        if "volume" not in d.columns:
+            d["volume"] = 0
+        d["volume"] = d["volume"].fillna(0).clip(lower=0)
+
+        # 使用類別軸，讓每根有效 K 棒等距排列；週末、國定假日及其他無 K 棒日期不再留下空白。
+        if k_period == "日K":
+            chart_x = d["date"].dt.strftime("%Y-%m-%d")
+        elif d["date"].dt.date.nunique() > 1:
+            chart_x = d["date"].dt.strftime("%m-%d %H:%M")
+        else:
+            chart_x = d["date"].dt.strftime("%H:%M")
+        chart_x = chart_x.astype(str).tolist()
+        d["_chart_x"] = chart_x
+
+        # 均線可切換；較長均線在資料筆數不足時會自然延後出現。
+        ma_specs = [("MA5", 5, True), ("MA10", 10, False), ("MA20", 20, True),
+                    ("MA60", 60, True), ("MA120", 120, False), ("MA240", 240, False)]
+        ma_cols = st.columns(6)
+        enabled_ma = {}
+        for col, (label, window, default_on) in zip(ma_cols, ma_specs):
+            with col:
+                enabled_ma[window] = st.checkbox(
+                    label,
+                    value=default_on,
+                    key=f"technical_ma_{selected}_{k_period}_{history_period}_{label}",
+                )
+
+        fig = make_subplots(
+            rows=2,
+            cols=1,
+            shared_xaxes=True,
+            vertical_spacing=0.035,
+            row_heights=[0.76, 0.24],
+            subplot_titles=("價格與移動平均線", "成交量"),
+        )
+        fig.add_trace(
+            go.Candlestick(
+                x=chart_x,
+                open=d["open"],
+                high=d["high"],
+                low=d["low"],
+                close=d["close"],
+                name="K 線",
+                increasing_line_color="#ef4444",
+                decreasing_line_color="#10b981",
+                increasing_fillcolor="#ef4444",
+                decreasing_fillcolor="#10b981",
+            ),
+            row=1,
+            col=1,
+        )
+
+        ma_colors = {5: "#2563eb", 10: "#f59e0b", 20: "#8b5cf6", 60: "#0891b2", 120: "#64748b", 240: "#a16207"}
+        for label, window, _default_on in ma_specs:
+            if enabled_ma.get(window):
+                ma = d["close"].rolling(window=window, min_periods=window).mean()
+                fig.add_trace(
+                    go.Scatter(
+                        x=chart_x,
+                        y=ma,
+                        mode="lines",
+                        name=label,
+                        line=dict(width=1.4, color=ma_colors[window]),
+                        connectgaps=False,
+                    ),
+                    row=1,
+                    col=1,
+                )
+
+        volume_colors = [
+            "#ef4444" if close >= open_ else "#10b981"
+            for open_, close in zip(d["open"], d["close"])
+        ]
+        fig.add_trace(
+            go.Bar(
+                x=chart_x,
+                y=d["volume"],
+                name="成交量",
+                marker_color=volume_colors,
+                hovertemplate="%{x}<br>成交量 %{y:,.0f}<extra></extra>",
+            ),
+            row=2,
+            col=1,
+        )
+
+        fig.update_layout(
+            height=680,
+            title=dict(text=title, x=0.01, xanchor="left"),
+            margin=dict(l=18, r=24, t=65, b=28),
+            hovermode="x unified",
+            dragmode="pan",
+            showlegend=True,
+            legend=dict(orientation="h", yanchor="bottom", y=1.01, xanchor="left", x=0),
+            uirevision=f"{selected}-{k_period}-{history_period}-{reset_version}",
+            bargap=0.18,
+        )
+        # 類別時間軸不會把非交易日當成不存在價格的空白區域。
+        for row_no in (1, 2):
+            fig.update_xaxes(
+                type="category",
+                categoryorder="array",
+                categoryarray=chart_x,
+                showgrid=True,
+                gridcolor="#e6eaee",
+                rangeslider_visible=False,
+                row=row_no,
+                col=1,
+            )
+        fig.update_yaxes(title_text="價格", showgrid=True, gridcolor="#e6eaee", row=1, col=1)
+        fig.update_yaxes(title_text="成交量", showgrid=True, gridcolor="#e6eaee", row=2, col=1)
+        fig.update_xaxes(title_text="交易時間（僅顯示有效 K 棒）", row=2, col=1)
+
+        st.caption("操作：滑鼠滾輪或觸控板／雙指縮放、按住拖曳平移、點兩下重設；也可使用「回到最新」。非交易日不占用圖表空間。")
+        st.plotly_chart(
+            fig,
+            use_container_width=True,
+            key=f"kline_{selected}_{k_period}_{history_period}_{reset_version}",
+            config={
+                "scrollZoom": True,
+                "doubleClick": "reset",
+                "displaylogo": False,
+                "responsive": True,
+            },
+        )
     except Exception as e:
         st.error(f"{k_period} 資料取得失敗：{e}")
 
