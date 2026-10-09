@@ -90,6 +90,13 @@ if ([string]::IsNullOrWhiteSpace($env:USERDOMAIN)) {
 Write-Host "User    : $CurrentUser"
 Write-Host ""
 
+foreach ($task in $Tasks) {
+    if (-not (Test-Path -LiteralPath $task.Script)) {
+        Write-Host "ERROR: Script not found: $($task.Script)" -ForegroundColor Red
+        exit 1
+    }
+}
+
 # Remove the legacy standalone crawler task; the 23:00 finance job now runs
 # the full crawler + AI summary + GitHub publication pipeline.
 $LegacyTaskName = "AI_TW_Stock_CNYES_Nightly_News"
@@ -99,12 +106,6 @@ if ($null -ne $LegacyTask) {
     Write-Host "Removed legacy task: $LegacyTaskName"
 }
 
-foreach ($task in $Tasks) {
-    if (-not (Test-Path -LiteralPath $task.Script)) {
-        Write-Host "ERROR: Script not found: $($task.Script)" -ForegroundColor Red
-        exit 1
-    }
-}
 
 # Important:
 # - WakeToRun = enabled
