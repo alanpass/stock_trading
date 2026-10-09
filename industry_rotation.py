@@ -639,8 +639,9 @@ def update_industry_rotation(base_dir: str | Path, force: bool = False, publish:
     base = Path(base_dir).resolve()
     now = now_taipei()
     today = pd.Timestamp(now.date())
+    trading_today = is_twse_trading_day(now, base)
     if not force:
-        if not is_twse_trading_day(now, base):
+        if not trading_today:
             return {"ok": True, "skipped": True, "reason": "今天不是台股交易日", "date": today.strftime("%Y-%m-%d")}
         if now.time() < dt_time(15, 10):
             return {"ok": True, "skipped": True, "reason": "尚未到排程時間 15:10", "date": today.strftime("%Y-%m-%d")}
@@ -648,23 +649,32 @@ def update_industry_rotation(base_dir: str | Path, force: bool = False, publish:
     client = FugleClient()
     errors: list[str] = []
     taiex = pd.DataFrame()
-    for attempt in range(6):
-        try:
-            taiex = _load_taiex_history(base, today)
-        except Exception as exc:
-            errors.append(f"TAIEX 更新失敗：{type(exc).__name__}: {exc}")
-            taiex = pd.DataFrame()
-        if not taiex.empty and pd.to_datetime(taiex["date"], errors="coerce").max().normalize() == today:
-            break
-        if attempt < 5:
-            print(f"官方加權指數尚未更新到 {today.date()}，60 秒後重試（{attempt + 1}/6）", flush=True)
-            time.sleep(60)
 
-    if taiex.empty or pd.to_datetime(taiex["date"], errors="coerce").max().normalize() != today:
-        raise RuntimeError(
-            f"無法確認官方加權指數已更新至 {today.date()}；不覆蓋上一份成功資料。"
-            + ("；" + "；".join(errors[-3:]) if errors else "")
-        )
+    # 排程執行時只接受今日官方資料；手動 --force 在週末／休市日可用最近交易日資料初始化。
+    if force and not trading_today:
+        taiex = _load_taiex_history(base, today)
+        if taiex.empty:
+            raise RuntimeError("無法取得 TWSE 加權指數歷史資料；沒有覆蓋上一份成功資料。")
+        target_date = pd.to_datetime(taiex["date"], errors="coerce").max().normalize()
+    else:
+        target_date = today
+        for attempt in range(6):
+            try:
+                taiex = _load_taiex_history(base, today)
+            except Exception as exc:
+                errors.append(f"TAIEX 更新失敗：{type(exc).__name__}: {exc}")
+                taiex = pd.DataFrame()
+            if not taiex.empty and pd.to_datetime(taiex["date"], errors="coerce").max().normalize() == target_date:
+                break
+            if attempt < 5:
+                print(f"官方加權指數尚未更新到 {target_date.date()}，60 秒後重試（{attempt + 1}/6）", flush=True)
+                time.sleep(60)
+
+        if taiex.empty or pd.to_datetime(taiex["date"], errors="coerce").max().normalize() != target_date:
+            raise RuntimeError(
+                f"無法確認官方加權指數已更新至 {target_date.date()}；不覆蓋上一份成功資料。"
+                + ("；" + "；".join(errors[-3:]) if errors else "")
+            )
 
     symbols = sorted(set(code for codes in ROTATION_THEMES.values() for code in codes))
     history_map: dict[str, pd.DataFrame] = {}
@@ -681,7 +691,7 @@ def update_industry_rotation(base_dir: str | Path, force: bool = False, publish:
         log.write(f"[{now.isoformat(timespec='seconds')}] start symbols={len(symbols)}\n")
         for index, symbol in enumerate(symbols, start=1):
             try:
-                history = _load_symbol_history(client, base, symbol, today)
+                history = _load_symbol_history(client, base, symbol, target_date)
                 if not history.empty:
                     history_map[symbol] = history
             except Exception as exc:
