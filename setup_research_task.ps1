@@ -75,7 +75,7 @@ $Tasks = @(
 
 Write-Host ""
 Write-Host "============================================================"
-Write-Host "AI TW Stock Research Assistant - Scheduler Setup v9.2"
+Write-Host "AI TW Stock Research Assistant - Scheduler Setup v10.0"
 Write-Host "============================================================"
 Write-Host ""
 Write-Host "Project : $ProjectDir"
