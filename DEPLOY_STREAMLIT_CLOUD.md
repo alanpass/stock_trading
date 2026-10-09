@@ -59,15 +59,23 @@ FUGLE_API_KEY = "你的 Fugle API Key"
 
 ## 7. Windows 排程
 
-Windows 自動排程（台灣時間）：
+`setup_research_task.ps1` 現在預設：
 
-- 08:10、11:00、13:30、16:00、18:00、23:00：財經新聞／法說會更新、AI 摘要、驗證資料，成功後自動發布 `finance_info_public.json` 到 GitHub 的 `finance-data` 分支。
-- 08:30：AI 台股早報。
-- 14:30：AI 台股盤後研究。
+- 08:30：AI 台股早報
+- 14:30：AI 台股盤後研究
+- 23:00：CNYES 當日新聞爬蟲
 
-財經排程統一執行 `python scheduled_job_runner.py finance`。Runner 只有在本機資料驗證成功、且 GitHub 發布成功後，才會將該次工作記錄為成功。網站財經頁每 60 秒 rerun 一次，資料快取 180 秒；有新發布資料時，開啟中的網站通常會在約 3 分鐘內更新。
+三者都使用 `WakeToRun`，但**不使用 `StartWhenAvailable`**。
 
-原本的喚醒規則仍保留：使用 `WakeToRun`，不啟用 `StartWhenAvailable`，不新增登入時立即補跑的觸發器。因此電腦睡眠時可嘗試喚醒；完全關機時不會執行，錯過的排程也不會在登入後立即補跑。
+因此：
+
+- 電腦睡眠／休眠：Windows 可嘗試在指定時間喚醒並執行。
+- 完全關機：指定時間不可能執行 Python。
+- 開機／登入：不會因錯過時間而立即補跑。
+- 若開機時已錯過當日指定時間：等待下一個每日時間。
+
+這正是「排程記得住，但開機不直接啟動，等到指定時間才開始」的行為。
+
 ## 8. 建立排程
 
 PowerShell：
