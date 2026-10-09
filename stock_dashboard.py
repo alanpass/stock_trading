@@ -1892,15 +1892,21 @@ def render_site_navigation() -> str:
 
 
 def _render_footer() -> None:
-    """每一頁固定放頁尾；外觀依設計稿採深色、雙欄、細紅色點綴。"""
+    """每一頁固定放頁尾，並顯示資料來源、新聞著作權與投資風險聲明。"""
     st.markdown('''
     <footer translate="no" class="site-footer"><div class="footer-inner"><div class="footer-contact">
       <div class="footer-title">台股即時互動式分析系統</div><p>股票即時行情、操作策略、未來分析與每日財經資訊。</p>
       <div class="footer-small">電子郵件：a1113359@mail.nuk.edu.tw</div><div class="footer-small">聯絡電話：+886-907-611-728</div>
     </div><div class="footer-form-note"><div class="footer-title">訂閱每日財經資訊</div>
       <p>輸入電子郵件後，可由訂閱系統留下需求。</p><a href="?section=subscribe" target="_self">前往訂閱系統 →</a>
-    </div></div><div class="footer-bottom">© 2026 台股即時互動式分析系統</div></footer>''', unsafe_allow_html=True)
-
+    </div></div>
+    <div class="footer-disclaimer" style="border-top:1px solid rgba(255,255,255,.08);padding:18px clamp(18px,4vw,42px) 16px;color:#a9a9a9;font-size:11px;line-height:1.9;overflow-wrap:anywhere;">
+      <div style="color:#d68f8f;font-size:12px;font-weight:700;letter-spacing:.3px;margin-bottom:5px;">資料來源與使用聲明</div>
+      <p style="margin:0 0 4px;">資料來源：Fugle、鉅亨網等公開資訊來源。</p>
+      <p style="margin:0 0 4px;">新聞以標題聯播方式呈現，著作權屬原媒體與原作者所有。本網站不重製、不儲存新聞內文、不轉載全文，亦不主張任何權利。</p>
+      <p style="margin:0;">本站資料僅供參考，不構成投資建議。</p>
+    </div>
+    <div class="footer-bottom">© 2026 台股即時互動式分析系統</div></footer>''', unsafe_allow_html=True)
 
 def render_strategy_workspace() -> None:
     """操作策略頁：維持文件的功能順序；各功能節點使用淺色交錯背景，形成同一套網站視覺。"""
