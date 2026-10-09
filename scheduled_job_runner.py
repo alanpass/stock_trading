@@ -231,7 +231,70 @@ def main() -> int:
             write_line(log, f"END={datetime.now(TAIPEI).isoformat(timespec='seconds')}")
             return 6
 
-        write_status(job, "success", message=message)
+        # 財經資料驗證成功後，自動發布精簡 JSON 到 GitHub。
+        # 只有發布成功才回報整條流程成功，避免誤以為網站已同步。
+        if job in {"finance", "cnyes"}:
+            publisher = BASE / "publish_research_data.py"
+            if not publisher.exists():
+                message = f"Finance publisher missing: {publisher}"
+                write_status(job, "publish_failed", message=message)
+                write_line(log, f"PUBLISH_FAILED={message}")
+                write_line(log, "FINAL_RETURN_CODE=7")
+                write_line(log, f"END={datetime.now(TAIPEI).isoformat(timespec='seconds')}")
+                return 7
+
+            write_line(log, "PUBLISH_START=publish_research_data.py")
+            try:
+                publish_timeout = int(os.getenv("GITHUB_PUBLISH_TIMEOUT", "180"))
+                publish_proc = subprocess.run(
+                    [sys.executable, "-u", str(publisher)],
+                    cwd=str(BASE),
+                    env=env,
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
+                    capture_output=True,
+                    timeout=publish_timeout,
+                    check=False,
+                )
+            except subprocess.TimeoutExpired:
+                message = f"GitHub publish timed out after {publish_timeout}s"
+                write_status(job, "publish_failed", message=message)
+                write_line(log, f"PUBLISH_FAILED={message}")
+                write_line(log, "FINAL_RETURN_CODE=7")
+                write_line(log, f"END={datetime.now(TAIPEI).isoformat(timespec='seconds')}")
+                return 7
+            except Exception as exc:
+                message = f"GitHub publish exception: {type(exc).__name__}: {exc}"
+                write_status(job, "publish_failed", message=message)
+                write_line(log, f"PUBLISH_FAILED={message}")
+                write_line(log, "FINAL_RETURN_CODE=7")
+                write_line(log, f"END={datetime.now(TAIPEI).isoformat(timespec='seconds')}")
+                return 7
+
+            for output_line in (publish_proc.stdout or "").splitlines():
+                write_line(log, f"PUBLISH_STDOUT: {output_line}")
+                print(f"[PUBLISH] {output_line}", flush=True)
+            for error_line in (publish_proc.stderr or "").splitlines():
+                write_line(log, f"PUBLISH_STDERR: {error_line}")
+                print(f"[PUBLISH-ERR] {error_line}", flush=True)
+
+            if publish_proc.returncode != 0:
+                message = f"GitHub publisher exit code {publish_proc.returncode}"
+                write_status(
+                    job, "publish_failed",
+                    message=message,
+                    publish_return_code=publish_proc.returncode,
+                )
+                write_line(log, f"PUBLISH_FAILED={message}")
+                write_line(log, "FINAL_RETURN_CODE=7")
+                write_line(log, f"END={datetime.now(TAIPEI).isoformat(timespec='seconds')}")
+                return 7
+
+            write_line(log, "PUBLISH_SUCCESS=True")
+            write_status(job, "success", message=message, published=True)
+        else:
+            write_status(job, "success", message=message)
         write_line(log, "FINAL_RETURN_CODE=0")
         write_line(log, f"END={datetime.now(TAIPEI).isoformat(timespec='seconds')}")
         return 0
