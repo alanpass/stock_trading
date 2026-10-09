@@ -207,7 +207,7 @@ def _load_taiex_history(base: Path, end_date: pd.Timestamp) -> pd.DataFrame:
                 frames.append(part)
         except Exception as exc:
             errors.append(f"{month.strftime('%Y-%m')} TAIEX: {type(exc).__name__}: {exc}")
-        time.sleep(0.25)
+        time.sleep(3.0)  # 官方歷史指數端點降低請求頻率，避免短時間連續查詢遭拒。
 
     if not frames:
         return pd.DataFrame(columns=["date", "close"])
@@ -390,7 +390,7 @@ def build_rotation_payload(history_map: dict[str, pd.DataFrame], taiex: pd.DataF
             ytd = _return_between(close, asof, ytd_base.index[-1])
 
         last_252 = close.loc[close.index <= asof].tail(252)
-        year_high = bool(not last_252.empty and np.isfinite(at_asof) and at_asof >= float(last_252.max()) * 0.9995)
+        year_high = bool(len(last_252) >= 250 and np.isfinite(at_asof) and at_asof >= float(last_252.max()) * 0.9995)
         fresh = pd.notna(at_asof)
         member_data[code] = {
             "symbol": code,
@@ -699,7 +699,7 @@ def update_industry_rotation(base_dir: str | Path, force: bool = False, publish:
             if index % 10 == 0 or index == len(symbols):
                 log.write(f"[{now_taipei().isoformat(timespec='seconds')}] progress={index}/{len(symbols)} valid={len(history_map)}\n")
                 log.flush()
-            time.sleep(0.06)
+            time.sleep(0.15)
 
     payload = build_rotation_payload(history_map, taiex, names, generated_at=now_taipei())
     payload["errors"] = errors[:30]
