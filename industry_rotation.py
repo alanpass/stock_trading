@@ -866,10 +866,9 @@ def build_rotation_payload(history_map: dict[str, pd.DataFrame], taiex: pd.DataF
         "benchmark_close": round(benchmark_today, 2) if np.isfinite(benchmark_today) else None,
         "benchmark_change_1d": round(float(benchmark_change), 3) if np.isfinite(benchmark_change) else None,
         "is_trading_day": True,
-        "data_source": ["Fugle 歷史日 K", "臺灣證券交易所加權指數歷史資料", "TWSE＋TPEx 全市場日成交金額"],
-        "market_turnover_available_dates": sorted(market_turnover.keys()),
-        "method": "子產業代表股每日報酬等權平均；RRG 以族群指數相對加權指數正規化，RS 使用 50 日均值，動能比較 10 個交易日前。",
-        "turnover_method": "成交值占比＝主題代表股日K成交均價×成交量估算值加總 ÷ 同日上市（TWSE）＋上櫃（TPEx）全市場成交金額；資金流向＝成交值占比較前一交易日的百分點變化。同成分股可屬多個主題，這是成交值占比變化代理，不代表真實淨流入或法人買賣超；若官方全市場分母缺漏，該日不顯示流向。",
+        "data_source": ["Fugle 歷史日 K", "臺灣證券交易所加權指數歷史資料"],
+        "method": "子產業代表股每日漲跌幅算術平均建立族群漲跌觀察值；RRG 以族群指數相對加權指數正規化，RS 使用 50 日均值，動能比較 10 個交易日前。",
+        "turnover_method": "本頁已取消資金流向排名，改以族群代表股平均漲跌幅（%）比較；平均值為每檔有效代表股等權計算，不等同官方產業指數。",
         "tracked_unique_stocks": len(all_symbols),
         "fresh_stock_count": len(fresh_members),
         "up_group_count": sum(1 for g in groups if g["today_return"] is not None and g["today_return"] > 0),
@@ -1003,12 +1002,9 @@ def update_industry_rotation(base_dir: str | Path, force: bool = False, publish:
                 log.flush()
             time.sleep(0.15)
 
-    turnover_dates = pd.to_datetime(taiex["date"], errors="coerce").dropna().drop_duplicates().sort_values().tail(3)
-    market_turnover = _load_market_turnover_totals(base, turnover_dates, errors)
     payload = build_rotation_payload(
         history_map, taiex, names,
         generated_at=now_taipei(),
-        market_turnover=market_turnover,
     )
     payload["errors"] = errors[:30]
     # 至少需要有足夠主題提供今日有效資料，才發布這次快照。
