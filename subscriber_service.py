@@ -50,12 +50,51 @@ def _save_local(path: Path, rows: list[dict[str, Any]]) -> None:
     path.write_text(json.dumps(rows, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
 
 
+def _load_local_env_values(base: Path) -> dict[str, str]:
+    """讀取專案 .env 中的設定；系統環境變數仍具有更高優先權。
+
+    Streamlit Cloud 會由 stock_dashboard.py 將 st.secrets 載入環境變數；
+    Windows Task Scheduler 則不一定會繼承互動式 PowerShell 的臨時變數，
+    因此共享訂閱名單設定也必須能從專案 .env 讀取。
+    """
+    values: dict[str, str] = {}
+    path = base / ".env"
+    if not path.exists():
+        return values
+
+    try:
+        for raw_line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            key = key.strip()
+            value = value.strip()
+            if not key:
+                continue
+            if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+                value = value[1:-1]
+            values[key] = value
+    except Exception:
+        return {}
+
+    return values
+
+
+def _setting(base: Path, name: str) -> str:
+    """先讀系統環境變數，再回退至專案 .env。"""
+    value = os.getenv(name, "").strip()
+    if value:
+        return value
+    return _load_local_env_values(base).get(name, "").strip()
+
+
 def _remote_url(base: Path) -> str:
-    return os.getenv("SUBSCRIBER_SYNC_URL", "").strip()
+    return _setting(base, "SUBSCRIBER_SYNC_URL")
 
 
-def _remote_token() -> str:
-    return os.getenv("SUBSCRIBER_SYNC_TOKEN", "").strip()
+def _remote_token(base: Path) -> str:
+    return _setting(base, "SUBSCRIBER_SYNC_TOKEN")
 
 
 def _remote_headers() -> dict[str, str]:
@@ -65,7 +104,7 @@ def _remote_headers() -> dict[str, str]:
 def load_remote_subscribers(base: str | Path = ".") -> tuple[list[dict[str, Any]], str]:
     base = Path(base).resolve()
     url = _remote_url(base)
-    token = _remote_token()
+    token = _remote_token(base)
     if not url:
         return [], ""
     try:
@@ -192,7 +231,7 @@ def register_subscriber(
     if url:
         payload = {
             "action": "upsert",
-            "token": _remote_token(),
+            "token": _remote_token(base),
             "name": clean_name,
             "email": clean_email,
             "message": clean_message,
@@ -204,7 +243,7 @@ def register_subscriber(
         try:
             response = requests.post(
                 url,
-                params={"token": _remote_token()} if _remote_token() else None,
+                params={"token": _remote_token(base)} if _remote_token(base) else None,
                 headers=_remote_headers(),
                 data=json.dumps(payload, ensure_ascii=False),
                 timeout=20,
