@@ -2381,35 +2381,36 @@ def _render_published_rotation(payload: dict) -> None:
             hide_index=True,
         )
 
-        # 完整分類總覽列出每個主題對應的所有代表股，即使該股票當天沒有有效行情。
-        with st.expander("查看全部 27 個產業主題與成分股分類", expanded=False):
-            component_lookup = {}
-            for group_data in groups:
-                for item in group_data.get("components", []):
-                    if item.get("symbol") is not None:
-                        component_lookup[(str(group_data.get("name")), str(item.get("symbol")))] = item
-            categorized_rows = []
-            for group_name in by_name:
-                for symbol in ROTATION_THEMES.get(group_name, []):
-                    item = component_lookup.get((group_name, str(symbol)), {})
-                    categorized_rows.append({
-                        "產業主題": rotation_label(group_name),
-                        "代號": str(symbol),
-                        "名稱": item.get("name") or NAME_FALLBACKS.get(str(symbol), str(symbol)),
-                        "資料日期": item.get("data_date") or "尚無行情",
-                        "收盤價": item.get("close"),
-                        "今日": pct(item, "change_1d"),
-                        "5 日": pct(item, "return_5d"),
-                        "20 日": pct(item, "return_20d"),
-                        "成交量": item.get("volume"),
-                    })
-            category_df = pd.DataFrame(categorized_rows)
-            st.dataframe(
-                styled_frame(category_df, ["今日", "5 日", "20 日"]),
-                use_container_width=True,
-                hide_index=True,
-            )
-            st.caption("分類依代表股主要產品與供應鏈用途整理；同一檔股票可能屬於多個主題。『尚無行情』表示尚未取得可用日 K，不代表該股不屬於此類。")
+# 完整分類總覽列出每個主題對應的所有代表股，即使該股票當天沒有有效行情。
+    with st.expander("查看全部 27 個產業主題與成分股分類", expanded=False):
+        component_lookup = {}
+        for group_data in groups:
+            for item in group_data.get("components", []):
+                if item.get("symbol") is not None:
+                    component_lookup[(str(group_data.get("name")), str(item.get("symbol")))] = item
+        categorized_rows = []
+        for group_name in by_name:
+            for symbol in ROTATION_THEMES.get(group_name, []):
+                item = component_lookup.get((group_name, str(symbol)), {})
+                categorized_rows.append({
+                    "產業主題": rotation_label(group_name),
+                    "代號": str(symbol),
+                    "名稱": item.get("name") or NAME_FALLBACKS.get(str(symbol), str(symbol)),
+                    "資料日期": item.get("data_date") or "尚無行情",
+                    "收盤價": item.get("close"),
+                    "今日": pct(item, "change_1d"),
+                    "5 日": pct(item, "return_5d"),
+                    "20 日": pct(item, "return_20d"),
+                    "成交量": item.get("volume"),
+                })
+        category_df = pd.DataFrame(categorized_rows)
+        st.dataframe(
+            styled_frame(category_df, ["今日", "5 日", "20 日"]),
+            use_container_width=True,
+            hide_index=True,
+        )
+        st.caption("分類依代表股主要產品與供應鏈用途整理；同一檔股票可能屬於多個主題。『尚無行情』表示尚未取得可用日 K，不代表該股不屬於此類。")
+
 
     st.markdown('<div class="feature-section-title">06｜成分股漲跌前十</div>', unsafe_allow_html=True)
     upcol, downcol = st.columns(2)
