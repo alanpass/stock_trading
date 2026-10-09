@@ -26,6 +26,8 @@ TAIPEI = ZoneInfo("Asia/Taipei")
 GITHUB_REPO_DEFAULT = "alanpass/stock_trading"
 PUBLIC_REPO_PATH = "output/research_reports/industry_rotation_public.json"
 TAIEX_MONTHLY_URL = "https://www.twse.com.tw/rwd/zh/TAIEX/MI_5MINS_HIST"
+TWSE_DAILY_MARKET_URL = "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX"
+TPEX_MONTHLY_MARKET_URL = "https://www.tpex.org.tw/web/stock/aftertrading/daily_trading_index/st41_result.php"
 USER_AGENT = "Mozilla/5.0 TaiwanStockIndustryRotation/1.0"
 
 # 主題依主要產品與供應鏈用途分類，對齊參考產業輪動頁的 27 個子產業；不等同證交所官方產業別。
@@ -177,6 +179,161 @@ def _parse_twse_date(value: Any) -> pd.Timestamp:
         except ValueError:
             return pd.NaT
     return pd.to_datetime(text, errors="coerce")
+
+
+def _fetch_twse_market_turnover_day(session: requests.Session, trade_date: pd.Timestamp) -> float:
+    """查詢證交所指定交易日的全市場成交金額，成功才回傳正數。"""
+    params = {
+        "date": pd.Timestamp(trade_date).strftime("%Y%m%d"),
+        "type": "ALL",
+        "response": "json",
+    }
+    response = session.get(TWSE_DAILY_MARKET_URL, params=params, timeout=30)
+    response.raise_for_status()
+    payload = response.json()
+    tables = payload.get("tables", []) if isinstance(payload, dict) else []
+    for table in tables:
+        fields = [str(x).strip() for x in table.get("fields", [])]
+        if "證券代號" not in fields or "成交金額" not in fields:
+            continue
+        code_idx = fields.index("證券代號")
+        value_idx = fields.index("成交金額")
+        total = 0.0
+        rows = table.get("data", []) or []
+        for row in rows:
+            if len(row) <= max(code_idx, value_idx):
+                continue
+            code = str(row[code_idx]).strip()
+            # 只計入證券代號列，排除小計、總計等摘要列。
+            if not code or not any(ch.isdigit() for ch in code):
+                continue
+            value = _parse_number(row[value_idx])
+            if np.isfinite(value) and value > 0:
+                total += float(value)
+        if total > 0:
+            return total
+    raise RuntimeError(f"TWSE {pd.Timestamp(trade_date).date()} 全市場成交金額資料格式或內容不符")
+
+
+def _fetch_tpex_market_turnover_month(session: requests.Session, month: pd.Timestamp) -> dict[str, float]:
+    """抓取櫃買中心指定月份的每日成交金額（JSON 月報）。"""
+    roc_year = int(month.year) - 1911
+    params = {"l": "zh-tw", "d": f"{roc_year}/{month.month:02d}", "s": "0,asc,0", "o": "json"}
+    response = session.get(TPEX_MONTHLY_MARKET_URL, params=params, timeout=30)
+    response.raise_for_status()
+    payload = response.json()
+    rows = payload.get("aaData", []) if isinstance(payload, dict) else []
+    output: dict[str, float] = {}
+    for row in rows or []:
+        if not isinstance(row, (list, tuple)) or len(row) < 3:
+            continue
+        dt = _parse_twse_date(row[0])
+        value = _parse_number(row[2])
+        if pd.notna(dt) and np.isfinite(value) and value > 0:
+            output[pd.Timestamp(dt).strftime("%Y-%m-%d")] = float(value)
+    if not output:
+        raise RuntimeError(f"TPEx {month.year}-{month.month:02d} 沒有可用的每日市場成交金額")
+    return output
+
+
+def _load_market_turnover_totals(base_dir: Path, trade_dates: pd.Series | pd.DatetimeIndex,
+                                 errors: list[str] | None = None) -> dict[str, float]:
+    """快取上市＋上櫃全市場日成交金額；任何一邊缺值就不產生該日資金流向排名。"""
+    cache_path = base_dir / "data" / "rotation" / "market_turnover.csv"
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    columns = ["date", "twse_turnover", "tpex_turnover", "total_turnover"]
+    if cache_path.exists():
+        try:
+            cache = pd.read_csv(cache_path, dtype={"date": str})
+        except Exception:
+            cache = pd.DataFrame(columns=columns)
+    else:
+        cache = pd.DataFrame(columns=columns)
+    for col in columns:
+        if col not in cache.columns:
+            cache[col] = np.nan if col != "date" else ""
+    cache = cache[columns].copy()
+    cache["date"] = cache["date"].astype(str).str.slice(0, 10)
+    cache = cache.drop_duplicates("date", keep="last")
+    cache_map = {str(row["date"]): row for _, row in cache.iterrows()}
+
+    wanted = sorted({
+        pd.Timestamp(d).normalize().strftime("%Y-%m-%d")
+        for d in trade_dates
+        if pd.notna(pd.to_datetime(d, errors="coerce"))
+    })
+    session = requests.Session()
+    session.headers.update({"User-Agent": USER_AGENT, "Accept": "application/json,text/plain,*/*"})
+    changed = False
+
+    missing_twse = [
+        d for d in wanted
+        if not np.isfinite(_parse_number(cache_map.get(d, {}).get("twse_turnover", np.nan)))
+        or _parse_number(cache_map.get(d, {}).get("twse_turnover", np.nan)) <= 0
+    ]
+    for date_text in missing_twse:
+        try:
+            value = _fetch_twse_market_turnover_day(session, pd.Timestamp(date_text))
+            row = cache_map.get(date_text, {"date": date_text, "twse_turnover": np.nan,
+                                            "tpex_turnover": np.nan, "total_turnover": np.nan})
+            row["twse_turnover"] = value
+            cache_map[date_text] = row
+            changed = True
+        except Exception as exc:
+            if errors is not None:
+                errors.append(f"{date_text} TWSE 全市場成交值取得失敗：{type(exc).__name__}: {exc}")
+        # 官方證交所 API 有請求頻率限制，逐日查詢時保留間隔。
+        time.sleep(3.0)
+
+    missing_tpex = [
+        d for d in wanted
+        if not np.isfinite(_parse_number(cache_map.get(d, {}).get("tpex_turnover", np.nan)))
+        or _parse_number(cache_map.get(d, {}).get("tpex_turnover", np.nan)) <= 0
+    ]
+    by_month: dict[str, list[str]] = {}
+    for date_text in missing_tpex:
+        by_month.setdefault(date_text[:7], []).append(date_text)
+    for month_text, date_texts in by_month.items():
+        try:
+            month_map = _fetch_tpex_market_turnover_month(session, pd.Timestamp(month_text + "-01"))
+            for date_text in date_texts:
+                if date_text in month_map:
+                    row = cache_map.get(date_text, {"date": date_text, "twse_turnover": np.nan,
+                                                    "tpex_turnover": np.nan, "total_turnover": np.nan})
+                    row["tpex_turnover"] = month_map[date_text]
+                    cache_map[date_text] = row
+                    changed = True
+                elif errors is not None:
+                    errors.append(f"{date_text} TPEx 月報沒有該交易日成交值")
+        except Exception as exc:
+            if errors is not None:
+                errors.append(f"{month_text} TPEx 全市場成交值取得失敗：{type(exc).__name__}: {exc}")
+        time.sleep(0.8)
+
+    output: dict[str, float] = {}
+    for date_text in wanted:
+        row = cache_map.get(date_text, {})
+        twse_value = _parse_number(row.get("twse_turnover", np.nan))
+        tpex_value = _parse_number(row.get("tpex_turnover", np.nan))
+        total = float(twse_value + tpex_value) if np.isfinite(twse_value) and twse_value > 0 and np.isfinite(tpex_value) and tpex_value > 0 else np.nan
+        if np.isfinite(total) and total > 0:
+            row["date"] = date_text
+            row["total_turnover"] = total
+            cache_map[date_text] = row
+            output[date_text] = total
+
+    if changed or not cache_path.exists():
+        records = []
+        for date_text, row in sorted(cache_map.items()):
+            twse_value = _parse_number(row.get("twse_turnover", np.nan))
+            tpex_value = _parse_number(row.get("tpex_turnover", np.nan))
+            total = float(twse_value + tpex_value) if np.isfinite(twse_value) and twse_value > 0 and np.isfinite(tpex_value) and tpex_value > 0 else np.nan
+            records.append({"date": date_text,
+                            "twse_turnover": twse_value if np.isfinite(twse_value) else None,
+                            "tpex_turnover": tpex_value if np.isfinite(tpex_value) else None,
+                            "total_turnover": total if np.isfinite(total) else None})
+        _atomic_write(cache_path, pd.DataFrame(records, columns=columns).to_csv(index=False))
+    return output
 
 
 def _atomic_write(path: Path, content: str) -> None:
@@ -358,7 +515,8 @@ def _mean_pct(values: list[float]) -> float | None:
 
 
 def build_rotation_payload(history_map: dict[str, pd.DataFrame], taiex: pd.DataFrame,
-                           names: dict[str, str], generated_at: datetime | None = None) -> dict[str, Any]:
+                           names: dict[str, str], generated_at: datetime | None = None,
+                           market_turnover: dict[str, float] | None = None) -> dict[str, Any]:
     """將歷史日 K 轉成頁面可直接使用的精簡輪動資訊。"""
     generated_at = generated_at or now_taipei()
     taiex = taiex.copy()
@@ -446,21 +604,12 @@ def build_rotation_payload(history_map: dict[str, pd.DataFrame], taiex: pd.DataF
             "daily_return_series": daily_return,
         }
 
-    tracked_turnover = sum(
-        float(v.loc[asof]) for v in member_value.values()
-        if asof in v.index and np.isfinite(_parse_number(v.loc[asof])) and float(v.loc[asof]) > 0
-    )
     prev_date = trade_dates[-2] if len(trade_dates) >= 2 else pd.NaT
-    prev_turnover = sum(
-        float(v.loc[prev_date]) for v in member_value.values()
-        if pd.notna(prev_date) and prev_date in v.index and np.isfinite(_parse_number(v.loc[prev_date])) and float(v.loc[prev_date]) > 0
-    )
     prev_prev_date = trade_dates[-3] if len(trade_dates) >= 3 else pd.NaT
-    prev_prev_turnover = sum(
-        float(v.loc[prev_prev_date]) for v in member_value.values()
-        if pd.notna(prev_prev_date) and prev_prev_date in v.index
-        and np.isfinite(_parse_number(v.loc[prev_prev_date])) and float(v.loc[prev_prev_date]) > 0
-    )
+    market_turnover = market_turnover or {}
+    market_turnover_asof = _parse_number(market_turnover.get(asof.strftime("%Y-%m-%d")))
+    market_turnover_prev = _parse_number(market_turnover.get(prev_date.strftime("%Y-%m-%d"))) if pd.notna(prev_date) else np.nan
+    market_turnover_prev_prev = _parse_number(market_turnover.get(prev_prev_date.strftime("%Y-%m-%d"))) if pd.notna(prev_prev_date) else np.nan
 
     groups: list[dict[str, Any]] = []
     for group_name, codes in ROTATION_THEMES.items():
@@ -513,7 +662,8 @@ def build_rotation_payload(history_map: dict[str, pd.DataFrame], taiex: pd.DataF
         )
         previous_turnover = 0.0
         previous_previous_group_turnover = 0.0
-        for code in codes:
+        # 同一主題三個交易日用相同的最新有效成分股比較，避免缺漏行情造成假流向。
+        for code in valid_latest:
             if code in member_value and pd.notna(prev_date) and prev_date in member_value[code].index:
                 val = _parse_number(member_value[code].loc[prev_date])
                 if np.isfinite(val) and val > 0:
@@ -522,11 +672,19 @@ def build_rotation_payload(history_map: dict[str, pd.DataFrame], taiex: pd.DataF
                 val_prev_prev = _parse_number(member_value[code].loc[prev_prev_date])
                 if np.isfinite(val_prev_prev) and val_prev_prev > 0:
                     previous_previous_group_turnover += float(val_prev_prev)
-        share = turnover / tracked_turnover * 100.0 if tracked_turnover else np.nan
-        previous_share = previous_turnover / prev_turnover * 100.0 if prev_turnover else np.nan
+
+        # 分母採 TWSE + TPEx 全市場成交值；官方分母不完整時不顯示流向，避免用樣本總額錯排。
+        share = (
+            turnover / market_turnover_asof * 100.0
+            if np.isfinite(market_turnover_asof) and market_turnover_asof > 0 else np.nan
+        )
+        previous_share = (
+            previous_turnover / market_turnover_prev * 100.0
+            if np.isfinite(market_turnover_prev) and market_turnover_prev > 0 else np.nan
+        )
         previous_previous_share = (
-            previous_previous_group_turnover / prev_prev_turnover * 100.0
-            if prev_prev_turnover else np.nan
+            previous_previous_group_turnover / market_turnover_prev_prev * 100.0
+            if np.isfinite(market_turnover_prev_prev) and market_turnover_prev_prev > 0 else np.nan
         )
 
         if not rrg.empty:
@@ -573,6 +731,10 @@ def build_rotation_payload(history_map: dict[str, pd.DataFrame], taiex: pd.DataF
             "falling": int(falling),
             "flat": int(flat),
             "year_high_count": int(year_high_count),
+            "market_turnover_share_pct": round(float(share), 3) if np.isfinite(share) else None,
+            "market_turnover_share_delta_pp": round(float(share_delta), 3) if np.isfinite(share_delta) else None,
+            "yesterday_market_turnover_share_pct": round(float(previous_share), 3) if np.isfinite(previous_share) else None,
+            "yesterday_market_turnover_share_delta_pp": round(float(yesterday_share_delta), 3) if np.isfinite(yesterday_share_delta) else None,
             "sample_turnover_share_pct": round(float(share), 3) if np.isfinite(share) else None,
             "sample_turnover_share_delta_pp": round(float(share_delta), 3) if np.isfinite(share_delta) else None,
             "yesterday_sample_turnover_share_pct": round(float(previous_share), 3) if np.isfinite(previous_share) else None,
@@ -616,7 +778,7 @@ def build_rotation_payload(history_map: dict[str, pd.DataFrame], taiex: pd.DataF
     benchmark_change = (benchmark_today / benchmark_yesterday - 1.0) * 100.0 if benchmark_yesterday else np.nan
 
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "generated_at": generated_at.isoformat(timespec="seconds"),
         "data_asof": asof.strftime("%Y-%m-%d"),
         "previous_data_asof": prev_date.strftime("%Y-%m-%d") if pd.notna(prev_date) else None,
@@ -625,9 +787,10 @@ def build_rotation_payload(history_map: dict[str, pd.DataFrame], taiex: pd.DataF
         "benchmark_close": round(benchmark_today, 2) if np.isfinite(benchmark_today) else None,
         "benchmark_change_1d": round(float(benchmark_change), 3) if np.isfinite(benchmark_change) else None,
         "is_trading_day": True,
-        "data_source": ["Fugle 歷史日 K", "臺灣證券交易所加權指數歷史資料"],
+        "data_source": ["Fugle 歷史日 K", "臺灣證券交易所加權指數歷史資料", "TWSE＋TPEx 全市場日成交金額"],
+        "market_turnover_available_dates": sorted(market_turnover.keys()),
         "method": "子產業代表股每日報酬等權平均；RRG 以族群指數相對加權指數正規化，RS 使用 50 日均值，動能比較 10 個交易日前。",
-        "turnover_method": "樣本成交值占比變化僅是本頁追蹤股票的聚焦代理，不代表全市場實際資金流；同一成分股可屬多個主題。",
+        "turnover_method": "成交值占比＝主題代表股成交值加總 ÷ 同日上市（TWSE）＋上櫃（TPEx）全市場成交金額；資金流向＝成交值占比較前一交易日的百分點變化。同成分股可屬多個主題，這是成交值占比變化代理，不代表真實淨流入或法人買賣超；若官方全市場分母缺漏，該日不顯示流向。",
         "tracked_unique_stocks": len(all_symbols),
         "fresh_stock_count": len(fresh_members),
         "up_group_count": sum(1 for g in groups if g["today_return"] is not None and g["today_return"] > 0),
@@ -761,7 +924,13 @@ def update_industry_rotation(base_dir: str | Path, force: bool = False, publish:
                 log.flush()
             time.sleep(0.15)
 
-    payload = build_rotation_payload(history_map, taiex, names, generated_at=now_taipei())
+    turnover_dates = pd.to_datetime(taiex["date"], errors="coerce").dropna().drop_duplicates().sort_values().tail(3)
+    market_turnover = _load_market_turnover_totals(base, turnover_dates, errors)
+    payload = build_rotation_payload(
+        history_map, taiex, names,
+        generated_at=now_taipei(),
+        market_turnover=market_turnover,
+    )
     payload["errors"] = errors[:30]
     # 至少需要有足夠主題提供今日有效資料，才發布這次快照。
     usable_groups = [g for g in payload["groups"] if g["members_fresh"] > 0 and g["quadrant"] != "資料不足"]
