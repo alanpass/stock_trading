@@ -548,7 +548,7 @@ def build_rotation_payload(history_map: dict[str, pd.DataFrame], taiex: pd.DataF
             continue
         d = h.copy()
         d["date"] = pd.to_datetime(d["date"], errors="coerce").dt.normalize()
-        for col in ["close", "volume", "high", "open"]:
+        for col in ["close", "volume", "high", "open", "average"]:
             if col in d:
                 d[col] = pd.to_numeric(d[col], errors="coerce")
         d = d.dropna(subset=["date", "close"]).drop_duplicates("date", keep="last").sort_values("date")
@@ -558,7 +558,12 @@ def build_rotation_payload(history_map: dict[str, pd.DataFrame], taiex: pd.DataF
             continue
         daily_return = close.pct_change()
         volume = d.set_index("date")["volume"] if "volume" in d else pd.Series(index=close.index, dtype=float)
-        value = (close * volume.reindex(close.index)).replace([np.inf, -np.inf], np.nan)
+        # Fugle 日K若有成交均價，優先用均價×成交量估算當日成交值；缺少均價才退回收盤價×成交量。
+        price_for_value = (
+            d.set_index("date")["average"].where(d.set_index("date")["average"] > 0, d.set_index("date")["close"])
+            if "average" in d else close
+        )
+        value = (price_for_value.reindex(close.index) * volume.reindex(close.index)).replace([np.inf, -np.inf], np.nan)
         member_close[code] = close
         member_returns[code] = daily_return
         member_value[code] = value
@@ -790,7 +795,7 @@ def build_rotation_payload(history_map: dict[str, pd.DataFrame], taiex: pd.DataF
         "data_source": ["Fugle 歷史日 K", "臺灣證券交易所加權指數歷史資料", "TWSE＋TPEx 全市場日成交金額"],
         "market_turnover_available_dates": sorted(market_turnover.keys()),
         "method": "子產業代表股每日報酬等權平均；RRG 以族群指數相對加權指數正規化，RS 使用 50 日均值，動能比較 10 個交易日前。",
-        "turnover_method": "成交值占比＝主題代表股成交值加總 ÷ 同日上市（TWSE）＋上櫃（TPEx）全市場成交金額；資金流向＝成交值占比較前一交易日的百分點變化。同成分股可屬多個主題，這是成交值占比變化代理，不代表真實淨流入或法人買賣超；若官方全市場分母缺漏，該日不顯示流向。",
+        "turnover_method": "成交值占比＝主題代表股日K成交均價×成交量估算值加總 ÷ 同日上市（TWSE）＋上櫃（TPEx）全市場成交金額；資金流向＝成交值占比較前一交易日的百分點變化。同成分股可屬多個主題，這是成交值占比變化代理，不代表真實淨流入或法人買賣超；若官方全市場分母缺漏，該日不顯示流向。",
         "tracked_unique_stocks": len(all_symbols),
         "fresh_stock_count": len(fresh_members),
         "up_group_count": sum(1 for g in groups if g["today_return"] is not None and g["today_return"] > 0),
