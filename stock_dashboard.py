@@ -2103,7 +2103,7 @@ def render_watchlist(compact: bool = False):
                                     unsafe_allow_html=True,
                                 )
                             with b2:
-                                if st.button("\u200b", key=f"watch_select_{r['code']}_{idx}", icon=":material/check_circle:", help="選取此股票", use_container_width=True):
+                                if st.button("\u200b", key=f"watch_select_{r['code']}_{idx}", icon=":material/visibility:", help="選取此股票", use_container_width=True):
                                     _watch_select(r['code'])
                             with b3:
                                 if st.button("\u200b", key=f"watch_remove_{r['code']}_{idx}", icon=":material/delete:", help=f"從自選股移除 {r['code']}", use_container_width=True):
@@ -2116,10 +2116,10 @@ def render_watchlist(compact: bool = False):
                                 unsafe_allow_html=True,
                             )
                         with b2:
-                            if st.button("查看", key=f"watch_select_{r['code']}_{idx}", use_container_width=True, type="secondary", help="查看此股票"):
+                            if st.button("\u200b", key=f"watch_select_{r['code']}_{idx}", icon=":material/visibility:", use_container_width=True, type="secondary", help="查看此股票"):
                                 _watch_select(r['code'])
                         with b3:
-                            if st.button("刪除", key=f"watch_remove_{r['code']}_{idx}", use_container_width=True, type="secondary", help=f"從自選股移除 {r['code']}"):
+                            if st.button("\u200b", key=f"watch_remove_{r['code']}_{idx}", icon=":material/delete:", use_container_width=True, type="secondary", help=f"從自選股移除 {r['code']}"):
                                 _watch_remove(r['code'])
                         with b4:
                             st.markdown(f"<div class='watch-value watch-price-cell{value_class}' style='color:{vcolor}'>{price_txt}</div>", unsafe_allow_html=True)
