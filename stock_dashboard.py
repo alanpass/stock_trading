@@ -85,7 +85,7 @@ from theme_agent import theme_sankey_frame
 from post_market_analysis import PostMarketAnalyzer
 from email_agent import EmailAgent
 from subscriber_service import register_subscriber, subscription_status
-from industry_rotation import ROTATION_THEMES, ROTATION_DEFAULT_THEMES, load_published_rotation
+from industry_rotation import ROTATION_THEMES, ROTATION_DEFAULT_THEMES, ROTATION_DISPLAY_NAMES, NAME_FALLBACKS, load_published_rotation
 
 BASE = Path(__file__).resolve().parent
 DATA, MODELS, OUTPUT = BASE / "data", BASE / "models", BASE / "output"
@@ -2108,8 +2108,36 @@ def _render_published_rotation(payload: dict) -> None:
     </style>
     """, unsafe_allow_html=True)
 
-    groups = [g for g in payload.get("groups", []) if isinstance(g, dict)]
+    groups = [
+        g for g in payload.get("groups", [])
+        if isinstance(g, dict) and str(g.get("name", "")) in ROTATION_THEMES
+    ]
     by_name = {str(g.get("name", "")): g for g in groups}
+
+    def rotation_label(name: str) -> str:
+        return ROTATION_DISPLAY_NAMES.get(str(name), str(name))
+
+    def sign_style(value: object) -> str:
+        """台股習慣：上漲／流入紅色、下跌／流出綠色。"""
+        import re
+        match = re.search(r"[-+]?\\d+(?:\\.\\d+)?", str(value).replace(",", ""))
+        if not match:
+            return ""
+        try:
+            number = float(match.group(0))
+        except (TypeError, ValueError):
+            return ""
+        if number > 0:
+            return "color: #c62828; font-weight: 650;"
+        if number < 0:
+            return "color: #16803c; font-weight: 650;"
+        return "color: #64748b;"
+
+    def styled_frame(frame: pd.DataFrame, columns: list[str]):
+        valid = [col for col in columns if col in frame.columns]
+        if valid:
+            return frame.style.applymap(sign_style, subset=valid)
+        return frame
     asof = str(payload.get("data_asof") or "未知")
     updated_at = str(payload.get("generated_at") or "未知")
     benchmark = str(payload.get("benchmark") or "加權指數")
@@ -2127,11 +2155,20 @@ def _render_published_rotation(payload: dict) -> None:
     a, b, c = st.columns([1, 3, 1.5])
     with a:
         period = st.radio("輪動軌跡", ["1 個月", "3 個月", "半年", "1 年"], index=1, key="rotation_published_period")
+    display_to_internal = {rotation_label(name): name for name in by_name}
     with b:
-        defaults = [n for n in ROTATION_DEFAULT_THEMES if n in by_name]
-        selected = st.multiselect("觀察主題", list(by_name.keys()), default=defaults, key="rotation_published_groups")
+        defaults = [rotation_label(n) for n in ROTATION_DEFAULT_THEMES if n in by_name]
+        selected_labels = st.multiselect(
+            "觀察主題", list(display_to_internal.keys()), default=defaults,
+            key="rotation_published_groups",
+        )
+        selected = [display_to_internal[label] for label in selected_labels if label in display_to_internal]
     with c:
-        sort_by = st.selectbox("排行依據", ["近 20 日", "近 5 日", "今日", "相對強弱", "相對動能", "樣本成交值占比變化"], key="rotation_published_sort")
+        sort_by = st.selectbox(
+            "排行依據",
+            ["近 20 日", "近 5 日", "今日", "相對強弱", "相對動能", "資金流向"],
+            key="rotation_published_sort",
+        )
 
     quadrants = {q: sum(1 for g in groups if g.get("quadrant") == q) for q in ["領先", "改善", "轉弱", "落後"]}
     kpis = st.columns(5)
@@ -2141,7 +2178,91 @@ def _render_published_rotation(payload: dict) -> None:
     kpis[3].metric("轉弱", f"{quadrants['轉弱']} 群")
     kpis[4].metric("落後", f"{quadrants['落後']} 群")
 
-    st.markdown('<div class="feature-section-title">01｜產業輪動圖</div>', unsafe_allow_html=True)
+    # 資金流向圖：以代表股成交值在本頁樣本中的占比變化（百分點）作為資金聚焦代理。
+    st.markdown('<div class="feature-section-title">01｜資金流向輪動圖</div>', unsafe_allow_html=True)
+    has_yesterday_flow = any(
+        g.get("yesterday_sample_turnover_share_delta_pp") is not None for g in groups
+    )
+    flow_options = ["今日", "昨日"] if has_yesterday_flow else ["今日"]
+    flow_day = st.radio(
+        "資金流向日期",
+        flow_options,
+        horizontal=True,
+        key="rotation_published_flow_day",
+    )
+    if flow_day == "昨日":
+        flow_delta_key = "yesterday_sample_turnover_share_delta_pp"
+        flow_share_key = "yesterday_sample_turnover_share_pct"
+        flow_date_label = payload.get("previous_data_asof") or "前一交易日"
+        flow_compare_label = payload.get("previous_previous_data_asof") or "再前一交易日"
+    else:
+        flow_delta_key = "sample_turnover_share_delta_pp"
+        flow_share_key = "sample_turnover_share_pct"
+        flow_date_label = asof
+        flow_compare_label = payload.get("previous_data_asof") or "前一交易日"
+
+    flow_rows = []
+    for group in groups:
+        raw_delta = group.get(flow_delta_key)
+        if raw_delta is None:
+            continue
+        try:
+            delta_value = float(raw_delta)
+        except (TypeError, ValueError):
+            continue
+        share_value = group.get(flow_share_key)
+        flow_rows.append({
+            "name": rotation_label(group.get("name", "")),
+            "delta": delta_value,
+            "share": float(share_value) if share_value is not None else float("nan"),
+        })
+    flow_rows.sort(key=lambda row: row["delta"], reverse=True)
+    if not flow_rows:
+        st.info("這份產業快照尚無資金流向資料。請執行一次最新版 run_industry_rotation_update.py --force 產生資料。")
+    else:
+        flow_colors = [
+            "#c62828" if row["delta"] > 0 else "#16803c" if row["delta"] < 0 else "#94a3b8"
+            for row in flow_rows
+        ]
+        flow_chart = go.Figure(go.Bar(
+            x=[row["delta"] for row in flow_rows],
+            y=[row["name"] for row in flow_rows],
+            orientation="h",
+            marker=dict(color=flow_colors),
+            text=[f"{row['delta']:+.2f} pp" for row in flow_rows],
+            textposition="outside",
+            cliponaxis=False,
+            customdata=[[row["share"]] for row in flow_rows],
+            hovertemplate=(
+                "%{y}<br>成交值占比變化：%{x:+.2f} pp"
+                "<br>成交值占比：%{customdata[0]:.2f}%<extra></extra>"
+            ),
+        ))
+        flow_chart.add_vline(x=0, line_color="#8793a1", line_width=1)
+        flow_chart.update_layout(
+            height=max(500, len(flow_rows) * 23),
+            margin=dict(l=165, r=78, t=12, b=48),
+            showlegend=False,
+            xaxis_title="樣本成交值占比變化（百分點 pp）",
+            yaxis_title=None,
+            hovermode="closest",
+            bargap=0.24,
+        )
+        flow_chart.update_xaxes(zeroline=False, gridcolor="rgba(130,145,160,0.18)")
+        flow_chart.update_yaxes(autorange="reversed", automargin=True)
+        st.plotly_chart(
+            flow_chart,
+            use_container_width=True,
+            key=f"rotation_published_cashflow_{flow_day}_{len(flow_rows)}",
+            config={"displaylogo": False, "responsive": True},
+        )
+        st.caption(
+            f"資料日期：{flow_date_label}；比較基準：{flow_compare_label}。"
+            "紅色代表本頁樣本成交值占比增加，綠色代表占比下降。"
+            "這是代表股樣本中的成交值占比變化，不等同全市場真實資金流入／流出或法人買賣超。"
+        )
+
+    st.markdown('<div class="feature-section-title">02｜產業輪動圖</div>', unsafe_allow_html=True)
     st.caption("每條線代表主題相對加權指數的軌跡，每 5 個交易日取一點。RS 高於 100 代表相對強弱高於自身 50 日均值；動能高於 100 代表較 10 個交易日前增強。")
     n_points = {"1 個月": 6, "3 個月": 15, "半年": 28, "1 年": 53}[period]
     fig = go.Figure()
@@ -2149,6 +2270,7 @@ def _render_published_rotation(payload: dict) -> None:
     all_x, all_y = [], []
     for name in selected:
         g = by_name.get(name, {})
+        display_label = rotation_label(name)
         pts = [x for x in g.get("rrg", []) if isinstance(x, dict)][-n_points:]
         if not pts:
             continue
@@ -2157,14 +2279,14 @@ def _render_published_rotation(payload: dict) -> None:
         labels = [str(x.get("date", ""))[5:] for x in pts]
         color = colors.get(str(g.get("quadrant")), "#64748b")
         fig.add_trace(go.Scatter(
-            x=xs, y=ys, mode="lines+markers", name=name,
+            x=xs, y=ys, mode="lines+markers", name=display_label,
             line=dict(width=2, color=color),
             marker=dict(size=[5] * max(0, len(pts) - 1) + [10], color=color),
             text=labels,
-            hovertemplate=name + "<br>日期 %{text}<br>相對強弱 %{x:.1f}<br>相對動能 %{y:.1f}<extra></extra>",
+            hovertemplate=display_label + "<br>日期 %{text}<br>相對強弱 %{x:.1f}<br>相對動能 %{y:.1f}<extra></extra>",
         ))
         fig.add_trace(go.Scatter(
-            x=[xs[-1]], y=[ys[-1]], mode="text", text=[name],
+            x=[xs[-1]], y=[ys[-1]], mode="text", text=[display_label],
             textposition="top center", textfont=dict(size=10, color=color),
             showlegend=False, hoverinfo="skip",
         ))
@@ -2187,7 +2309,7 @@ def _render_published_rotation(payload: dict) -> None:
     st.markdown('<div class="feature-section-title">02｜產業報酬與輪動狀態</div>', unsafe_allow_html=True)
     fields = {"近 20 日": "return_20d", "近 5 日": "return_5d", "今日": "today_return",
               "相對強弱": "relative_strength", "相對動能": "relative_momentum",
-              "樣本成交值占比變化": "sample_turnover_share_delta_pp"}
+              "資金流向": "sample_turnover_share_delta_pp"}
     field = fields[sort_by]
     table_groups = [g for g in groups if not selected or g.get("name") in selected]
     table_groups.sort(key=lambda g: g.get(field) if g.get(field) is not None else -999999, reverse=True)
@@ -2200,7 +2322,7 @@ def _render_published_rotation(payload: dict) -> None:
         delta = g.get("sample_turnover_share_delta_pp")
         rs, momentum = g.get("relative_strength"), g.get("relative_momentum")
         table_rows.append({
-            "產業主題": g.get("name"),
+            "產業主題": rotation_label(g.get("name", "")),
             "有效／樣本": f"{g.get('members_fresh', 0)}/{g.get('members_total', 0)}",
             "資料覆蓋率": f"{g.get('data_coverage_pct', 0):.0f}%",
             "今日": pct(g, "today_return"), "昨日": pct(g, "yesterday_return"),
@@ -2209,18 +2331,25 @@ def _render_published_rotation(payload: dict) -> None:
             "上漲／下跌": f"{g.get('rising', 0)}/{g.get('falling', 0)}",
             "52 週新高": g.get("year_high_count", 0),
             "樣本成交值占比": f"{float(share):.1f}%" if share is not None else "—",
-            "占比變化": f"{float(delta):+.2f} pp" if delta is not None else "—",
+            "資金流向": f"{float(delta):+.2f} pp" if delta is not None else "—",
             "RS": f"{float(rs):.1f}" if rs is not None else "—",
             "動能": f"{float(momentum):.1f}" if momentum is not None else "—",
             "象限": g.get("quadrant", "資料不足"),
         })
-    st.dataframe(pd.DataFrame(table_rows), use_container_width=True, hide_index=True)
+    metrics_df = pd.DataFrame(table_rows)
+    st.dataframe(
+        styled_frame(metrics_df, ["今日", "昨日", "5 日", "20 日", "60 日", "今年以來", "資金流向"]),
+        use_container_width=True,
+        hide_index=True,
+    )
 
-    st.markdown('<div class="feature-section-title">03｜本週象限變化</div>', unsafe_allow_html=True)
+    st.markdown('<div class="feature-section-title">04｜本週象限變化</div>', unsafe_allow_html=True)
     changes = payload.get("quadrant_changes") or []
     if changes:
-        st.dataframe(pd.DataFrame(changes).rename(columns={"name": "產業主題", "from": "前一象限", "to": "目前象限"}),
-                     use_container_width=True, hide_index=True)
+        changes_df = pd.DataFrame(changes).rename(columns={"name": "產業主題", "from": "前一象限", "to": "目前象限"})
+        if "產業主題" in changes_df.columns:
+            changes_df["產業主題"] = changes_df["產業主題"].map(rotation_label)
+        st.dataframe(changes_df, use_container_width=True, hide_index=True)
     else:
         st.caption("目前沒有可用的象限轉換紀錄，或輪動方向尚未跨越象限。")
 
@@ -2229,31 +2358,76 @@ def _render_published_rotation(payload: dict) -> None:
         st.markdown('<div class="feature-section-title">04｜成分股技術資訊</div>', unsafe_allow_html=True)
         c1, c2 = st.columns([2, 1])
         with c1:
-            chosen = st.selectbox("檢視主題成分股", component_names, key="rotation_published_component_group")
+            chosen_label = st.selectbox(
+                "檢視主題成分股",
+                [rotation_label(n) for n in component_names],
+                key="rotation_published_component_group",
+            )
+            chosen = display_to_internal.get(chosen_label, chosen_label)
         with c2:
             component_sort = st.selectbox("排序", ["今日漲幅", "5 日報酬", "20 日報酬", "成交量"], key="rotation_published_component_sort")
         comps = [dict(x) for x in by_name[chosen].get("components", [])]
         skey = {"今日漲幅": "change_1d", "5 日報酬": "return_5d", "20 日報酬": "return_20d", "成交量": "volume"}[component_sort]
         comps.sort(key=lambda x: x.get(skey) if x.get(skey) is not None else -999999, reverse=True)
-        st.dataframe(pd.DataFrame([{
+        components_df = pd.DataFrame([{
             "代號": x.get("symbol"), "名稱": x.get("name"), "資料日期": x.get("data_date"),
             "收盤價": x.get("close"), "今日": pct(x, "change_1d"), "5 日": pct(x, "return_5d"),
             "20 日": pct(x, "return_20d"), "60 日": pct(x, "return_60d"), "今年以來": pct(x, "return_ytd"),
             "成交量": x.get("volume"), "52 週新高": "是" if x.get("year_high") else "否",
-        } for x in comps]), use_container_width=True, hide_index=True)
+        } for x in comps])
+        st.dataframe(
+            styled_frame(components_df, ["今日", "5 日", "20 日", "60 日", "今年以來"]),
+            use_container_width=True,
+            hide_index=True,
+        )
 
-    st.markdown('<div class="feature-section-title">05｜成分股漲跌前十</div>', unsafe_allow_html=True)
+        # 完整分類總覽列出每個主題對應的所有代表股，即使該股票當天沒有有效行情。
+        with st.expander("查看全部 27 個產業主題與成分股分類", expanded=False):
+            component_lookup = {}
+            for group_data in groups:
+                for item in group_data.get("components", []):
+                    if item.get("symbol") is not None:
+                        component_lookup[(str(group_data.get("name")), str(item.get("symbol")))] = item
+            categorized_rows = []
+            for group_name in by_name:
+                for symbol in ROTATION_THEMES.get(group_name, []):
+                    item = component_lookup.get((group_name, str(symbol)), {})
+                    categorized_rows.append({
+                        "產業主題": rotation_label(group_name),
+                        "代號": str(symbol),
+                        "名稱": item.get("name") or NAME_FALLBACKS.get(str(symbol), str(symbol)),
+                        "資料日期": item.get("data_date") or "尚無行情",
+                        "收盤價": item.get("close"),
+                        "今日": pct(item, "change_1d"),
+                        "5 日": pct(item, "return_5d"),
+                        "20 日": pct(item, "return_20d"),
+                        "成交量": item.get("volume"),
+                    })
+            category_df = pd.DataFrame(categorized_rows)
+            st.dataframe(
+                styled_frame(category_df, ["今日", "5 日", "20 日"]),
+                use_container_width=True,
+                hide_index=True,
+            )
+            st.caption("分類依代表股主要產品與供應鏈用途整理；同一檔股票可能屬於多個主題。『尚無行情』表示尚未取得可用日 K，不代表該股不屬於此類。")
+
+    st.markdown('<div class="feature-section-title">06｜成分股漲跌前十</div>', unsafe_allow_html=True)
     upcol, downcol = st.columns(2)
     for col, data_key, label in [(upcol, "gainers", "漲幅前十"), (downcol, "losers", "跌幅前十")]:
         with col:
             st.markdown(f"**{label}**")
-            st.dataframe(pd.DataFrame([{
+            movers_df = pd.DataFrame([{
                 "代號": x.get("symbol"), "名稱": x.get("name"), "今日": pct(x, "change_1d"),
                 "5 日": pct(x, "return_5d"), "20 日": pct(x, "return_20d"),
                 "52 週新高": "是" if x.get("year_high") else "否",
-            } for x in payload.get(data_key, [])]), use_container_width=True, hide_index=True)
+            } for x in payload.get(data_key, [])])
+            st.dataframe(
+                styled_frame(movers_df, ["今日", "5 日", "20 日"]),
+                use_container_width=True,
+                hide_index=True,
+            )
 
-    st.markdown('<div class="feature-section-title">06｜輪動解讀與資料限制</div>', unsafe_allow_html=True)
+    st.markdown('<div class="feature-section-title">07｜輪動解讀與資料限制</div>', unsafe_allow_html=True)
     st.markdown("""
     <div class="rotation-quadrants">
       <div class="rotation-leading"><strong>領先｜右上</strong><br>相對大盤偏強，動能持續增強。</div>
