@@ -2381,7 +2381,7 @@ def _render_published_rotation(payload: dict) -> None:
             hide_index=True,
         )
 
-# 完整分類總覽列出每個主題對應的所有代表股，即使該股票當天沒有有效行情。
+    # 完整分類總覽列出每個主題對應的所有代表股，即使該股票當天沒有有效行情。
     with st.expander("查看全部 27 個產業主題與成分股分類", expanded=False):
         component_lookup = {}
         for group_data in groups:
