@@ -58,7 +58,35 @@ ROTATION_THEMES: dict[str, list[str]] = {
     "低軌衛星": ["7717", "4908", "6285", "2314", "3491"],
     "機器人／自動化": ["6215", "2049", "1590", "4583", "4576", "2464", "2231"],
     "廠務工程": ["6691", "6196", "6139", "6613", "5536", "2404"],
-    "金融／金控": ["2881", "2882", "2891", "2886"],
+}
+ROTATION_DISPLAY_NAMES: dict[str, str] = {
+    "晶圓代工": "晶圓代工(台積電)",
+    "ASIC／矽智財": "ASIC/矽智財",
+    "BMC／伺服器管理晶片": "BMC(信驊)",
+    "高速傳輸 IC": "高速傳輸IC",
+    "先進封裝設備": "先進封裝設備",
+    "封裝測試": "封裝測試",
+    "測試介面／設備": "測試介面/設備",
+    "檢測分析": "檢測分析",
+    "記憶體／儲存": "記憶體",
+    "ABF／IC 載板": "ABF載板",
+    "CCL／銅箔基板": "CCL銅箔基板",
+    "玻纖布／銅箔": "玻纖布/銅箔",
+    "PCB／伺服器板／HDI": "PCB(伺服器板/HDI)",
+    "散熱／液冷": "散熱",
+    "電源／BBU": "電源/BBU",
+    "重電／電網": "重電/電網",
+    "滑軌": "滑軌",
+    "機殼／機櫃": "機殼",
+    "高速連接器／線材": "高速連接器/線材",
+    "被動元件": "被動元件",
+    "組裝代工／ODM": "組裝代工(ODM)",
+    "網通／交換器": "網通設備",
+    "矽光子／光通訊": "矽光子/光通訊",
+    "磊晶／化合物半導體": "磊晶/化合物半導體",
+    "低軌衛星": "低軌衛星",
+    "機器人／自動化": "機器人",
+    "廠務工程": "廠務工程",
 }
 ROTATION_DEFAULT_THEMES = [
     "晶圓代工", "ASIC／矽智財", "記憶體／儲存", "先進封裝設備", "封裝測試",
@@ -418,6 +446,12 @@ def build_rotation_payload(history_map: dict[str, pd.DataFrame], taiex: pd.DataF
         float(v.loc[prev_date]) for v in member_value.values()
         if pd.notna(prev_date) and prev_date in v.index and np.isfinite(_parse_number(v.loc[prev_date])) and float(v.loc[prev_date]) > 0
     )
+    prev_prev_date = trade_dates[-3] if len(trade_dates) >= 3 else pd.NaT
+    prev_prev_turnover = sum(
+        float(v.loc[prev_prev_date]) for v in member_value.values()
+        if pd.notna(prev_prev_date) and prev_prev_date in v.index
+        and np.isfinite(_parse_number(v.loc[prev_prev_date])) and float(v.loc[prev_prev_date]) > 0
+    )
 
     groups: list[dict[str, Any]] = []
     for group_name, codes in ROTATION_THEMES.items():
@@ -469,13 +503,22 @@ def build_rotation_payload(history_map: dict[str, pd.DataFrame], taiex: pd.DataF
             if member_data[code]["traded_value"] is not None and float(member_data[code]["traded_value"]) > 0
         )
         previous_turnover = 0.0
+        previous_previous_group_turnover = 0.0
         for code in codes:
             if code in member_value and pd.notna(prev_date) and prev_date in member_value[code].index:
                 val = _parse_number(member_value[code].loc[prev_date])
                 if np.isfinite(val) and val > 0:
                     previous_turnover += float(val)
+            if code in member_value and pd.notna(prev_prev_date) and prev_prev_date in member_value[code].index:
+                val_prev_prev = _parse_number(member_value[code].loc[prev_prev_date])
+                if np.isfinite(val_prev_prev) and val_prev_prev > 0:
+                    previous_previous_group_turnover += float(val_prev_prev)
         share = turnover / tracked_turnover * 100.0 if tracked_turnover else np.nan
         previous_share = previous_turnover / prev_turnover * 100.0 if prev_turnover else np.nan
+        previous_previous_share = (
+            previous_previous_group_turnover / prev_prev_turnover * 100.0
+            if prev_prev_turnover else np.nan
+        )
 
         if not rrg.empty:
             last = rrg.iloc[-1]
@@ -501,6 +544,10 @@ def build_rotation_payload(history_map: dict[str, pd.DataFrame], taiex: pd.DataF
             rs_now, mom_now, quadrant, rrg_points, prior_q = np.nan, np.nan, "資料不足", [], "資料不足"
 
         share_delta = share - previous_share if np.isfinite(share) and np.isfinite(previous_share) else np.nan
+        yesterday_share_delta = (
+            previous_share - previous_previous_share
+            if np.isfinite(previous_share) and np.isfinite(previous_previous_share) else np.nan
+        )
         group = {
             "name": group_name,
             "members_total": len(codes),
@@ -519,6 +566,8 @@ def build_rotation_payload(history_map: dict[str, pd.DataFrame], taiex: pd.DataF
             "year_high_count": int(year_high_count),
             "sample_turnover_share_pct": round(float(share), 3) if np.isfinite(share) else None,
             "sample_turnover_share_delta_pp": round(float(share_delta), 3) if np.isfinite(share_delta) else None,
+            "yesterday_sample_turnover_share_pct": round(float(previous_share), 3) if np.isfinite(previous_share) else None,
+            "yesterday_sample_turnover_share_delta_pp": round(float(yesterday_share_delta), 3) if np.isfinite(yesterday_share_delta) else None,
             "relative_strength": round(rs_now, 3) if np.isfinite(rs_now) else None,
             "relative_momentum": round(mom_now, 3) if np.isfinite(mom_now) else None,
             "quadrant": quadrant,
@@ -561,6 +610,8 @@ def build_rotation_payload(history_map: dict[str, pd.DataFrame], taiex: pd.DataF
         "schema_version": 1,
         "generated_at": generated_at.isoformat(timespec="seconds"),
         "data_asof": asof.strftime("%Y-%m-%d"),
+        "previous_data_asof": prev_date.strftime("%Y-%m-%d") if pd.notna(prev_date) else None,
+        "previous_previous_data_asof": prev_prev_date.strftime("%Y-%m-%d") if pd.notna(prev_prev_date) else None,
         "benchmark": "臺灣加權股價指數（TWSE 官方歷史資料）",
         "benchmark_close": round(benchmark_today, 2) if np.isfinite(benchmark_today) else None,
         "benchmark_change_1d": round(float(benchmark_change), 3) if np.isfinite(benchmark_change) else None,
