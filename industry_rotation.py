@@ -250,7 +250,8 @@ def _fetch_tpex_market_turnover_month(session: requests.Session, month: pd.Times
                     for row in rows:
                         add_row(row)
             # 新舊格式偶爾會把表格包在 tables 裡。
-            for table in payload.get("tables", []) if isinstance(payload.get("tables"), list) else []:
+            tables = payload.get("tables", [])
+            for table in (tables if isinstance(tables, list) else []):
                 if not isinstance(table, dict):
                     continue
                 rows = table.get("data", []) or table.get("aaData", []) or []
@@ -268,7 +269,7 @@ def _fetch_tpex_market_turnover_month(session: requests.Session, month: pd.Times
             try:
                 response = session.get(TPEX_MONTHLY_MARKET_URL, params=params, timeout=30)
                 response.raise_for_status()
-                content = response.text.lstrip("\\ufeff\\r\\n\\t ")
+                content = response.text.lstrip("\ufeff\\r\\n\\t ")
                 if output_format == "json":
                     try:
                         harvest_json(response.json())
