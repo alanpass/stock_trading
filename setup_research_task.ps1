@@ -1,5 +1,5 @@
 ﻿# Windows Task Scheduler setup for AI TW Stock Research Assistant
-# v9.2
+# v10.0 - six daily finance refresh/publish jobs
 # This file intentionally uses ASCII-only text for Windows PowerShell compatibility.
 
 $ErrorActionPreference = "Stop"
@@ -18,8 +18,44 @@ $PythonPath = $PythonCommand.Source
 
 $Tasks = @(
     @{
-        Name = "AI_TW_Stock_CNYES_Nightly_News"
-        Script = Join-Path $ProjectDir "run_cnyes_news_nightly.py"
+        Name = "AI_TW_Stock_Finance_Update_0810"
+        Script = Join-Path $ProjectDir "scheduled_job_runner.py"
+        Arguments = "finance"
+        Hour = 8
+        Minute = 10
+    },
+    @{
+        Name = "AI_TW_Stock_Finance_Update_1100"
+        Script = Join-Path $ProjectDir "scheduled_job_runner.py"
+        Arguments = "finance"
+        Hour = 11
+        Minute = 0
+    },
+    @{
+        Name = "AI_TW_Stock_Finance_Update_1330"
+        Script = Join-Path $ProjectDir "scheduled_job_runner.py"
+        Arguments = "finance"
+        Hour = 13
+        Minute = 30
+    },
+    @{
+        Name = "AI_TW_Stock_Finance_Update_1600"
+        Script = Join-Path $ProjectDir "scheduled_job_runner.py"
+        Arguments = "finance"
+        Hour = 16
+        Minute = 0
+    },
+    @{
+        Name = "AI_TW_Stock_Finance_Update_1800"
+        Script = Join-Path $ProjectDir "scheduled_job_runner.py"
+        Arguments = "finance"
+        Hour = 18
+        Minute = 0
+    },
+    @{
+        Name = "AI_TW_Stock_Finance_Update_2300"
+        Script = Join-Path $ProjectDir "scheduled_job_runner.py"
+        Arguments = "finance"
         Hour = 23
         Minute = 0
     },
@@ -54,6 +90,15 @@ if ([string]::IsNullOrWhiteSpace($env:USERDOMAIN)) {
 Write-Host "User    : $CurrentUser"
 Write-Host ""
 
+# Remove the legacy standalone crawler task; the 23:00 finance job now runs
+# the full crawler + AI summary + GitHub publication pipeline.
+$LegacyTaskName = "AI_TW_Stock_CNYES_Nightly_News"
+$LegacyTask = Get-ScheduledTask -TaskName $LegacyTaskName -ErrorAction SilentlyContinue
+if ($null -ne $LegacyTask) {
+    Unregister-ScheduledTask -TaskName $LegacyTaskName -Confirm:$false
+    Write-Host "Removed legacy task: $LegacyTaskName"
+}
+
 foreach ($task in $Tasks) {
     if (-not (Test-Path -LiteralPath $task.Script)) {
         Write-Host "ERROR: Script not found: $($task.Script)" -ForegroundColor Red
@@ -82,7 +127,16 @@ foreach ($task in $Tasks) {
     $Time = [datetime]::Today.AddHours($task.Hour).AddMinutes($task.Minute)
     $Trigger = New-ScheduledTaskTrigger -Daily -At $Time
 
+    $ScriptArguments = ""
+    if ($task.ContainsKey("Arguments")) {
+        $ScriptArguments = [string]$task.Arguments
+    }
+
     $Argument = '"{0}"' -f $task.Script
+    if (-not [string]::IsNullOrWhiteSpace($ScriptArguments)) {
+        $Argument += " $ScriptArguments"
+    }
+
     $Action = New-ScheduledTaskAction `
         -Execute $PythonPath `
         -Argument $Argument `
@@ -136,9 +190,9 @@ if (-not $allOk) {
 
 Write-Host "Scheduler setup completed successfully." -ForegroundColor Green
 Write-Host ""
+Write-Host "08:10, 11:00, 13:30, 16:00, 18:00, 23:00  Finance refresh + GitHub publish"
 Write-Host "08:30  Morning report"
 Write-Host "14:30  After-close report"
-Write-Host "23:00  CNYES nightly crawler"
 Write-Host ""
 Write-Host "StartWhenAvailable = OFF"
 Write-Host "WakeToRun          = ON"
