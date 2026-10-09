@@ -1868,7 +1868,7 @@ def _get_nav_section() -> str:
         value = str(value or default)
     except Exception:
         value = default
-    allowed = {"home", "strategy", "future", "finance", "subscribe"}
+    allowed = {"home", "strategy", "future", "finance", "rotation", "subscribe"}
     return value if value in allowed else "home"
 
 
@@ -1883,7 +1883,7 @@ def _set_nav_section(section: str) -> None:
 
 def render_site_navigation() -> str:
     current = _get_nav_section()
-    nav = [("home", "首頁"), ("strategy", "操作策略"), ("future", "未來分析"), ("finance", "財經資訊"), ("subscribe", "訂閱系統")]
+    nav = [("home", "首頁"), ("strategy", "操作策略"), ("future", "未來分析"), ("finance", "財經資訊"), ("rotation", "產業輪動"), ("subscribe", "訂閱系統")]
     links = []
     for key, label in nav:
         active = " active" if current == key else ""
@@ -1969,6 +1969,390 @@ def render_future_workspace() -> None:
     with st.container(key="future-03-agent"):
         st.markdown('<div class="feature-section-title">03｜模型研究 Agent</div>', unsafe_allow_html=True)
         render_model_research_agent()
+
+
+# ============================================================
+# 產業輪動：供應鏈族群相對強弱與輪動象限
+# ============================================================
+ROTATION_THEMES = {
+    "晶圓代工": ["2330", "2303", "6770"],
+    "ASIC／IC 設計": ["3661", "3443", "2454", "5269", "3034"],
+    "記憶體／儲存": ["2408", "2344", "8299", "3260", "6239"],
+    "先進封裝／測試": ["3711", "3374", "6510", "6223", "3583"],
+    "ABF／IC 載板": ["3037", "3189", "8046"],
+    "PCB／高階板": ["2368", "3044", "2313", "6274"],
+    "CCL／高速材料": ["2383", "6274", "6213"],
+    "散熱／液冷": ["3017", "3324", "3653", "2421"],
+    "AI 伺服器／ODM": ["2382", "3231", "6669", "2317", "2356"],
+    "電源／BBU": ["2308", "6412", "6121", "6781"],
+    "被動元件": ["2327", "2492", "8042", "3026"],
+    "高速連接器／互連": ["3533", "3665", "3023", "2059"],
+    "光通訊／矽光子": ["3363", "3081", "4979", "3450", "6442"],
+    "網通／交換器": ["2345", "6285", "3704"],
+    "重電／電網": ["1519", "1513", "1503", "1504"],
+    "面板／顯示器": ["3481", "2409"],
+    "電子通路": ["3702", "3036", "2347"],
+    "航運／貨櫃": ["2603", "2609", "2615"],
+    "金融／金控": ["2881", "2882", "2891", "2886"],
+    "鋼鐵／原物料": ["2002", "2014", "2031"],
+    "生技／醫療": ["6446", "4743", "4128"],
+    "綠能／能源": ["6505", "6806", "1513"],
+}
+ROTATION_DEFAULT_THEMES = [
+    "晶圓代工", "ASIC／IC 設計", "記憶體／儲存", "先進封裝／測試",
+    "ABF／IC 載板", "PCB／高階板", "CCL／高速材料",
+    "散熱／液冷", "AI 伺服器／ODM", "電源／BBU",
+]
+
+
+def _rotation_period_return(series: pd.Series, bars: int) -> float:
+    """以有效交易 K 棒計算報酬率；資料不足時回傳 NaN。"""
+    s = pd.to_numeric(series, errors="coerce").dropna()
+    if len(s) <= bars:
+        return np.nan
+    base = float(s.iloc[-bars - 1])
+    latest = float(s.iloc[-1])
+    return (latest / base - 1.0) * 100.0 if base else np.nan
+
+
+def _rotation_quadrant(rs: float, momentum: float) -> str:
+    """RRG 四象限：RS 與相對動能均以 100 為中線。"""
+    if not np.isfinite(rs) or not np.isfinite(momentum):
+        return "資料不足"
+    if rs >= 100 and momentum >= 100:
+        return "領先"
+    if rs >= 100 and momentum < 100:
+        return "轉弱"
+    if rs < 100 and momentum < 100:
+        return "落後"
+    return "改善"
+
+
+def _rotation_make_index(history_map: dict[str, pd.DataFrame], symbols: list[str]) -> tuple[pd.Series, dict]:
+    """以代表股每日報酬等權平均建構族群指數，並回傳個股最近一期報酬。"""
+    return_frames = []
+    latest_returns = {}
+    valid_symbols = []
+    for code in symbols:
+        h = history_map.get(code)
+        if h is None or h.empty or "close" not in h.columns:
+            continue
+        d = h.copy()
+        d["date"] = pd.to_datetime(d["date"], errors="coerce").dt.normalize()
+        d["close"] = pd.to_numeric(d["close"], errors="coerce")
+        d = d.dropna(subset=["date", "close"]).drop_duplicates("date", keep="last").sort_values("date")
+        if len(d) < 22 or d["close"].iloc[-1] <= 0:
+            continue
+        returns = d.set_index("date")["close"].pct_change()
+        returns.name = code
+        return_frames.append(returns)
+        latest_returns[code] = float(returns.dropna().iloc[-1] * 100.0) if not returns.dropna().empty else np.nan
+        valid_symbols.append(code)
+
+    if not return_frames:
+        return pd.Series(dtype=float), {"valid_symbols": [], "latest_returns": {}}
+
+    # 不補造休市日或缺少的 K 棒；各交易日只平均當日真正有有效報酬的代表股。
+    frame = pd.concat(return_frames, axis=1).sort_index()
+    daily_returns = frame.mean(axis=1, skipna=True).dropna()
+    index_series = (1.0 + daily_returns).cumprod() * 100.0
+    index_series.name = "族群等權指數"
+    return index_series, {"valid_symbols": valid_symbols, "latest_returns": latest_returns}
+
+
+def _rotation_build_frame(group_series: dict[str, pd.Series], history_map: dict[str, pd.DataFrame],
+                          period_bars: int) -> tuple[pd.DataFrame, dict[str, pd.DataFrame]]:
+    """產生族群績效表，以及相對 0050 基準的 RRG 歷史座標。"""
+    benchmark, _ = _rotation_make_index(history_map, ["0050"])
+    # 0050 是可取得的廣泛市場代理；清楚揭露它不是完整加權指數。
+    if benchmark.empty:
+        raise RuntimeError("無法取得 0050 基準日 K，暫時無法計算相對強弱。")
+
+    # 族群報酬表以樣本股等權平均計算；同一股票可出現在不同主題。
+    rows = []
+    rrg_map: dict[str, pd.DataFrame] = {}
+    min_date = pd.Timestamp.max
+    max_date = pd.Timestamp.min
+    for name, group_index in group_series.items():
+        aligned = pd.concat([group_index.rename("group"), benchmark.rename("benchmark")], axis=1).dropna()
+        if len(aligned) < 70:
+            continue
+        aligned["relative"] = aligned["group"] / aligned["benchmark"] * 100.0
+        aligned["rs"] = aligned["relative"] / aligned["relative"].rolling(50, min_periods=50).mean() * 100.0
+        aligned["momentum"] = aligned["rs"] / aligned["rs"].shift(10) * 100.0
+        aligned = aligned.replace([np.inf, -np.inf], np.nan).dropna(subset=["rs", "momentum"])
+        if aligned.empty:
+            continue
+
+        view = aligned.tail(period_bars).copy()
+        rrg_map[name] = view
+        last = aligned.iloc[-1]
+        metrics = {
+            "族群": name,
+            "樣本數": int(len(group_index.attrs.get("valid_symbols", []))) if hasattr(group_index, "attrs") else 0,
+            "近 1 日": _rotation_period_return(group_index, 1),
+            "近 5 日": _rotation_period_return(group_index, 5),
+            "近 20 日": _rotation_period_return(group_index, 20),
+            "近 60 日": _rotation_period_return(group_index, 60),
+            "今年以來": np.nan,
+            "相對強弱": float(last["rs"]),
+            "相對動能": float(last["momentum"]),
+            "輪動象限": _rotation_quadrant(float(last["rs"]), float(last["momentum"])),
+            "_group_index": group_index,
+        }
+        dates = pd.to_datetime(group_index.index, errors="coerce")
+        if not dates.empty:
+            this_year = pd.Timestamp.now(tz="Asia/Taipei").year
+            ytd_start = pd.Timestamp(year=this_year, month=1, day=1)
+            ytd_hist = group_index[dates >= ytd_start]
+            prior_hist = group_index[dates < ytd_start]
+            if not ytd_hist.empty and not prior_hist.empty:
+                metrics["今年以來"] = (float(ytd_hist.iloc[-1]) / float(prior_hist.iloc[-1]) - 1.0) * 100.0
+        rows.append(metrics)
+        min_date = min(min_date, aligned.index.min())
+        max_date = max(max_date, aligned.index.max())
+
+    if not rows:
+        raise RuntimeError("有效歷史樣本不足，至少需要約 70 個交易日資料。")
+    result = pd.DataFrame(rows).sort_values("近 20 日", ascending=False, na_position="last").reset_index(drop=True)
+    return result, rrg_map
+
+
+def render_rotation_workspace() -> None:
+    """產業輪動研究頁：族群等權績效表＋Relative Rotation Graph。"""
+    st.markdown(
+        '<div class="content-heading"><div class="eyebrow">SECTOR ROTATION</div>'
+        '<h1>產業輪動</h1>'
+        '<p>比較台股供應鏈主題的相對強弱、短中期報酬與輪動方向，協助辨識領先、轉弱、落後與改善族群。</p></div>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<div class="rotation-note"><strong>計算方式</strong>：使用各主題代表股的每日報酬等權平均建立族群指數，'
+        '並以元大台灣 50（0050）作為市場基準代理。主題分類為研究用途整理、不是交易所官方產業指數；'
+        '同一股票可能屬於多個主題，樣本結果不代表整個族群所有成分股。資料僅供參考，不構成投資建議。</div>',
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("""
+    <style>
+    .rotation-note{background:#fbf1f1;border:1px solid #eadada;border-left:4px solid #8e2b2f;
+        border-radius:10px;padding:13px 16px;margin:0 0 18px;color:#594b4b;font-size:12px;line-height:1.85;}
+    .rotation-note strong{color:#8e2b2f;}
+    .rotation-quadrants{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 14px;}
+    .rotation-quadrants div{border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.6;}
+    .rotation-leading{background:#fce8e8;color:#8e2b2f;}
+    .rotation-weakening{background:#fff1df;color:#9a5b10;}
+    .rotation-lagging{background:#edf1f5;color:#455468;}
+    .rotation-improving{background:#e5f4ed;color:#17694b;}
+    </style>
+    """, unsafe_allow_html=True)
+
+    col_period, col_groups, col_run = st.columns([1.2, 2.8, 1])
+    with col_period:
+        period_choice = st.radio(
+            "輪動軌跡",
+            ["1 個月", "3 個月", "半年", "1 年"],
+            index=1,
+            horizontal=False,
+            key="rotation_period_choice",
+        )
+    with col_groups:
+        selected_groups = st.multiselect(
+            "分析主題（可自行增減）",
+            list(ROTATION_THEMES.keys()),
+            default=[x for x in ROTATION_DEFAULT_THEMES if x in ROTATION_THEMES],
+            key="rotation_selected_themes",
+            help="每個主題最多使用 5 檔代表股；可重複出現在不同主題。",
+        )
+    with col_run:
+        st.markdown("<div style='height:29px'></div>", unsafe_allow_html=True)
+        run_rotation = st.button("計算產業輪動", type="primary", use_container_width=True, key="run_rotation_analysis")
+
+    period_bars = {"1 個月": 22, "3 個月": 66, "半年": 132, "1 年": 250}[period_choice]
+    # 需要留出 50 日 RS 均線與 10 日動能的 warm-up 區間。
+    fetch_days = {"1 個月": 170, "3 個月": 250, "半年": 370, "1 年": 520}[period_choice]
+    signature = period_choice + "|" + "|".join(sorted(selected_groups))
+    stored = st.session_state.get("rotation_result")
+    stored_signature = st.session_state.get("rotation_signature")
+
+    if run_rotation:
+        if not selected_groups:
+            st.warning("請至少選擇一個產業主題。")
+        else:
+            symbols = sorted(set(["0050"] + [
+                code for group in selected_groups for code in ROTATION_THEMES.get(group, [])
+            ]))
+            history_map = {}
+            progress = st.progress(0, text="準備下載代表股歷史日 K…")
+            failures = []
+            with st.spinner(f"正在整理 {len(symbols)} 檔股票的歷史行情，第一次執行可能需要一些時間…"):
+                for idx, code in enumerate(symbols):
+                    try:
+                        hist = get_history(code, fetch_days)
+                        if hist is None or hist.empty:
+                            failures.append(code)
+                        else:
+                            history_map[code] = hist.copy()
+                    except Exception:
+                        failures.append(code)
+                    progress.progress((idx + 1) / len(symbols), text=f"讀取 {code} 歷史日 K（{idx + 1}/{len(symbols)}）")
+            progress.empty()
+
+            group_series = {}
+            diagnostics = {}
+            for group in selected_groups:
+                series, meta = _rotation_make_index(history_map, ROTATION_THEMES[group])
+                if len(series) >= 70:
+                    series.attrs["valid_symbols"] = meta["valid_symbols"]
+                    group_series[group] = series
+                    diagnostics[group] = meta
+
+            try:
+                metrics, rrg_map = _rotation_build_frame(group_series, history_map, period_bars)
+                for _, metric in metrics.iterrows():
+                    name = metric["族群"]
+                    metric_symbols = diagnostics.get(name, {}).get("valid_symbols", [])
+                    metric["樣本數"] = len(metric_symbols)
+                # 在結果物件中把內部時間序列欄位取出，避免表格直接顯示 Series。
+                visible_metrics = metrics.drop(columns=["_group_index"], errors="ignore").copy()
+                visible_metrics["樣本數"] = visible_metrics["族群"].map(
+                    lambda name: len(diagnostics.get(name, {}).get("valid_symbols", []))
+                )
+                st.session_state["rotation_result"] = {
+                    "metrics": visible_metrics,
+                    "rrg": rrg_map,
+                    "diagnostics": diagnostics,
+                    "asof": max((pd.to_datetime(h["date"], errors="coerce").max() for h in history_map.values() if h is not None and not h.empty), default=pd.NaT),
+                    "failures": failures,
+                }
+                st.session_state["rotation_signature"] = signature
+                stored = st.session_state["rotation_result"]
+                stored_signature = signature
+            except Exception as e:
+                st.error(f"產業輪動計算失敗：{e}")
+                st.caption("請檢查 Fugle 歷史 K 線是否可用，或先減少選取的主題數。")
+                return
+
+    if stored is None or stored_signature != signature:
+        st.info("請選擇觀察期間與主題，再按「計算產業輪動」。結果會快取在目前頁面工作階段，切換主題後需重新計算。")
+        return
+
+    metrics = stored["metrics"].copy()
+    asof = pd.to_datetime(stored.get("asof"), errors="coerce")
+    if pd.notna(asof):
+        st.caption(f"行情資料基準：{asof.strftime('%Y-%m-%d')}｜基準代理：0050｜主題數：{len(metrics)}")
+    failed = stored.get("failures") or []
+    if failed:
+        st.caption(f"未取得有效日 K 的股票：{', '.join(failed[:15])}" + (f" 等 {len(failed)} 檔" if len(failed) > 15 else ""))
+
+    counts = metrics["輪動象限"].value_counts()
+    leaders = metrics.loc[metrics["輪動象限"] == "領先", "族群"].tolist()
+    improvers = metrics.loc[metrics["輪動象限"] == "改善", "族群"].tolist()
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("可分析主題", f"{len(metrics)}")
+    m2.metric("領先象限", f"{int(counts.get('領先', 0))} 群")
+    m3.metric("改善象限", f"{int(counts.get('改善', 0))} 群")
+    m4.metric("落後／轉弱", f"{int(counts.get('落後', 0) + counts.get('轉弱', 0))} 群")
+
+    st.markdown('<div class="feature-section-title">01｜產業輪動圖</div>', unsafe_allow_html=True)
+    st.caption("每條線代表一個主題的相對強弱軌跡；尾端是最新位置。X、Y 軸的 100 為中線。滑鼠移到線上可查看日期與數值。")
+    fig = go.Figure()
+    quadrant_colors = {
+        "領先": "#c65b62", "轉弱": "#d9a441", "落後": "#64748b", "改善": "#319879",
+    }
+    all_x, all_y = [], []
+    for group, frame in stored["rrg"].items():
+        if frame.empty:
+            continue
+        # 每五個交易日取一點，並確保最新點保留在軌跡末端。
+        trail = frame.iloc[::5].copy()
+        if trail.empty or trail.index[-1] != frame.index[-1]:
+            trail = pd.concat([trail, frame.tail(1)])
+        color = quadrant_colors.get(
+            metrics.loc[metrics["族群"] == group, "輪動象限"].iloc[0], "#64748b"
+        )
+        fig.add_trace(go.Scatter(
+            x=trail["rs"], y=trail["momentum"],
+            mode="lines+markers",
+            name=group,
+            line=dict(width=2, color=color),
+            marker=dict(size=[6] * max(0, len(trail) - 1) + [11], color=color),
+            text=[pd.Timestamp(d).strftime("%m/%d") for d in trail.index],
+            hovertemplate=group + "<br>日期 %{text}<br>相對強弱 %{x:.1f}<br>相對動能 %{y:.1f}<extra></extra>",
+        ))
+        last = frame.iloc[-1]
+        all_x.extend(frame["rs"].tail(20).astype(float).tolist())
+        all_y.extend(frame["momentum"].tail(20).astype(float).tolist())
+        fig.add_trace(go.Scatter(
+            x=[float(last["rs"])], y=[float(last["momentum"])],
+            mode="text",
+            text=[group],
+            textposition="top center",
+            textfont=dict(size=10, color=color),
+            showlegend=False,
+            hoverinfo="skip",
+        ))
+
+    if all_x and all_y:
+        min_x, max_x = min(all_x), max(all_x)
+        min_y, max_y = min(all_y), max(all_y)
+        # 以 100 為中心提供適度邊界，避免軸距過窄。
+        x_pad = max(2.5, (max_x - min_x) * 0.12)
+        y_pad = max(2.5, (max_y - min_y) * 0.12)
+        x_range = [min(min_x - x_pad, 97), max(max_x + x_pad, 103)]
+        y_range = [min(min_y - y_pad, 97), max(max_y + y_pad, 103)]
+        fig.add_shape(type="line", x0=100, x1=100, y0=y_range[0], y1=y_range[1],
+                      line=dict(color="#9aa7b5", width=1, dash="dash"))
+        fig.add_shape(type="line", x0=x_range[0], x1=x_range[1], y0=100, y1=100,
+                      line=dict(color="#9aa7b5", width=1, dash="dash"))
+        fig.update_xaxes(range=x_range, title_text="相對強弱（100＝近 50 日平均）", zeroline=False)
+        fig.update_yaxes(range=y_range, title_text="相對動能（100＝10 日前水準）", zeroline=False)
+    fig.update_layout(
+        height=620, margin=dict(l=30, r=20, t=16, b=25),
+        hovermode="closest", dragmode="pan",
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
+        showlegend=True,
+    )
+    st.plotly_chart(
+        fig, use_container_width=True, key=f"rotation_rrg_{signature}",
+        config={"scrollZoom": True, "doubleClick": "reset", "displaylogo": False, "responsive": True},
+    )
+
+    st.markdown('<div class="feature-section-title">02｜族群績效與輪動狀態</div>', unsafe_allow_html=True)
+    sort_by = st.selectbox(
+        "排序方式",
+        ["近 20 日報酬", "近 5 日報酬", "今日／最近交易日", "相對強弱", "相對動能"],
+        key="rotation_sort_by",
+    )
+    sort_col = {
+        "近 20 日報酬": "近 20 日",
+        "近 5 日報酬": "近 5 日",
+        "今日／最近交易日": "近 1 日",
+        "相對強弱": "相對強弱",
+        "相對動能": "相對動能",
+    }[sort_by]
+    table = metrics.sort_values(sort_col, ascending=False, na_position="last").copy()
+    for col in ["近 1 日", "近 5 日", "近 20 日", "近 60 日", "今年以來"]:
+        table[col] = table[col].map(lambda x: f"{x:+.2f}%" if pd.notna(x) else "—")
+    for col in ["相對強弱", "相對動能"]:
+        table[col] = table[col].map(lambda x: f"{x:.1f}" if pd.notna(x) else "—")
+    st.dataframe(
+        table[["族群", "樣本數", "近 1 日", "近 5 日", "近 20 日", "近 60 日", "今年以來", "相對強弱", "相對動能", "輪動象限"]],
+        use_container_width=True,
+        hide_index=True,
+    )
+
+    st.markdown('<div class="feature-section-title">03｜四象限判讀</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="rotation-quadrants">
+      <div class="rotation-leading"><strong>領先｜右上</strong><br>相對大盤偏強，而且相對動能仍在增強。</div>
+      <div class="rotation-weakening"><strong>轉弱｜右下</strong><br>相對大盤仍偏強，但動能正在減弱。</div>
+      <div class="rotation-lagging"><strong>落後｜左下</strong><br>相對大盤偏弱，而且動能仍弱。</div>
+      <div class="rotation-improving"><strong>改善｜左上</strong><br>目前相對偏弱，但動能正在改善。</div>
+    </div>
+    """, unsafe_allow_html=True)
+    st.caption("RRG 是相對績效與動能的描述工具，不等同買賣訊號。不同主題樣本股數、產業重疊及個股流動性會影響結果；請搭配原始 K 線與基本面資料判讀。")
+
 
 # ============================================================
 # Watchlist fragment
@@ -4637,6 +5021,8 @@ elif current_section == "future":
     render_future_workspace()
 elif current_section == "finance":
     render_finance_workspace()
+elif current_section == "rotation":
+    render_rotation_workspace()
 else:
     render_subscription_workspace()
 
