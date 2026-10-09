@@ -2178,7 +2178,7 @@ def _render_published_rotation(payload: dict) -> None:
     kpis[3].metric("轉弱", f"{quadrants['轉弱']} 群")
     kpis[4].metric("落後", f"{quadrants['落後']} 群")
 
-    # 資金流向圖：以代表股成交值在本頁樣本中的占比變化（百分點）作為資金聚焦代理。
+    # 資金流向圖：以代表股成交值占 TWSE＋TPEx 全市場成交值的百分點變化衡量相對成交聚焦。
     st.markdown('<div class="feature-section-title">01｜資金流向輪動圖</div>', unsafe_allow_html=True)
     previous_date = str(payload.get("previous_data_asof") or "")
     previous_previous_date = str(payload.get("previous_previous_data_asof") or "")
