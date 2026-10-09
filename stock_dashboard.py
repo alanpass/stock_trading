@@ -2103,7 +2103,7 @@ def render_watchlist(compact: bool = False):
                                     unsafe_allow_html=True,
                                 )
                             with b2:
-                                if st.button("\u200b", key=f"watch_select_{r['code']}_{idx}", icon=":material/check_circle:", help="選取此股票", use_container_width=True):
+                                if st.button("\u200b", key=f"watch_select_{r['code']}_{idx}", icon=":material/visibility:", help="選取此股票", use_container_width=True):
                                     _watch_select(r['code'])
                             with b3:
                                 if st.button("\u200b", key=f"watch_remove_{r['code']}_{idx}", icon=":material/delete:", help=f"從自選股移除 {r['code']}", use_container_width=True):
@@ -2116,10 +2116,10 @@ def render_watchlist(compact: bool = False):
                                 unsafe_allow_html=True,
                             )
                         with b2:
-                            if st.button("查看", key=f"watch_select_{r['code']}_{idx}", use_container_width=True, type="secondary", help="查看此股票"):
+                            if st.button("\u200b", key=f"watch_select_{r['code']}_{idx}", icon=":material/visibility:", use_container_width=True, type="secondary", help="查看此股票"):
                                 _watch_select(r['code'])
                         with b3:
-                            if st.button("刪除", key=f"watch_remove_{r['code']}_{idx}", use_container_width=True, type="secondary", help=f"從自選股移除 {r['code']}"):
+                            if st.button("\u200b", key=f"watch_remove_{r['code']}_{idx}", icon=":material/delete:", use_container_width=True, type="secondary", help=f"從自選股移除 {r['code']}"):
                                 _watch_remove(r['code'])
                         with b4:
                             st.markdown(f"<div class='watch-value watch-price-cell{value_class}' style='color:{vcolor}'>{price_txt}</div>", unsafe_allow_html=True)
@@ -4186,7 +4186,7 @@ a[data-testid^="stBaseLinkButton"]{
 .wc-vals .wc-price{font-size:20px;font-weight:900;letter-spacing:.3px;}
 [class*="st-key-wc_"]:has(.wc-info.limit-up) .wc-vals span,
 [class*="st-key-wc_"]:has(.wc-info.limit-down) .wc-vals span{color:#fff !important;}
-/* 選取／刪除：設計感文字按鈕「選」「刪」（淺藍底＋黑框，圓角正方形，字在正中心）
+/* 選取／刪除：Material Symbols 圖示按鈕（淺藍底＋黑框，圓角正方形，圖示置中）
    注意：全站有 div[data-testid=stButton] > button[kind=secondary] 的 !important 規則，這裡的選擇器要更具體才蓋得過 */
 .stApp [class*="st-key-wc_"] div[data-testid="stButton"]{display:flex !important;justify-content:center !important;align-items:center !important;}
 .stApp [class*="st-key-wc_"] div[data-testid="stButton"] > button[kind]{
@@ -4198,31 +4198,29 @@ a[data-testid^="stBaseLinkButton"]{
   gap:0 !important;line-height:1 !important;
 }
 .stApp [class*="st-key-wc_"] div[data-testid="stButton"] > button[kind]:hover{background:#c7dcf8 !important;transform:translateY(-1px);}
-/* 圖示按鈕：圖示正中心。按鈕內所有層級的邊距／間距／行高一律歸零，標籤文字（零寬字元）縮到 0，
-   只留下 22px 的圖示；容器一律 flex 置中，且不裁切。 */
-.stApp [class*="st-key-wc_"] div[data-testid="stButton"] > button[kind] *{
-  margin:0 !important;padding:0 !important;gap:0 !important;
-  overflow:visible !important;min-width:0 !important;max-width:none !important;
-}
 .stApp [class*="st-key-wc_"] div[data-testid="stButton"] > button[kind] > div,
 .stApp [class*="st-key-wc_"] div[data-testid="stButton"] > button[kind] [data-testid="stMarkdownContainer"]{
   display:flex !important;align-items:center !important;justify-content:center !important;
-  width:100% !important;height:100% !important;
+  width:100% !important;height:100% !important;margin:0 !important;padding:0 !important;
 }
 .stApp [class*="st-key-wc_"] div[data-testid="stButton"] > button[kind] p{
-  display:flex !important;align-items:center !important;justify-content:center !important;
-  font-size:0 !important;line-height:0 !important;width:auto !important;height:auto !important;
+  margin:0 !important;padding:0 !important;line-height:1 !important;text-align:center !important;
+  font-family:"Noto Serif TC","Source Han Serif TC","Songti TC","PMingLiU","MingLiU",Georgia,serif !important;
+  font-size:19px !important;font-weight:900 !important;letter-spacing:0 !important;
+  transform:translateY(-1px);   /* 補償明體字形重心偏下，讓字看起來在正中心 */
 }
-.stApp [class*="st-key-wc_"] div[data-testid="stButton"] > button[kind] [data-testid="stIconMaterial"],
-.stApp [class*="st-key-wc_"] div[data-testid="stButton"] > button[kind] span{
+/* Material Symbols 圖示本身著色；按鈕不再顯示「選／刪」文字。 */
+.stApp [class*="st-key-wc_"] div[data-testid="stButton"] > button [data-testid="stIconMaterial"],
+.stApp [class*="st-key-wc_"] div[data-testid="stButton"] > button .material-symbols-rounded {
   display:inline-flex !important;align-items:center !important;justify-content:center !important;
   width:22px !important;height:22px !important;font-size:22px !important;line-height:1 !important;
-  text-indent:0 !important;
 }
-.stApp [class*="st-key-watch_select_"] div[data-testid="stButton"] > button[kind] [data-testid="stIconMaterial"],
-.stApp [class*="st-key-watch_select_"] div[data-testid="stButton"] > button[kind] span{color:#0b5cad !important;}
-.stApp [class*="st-key-watch_remove_"] div[data-testid="stButton"] > button[kind] [data-testid="stIconMaterial"],
-.stApp [class*="st-key-watch_remove_"] div[data-testid="stButton"] > button[kind] span{color:#b3121a !important;}
+.stApp [class*="st-key-watch_select_"] button p,
+.stApp [class*="st-key-watch_select_"] button [data-testid="stIconMaterial"],
+.stApp [class*="st-key-watch_select_"] button .material-symbols-rounded{color:#0b5cad !important;}
+.stApp [class*="st-key-watch_remove_"] button p,
+.stApp [class*="st-key-watch_remove_"] button [data-testid="stIconMaterial"],
+.stApp [class*="st-key-watch_remove_"] button .material-symbols-rounded{color:#b3121a !important;}
 
 /* ============================================================
    V19 淺色系：搜尋框、下拉選單、單選鈕、輸入框（不再出現深色底）
