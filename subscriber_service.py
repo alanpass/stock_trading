@@ -114,10 +114,15 @@ def load_remote_subscribers(base: str | Path = ".") -> tuple[list[dict[str, Any]
         response = requests.get(url, params=params, timeout=15)
         response.raise_for_status()
         data = response.json()
-        rows = data.get("subscribers", []) if isinstance(data, dict) else []
+        if not isinstance(data, dict):
+            return [], "遠端訂閱服務回傳格式錯誤（預期 JSON 物件）"
+        if data.get("ok") is False:
+            reason = str(data.get("error") or "unknown_error")
+            return [], f"遠端訂閱服務拒絕請求：{reason}；請確認 Web App 部署與 Token"
+        rows = data.get("subscribers", [])
         if isinstance(rows, list):
             return [x for x in rows if isinstance(x, dict)], ""
-        return [], "遠端訂閱服務回傳格式錯誤"
+        return [], "遠端訂閱服務回傳格式錯誤（subscribers 不是清單）"
     except Exception as exc:
         return [], f"遠端訂閱名單讀取失敗：{type(exc).__name__}: {exc}"
 
