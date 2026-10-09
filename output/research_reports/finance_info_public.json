@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "report_type": "finance_info_public",
+  "report_date": null,
+  "updated_at": null,
+  "finished_at": null,
+  "published_at": null,
+  "lookback_days": 2,
+  "schedule": [
+    "08:10",
+    "11:00",
+    "13:30",
+    "16:00",
+    "18:00",
+    "23:00"
+  ],
+  "stale": true,
+  "news_count": 0,
+  "earnings_count": 0,
+  "news_digest": {},
+  "earnings_digest": {},
+  "crawl": {
+    "ok": false,
+    "message": "尚未從 Windows 研究端發布資料"
+  },
+  "agent_stats": {},
+  "errors_count": 0,
+  "news": [],
+  "earnings": []
+}
