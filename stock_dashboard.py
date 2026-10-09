@@ -2166,8 +2166,9 @@ def _render_published_rotation(payload: dict) -> None:
     with c:
         sort_by = st.selectbox(
             "排行依據",
-            ["近 20 日", "近 5 日", "今日", "相對強弱", "相對動能", "資金流向"],
-            key="rotation_published_sort",
+            ["族群平均漲跌幅", "前一日平均漲跌幅", "近 20 日", "近 5 日", "今日", "相對強弱", "相對動能"],
+            index=0,
+            key="rotation_published_sort_v2",
         )
 
     quadrants = {q: sum(1 for g in groups if g.get("quadrant") == q) for q in ["領先", "改善", "轉弱", "落後"]}
@@ -2178,96 +2179,87 @@ def _render_published_rotation(payload: dict) -> None:
     kpis[3].metric("轉弱", f"{quadrants['轉弱']} 群")
     kpis[4].metric("落後", f"{quadrants['落後']} 群")
 
-    # 資金流向圖：以代表股成交值占 TWSE＋TPEx 全市場成交值的百分點變化衡量相對成交聚焦。
-    st.markdown('<div class="feature-section-title">01｜資金流向輪動圖</div>', unsafe_allow_html=True)
+    # 族群平均漲跌幅：依最新完成交易日各主題代表股的日漲跌幅算術平均。
+    st.markdown('<div class="feature-section-title">01｜產業族群平均漲跌幅</div>', unsafe_allow_html=True)
     previous_date = str(payload.get("previous_data_asof") or "")
-    previous_previous_date = str(payload.get("previous_previous_data_asof") or "")
-    latest_flow_label = f"最新交易日 {asof[5:]}" if len(asof) >= 10 else "最新交易日"
-    previous_flow_label = f"前一交易日 {previous_date[5:]}" if len(previous_date) >= 10 else "前一交易日"
-    has_yesterday_flow = any(
-        g.get("yesterday_market_turnover_share_delta_pp") is not None for g in groups
-    )
-    flow_options = [latest_flow_label, previous_flow_label] if has_yesterday_flow else [latest_flow_label]
-    flow_day = st.radio(
-        "資金流向資料日期（採最新已完成交易日，非日曆日）",
-        flow_options,
+    latest_label = f"最新交易日 {asof[5:]}" if len(asof) >= 10 else "最新交易日"
+    previous_label = f"前一交易日 {previous_date[5:]}" if len(previous_date) >= 10 else "前一交易日"
+    average_day = st.radio(
+        "資料日期（使用最新已完成交易日，不以日曆日判斷）",
+        [latest_label, previous_label],
         horizontal=True,
-        key="rotation_published_flow_day_v2",
+        key="rotation_published_avg_return_day_v1",
     )
-    if flow_day == previous_flow_label and has_yesterday_flow:
-        flow_delta_key = "yesterday_market_turnover_share_delta_pp"
-        flow_share_key = "yesterday_market_turnover_share_pct"
-        flow_date_label = previous_date or "前一交易日"
-        flow_compare_label = previous_previous_date or "再前一交易日"
-    else:
-        flow_delta_key = "market_turnover_share_delta_pp"
-        flow_share_key = "market_turnover_share_pct"
-        flow_date_label = asof
-        flow_compare_label = previous_date or "前一交易日"
+    average_key = "yesterday_return" if average_day == previous_label else "today_return"
+    average_date = previous_date if average_day == previous_label else asof
 
-    flow_rows = []
+    average_rows = []
     for group in groups:
-        raw_delta = group.get(flow_delta_key)
-        if raw_delta is None:
+        raw_value = group.get(average_key)
+        if raw_value is None:
             continue
         try:
-            delta_value = float(raw_delta)
+            value = float(raw_value)
         except (TypeError, ValueError):
             continue
-        share_value = group.get(flow_share_key)
-        flow_rows.append({
+        if not np.isfinite(value):
+            continue
+        average_rows.append({
             "name": rotation_label(group.get("name", "")),
-            "delta": delta_value,
-            "share": float(share_value) if share_value is not None else float("nan"),
+            "return_pct": value,
+            "rising": int(group.get("rising", 0) or 0) if average_key == "today_return" else None,
+            "falling": int(group.get("falling", 0) or 0) if average_key == "today_return" else None,
         })
-    flow_rows.sort(key=lambda row: row["delta"], reverse=True)
-    if not flow_rows:
-        st.info(
-            "這份快照尚未有完整的上市＋上櫃全市場成交值分母，故不顯示資金流向排名。"
-            "請在本機執行最新版 run_industry_rotation_update.py --force，成功後發布新的 JSON；"
-            "不再用樣本股票總成交值作分母，以免因追蹤股票組成而把記憶體等大型分類誤排為第一。"
-        )
+    average_rows.sort(key=lambda row: row["return_pct"], reverse=True)
+    if not average_rows:
+        st.info("目前快照沒有可用的族群平均漲跌幅資料，請確認代表股歷史日 K 是否成功更新。")
     else:
-        flow_colors = [
-            "#c62828" if row["delta"] > 0 else "#16803c" if row["delta"] < 0 else "#94a3b8"
-            for row in flow_rows
+        average_colors = [
+            "#c62828" if row["return_pct"] > 0 else "#16803c" if row["return_pct"] < 0 else "#94a3b8"
+            for row in average_rows
         ]
-        flow_chart = go.Figure(go.Bar(
-            x=[row["delta"] for row in flow_rows],
-            y=[row["name"] for row in flow_rows],
+        average_chart = go.Figure(go.Bar(
+            x=[row["return_pct"] for row in average_rows],
+            y=[row["name"] for row in average_rows],
             orientation="h",
-            marker=dict(color=flow_colors),
-            text=[f"{row['delta']:+.2f} pp" for row in flow_rows],
+            marker=dict(color=average_colors),
+            text=[f"{row['return_pct']:+.2f}%" for row in average_rows],
             textposition="outside",
             cliponaxis=False,
-            customdata=[[row["share"]] for row in flow_rows],
+            customdata=[[row["rising"], row["falling"]] for row in average_rows],
             hovertemplate=(
-                "%{y}<br>成交值占比變化：%{x:+.2f} pp"
-                "<br>成交值占比：%{customdata[0]:.2f}%<extra></extra>"
+                "%{y}<br>族群平均漲跌幅：%{x:+.2f}%"
+                "<br>上漲／下跌代表股：%{customdata[0]}／%{customdata[1]}<extra></extra>"
             ),
         ))
-        flow_chart.add_vline(x=0, line_color="#8793a1", line_width=1)
-        flow_chart.update_layout(
-            height=max(500, len(flow_rows) * 23),
+        average_chart.add_vline(x=0, line_color="#8793a1", line_width=1)
+        max_abs = max(abs(row["return_pct"]) for row in average_rows) if average_rows else 1.0
+        pad = max(0.25, max_abs * 0.18)
+        average_chart.update_layout(
+            height=max(500, len(average_rows) * 23),
             margin=dict(l=165, r=78, t=12, b=48),
             showlegend=False,
-            xaxis_title="樣本成交值占比變化（百分點 pp）",
+            xaxis_title="族群平均漲跌幅（%）",
             yaxis_title=None,
             hovermode="closest",
             bargap=0.24,
         )
-        flow_chart.update_xaxes(zeroline=False, gridcolor="rgba(130,145,160,0.18)")
-        flow_chart.update_yaxes(autorange="reversed", automargin=True)
+        average_chart.update_xaxes(
+            range=[min(0.0, min(row["return_pct"] for row in average_rows) - pad),
+                   max(0.0, max(row["return_pct"] for row in average_rows) + pad)],
+            zeroline=False,
+            gridcolor="rgba(130,145,160,0.18)",
+        )
+        average_chart.update_yaxes(autorange="reversed", automargin=True)
         st.plotly_chart(
-            flow_chart,
+            average_chart,
             use_container_width=True,
-            key=f"rotation_published_cashflow_{flow_day}_{len(flow_rows)}",
+            key=f"rotation_published_avg_return_{average_day}_{len(average_rows)}",
             config={"displaylogo": False, "responsive": True},
         )
         st.caption(
-            f"資料日期：{flow_date_label}；比較基準：{flow_compare_label}。"
-            "紅色代表主題代表股成交值占全市場比例增加，綠色代表比例下降。"
-            "此為成交值占比的相對變化，不等同真正資金淨流入／流出或法人買賣超。"
+            f"資料日期：{average_date or '未知'}。族群平均漲跌幅是該主題有有效行情的代表股日漲跌幅算術平均；"
+            "每檔代表股等權計算，並非全市場資金流入，也不等同官方產業指數。紅色為平均上漲，綠色為平均下跌。"
         )
 
     st.markdown('<div class="feature-section-title">02｜產業輪動圖</div>', unsafe_allow_html=True)
@@ -2315,9 +2307,9 @@ def _render_published_rotation(payload: dict) -> None:
                     config={"scrollZoom": True, "doubleClick": "reset", "displaylogo": False, "responsive": True})
 
     st.markdown('<div class="feature-section-title">02｜產業報酬與輪動狀態</div>', unsafe_allow_html=True)
-    fields = {"近 20 日": "return_20d", "近 5 日": "return_5d", "今日": "today_return",
-              "相對強弱": "relative_strength", "相對動能": "relative_momentum",
-              "資金流向": "market_turnover_share_delta_pp"}
+    fields = {"族群平均漲跌幅": "today_return", "前一日平均漲跌幅": "yesterday_return",
+              "近 20 日": "return_20d", "近 5 日": "return_5d", "今日": "today_return",
+              "相對強弱": "relative_strength", "相對動能": "relative_momentum"}
     field = fields[sort_by]
     table_groups = [g for g in groups if not selected or g.get("name") in selected]
     table_groups.sort(key=lambda g: g.get(field) if g.get(field) is not None else -999999, reverse=True)
@@ -2326,27 +2318,24 @@ def _render_published_rotation(payload: dict) -> None:
         return f"{float(value):+.2f}%" if value is not None and np.isfinite(float(value)) else "—"
     table_rows = []
     for g in table_groups:
-        share = g.get("market_turnover_share_pct")
-        delta = g.get("market_turnover_share_delta_pp")
         rs, momentum = g.get("relative_strength"), g.get("relative_momentum")
         table_rows.append({
             "產業主題": rotation_label(g.get("name", "")),
             "有效／樣本": f"{g.get('members_fresh', 0)}/{g.get('members_total', 0)}",
             "資料覆蓋率": f"{g.get('data_coverage_pct', 0):.0f}%",
-            "今日": pct(g, "today_return"), "昨日": pct(g, "yesterday_return"),
+            "族群平均漲跌幅": pct(g, "today_return"),
+            "前一日平均漲跌幅": pct(g, "yesterday_return"),
             "5 日": pct(g, "return_5d"), "20 日": pct(g, "return_20d"),
             "60 日": pct(g, "return_60d"), "今年以來": pct(g, "return_ytd"),
             "上漲／下跌": f"{g.get('rising', 0)}/{g.get('falling', 0)}",
             "52 週新高": g.get("year_high_count", 0),
-            "成交值占比": f"{float(share):.1f}%" if share is not None else "—",
-            "資金流向": f"{float(delta):+.2f} pp" if delta is not None else "—",
             "RS": f"{float(rs):.1f}" if rs is not None else "—",
             "動能": f"{float(momentum):.1f}" if momentum is not None else "—",
             "象限": g.get("quadrant", "資料不足"),
         })
     metrics_df = pd.DataFrame(table_rows)
     st.dataframe(
-        styled_frame(metrics_df, ["今日", "昨日", "5 日", "20 日", "60 日", "今年以來", "資金流向"]),
+        styled_frame(metrics_df, ["族群平均漲跌幅", "前一日平均漲跌幅", "5 日", "20 日", "60 日", "今年以來"]),
         use_container_width=True,
         hide_index=True,
     )
@@ -2447,8 +2436,7 @@ def _render_published_rotation(payload: dict) -> None:
     """, unsafe_allow_html=True)
     st.markdown(
         '<div class="rotation-note"><strong>資料來源與方法</strong><br>' + _html.escape(str(payload.get("method") or "")) +
-        '<br>' + _html.escape(str(payload.get("turnover_method") or "")) +
-        '<br>「樣本成交值占比變化」不是全市場真實資金流向；成分股可重複出現在不同主題，請同時參考有效樣本數與資料覆蓋率。</div>',
+        '<br>族群平均漲跌幅＝該主題有有效行情的代表股日漲跌幅算術平均，代表股等權計算；同一股票可同時屬於不同主題，因此請同時參考有效樣本數與資料覆蓋率。</div>',
         unsafe_allow_html=True,
     )
     if payload.get("errors"):
