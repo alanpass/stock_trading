@@ -441,7 +441,12 @@ class FugleEarningsCallAgent:
                     messages.append({"role":"tool","content":json.dumps({"ok":False,"error":str(exc),"detail_read_verified":False},ensure_ascii=False)})
             break
         if not tool_used or not article or not article.get("detail_read_verified"): raise RuntimeError("Ollama Agent 沒有成功讀取 Fugle 詳細文章")
-        prompt=("只根據以下 read_fugle_memo 讀取的文章正文輸出合法 JSON。欄位：impact(利多/利空/中性/混合), confidence(0-100), one_line_summary, financial_highlights[], operating_highlights[], guidance[], positive_factors[], negative_factors[], key_risks[], qa_highlights[], reasoning。所有數字與結論只能來自正文，不要輸出網址或文章外資訊。")
+        prompt=("你是嚴謹的台股法說會研究 Agent。只根據 read_fugle_memo 讀取的文章正文輸出合法 JSON，禁止補造文章外資訊。"
+                 "欄位：impact(利多/利空/中性/混合), confidence(0-100), one_line_summary(繁體中文 1-2 句，指出最重要的營運結論), "
+                 "key_points[](3-5 條可直接顯示在網站的重點，每條約 30-100 字，開頭標示「財務：」「營運：」「展望：」「利多：」「風險：」等類別，保留正文中的公司、期間、數字、成長率、資本支出與時程；不要重複同一句), "
+                 "highlights[](5-12 個需在 one_line_summary 或 key_points 中逐字出現的關鍵字／數字，例如營收、EPS、毛利率、成長率、產能、訂單、展望、風險；不得加入未出現在文字中的詞), "
+                 "financial_highlights[](最多 3 條), operating_highlights[](最多 3 條), guidance[](最多 3 條), positive_factors[](最多 4 條), negative_factors[](最多 4 條), key_risks[](最多 4 條), qa_highlights[](最多 3 條), reasoning(簡述判斷依據)。"
+                 "每一條都要精簡、具體、可驗證；數字單位與期間必須正確；若正文沒有資訊，對應陣列留空。")
         context=article.get("memo_text","")
         resp2=client.chat(model=self.ollama_model,messages=[{"role":"system","content":prompt},{"role":"user","content":context[:48000]}],options={"temperature":0},format="json",think=False)
         txt=getattr(getattr(resp2,"message",None),"content","") or ""
@@ -468,18 +473,47 @@ class FugleEarningsCallAgent:
         p = [x for x in POSITIVE_WORDS if x in t]
         n = [x for x in NEGATIVE_WORDS if x in t]
         impact = "利多" if len(p) > len(n) + 2 else ("利空" if len(n) > len(p) + 2 else "混合")
+        def first_sentence(value: Any, limit: int = 100) -> str:
+            text = re.sub(r"\\s+", " ", clean(value))
+            fragments = [x.strip(" ：:；;，,") for x in re.split(r"(?<=[。！？；])\\s*|(?<=\\n)", text) if x.strip()]
+            chosen = next((x for x in fragments if len(x) >= 12), text)
+            return chosen[:limit].rstrip("，、；;：: ") + ("…" if len(chosen) > limit else "")
+
+        key_points = []
+        if summary:
+            key_points.append("摘要：" + first_sentence(summary, 95))
+        for label, value in (
+            ("財務", sections.get("財務表現")),
+            ("營運", sections.get("營運摘要")),
+            ("展望", sections.get("展望與指引")),
+            ("風險", "；".join(n)),
+        ):
+            if not value:
+                continue
+            point = f"{label}：" + first_sentence(value, 92)
+            if point not in key_points:
+                key_points.append(point)
+            if len(key_points) >= 5:
+                break
+        highlights = []
+        point_blob = " ".join(key_points)
+        highlights.extend(m.group(0) for m in re.finditer(r"(?<![A-Za-z])\\d+(?:,\\d{3})*(?:\\.\\d+)?%?(?![A-Za-z])", point_blob))
+        highlights.extend(word for word in POSITIVE_WORDS + NEGATIVE_WORDS if word in point_blob)
+        highlights = list(dict.fromkeys(highlights))[:12]
         return {
             "impact": impact,
             "confidence": 45 + min(40, abs(len(p) - len(n)) * 5),
-            "one_line_summary": summary,
-            "financial_highlights": [str(sections.get("財務表現"))[:320]] if sections.get("財務表現") else [],
-            "operating_highlights": [str(sections.get("營運摘要"))[:320]] if sections.get("營運摘要") else [],
-            "guidance": [str(sections.get("展望與指引"))[:320]] if sections.get("展望與指引") else [],
-            "positive_factors": p[:8],
-            "negative_factors": n[:8],
-            "key_risks": n[:8],
-            "qa_highlights": [str(sections.get("Q&A 重點") or sections.get("Q&A"))[:360]] if (sections.get("Q&A 重點") or sections.get("Q&A")) else [],
-            "reasoning": "Ollama 無法完成結構化輸出，改用已成功讀取的 Fugle 正文與段落內容做保守摘要。",
+            "one_line_summary": first_sentence(summary, 180),
+            "key_points": key_points[:5],
+            "highlights": highlights,
+            "financial_highlights": [first_sentence(sections.get("財務表現"), 300)] if sections.get("財務表現") else [],
+            "operating_highlights": [first_sentence(sections.get("營運摘要"), 300)] if sections.get("營運摘要") else [],
+            "guidance": [first_sentence(sections.get("展望與指引"), 300)] if sections.get("展望與指引") else [],
+            "positive_factors": p[:4],
+            "negative_factors": n[:4],
+            "key_risks": n[:4],
+            "qa_highlights": [first_sentence(sections.get("Q&A 重點") or sections.get("Q&A"), 320)] if (sections.get("Q&A 重點") or sections.get("Q&A")) else [],
+            "reasoning": "Ollama 無法完成結構化輸出，改用已成功讀取的 Fugle 正文與可辨識段落產生保守重點。",
             "agent_tool_used": False,
             "memo_read_success": True,
         }
@@ -491,7 +525,26 @@ class FugleEarningsCallAgent:
         except Exception:conf=0
         def arr(k,n):return [clean(x)[:n] for x in (a.get(k) or []) if clean(x)]
         summary = clean(a.get("one_line_summary", ""))[:600]
-        return {"impact":impact,"confidence":round(conf,1),"one_line_summary":summary,"summary":summary,"financial_highlights":arr("financial_highlights",320),"operating_highlights":arr("operating_highlights",320),"guidance":arr("guidance",320),"positive_factors":arr("positive_factors",260),"negative_factors":arr("negative_factors",260),"key_risks":arr("key_risks",260),"qa_highlights":arr("qa_highlights",360),"reasoning":clean(a.get("reasoning",""))[:1200],"agent_tool_used":bool(a.get("agent_tool_used"))}
+        key_points = arr("key_points", 140)[:5]
+        highlights = arr("highlights", 24)[:12]
+        return {
+            "impact": impact,
+            "confidence": round(conf, 1),
+            "one_line_summary": summary,
+            "summary": summary,
+            "key_points": key_points,
+            "highlights": highlights,
+            "financial_highlights": arr("financial_highlights", 320)[:3],
+            "operating_highlights": arr("operating_highlights", 320)[:3],
+            "guidance": arr("guidance", 320)[:3],
+            "positive_factors": arr("positive_factors", 260)[:4],
+            "negative_factors": arr("negative_factors", 260)[:4],
+            "key_risks": arr("key_risks", 260)[:4],
+            "qa_highlights": arr("qa_highlights", 360)[:3],
+            "reasoning": clean(a.get("reasoning", ""))[:1200],
+            "agent_tool_used": bool(a.get("agent_tool_used")),
+            "memo_read_success": bool(a.get("memo_read_success", True)),
+        }
 
     def _fugle_memo_events(self, symbol: str = "", max_events: int = 20):
         rows=self.crawler.discover(); sym=str(symbol or "").strip().upper()
