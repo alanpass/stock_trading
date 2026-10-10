@@ -2134,9 +2134,22 @@ def _render_published_rotation(payload: dict) -> None:
         return "color: #64748b;"
 
     def styled_frame(frame: pd.DataFrame, columns: list[str]):
+        """依正負值上色，兼容新舊版 Pandas Styler API。"""
         valid = [col for col in columns if col in frame.columns]
-        if valid:
-            return frame.style.applymap(sign_style, subset=valid)
+        if not valid:
+            return frame
+
+        styler = frame.style
+        # Pandas 新版使用 Styler.map；舊版才提供 Styler.applymap。
+        cell_map = getattr(styler, "map", None)
+        if callable(cell_map):
+            return cell_map(sign_style, subset=valid)
+
+        cell_applymap = getattr(styler, "applymap", None)
+        if callable(cell_applymap):
+            return cell_applymap(sign_style, subset=valid)
+
+        # 若執行環境的 Styler API 更精簡，仍要讓頁面正常顯示，不因顏色功能而整頁失敗。
         return frame
     asof = str(payload.get("data_asof") or "未知")
     updated_at = str(payload.get("generated_at") or "未知")
