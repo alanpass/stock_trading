@@ -474,8 +474,8 @@ class FugleEarningsCallAgent:
         n = [x for x in NEGATIVE_WORDS if x in t]
         impact = "利多" if len(p) > len(n) + 2 else ("利空" if len(n) > len(p) + 2 else "混合")
         def first_sentence(value: Any, limit: int = 100) -> str:
-            text = re.sub(r"\\s+", " ", clean(value))
-            fragments = [x.strip(" ：:；;，,") for x in re.split(r"(?<=[。！？；])\\s*|(?<=\\n)", text) if x.strip()]
+            text = re.sub(r"\s+", " ", clean(value))
+            fragments = [x.strip(" ：:；;，,") for x in re.split(r"(?<=[。！？；])\s*|(?<=\n)", text) if x.strip()]
             chosen = next((x for x in fragments if len(x) >= 12), text)
             return chosen[:limit].rstrip("，、；;：: ") + ("…" if len(chosen) > limit else "")
 
@@ -497,7 +497,7 @@ class FugleEarningsCallAgent:
                 break
         highlights = []
         point_blob = " ".join(key_points)
-        highlights.extend(m.group(0) for m in re.finditer(r"(?<![A-Za-z])\\d+(?:,\\d{3})*(?:\\.\\d+)?%?(?![A-Za-z])", point_blob))
+        highlights.extend(m.group(0) for m in re.finditer(r"(?<![A-Za-z])\d+(?:,\d{3})*(?:\.\d+)?%?(?![A-Za-z])", point_blob))
         highlights.extend(word for word in POSITIVE_WORDS + NEGATIVE_WORDS if word in point_blob)
         highlights = list(dict.fromkeys(highlights))[:12]
         return {
