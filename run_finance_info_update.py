@@ -253,9 +253,21 @@ def _load_earnings(base: Path, previous: dict[str, Any], watchlist: list[str], e
         payload = _run_with_timeout(work, timeout)
         fresh = _extract_list(payload, ("items", "earnings_calls", "events", "data"))
         if isinstance(payload, dict):
+            discovered_count = payload.get("discovered_count", "未知")
+            recent_count = payload.get("recent_count", "未知")
+            selected_count = payload.get("selected_count", len(fresh))
+            log(
+                f"法說會：探索 {discovered_count} 個文章網址；最近 {EARNINGS_LOOKBACK_DAYS} 天符合 {recent_count} 個；"
+                f"本次選取 {selected_count} 個、成功分析 {len(fresh)} 筆"
+            )
+            if not discovered_count or discovered_count == 0:
+                debug = json.dumps(payload.get("discovery_debug") or {}, ensure_ascii=False)
+                log(f"法說會：爬取診斷 {debug[:2400]}")
             for e in (payload.get("errors") or [])[:5]:
                 if isinstance(e, dict):
-                    errors.append(f"法說會：{e.get('warning') or e.get('error')}")
+                    message = e.get("warning") or e.get("error")
+                    if message:
+                        errors.append(f"法說會：{message}")
         log(f"法說會：新增 {len(fresh)} 筆")
     except TimeoutError as exc:
         errors.append(f"法說會逾時（{exc}），本次沿用既有資料；剩下的會在下一個時段繼續。")
