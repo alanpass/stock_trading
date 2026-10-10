@@ -2419,7 +2419,7 @@ def _render_published_rotation(payload: dict) -> None:
         )
 
     st.markdown('<div class="feature-section-title">02｜產業輪動圖</div>', unsafe_allow_html=True)
-    st.caption("每條線代表主題相對加權指數的軌跡，每 5 個交易日取一點。RS 高於 100 代表相對強弱高於自身 50 日均值；動能高於 100 代表較 10 個交易日前增強。預設顯示 1 個月與「領先」象限。圖表固定尺寸：先用工具列框選或放大按鈕放大，再切換平移工具移動視窗。")
+    st.caption("每條線代表主題相對加權指數的軌跡，每 5 個交易日取一點。RS 高於 100 代表相對強弱高於自身 50 日均值；動能高於 100 代表較 10 個交易日前增強。預設顯示 1 個月與「領先」象限。圖表固定尺寸：框選放大後切換平移工具移動；雙擊會重設回原始圖，不能縮小至原圖範圍之外，滑鼠滾輪縮放已關閉。")
     quadrant_options = ["領先", "轉弱", "改善", "落後", "全選"]
     quadrant_filter = st.radio(
         "當前所在的象限",
@@ -2511,8 +2511,8 @@ def _render_published_rotation(payload: dict) -> None:
             )
         fig.update_xaxes(range=xr, title_text="相對強弱", zeroline=False, fixedrange=False)
         fig.update_yaxes(range=yr, title_text="相對動能", zeroline=False, fixedrange=False)
-    # 固定畫布尺寸，預設框選放大；放大後可切換工具列的平移工具移動視窗。
-    # 不提供縮小／重設按鈕、不使用滑鼠滾輪縮放或雙擊還原，避免檢視時意外縮回全圖。
+    # 固定畫布尺寸；預設框選放大，放大後切換平移工具才可移動視窗。
+    # 雙擊重設回原始範圍；關閉滾輪縮放並移除縮小／自動縮放按鈕，無法縮至原圖範圍以外。
     fig.update_layout(
         width=1400, height=760, autosize=False,
         margin=dict(l=45, r=35, t=28, b=40),
@@ -2803,7 +2803,7 @@ def render_rotation_workspace() -> None:
         period_choice = st.radio(
             "輪動軌跡",
             ["1 個月", "3 個月", "半年", "1 年"],
-            index=1,
+            index=0,
             horizontal=False,
             key="rotation_period_choice",
         )
@@ -3597,7 +3597,7 @@ def render_kline():
         fig.update_yaxes(showgrid=True, gridcolor="#e6eaee", row=1, col=1)
         fig.update_yaxes(showgrid=True, gridcolor="#e6eaee", row=2, col=1)
 
-        st.caption("操作：先以拖曳框選或工具列放大；放大後切換工具列的平移工具移動視窗。雙擊可重設回原始完整圖；已關閉滾輪縮放及縮小／自動縮放／重設按鈕，避免縮到原圖範圍以下。也可按「回到最新」。非交易日不占用圖表空間。")
+        st.caption("操作：框選區域放大；放大後切換工具列的平移工具移動視窗。雙擊會重設回原始完整圖，也可按「回到最新」。已關閉滑鼠滾輪縮放，並移除縮小／自動縮放／重設按鈕，無法縮小到原圖範圍之外。非交易日不占用圖表空間。")
         st.plotly_chart(
             fig,
             use_container_width=False,
