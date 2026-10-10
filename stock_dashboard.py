@@ -2247,52 +2247,155 @@ def _render_published_rotation(payload: dict) -> None:
     if not average_rows:
         st.info("目前快照沒有可用的族群平均漲跌幅資料，請確認代表股歷史日 K 是否成功更新。")
     else:
-        average_colors = [
-            "#c62828" if row["return_pct"] > 0 else "#16803c" if row["return_pct"] < 0 else "#94a3b8"
-            for row in average_rows
-        ]
-        average_chart = go.Figure(go.Bar(
-            x=[row["return_pct"] for row in average_rows],
-            y=[row["name"] for row in average_rows],
-            orientation="h",
-            marker=dict(color=average_colors),
-            text=[f"{row['return_pct']:+.2f}%" for row in average_rows],
-            textposition="outside",
-            cliponaxis=False,
-            customdata=[[row["rising"], row["falling"]] for row in average_rows],
-            hovertemplate=(
-                "%{y}<br>族群平均漲跌幅：%{x:+.2f}%"
-                "<br>上漲／下跌代表股：%{customdata[0]}／%{customdata[1]}<extra></extra>"
-            ),
-        ))
-        average_chart.add_vline(x=0, line_color="#8793a1", line_width=1)
-        max_abs = max(abs(row["return_pct"]) for row in average_rows) if average_rows else 1.0
-        pad = max(0.25, max_abs * 0.18)
-        average_chart.update_layout(
-            height=max(500, len(average_rows) * 23),
-            margin=dict(l=165, r=78, t=12, b=48),
-            showlegend=False,
-            xaxis_title="族群平均漲跌幅（%）",
-            yaxis_title=None,
-            hovermode="closest",
-            bargap=0.24,
+        # 取得各台股子產業對應的美股指標股行情；採既有 15 分鐘快取，避免重複請求。
+        us_symbols = tuple(get_us_indicator_symbols(tuple(US_INDUSTRY_INDICATORS.keys())))
+        try:
+            us_quotes_df = _cached_us_industry_quotes(us_symbols)
+        except Exception:
+            us_quotes_df = pd.DataFrame()
+        us_quote_lookup = {}
+        if not us_quotes_df.empty:
+            for _, quote_row in us_quotes_df.iterrows():
+                us_quote_lookup[str(quote_row.get("symbol", "")).upper()] = quote_row.to_dict()
+
+        # 美股產業報酬＝該台股子產業對應、且成功取得行情的美股指標股 change_pct 算術平均。
+        us_average_rows = []
+        for row in average_rows:
+            internal_name = next(
+                (name for name in by_name if rotation_label(name) == row["name"]),
+                row["name"],
+            )
+            indicators = US_INDUSTRY_INDICATORS.get(internal_name, [])
+            valid_quotes = []
+            mapped_symbols = []
+            for indicator in indicators:
+                symbol = str(indicator.get("symbol", "")).upper()
+                mapped_symbols.append(symbol)
+                quote = us_quote_lookup.get(symbol, {})
+                try:
+                    quote_pct = float(quote.get("change_pct"))
+                    if quote.get("status") == "OK" and np.isfinite(quote_pct):
+                        valid_quotes.append((symbol, quote_pct, str(quote.get("data_date") or "")))
+                except (TypeError, ValueError):
+                    continue
+            us_return = (
+                float(np.mean([item[1] for item in valid_quotes]))
+                if valid_quotes else None
+            )
+            us_average_rows.append({
+                "name": row["name"],
+                "return_pct": us_return,
+                "symbols": ", ".join(mapped_symbols) if mapped_symbols else "未設定對照",
+                "valid_symbols": ", ".join(item[0] for item in valid_quotes) if valid_quotes else "無可用行情",
+                "valid_count": len(valid_quotes),
+                "total_count": len(mapped_symbols),
+                "data_dates": ", ".join(sorted({item[2] for item in valid_quotes if item[2]})) or "無可用日期",
+            })
+
+        all_returns = [float(row["return_pct"]) for row in average_rows]
+        all_returns.extend(
+            float(row["return_pct"]) for row in us_average_rows
+            if row["return_pct"] is not None and np.isfinite(float(row["return_pct"]))
         )
-        average_chart.update_xaxes(
-            range=[min(0.0, min(row["return_pct"] for row in average_rows) - pad),
-                   max(0.0, max(row["return_pct"] for row in average_rows) + pad)],
-            zeroline=False,
-            gridcolor="rgba(130,145,160,0.18)",
-        )
-        average_chart.update_yaxes(autorange="reversed", automargin=True)
-        st.plotly_chart(
-            average_chart,
-            use_container_width=True,
-            key=f"rotation_published_avg_return_{average_day}_{len(average_rows)}",
-            config={"displaylogo": False, "responsive": True},
-        )
+        max_abs = max([abs(value) for value in all_returns] or [1.0])
+        pad = max(0.25, max_abs * 0.15)
+        shared_xrange = [-max_abs - pad, max_abs + pad]
+        chart_height = max(620, len(average_rows) * 25)
+
+        def build_industry_return_chart(rows, *, us_market: bool):
+            values = [row["return_pct"] for row in rows]
+            colors = [
+                "#c62828" if value is not None and value > 0
+                else "#16803c" if value is not None and value < 0
+                else "#94a3b8"
+                for value in values
+            ]
+            if us_market:
+                chart_customdata = [
+                    [row["symbols"], row["valid_symbols"], row["valid_count"], row["total_count"], row["data_dates"]]
+                    for row in rows
+                ]
+                hovertemplate = (
+                    "%{y}<br>美股對應指標平均漲跌幅：%{x:+.2f}%"
+                    "<br>對照代號：%{customdata[0]}"
+                    "<br>有效行情：%{customdata[2]}/%{customdata[3]}"
+                    "<br>有效代號：%{customdata[1]}"
+                    "<br>美東資料日期：%{customdata[4]}<extra></extra>"
+                )
+                labels = [
+                    f"{value:+.2f}%" if value is not None and np.isfinite(float(value)) else "—"
+                    for value in values
+                ]
+                x_values = [
+                    float(value) if value is not None and np.isfinite(float(value)) else None
+                    for value in values
+                ]
+            else:
+                chart_customdata = [[row["rising"], row["falling"]] for row in rows]
+                hovertemplate = (
+                    "%{y}<br>台股族群平均漲跌幅：%{x:+.2f}%"
+                    "<br>上漲／下跌代表股：%{customdata[0]}／%{customdata[1]}<extra></extra>"
+                )
+                labels = [f"{float(value):+.2f}%" for value in values]
+                x_values = [float(value) for value in values]
+
+            chart = go.Figure(go.Bar(
+                x=x_values,
+                y=[row["name"] for row in rows],
+                orientation="h",
+                marker=dict(color=colors),
+                text=labels,
+                textposition="outside",
+                cliponaxis=False,
+                customdata=chart_customdata,
+                hovertemplate=hovertemplate,
+            ))
+            chart.add_vline(x=0, line_color="#8793a1", line_width=1)
+            chart.update_layout(
+                width=720, height=chart_height, autosize=False,
+                margin=dict(l=160 if not us_market else 10, r=55, t=14, b=48),
+                showlegend=False,
+                xaxis_title="平均漲跌幅（%）",
+                yaxis_title=None,
+                hovermode="closest",
+                bargap=0.24,
+            )
+            chart.update_xaxes(
+                range=shared_xrange,
+                zeroline=False,
+                gridcolor="rgba(130,145,160,0.18)",
+            )
+            chart.update_yaxes(
+                autorange="reversed",
+                automargin=True,
+                showticklabels=not us_market,
+            )
+            return chart
+
+        # 同一產業排序、共用百分比範圍，兩側每一列均可直接比較。
+        tw_chart = build_industry_return_chart(average_rows, us_market=False)
+        us_chart = build_industry_return_chart(us_average_rows, us_market=True)
+        tw_col, us_col = st.columns(2, gap="medium")
+        with tw_col:
+            st.markdown("**台股｜產業族群平均漲跌幅**")
+            st.plotly_chart(
+                tw_chart,
+                use_container_width=False,
+                key=f"rotation_published_avg_return_tw_{average_day}_{len(average_rows)}",
+                config={"displaylogo": False, "responsive": False},
+            )
+        with us_col:
+            st.markdown("**美股｜對應指標股平均漲跌幅**")
+            st.plotly_chart(
+                us_chart,
+                use_container_width=False,
+                key=f"rotation_published_avg_return_us_{average_day}_{len(us_average_rows)}",
+                config={"displaylogo": False, "responsive": False},
+            )
         st.caption(
-            f"資料日期：{average_date or '未知'}。族群平均漲跌幅是該主題有有效行情的代表股日漲跌幅算術平均；"
-            "每檔代表股等權計算，並非全市場資金流入，也不等同官方產業指數。紅色為平均上漲，綠色為平均下跌。"
+            f"台股資料日期：{average_date or '未知'}；美股使用最近可取得的交易日漲跌幅（日期依各指標股行情顯示）。"
+            "台股族群平均為代表股日漲跌幅算術平均；美股族群平均為該台股子產業對應美股指標股 change_pct 算術平均。"
+            "兩側共用漲跌幅比例與產業排序；紅色為上漲、綠色為下跌。部分美股為供應鏈代理，不是完全相同的純標的；美股查詢快取 15 分鐘。"
         )
 
     st.markdown('<div class="feature-section-title">02｜產業輪動圖</div>', unsafe_allow_html=True)
@@ -2408,7 +2511,7 @@ def _render_published_rotation(payload: dict) -> None:
             key=f"rotation_published_rrg_v3_{period}_{quadrant_filter}_{len(plot_selected)}",
             config={
                 "scrollZoom": False,
-                "doubleClick": False,
+                "doubleClick": "reset",
                 "displaylogo": False,
                 "responsive": False,
                 "displayModeBar": True,
@@ -2816,7 +2919,7 @@ def render_rotation_workspace() -> None:
             mode="text",
             text=[group],
             textposition="top center",
-            textfont=dict(size=10, color=color),
+            textfont=dict(size=14, color=color, family="Arial Black, Arial, sans-serif"),
             showlegend=False,
             hoverinfo="skip",
         ))
@@ -2836,14 +2939,23 @@ def render_rotation_workspace() -> None:
         fig.update_xaxes(range=x_range, title_text="相對強弱（100＝近 50 日平均）", zeroline=False)
         fig.update_yaxes(range=y_range, title_text="相對動能（100＝10 日前水準）", zeroline=False)
     fig.update_layout(
-        height=620, margin=dict(l=30, r=20, t=16, b=25),
-        hovermode="closest", dragmode="pan",
+        width=1400, height=760, autosize=False,
+        margin=dict(l=45, r=35, t=24, b=34),
+        hovermode="closest", dragmode="zoom",
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
         showlegend=True,
     )
+    st.caption("操作：先放大，再切換工具列的平移工具移動視窗；雙擊重設回原圖。已關閉滾輪縮放及縮小／重設按鈕，避免縮小到原圖範圍以下。")
     st.plotly_chart(
-        fig, use_container_width=True, key=f"rotation_rrg_{signature}",
-        config={"scrollZoom": True, "doubleClick": "reset", "displaylogo": False, "responsive": True},
+        fig, use_container_width=False, key=f"rotation_rrg_{signature}",
+        config={
+            "scrollZoom": False,
+            "doubleClick": "reset",
+            "displaylogo": False,
+            "responsive": False,
+            "displayModeBar": True,
+            "modeBarButtonsToRemove": ["zoomOut2d", "autoScale2d", "resetScale2d"],
+        },
     )
 
     st.markdown('<div class="feature-section-title">02｜族群績效與輪動狀態</div>', unsafe_allow_html=True)
@@ -3437,10 +3549,12 @@ def render_kline():
         )
 
         fig.update_layout(
-            height=680,
-            margin=dict(l=18, r=24, t=28, b=24),
+            width=1400,
+            height=760,
+            autosize=False,
+            margin=dict(l=38, r=45, t=28, b=36),
             hovermode="x unified",
-            dragmode="pan",
+            dragmode="zoom",
             showlegend=True,
             legend=dict(orientation="h", yanchor="bottom", y=1.0, xanchor="left", x=0),
             uirevision=f"{selected}-{k_period}-{history_period}-{reset_version}",
@@ -3463,12 +3577,19 @@ def render_kline():
         fig.update_yaxes(showgrid=True, gridcolor="#e6eaee", row=1, col=1)
         fig.update_yaxes(showgrid=True, gridcolor="#e6eaee", row=2, col=1)
 
-        st.caption("操作：滾輪／雙指縮放、按住拖曳平移、點兩下重設；也可使用「回到最新」。非交易日不占用圖表空間。")
+        st.caption("操作：先以拖曳框選或工具列放大；放大後切換工具列的平移工具移動視窗。雙擊可重設回原始完整圖；已關閉滾輪縮放及縮小／自動縮放／重設按鈕，避免縮到原圖範圍以下。也可按「回到最新」。非交易日不占用圖表空間。")
         st.plotly_chart(
             fig,
-            use_container_width=True,
+            use_container_width=False,
             key=f"kline_{selected}_{k_period}_{history_period}_{reset_version}",
-            config={"scrollZoom": True, "doubleClick": "reset", "displaylogo": False, "responsive": True},
+            config={
+                "scrollZoom": False,
+                "doubleClick": "reset",
+                "displaylogo": False,
+                "responsive": False,
+                "displayModeBar": True,
+                "modeBarButtonsToRemove": ["zoomOut2d", "autoScale2d", "resetScale2d"],
+            },
         )
     except Exception as e:
         st.error(f"{k_period} 資料取得失敗：{e}")
