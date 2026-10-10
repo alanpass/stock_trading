@@ -2528,7 +2528,7 @@ def _render_published_rotation(payload: dict) -> None:
         st.plotly_chart(
             fig,
             use_container_width=False,
-            key=f"rotation_published_rrg_v3_{period}_{quadrant_filter}_{len(plot_selected)}",
+            key=f"rotation_published_rrg_v4_{period}_{quadrant_filter}_{len(plot_selected)}",
             config={
                 "scrollZoom": False,
                 "doubleClick": "reset",
@@ -2967,7 +2967,7 @@ def render_rotation_workspace() -> None:
     )
     st.caption("操作：先放大，再切換工具列的平移工具移動視窗；雙擊重設回原圖。已關閉滾輪縮放及縮小／重設按鈕，避免縮小到原圖範圍以下。")
     st.plotly_chart(
-        fig, use_container_width=False, key=f"rotation_rrg_{signature}",
+        fig, use_container_width=False, key=f"rotation_rrg_v2_{signature}",
         config={
             "scrollZoom": False,
             "doubleClick": "reset",
@@ -3601,7 +3601,7 @@ def render_kline():
         st.plotly_chart(
             fig,
             use_container_width=False,
-            key=f"kline_{selected}_{k_period}_{history_period}_{reset_version}",
+            key=f"kline_v2_{selected}_{k_period}_{history_period}_{reset_version}",
             config={
                 "scrollZoom": False,
                 "doubleClick": "reset",
