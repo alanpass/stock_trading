@@ -50,7 +50,7 @@ def request_account(email: str, base_dir: str | Path) -> dict[str, Any]:
         result = agent.send_subscription_notice(name="網站帳號申請", email=email, message="使用者申請網站登入帳號。請管理員確認後，手動將帳號與密碼雜湊加入 Streamlit Secrets 的 AUTH_USERS_JSON；系統不會自動建立帳號。", subscribed=False)
         return {"sent": True} if result.get("sent") else {"sent": False, "error": str(result.get("error") or "管理員通知寄送失敗。")}
     except Exception as exc:
-        return {"sent": False, "error": "寄送申請通知失敗：" + type(exc).__name__ + ": " + str(exc)
+        return {"sent": False, "error": "寄送申請通知失敗：" + type(exc).__name__ + ": " + str(exc)}
 
 if __name__ == "__main__" and len(sys.argv) >= 3 and sys.argv[1] == "hash-password":
     email = sys.argv[2].strip().lower()
