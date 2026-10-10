@@ -2352,7 +2352,7 @@ def _render_published_rotation(payload: dict) -> None:
             ))
             chart.add_vline(x=0, line_color="#8793a1", line_width=1)
             chart.update_layout(
-                width=720, height=chart_height, autosize=False,
+                height=chart_height, autosize=True,
                 margin=dict(l=160 if not us_market else 10, r=55, t=14, b=48),
                 showlegend=False,
                 xaxis_title="平均漲跌幅（%）",
@@ -2367,6 +2367,8 @@ def _render_published_rotation(payload: dict) -> None:
             )
             chart.update_yaxes(
                 autorange="reversed",
+                categoryorder="array",
+                categoryarray=[row["name"] for row in rows],
                 automargin=True,
                 showticklabels=not us_market,
             )
@@ -2380,17 +2382,17 @@ def _render_published_rotation(payload: dict) -> None:
             st.markdown("**台股｜產業族群平均漲跌幅**")
             st.plotly_chart(
                 tw_chart,
-                use_container_width=False,
+                use_container_width=True,
                 key=f"rotation_published_avg_return_tw_{average_day}_{len(average_rows)}",
-                config={"displaylogo": False, "responsive": False},
+                config={"displaylogo": False, "responsive": True},
             )
         with us_col:
             st.markdown("**美股｜對應指標股平均漲跌幅**")
             st.plotly_chart(
                 us_chart,
-                use_container_width=False,
+                use_container_width=True,
                 key=f"rotation_published_avg_return_us_{average_day}_{len(us_average_rows)}",
-                config={"displaylogo": False, "responsive": False},
+                config={"displaylogo": False, "responsive": True},
             )
         st.caption(
             f"台股資料日期：{average_date or '未知'}；美股使用最近可取得的交易日漲跌幅（日期依各指標股行情顯示）。"
