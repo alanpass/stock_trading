@@ -218,40 +218,129 @@ class FugleMemoCrawler:
         raise RuntimeError("；".join(errors[-3:]))
 
     def discover(self) -> list[dict[str, str]]:
-        """Primary discovery from the requested topic page, plus homepage and a URL-only search fallback."""
+        """從 Fugle 法說會主題頁探索文章；若靜態 HTML 沒有連結，繼續嘗試 curl_cffi 與瀏覽器 DOM。"""
         found: dict[str, dict[str, str]] = {}
-        for page in (TOPIC_URL, HOME_URL):
-            try:
-                raw, final, reader = self.fetch(page, allow_browser=True, load_more=(page == TOPIC_URL))
-            except Exception:
-                continue
-            urls = set(re.findall(r"https?://blog\.fugle\.tw/post/earnings-call-[^\"'<>\s&]+", raw))
+        page_debug: list[dict[str, Any]] = []
+
+        def extract_links(raw: str, final_url: str) -> dict[str, dict[str, str]]:
+            """同時解析絕對網址、相對 href 與瀏覽器渲染後的連結。"""
+            page_rows: dict[str, dict[str, str]] = {}
+            raw = html.unescape(raw or "")
             if BeautifulSoup is not None:
-                soup = BeautifulSoup(raw, "html.parser")
-                for a in soup.find_all("a", href=True):
-                    u = urljoin(final, a.get("href"))
-                    if POST_PREFIX in u:
-                        urls.add(u.split("?")[0])
-                    txt = clean(a.get_text(" ", strip=True))
-                    if POST_PREFIX in u:
-                        found[u.split("?")[0]] = {"url":u.split("?")[0], "title":txt, "symbol":symbol_from_url(u), "published_date":parse_date(u)}
-            for u in urls:
-                u = html.unescape(u).rstrip("\")'.,)")
-                if u.startswith(POST_PREFIX):
-                    found.setdefault(u, {"url":u,"title":"","symbol":symbol_from_url(u),"published_date":parse_date(u)})
-        rows = list(found.values())
-        # No external search engine is used for the content itself; only if the topic page lacks a company URL.
-        if not rows and os.getenv("FUGLE_MEMO_ALLOW_SEARCH_FALLBACK", "true").lower() in {"1","true","yes","on"}:
+                try:
+                    soup = BeautifulSoup(raw, "html.parser")
+                    for a in soup.find_all("a", href=True):
+                        href = html.unescape(str(a.get("href") or "").strip())
+                        if not href:
+                            continue
+                        u = urljoin(final_url or TOPIC_URL, href)
+                        u = u.split("#", 1)[0].split("?", 1)[0].rstrip("/")
+                        if u.startswith(POST_PREFIX):
+                            title = clean(a.get_text(" ", strip=True))
+                            row = {
+                                "url": u,
+                                "title": title,
+                                "symbol": symbol_from_url(u),
+                                "published_date": parse_date(u),
+                            }
+                            if u not in page_rows or (title and not page_rows[u].get("title")):
+                                page_rows[u] = row
+                except Exception:
+                    pass
+
+            # 有些回應是 JS 外殼，或文章網址只出現在 script JSON，另以 regex 補捉。
+            patterns = (
+                r"""https?://blog\.fugle\.tw/post/earnings-call-[^"'<>\\s?&#]+""",
+                r"""//blog\.fugle\.tw/post/earnings-call-[^"'<>\\s?&#]+""",
+                r"""/post/earnings-call-[^"'<>\\s?&#]+""",
+            )
+            for pattern in patterns:
+                for match in re.findall(pattern, raw, flags=re.I):
+                    href = html.unescape(match).rstrip(".,);]}'\"")
+                    u = urljoin(final_url or TOPIC_URL, href)
+                    u = u.split("#", 1)[0].split("?", 1)[0].rstrip("/")
+                    if not u.startswith(POST_PREFIX):
+                        continue
+                    page_rows.setdefault(
+                        u,
+                        {
+                            "url": u,
+                            "title": "",
+                            "symbol": symbol_from_url(u),
+                            "published_date": parse_date(u),
+                        },
+                    )
+            return page_rows
+
+        # 不能只使用 fetch() 的第一個「HTTP 成功」回應：網站可能回傳沒有文章連結的 JS 外殼。
+        for page in (TOPIC_URL, HOME_URL):
+            page_rows: dict[str, dict[str, str]] = {}
+            attempts: list[dict[str, Any]] = []
+            fetchers = (
+                ("requests", lambda: self._fetch_requests(page, timeout=25)),
+                ("curl_cffi", lambda: self._fetch_curl_cffi(page, timeout=25)),
+                ("selenium", lambda: self._fetch_browser(page, timeout=45, load_more=(page == TOPIC_URL))),
+            )
+            for method_name, fetcher in fetchers:
+                try:
+                    raw, final_url, reader = fetcher()
+                    extracted = extract_links(raw, final_url or page)
+                    for u, row in extracted.items():
+                        if u not in page_rows or (row.get("title") and not page_rows[u].get("title")):
+                            page_rows[u] = row
+                    attempts.append(
+                        {
+                            "method": method_name,
+                            "reader": reader,
+                            "links_found": len(extracted),
+                            "total_page_links": len(page_rows),
+                        }
+                    )
+                    # 主題頁優先取得足夠的近期清單；首頁則作為補充來源。
+                    minimum = 5 if page == TOPIC_URL else 3
+                    if len(page_rows) >= minimum:
+                        break
+                except Exception as exc:
+                    attempts.append({"method": method_name, "error": f"{type(exc).__name__}: {exc}"[:300]})
+
+            for u, row in page_rows.items():
+                if u not in found or (row.get("title") and not found[u].get("title")):
+                    found[u] = row
+            page_debug.append(
+                {
+                    "page": page,
+                    "attempts": attempts,
+                    "links_found": len(page_rows),
+                }
+            )
+
+        # 只有兩個 Fugle 頁面都無文章連結時，才用搜尋頁面作為 URL 探索備援。
+        if not found and os.getenv("FUGLE_MEMO_ALLOW_SEARCH_FALLBACK", "true").lower() in {"1", "true", "yes", "on"}:
             q = quote_plus("site:blog.fugle.tw/post/earnings-call-")
-            try:
-                raw, _, _ = self.fetch(f"https://www.google.com/search?q={q}", timeout=15, allow_browser=False)
-                for u in re.findall(r"https?://blog\.fugle\.tw/post/earnings-call-[^\"'<>\s&]+", raw):
-                    u = html.unescape(u).rstrip("\")'.,)")
-                    if u.startswith(POST_PREFIX): found.setdefault(u, {"url":u,"title":"","symbol":symbol_from_url(u),"published_date":parse_date(u)})
-            except Exception:
-                pass
-            rows = list(found.values())
-        rows.sort(key=lambda x:(x.get("published_date", ""), x.get("url", "")), reverse=True)
+            search_debug: list[dict[str, Any]] = []
+            for method_name, fetcher in (
+                ("requests", lambda: self._fetch_requests(f"https://www.google.com/search?q={q}", timeout=15)),
+                ("curl_cffi", lambda: self._fetch_curl_cffi(f"https://www.google.com/search?q={q}", timeout=15)),
+            ):
+                try:
+                    raw, final_url, reader = fetcher()
+                    extracted = extract_links(raw, final_url or "https://www.google.com/")
+                    for u, row in extracted.items():
+                        found.setdefault(u, row)
+                    search_debug.append({"method": method_name, "reader": reader, "links_found": len(extracted)})
+                    if found:
+                        break
+                except Exception as exc:
+                    search_debug.append({"method": method_name, "error": f"{type(exc).__name__}: {exc}"[:300]})
+            page_debug.append({"page": "google_fallback", "attempts": search_debug, "links_found": len(found)})
+
+        rows = list(found.values())
+        rows.sort(key=lambda x: (x.get("published_date", ""), x.get("url", "")), reverse=True)
+        self._last_discovery_debug = {
+            "pages": page_debug,
+            "found_count": len(rows),
+            "sample_urls": [x.get("url", "") for x in rows[:8]],
+        }
         return rows
 
     def _extract_article_text(self, raw: str, rendered: str = ""):
