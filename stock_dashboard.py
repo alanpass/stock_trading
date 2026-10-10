@@ -1601,9 +1601,25 @@ def render_finance_workspace() -> None:
     # ---------------- 法說會 ----------------
     with left:
         st.markdown('<div class="finance-card-title">法說會摘要</div>', unsafe_allow_html=True)
-        edig = cache.get("earnings_digest") or {}
-        if edig.get("headline"):
-            st.markdown(f'<div class="fin-meta">{_fin_hl(edig["headline"], [])}</div>', unsafe_allow_html=True)
+        # 摘要標題以實際顯示的五日清單重算，避免舊快取仍寫著「最近 2 天」或顯示過期筆數。
+        earnings_counts = {"利多": 0, "利空": 0, "中性": 0, "混合": 0}
+        for item in earnings:
+            sentiment = str(
+                item.get("sentiment") or item.get("impact") or item.get("judgement") or "混合"
+            ).strip()
+            if sentiment not in earnings_counts:
+                sentiment = "混合"
+            earnings_counts[sentiment] += 1
+        earnings_headline = (
+            f"最近 5 天共 {len(earnings)} 場法說會備忘錄："
+            f"利多 {earnings_counts['利多']}、利空 {earnings_counts['利空']}、"
+            f"中性 {earnings_counts['中性']}、混合 {earnings_counts['混合']}。"
+            if earnings else "最近 5 天沒有可用的法說會備忘錄。"
+        )
+        st.markdown(
+            f'<div class="fin-meta">{_fin_hl(earnings_headline, [])}</div>',
+            unsafe_allow_html=True,
+        )
         if not earnings:
             st.info("最近 5 天目前沒有發現新的可用 Fugle 法說會摘要；這不代表財經資訊快取未更新。")
         else:
