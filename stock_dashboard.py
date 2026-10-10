@@ -86,6 +86,13 @@ from post_market_analysis import PostMarketAnalyzer
 from email_agent import EmailAgent
 from subscriber_service import register_subscriber, subscription_status
 from industry_rotation import ROTATION_THEMES, ROTATION_DEFAULT_THEMES, ROTATION_DISPLAY_NAMES, NAME_FALLBACKS, load_published_rotation
+from us_industry_indicators import US_INDUSTRY_INDICATORS, get_us_indicator_symbols, fetch_us_indicators
+
+
+@st.cache_data(ttl=900, show_spinner=False)
+def _cached_us_industry_quotes(symbols: tuple[str, ...]) -> pd.DataFrame:
+    """快取美股代表指標資料 15 分鐘，避免 Streamlit 每次重跑都重新查詢。"""
+    return pd.DataFrame(fetch_us_indicators(symbols))
 
 BASE = Path(__file__).resolve().parent
 DATA, MODELS, OUTPUT = BASE / "data", BASE / "models", BASE / "output"
@@ -2383,7 +2390,80 @@ def _render_published_rotation(payload: dict) -> None:
         hide_index=True,
     )
 
-    st.markdown('<div class="feature-section-title">04｜本週象限變化</div>', unsafe_allow_html=True)
+    st.markdown('<div class="feature-section-title">03｜美股產業指標股資訊</div>', unsafe_allow_html=True)
+    st.caption(
+        "依台股供應鏈子產業整理美股上市指標公司，顯示最新可取得價格與當日漲跌幅。"
+        "美股價格與日期來自 Yahoo Finance；每一筆以來源回傳的美東交易日期為準。"
+    )
+    us_display_to_internal = {rotation_label(name): name for name in US_INDUSTRY_INDICATORS}
+    us_category_options = ["全部產業"] + list(us_display_to_internal.keys())
+    chosen_us_category = st.selectbox(
+        "美股指標股產業篩選",
+        us_category_options,
+        index=0,
+        key="rotation_us_industry_category_v1",
+        help="選擇一個台股子產業，即可查看對應的美股上市指標公司；全部產業會顯示完整對照。",
+    )
+    if chosen_us_category == "全部產業":
+        us_selected_categories = list(US_INDUSTRY_INDICATORS.keys())
+    else:
+        us_selected_categories = [us_display_to_internal[chosen_us_category]]
+
+    us_symbols = tuple(get_us_indicator_symbols(tuple(us_selected_categories)))
+    us_quote_df = pd.DataFrame()
+    with st.spinner(f"正在取得 {len(us_symbols)} 檔美股指標股的最新可用行情…"):
+        try:
+            us_quote_df = _cached_us_industry_quotes(us_symbols)
+        except Exception as exc:
+            st.warning(f"美股行情服務目前無法完成查詢：{type(exc).__name__}。仍會列出產業對照清單。")
+
+    us_quote_lookup = {}
+    if not us_quote_df.empty and "symbol" in us_quote_df.columns:
+        us_quote_lookup = us_quote_df.set_index("symbol").to_dict(orient="index")
+
+    us_rows = []
+    for us_category in us_selected_categories:
+        for indicator in US_INDUSTRY_INDICATORS.get(us_category, []):
+            quote = us_quote_lookup.get(indicator["symbol"], {})
+            price = quote.get("price")
+            change = quote.get("change")
+            change_pct = quote.get("change_pct")
+            currency = quote.get("currency") or "USD"
+            status = quote.get("status") or "行情暫不可用"
+            us_rows.append({
+                "對應台股產業": rotation_label(us_category),
+                "美股代號": indicator["symbol"],
+                "公司名稱": indicator["name"],
+                "產業對照角色": indicator["role"],
+                "最新價（USD）": f"{float(price):,.2f}" if price is not None and pd.notna(pd.to_numeric(price, errors="coerce")) else "—",
+                "漲跌額（USD）": f"{float(change):+,.2f}" if change is not None and pd.notna(pd.to_numeric(change, errors="coerce")) else "—",
+                "漲跌幅": f"{float(change_pct):+.2f}%" if change_pct is not None and pd.notna(pd.to_numeric(change_pct, errors="coerce")) else "—",
+                "資料日期（美東）": quote.get("data_date") or "—",
+                "行情狀態": "正常" if status == "OK" else status,
+            })
+
+    us_table = pd.DataFrame(us_rows)
+    if not us_table.empty:
+        success_count = sum(1 for row in us_rows if row["行情狀態"] == "正常")
+        us_kpis = st.columns(3)
+        us_kpis[0].metric("產業分類", f"{len(us_selected_categories)} 群")
+        us_kpis[1].metric("指標股分類列", f"{len(us_rows)} 筆")
+        us_kpis[2].metric("成功取得行情", f"{success_count} / {len(us_symbols)} 檔")
+        st.dataframe(
+            styled_frame(us_table, ["漲跌額（USD）", "漲跌幅"]),
+            use_container_width=True,
+            hide_index=True,
+            height=min(640, 42 + len(us_table) * 35),
+        )
+        st.caption(
+            "備註：美股指標股是對照各台股供應鏈主題的參考標的，並非每一類都有一對一的美國上市純標的。"
+            "表中已在「產業對照角色」標明直接對照或供應鏈代理；同一美股可出現在多個子產業。"
+            "最新價以美元（USD）呈現，紅色表示上漲、綠色表示下跌。"
+        )
+    else:
+        st.info("所選產業目前沒有設定美股對照指標。")
+
+    st.markdown('<div class="feature-section-title">05｜本週象限變化</div>', unsafe_allow_html=True)
     changes = payload.get("quadrant_changes") or []
     if changes:
         changes_df = pd.DataFrame(changes).rename(columns={"name": "產業主題", "from": "前一象限", "to": "目前象限"})
@@ -2395,7 +2475,7 @@ def _render_published_rotation(payload: dict) -> None:
 
     component_names = [n for n in (selected or list(by_name)) if by_name.get(n, {}).get("components")]
     if component_names:
-        st.markdown('<div class="feature-section-title">05｜成分股技術資訊</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">06｜成分股技術資訊</div>', unsafe_allow_html=True)
         c1, c2 = st.columns([2, 1])
         with c1:
             chosen_label = st.selectbox(
@@ -2452,7 +2532,7 @@ def _render_published_rotation(payload: dict) -> None:
         st.caption("分類依代表股主要產品與供應鏈用途整理；同一檔股票可能屬於多個主題。『尚無行情』表示尚未取得可用日 K，不代表該股不屬於此類。")
 
 
-    st.markdown('<div class="feature-section-title">06｜成分股漲跌前十</div>', unsafe_allow_html=True)
+    st.markdown('<div class="feature-section-title">07｜成分股漲跌前十</div>', unsafe_allow_html=True)
     upcol, downcol = st.columns(2)
     for col, data_key, label in [(upcol, "gainers", "漲幅前十"), (downcol, "losers", "跌幅前十")]:
         with col:
@@ -2468,7 +2548,7 @@ def _render_published_rotation(payload: dict) -> None:
                 hide_index=True,
             )
 
-    st.markdown('<div class="feature-section-title">07｜輪動解讀與資料限制</div>', unsafe_allow_html=True)
+    st.markdown('<div class="feature-section-title">08｜輪動解讀與資料限制</div>', unsafe_allow_html=True)
     st.markdown("""
     <div class="rotation-quadrants">
       <div class="rotation-leading"><strong>領先｜右上</strong><br>相對大盤偏強，動能持續增強。</div>
