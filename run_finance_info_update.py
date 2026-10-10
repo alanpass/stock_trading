@@ -91,7 +91,7 @@ def _parse_date(value: Any):
 
 
 def _filter_recent_calendar_days(items: list[dict[str, Any]], days: int, date_keys: tuple[str, ...]) -> list[dict[str, Any]]:
-    """保留今天＋前 N-1 個日曆日（= 前一日 00:00 至現在）。"""
+    """保留今天與前 N-1 個日曆日，讓新聞與法說會可各自設定範圍。"""
     today = now_taipei().date()
     cutoff = today - timedelta(days=max(0, int(days) - 1))
     out: list[dict[str, Any]] = []
@@ -342,7 +342,7 @@ def update_finance_info(base_dir: str | Path = BASE, watchlist: list[str] | None
 
     # 3) 法說會
     earnings_raw = _load_earnings(base, previous, symbols, errors)
-    earnings, earnings_digest = agent.analyze_earnings(earnings_raw)
+    earnings, earnings_digest = agent.analyze_earnings(earnings_raw, days=EARNINGS_LOOKBACK_DAYS)
     payload = build_payload(news, news_digest, earnings, earnings_digest, crawl_info, stale, agent.stats)
     _atomic_write_json(latest, payload)  # 直接取代上一個時間點的資料
     log(f"完成：新聞 {len(news)} 篇、法說會 {len(earnings)} 筆")
