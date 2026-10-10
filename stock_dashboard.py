@@ -2419,7 +2419,7 @@ def _render_published_rotation(payload: dict) -> None:
         )
 
     st.markdown('<div class="feature-section-title">02｜產業輪動圖</div>', unsafe_allow_html=True)
-    st.caption("每條線代表主題相對加權指數的軌跡，每 5 個交易日取一點。RS 高於 100 代表相對強弱高於自身 50 日均值；動能高於 100 代表較 10 個交易日前增強。預設顯示 1 個月與「領先」象限。圖表固定尺寸：框選放大後切換平移工具移動；雙擊會重設回原始圖，不能縮小至原圖範圍之外，滑鼠滾輪縮放已關閉。")
+    st.caption("每條線代表主題相對加權指數的軌跡，每 5 個交易日取一點。RS 高於 100 代表相對強弱高於自身 50 日均值；動能高於 100 代表較 10 個交易日前增強。預設顯示 1 個月與「領先」象限。固定 1400×760 畫布：滑鼠滾輪縮放、雙擊重設；放大後可切換工具列平移，原始大小時不能平移出界，縮小不會超出原始視圖。")
     quadrant_options = ["領先", "轉弱", "改善", "落後", "全選"]
     quadrant_filter = st.radio(
         "當前所在的象限",
@@ -2509,10 +2509,9 @@ def _render_published_rotation(payload: dict) -> None:
                 font=dict(size=16, color="rgba(55, 65, 81, 0.76)", family="Arial Black, Arial, sans-serif"),
                 opacity=0.92,
             )
-        fig.update_xaxes(range=xr, title_text="相對強弱", zeroline=False, fixedrange=False)
-        fig.update_yaxes(range=yr, title_text="相對動能", zeroline=False, fixedrange=False)
-    # 固定畫布尺寸；預設框選放大，放大後切換平移工具才可移動視窗。
-    # 雙擊重設回原始範圍；關閉滾輪縮放並移除縮小／自動縮放按鈕，無法縮至原圖範圍以外。
+        fig.update_xaxes(range=xr, minallowed=xr[0], maxallowed=xr[1], title_text="相對強弱", zeroline=False, fixedrange=False)
+        fig.update_yaxes(range=yr, minallowed=yr[0], maxallowed=yr[1], title_text="相對動能", zeroline=False, fixedrange=False)
+    # 固定畫布尺寸；滾輪可縮放、雙擊重設。軸範圍限制於原始視圖邊界內，未放大時不能平移出界。
     fig.update_layout(
         width=1400, height=760, autosize=False,
         margin=dict(l=45, r=35, t=28, b=40),
@@ -2530,7 +2529,7 @@ def _render_published_rotation(payload: dict) -> None:
             use_container_width=False,
             key=f"rotation_published_rrg_v4_{period}_{quadrant_filter}_{len(plot_selected)}",
             config={
-                "scrollZoom": False,
+                "scrollZoom": True,
                 "doubleClick": "reset",
                 "displaylogo": False,
                 "responsive": False,
@@ -2956,8 +2955,8 @@ def render_rotation_workspace() -> None:
                       line=dict(color="#9aa7b5", width=1, dash="dash"))
         fig.add_shape(type="line", x0=x_range[0], x1=x_range[1], y0=100, y1=100,
                       line=dict(color="#9aa7b5", width=1, dash="dash"))
-        fig.update_xaxes(range=x_range, title_text="相對強弱（100＝近 50 日平均）", zeroline=False)
-        fig.update_yaxes(range=y_range, title_text="相對動能（100＝10 日前水準）", zeroline=False)
+        fig.update_xaxes(range=x_range, minallowed=x_range[0], maxallowed=x_range[1], title_text="相對強弱（100＝近 50 日平均）", zeroline=False)
+        fig.update_yaxes(range=y_range, minallowed=y_range[0], maxallowed=y_range[1], title_text="相對動能（100＝10 日前水準）", zeroline=False)
     fig.update_layout(
         width=1400, height=760, autosize=False,
         margin=dict(l=45, r=35, t=24, b=34),
@@ -2965,11 +2964,11 @@ def render_rotation_workspace() -> None:
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
         showlegend=True,
     )
-    st.caption("操作：先放大，再切換工具列的平移工具移動視窗；雙擊重設回原圖。已關閉滾輪縮放及縮小／重設按鈕，避免縮小到原圖範圍以下。")
+    st.caption("操作：滑鼠滾輪放大／縮小；雙擊重設回完整原圖。放大後切換工具列平移工具可移動視窗；原始大小時軸範圍鎖定，不能位移出界或縮小到原圖以外。")
     st.plotly_chart(
         fig, use_container_width=False, key=f"rotation_rrg_v2_{signature}",
         config={
-            "scrollZoom": False,
+            "scrollZoom": True,
             "doubleClick": "reset",
             "displaylogo": False,
             "responsive": False,
@@ -3588,22 +3587,38 @@ def render_kline():
                 tickmode="array",
                 tickvals=tickvals,
                 ticktext=ticktext,
+                range=[-0.5, len(chart_x) - 0.5],
+                minallowed=-0.5,
+                maxallowed=len(chart_x) - 0.5,
                 showgrid=True,
                 gridcolor="#e6eaee",
                 rangeslider_visible=False,
                 row=row_no,
                 col=1,
             )
-        fig.update_yaxes(showgrid=True, gridcolor="#e6eaee", row=1, col=1)
-        fig.update_yaxes(showgrid=True, gridcolor="#e6eaee", row=2, col=1)
+        # 限制座標軸不得超出完整 K 線原始視圖，避免縮小到原圖之外或未放大就平移。
+        price_low = float(d["low"].min())
+        price_high = float(d["high"].max())
+        price_pad = max((price_high - price_low) * 0.04, abs(price_high) * 0.005, 0.01)
+        price_range = [price_low - price_pad, price_high + price_pad]
+        volume_top = max(float(d["volume"].max()), 1.0) * 1.08
+        volume_range = [0.0, volume_top]
+        fig.update_yaxes(
+            range=price_range, minallowed=price_range[0], maxallowed=price_range[1],
+            showgrid=True, gridcolor="#e6eaee", row=1, col=1,
+        )
+        fig.update_yaxes(
+            range=volume_range, minallowed=volume_range[0], maxallowed=volume_range[1],
+            showgrid=True, gridcolor="#e6eaee", row=2, col=1,
+        )
 
-        st.caption("操作：框選區域放大；放大後切換工具列的平移工具移動視窗。雙擊會重設回原始完整圖，也可按「回到最新」。已關閉滑鼠滾輪縮放，並移除縮小／自動縮放／重設按鈕，無法縮小到原圖範圍之外。非交易日不占用圖表空間。")
+        st.caption("操作：滑鼠滾輪放大／縮小；雙擊重設回完整原圖，也可按「回到最新」。放大後切換工具列平移工具可移動視窗；原始大小時軸範圍鎖定，不能任意位移或縮小到原圖以外。畫布固定 1400×760，非交易日不占用圖表空間。")
         st.plotly_chart(
             fig,
             use_container_width=False,
             key=f"kline_v2_{selected}_{k_period}_{history_period}_{reset_version}",
             config={
-                "scrollZoom": False,
+                "scrollZoom": True,
                 "doubleClick": "reset",
                 "displaylogo": False,
                 "responsive": False,
