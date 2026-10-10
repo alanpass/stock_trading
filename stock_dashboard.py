@@ -2301,7 +2301,7 @@ def _render_published_rotation(payload: dict) -> None:
         for symbol, quote in us_quote_lookup.items():
             history = quote.get("history") or []
             history_rows = []
-            for point in history if isinstance(history, list) else []:
+            for point in (history if isinstance(history, list) else []):
                 try:
                     date_text = str(point.get("date") or "")[:10]
                     close_value = float(point.get("close"))
