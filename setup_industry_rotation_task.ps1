@@ -22,16 +22,18 @@ if (Test-Path -LiteralPath $VenvPython) {
 }
 
 $Action = New-ScheduledTaskAction -Execute $PythonExe -Argument ('"' + $Updater + '"') -WorkingDirectory $ProjectRoot
-# 每週一至週五 15:10 啟動；程式本身會用官方交易日曆排除國定休市日。
-$Trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At ([datetime]::Today.AddHours(15).AddMinutes(10))
+# 每週一至週五於 08:20 與 15:10 啟動；程式會用官方交易日曆排除國定休市日。
+$MorningTrigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At ([datetime]::Today.AddHours(8).AddMinutes(20))
+$CloseTrigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At ([datetime]::Today.AddHours(15).AddMinutes(10))
+$Triggers = @($MorningTrigger, $CloseTrigger)
 $Principal = New-ScheduledTaskPrincipal -UserId "$env:USERDOMAIN\$env:USERNAME" -LogonType Interactive -RunLevel Limited
 $Settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -WakeToRun -ExecutionTimeLimit (New-TimeSpan -Hours 2) -MultipleInstances IgnoreNew
 
-Register-ScheduledTask -TaskName $TaskName -Action $Action -Trigger $Trigger -Principal $Principal -Settings $Settings -Description "台股交易日 15:10 更新產業分析輪動資料並發布到 GitHub。" -Force | Out-Null
+Register-ScheduledTask -TaskName $TaskName -Action $Action -Trigger $Triggers -Principal $Principal -Settings $Settings -Description "台股交易日 08:20 盤前刷新與 15:10 盤後更新產業分析輪動資料並發布到 GitHub。" -Force | Out-Null
 
 Write-Host ""
 Write-Host "已建立排程：$TaskName" -ForegroundColor Green
-Write-Host "執行時間：每週一至週五 15:10（休市日由程式自動略過）"
+Write-Host "執行時間：每週一至週五 08:20、15:10（休市日由程式自動略過）"
 Write-Host "Python：$PythonExe"
 Write-Host "程式：$Updater"
 Write-Host "Log：$(Join-Path $ProjectRoot 'logs\industry_rotation_task.log')"
