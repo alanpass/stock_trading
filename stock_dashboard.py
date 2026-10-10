@@ -2485,7 +2485,7 @@ def _render_published_rotation(payload: dict) -> None:
             )
             return chart
 
-        # 兩側產業列順序一致；單日報酬共用百分比尺度，其餘指標採適當的獨立尺度。
+        # 台股依所選排行依據排序；美股依自身平均漲跌幅排序，兩側均顯示產業族群名稱。
         tw_chart = build_industry_return_chart(average_rows, us_market=False)
         us_chart = build_industry_return_chart(us_average_rows, us_market=True)
         tw_col, us_col = st.columns(2, gap="medium")
