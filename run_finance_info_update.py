@@ -21,7 +21,6 @@ from __future__ import annotations
 import json
 import os
 import sys
-import inspect
 import threading
 import time
 import traceback
@@ -36,6 +35,7 @@ import pandas as pd
 import requests
 
 from cnyes_news_crawler import CnyesNewsCrawler
+from earnings_summary_agent import EarningsSummaryAgent
 from finance_agent import FinanceNewsAgent
 
 TAIPEI = ZoneInfo("Asia/Taipei")
@@ -240,7 +240,7 @@ def _load_earnings(base: Path, previous: dict[str, Any], watchlist: list[str], e
     if os.getenv("FINANCE_SKIP_EARNINGS", "").strip().lower() in {"1", "true", "yes", "on"}:
         log("法說會：略過（--no-earnings）")
         return prev_items
-    per_run = int(os.getenv("EARNINGS_NEW_PER_RUN", "4"))      # 每次最多新分析幾場，多的留給下一個時段
+    per_run = int(os.getenv("EARNINGS_NEW_PER_RUN", "12"))      # 每次最多新分析幾場，多的留給下一個時段
     timeout = int(os.getenv("EARNINGS_TIMEOUT_SEC", "600"))
     try:
         from earnings_call_agent import EarningsCallAgent
@@ -355,32 +355,10 @@ def update_finance_info(base_dir: str | Path = BASE, watchlist: list[str] | None
 
     # 3) 法說會
     earnings_raw = _load_earnings(base, previous, symbols, errors)
-
-    # 相容新舊版 finance_agent.py：先前本機若未同步最新版，舊簽章可能不接受 days 參數。
-    analyze_earnings = agent.analyze_earnings
-    try:
-        supports_days = "days" in inspect.signature(analyze_earnings).parameters
-    except (TypeError, ValueError):
-        supports_days = False
-    if supports_days:
-        earnings, earnings_digest = analyze_earnings(earnings_raw, days=EARNINGS_LOOKBACK_DAYS)
-    else:
-        log("FinanceNewsAgent 舊版相容模式：analyze_earnings 不支援 days；輸入資料已先依最近 5 天過濾")
-        earnings, earnings_digest = analyze_earnings(earnings_raw)
-        # 即使使用舊版 Agent，也確保 digest 的時間範圍文字一致。
-        if isinstance(earnings_digest, dict):
-            counts = {"利多": 0, "利空": 0, "中性": 0, "混合": 0}
-            for item in earnings:
-                label = str(item.get("sentiment") or item.get("impact") or item.get("judgement") or "混合").strip()
-                if label not in counts:
-                    label = "混合"
-                counts[label] += 1
-            earnings_digest["headline"] = (
-                f"最近 {EARNINGS_LOOKBACK_DAYS} 天共 {len(earnings)} 場法說會備忘錄："
-                f"利多 {counts['利多']}、利空 {counts['利空']}、中性 {counts['中性']}、混合 {counts['混合']}。"
-                if earnings else f"最近 {EARNINGS_LOOKBACK_DAYS} 天沒有可用的法說會備忘錄。"
-            )
-
+    # 法說會用專屬 Agent（沿用新聞摘要的重點／畫重點邏輯），範圍 EARNINGS_LOOKBACK_DAYS 天
+    earnings_agent = EarningsSummaryAgent(base)
+    earnings, earnings_digest = earnings_agent.analyze_earnings(earnings_raw, days=EARNINGS_LOOKBACK_DAYS, now=started)
+    agent.stats["earnings"] = earnings_agent.stats.get("earnings", {})
     payload = build_payload(news, news_digest, earnings, earnings_digest, crawl_info, stale, agent.stats)
     _atomic_write_json(latest, payload)  # 直接取代上一個時間點的資料
     log(f"完成：新聞 {len(news)} 篇、法說會 {len(earnings)} 筆")

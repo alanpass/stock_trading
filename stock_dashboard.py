@@ -1493,6 +1493,46 @@ def _render_news_digest(digest: dict, total_news: int) -> None:
     st.markdown('<div translate="no" class="notranslate">' + "".join(parts) + "</div>", unsafe_allow_html=True)
 
 
+def _render_earnings_digest(digest: dict, days: int = 5) -> None:
+    """法說會 AI 重點（版型與新聞的 AI 今日重點一致；新聞的函式不動）。"""
+    if not digest or not digest.get("total"):
+        return
+    headline = digest.get("agent_headline") or digest.get("headline") or ""
+    by = "Qwen3 Agent" if digest.get("generated_by") == "qwen3" else "規則摘要"
+    parts = [f'<div class="fin-digest"><h3>📌 法說會 AI 重點 <small style="font-weight:400;font-size:12px">（最近 {days} 天・{by}整理）</small></h3>']
+    if headline:
+        parts.append(f'<div class="fin-headline">{_fin_hl(headline, [])}</div>')
+    points = digest.get("agent_key_points") or []
+    if points:
+        parts.append('<ul class="fin-list">' + "".join(f"<li>{_fin_hl(p, [])}</li>" for p in points) + "</ul>")
+    else:
+        rows = digest.get("key_points", []) or []
+        parts.append(
+            '<ul class="fin-list">'
+            + "".join(
+                f'<li>{_fin_badge(x.get("sentiment"))}<b>{_fin_hl(x.get("title"), [])}</b>：{_fin_hl(x.get("point"), x.get("highlights"))}</li>'
+                for x in rows[:6]
+            )
+            + "</ul>"
+        )
+    heat = digest.get("sector_heat", []) or []
+    if heat:
+        chips = "".join(
+            f'<span class="fin-chip {"hot" if i < 3 else ""}">{x["sector"]} {x["count"]}'
+            f'{"　▲" if x.get("tone") == "偏多" else "　▼" if x.get("tone") == "偏空" else ""}</span>'
+            for i, x in enumerate(heat[:8])
+        )
+        parts.append(f'<div class="fin-sub" style="margin-top:12px">產業熱度（場數）</div>{chips}')
+    watch, risks = digest.get("watch_items", []) or [], digest.get("risks", []) or []
+    if watch or risks:
+        def col(title, rows):
+            body = "".join(f"<li>{_fin_hl(x, [])}</li>" for x in rows) or "<li>—</li>"
+            return f'<div><div class="fin-sub">{title}</div><ul class="fin-list">{body}</ul></div>'
+        parts.append('<div class="fin-two">' + col("👀 待追蹤", watch) + col("⚠️ 風險", risks) + "</div>")
+    parts.append("</div>")
+    st.markdown('<div translate="no" class="notranslate">' + "".join(parts) + "</div>", unsafe_allow_html=True)
+
+
 def _safe_url(url) -> str:
     from html import escape as _esc
     u = str(url or "").strip()
@@ -1574,6 +1614,9 @@ def _earning_item_html(item: dict, label: str, is_open: bool = False) -> str:
         )
     elif not summary:
         body.append(f'<div>{_fin_hl(str(_record_summary(item)), highlights)}</div>')
+
+    if item.get("why"):
+        body.append(f'<div class="fin-why">💡 {_fin_hl(item["why"], highlights)}</div>')
 
     # 這些陣列由 Fugle 法說會 Agent 直接產生；用巢狀展開區保留詳細資訊，
     # 預設不拉長整個摘要清單。新聞摘要的函式與呈現保持不動。
@@ -1717,6 +1760,7 @@ def render_finance_workspace() -> None:
         if not earnings:
             st.info("最近 5 天目前沒有發現新的可用 Fugle 法說會摘要；這不代表財經資訊快取未更新。")
         else:
+            _render_earnings_digest(cache.get("earnings_digest") or {}, int(cache.get("earnings_lookback_days") or 5))
             html_items = "".join(
                 _earning_item_html(item, f"{item['_date'].strftime('%Y-%m-%d')}｜{_record_company(item)}", i == 0)
                 for i, item in enumerate(earnings[:20])
