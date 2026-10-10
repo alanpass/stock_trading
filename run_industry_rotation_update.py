@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""台股產業分析每日更新入口。Windows 工作排程於交易日 15:10 執行。"""
+"""台股產業分析每日更新入口。Windows 工作排程於交易日 08:20 與 15:10 執行。"""
 from __future__ import annotations
 
 import argparse
@@ -30,7 +30,7 @@ def log(message: str) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="更新並發布台股產業分析輪動資料")
-    parser.add_argument("--force", action="store_true", help="忽略 15:10 時間檢查；仍須取得可驗證的當日資料")
+    parser.add_argument("--force", action="store_true", help="忽略 08:20／15:10 時段檢查；仍須取得可驗證的行情資料")
     parser.add_argument("--no-publish", action="store_true", help="只更新本機 JSON，不發布到 GitHub")
     args = parser.parse_args()
 
