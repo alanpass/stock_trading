@@ -2169,11 +2169,24 @@ def _render_published_rotation(payload: dict) -> None:
     with a:
         period = st.radio("輪動軌跡", ["1 個月", "3 個月", "半年", "1 年"], index=1, key="rotation_published_period")
     display_to_internal = {rotation_label(name): name for name in by_name}
+    all_labels = list(display_to_internal.keys())
+    selection_key = "rotation_published_groups_all_v3"
+    # 新工作階段預設選取全部 27 群；獨立新 key 避免沿用舊版只選 10 群的狀態。
+    if selection_key not in st.session_state:
+        st.session_state[selection_key] = all_labels.copy()
     with b:
-        defaults = [rotation_label(n) for n in ROTATION_DEFAULT_THEMES if n in by_name]
+        select_actions = st.columns(2)
+        with select_actions[0]:
+            if st.button(f"全選 {len(all_labels)} 群", key="rotation_select_all_v3", use_container_width=True):
+                st.session_state[selection_key] = all_labels.copy()
+        with select_actions[1]:
+            if st.button("清除選取", key="rotation_clear_selection_v3", use_container_width=True):
+                st.session_state[selection_key] = []
         selected_labels = st.multiselect(
-            "觀察主題", list(display_to_internal.keys()), default=defaults,
-            key="rotation_published_groups",
+            "觀察主題（預設全部顯示）",
+            all_labels,
+            key=selection_key,
+            help="預設選取全部 27 個子產業。可按「清除選取」後重新挑選，或按「全選」恢復全部群組。",
         )
         selected = [display_to_internal[label] for label in selected_labels if label in display_to_internal]
     with c:
@@ -2281,12 +2294,14 @@ def _render_published_rotation(payload: dict) -> None:
     fig = go.Figure()
     colors = {"領先": "#c65b62", "轉弱": "#d9a441", "落後": "#64748b", "改善": "#319879"}
     all_x, all_y = [], []
+    rrg_plot_groups = 0
     for name in selected:
         g = by_name.get(name, {})
         display_label = rotation_label(name)
         pts = [x for x in g.get("rrg", []) if isinstance(x, dict)][-n_points:]
         if not pts:
             continue
+        rrg_plot_groups += 1
         xs = [float(x["rs"]) for x in pts]
         ys = [float(x["momentum"]) for x in pts]
         labels = [str(x.get("date", ""))[5:] for x in pts]
@@ -2316,15 +2331,30 @@ def _render_published_rotation(payload: dict) -> None:
         fig.update_yaxes(range=yr, title_text="相對動能", zeroline=False)
     fig.update_layout(height=600, margin=dict(l=25, r=20, t=12, b=24), hovermode="closest", dragmode="pan",
                       legend=dict(orientation="h", yanchor="bottom", y=1.0, xanchor="left", x=0), showlegend=True)
-    st.plotly_chart(fig, use_container_width=True, key=f"rotation_published_rrg_{period}_{len(selected)}",
-                    config={"scrollZoom": True, "doubleClick": "reset", "displaylogo": False, "responsive": True})
+    if all_x and all_y:
+        st.plotly_chart(
+            fig,
+            use_container_width=True,
+            key=f"rotation_published_rrg_v2_{period}_{len(selected)}",
+            config={"scrollZoom": True, "doubleClick": "reset", "displaylogo": False, "responsive": True},
+        )
+    elif not selected:
+        st.info("目前沒有選取任何產業群。請按「全選 27 群」或在上方選取要觀察的產業。")
+    else:
+        st.info("所選產業目前都缺少足夠的 RRG 歷史座標；請查看下方報酬表與成分股分類。")
+
+    st.caption(
+        f"已選 {len(selected)} / {len(groups)} 群；目前有 {rrg_plot_groups} 群具備可繪製的 RRG 歷史軌跡。"
+        "若某群沒有軌跡，代表快照中的相對強弱／動能歷史點不足，不代表該產業分類不存在；"
+        "該群仍會列在下方報酬表及成分股分類名單。"
+    )
 
     st.markdown('<div class="feature-section-title">02｜產業報酬與輪動狀態</div>', unsafe_allow_html=True)
     fields = {"族群平均漲跌幅": "today_return", "前一日平均漲跌幅": "yesterday_return",
               "近 20 日": "return_20d", "近 5 日": "return_5d", "今日": "today_return",
               "相對強弱": "relative_strength", "相對動能": "relative_momentum"}
     field = fields[sort_by]
-    table_groups = [g for g in groups if not selected or g.get("name") in selected]
+    table_groups = [g for g in groups if g.get("name") in selected]
     table_groups.sort(key=lambda g: g.get(field) if g.get(field) is not None else -999999, reverse=True)
     def pct(g, k):
         value = g.get(k)
@@ -2392,7 +2422,7 @@ def _render_published_rotation(payload: dict) -> None:
         )
 
     # 完整分類總覽列出每個主題對應的所有代表股，即使該股票當天沒有有效行情。
-    with st.expander("查看全部 27 個產業主題與成分股分類", expanded=False):
+    with st.expander("查看全部 27 個產業主題與成分股分類", expanded=True):
         component_lookup = {}
         for group_data in groups:
             for item in group_data.get("components", []):
@@ -2504,9 +2534,9 @@ def render_rotation_workspace() -> None:
         selected_groups = st.multiselect(
             "分析主題（可自行增減）",
             list(ROTATION_THEMES.keys()),
-            default=[x for x in ROTATION_DEFAULT_THEMES if x in ROTATION_THEMES],
-            key="rotation_selected_themes",
-            help="每個主題最多使用 5 檔代表股；可重複出現在不同主題。",
+            default=list(ROTATION_THEMES.keys()),
+            key="rotation_selected_themes_all_v2",
+            help="預設選取全部 27 個子產業；每一群都有明確的代表股票代號清單，同一檔股票可出現在多個主題。",
         )
     with col_run:
         st.markdown("<div style='height:29px'></div>", unsafe_allow_html=True)
