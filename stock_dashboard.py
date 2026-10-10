@@ -2285,8 +2285,8 @@ def _render_published_rotation(payload: dict) -> None:
     if not average_rows:
         st.info(f"目前快照沒有可用的「{sort_by}」資料，請確認產業分析快照包含此指標。")
     else:
-        # 取得各台股子產業對應的美股指標股行情；採既有 15 分鐘快取，避免重複請求。
-        us_symbols = tuple(get_us_indicator_symbols(tuple(US_INDUSTRY_INDICATORS.keys())))
+        # 取得美股指標與 SPY 一年日線；SPY 僅作為相對強弱／動能的市場基準，不會當成產業顯示。
+        us_symbols = tuple(sorted(set(get_us_indicator_symbols(tuple(US_INDUSTRY_INDICATORS.keys())) + ["SPY"])))
         try:
             us_quotes_df = _cached_us_industry_quotes(us_symbols)
         except Exception:
@@ -2296,44 +2296,137 @@ def _render_published_rotation(payload: dict) -> None:
             for _, quote_row in us_quotes_df.iterrows():
                 us_quote_lookup[str(quote_row.get("symbol", "")).upper()] = quote_row.to_dict()
 
-        # 美股產業報酬＝該台股子產業對應、且成功取得行情的美股指標股 change_pct 算術平均。
+        # 以每日收盤／最新可取得價建立美股歷史序列，使排行依據選單會同時改變右圖的指標數值。
+        us_close_map = {}
+        for symbol, quote in us_quote_lookup.items():
+            history = quote.get("history") or []
+            history_rows = []
+            for point in history if isinstance(history, list) else []:
+                try:
+                    date_text = str(point.get("date") or "")[:10]
+                    close_value = float(point.get("close"))
+                    if date_text and np.isfinite(close_value) and close_value > 0:
+                        history_rows.append((date_text, close_value))
+                except (AttributeError, TypeError, ValueError):
+                    continue
+            if history_rows:
+                history_frame = pd.DataFrame(history_rows, columns=["date", "close"])
+                history_frame = history_frame.drop_duplicates("date", keep="last").sort_values("date")
+                close_series = pd.Series(
+                    history_frame["close"].to_numpy(dtype=float),
+                    index=pd.to_datetime(history_frame["date"], errors="coerce"),
+                    name=symbol,
+                )
+                close_series = close_series[~close_series.index.isna()]
+                if not close_series.empty:
+                    us_close_map[symbol] = close_series
+
+        us_daily_return_columns = {
+            symbol: close_series.pct_change() * 100.0
+            for symbol, close_series in us_close_map.items()
+            if len(close_series) >= 2
+        }
+        us_daily_returns_df = (
+            pd.concat(us_daily_return_columns, axis=1).sort_index()
+            if us_daily_return_columns else pd.DataFrame()
+        )
+        us_metric_for_sort = {
+            "族群平均漲跌幅": "today_return",
+            "前一日平均漲跌幅": "yesterday_return",
+            "近 20 日": "return_20d",
+            "近 5 日": "return_5d",
+            "相對強弱": "relative_strength",
+            "相對動能": "relative_momentum",
+        }
+
+        def _us_theme_metrics(internal_name: str) -> dict:
+            """計算美股主題等權平均報酬、相對強弱與相對動能。"""
+            indicators = US_INDUSTRY_INDICATORS.get(internal_name, [])
+            mapped_symbols = [str(item.get("symbol", "")).upper() for item in indicators]
+            usable_symbols = [
+                symbol for symbol in mapped_symbols
+                if symbol in us_daily_returns_df.columns
+                and symbol in us_quote_lookup
+                and us_quote_lookup[symbol].get("status") == "OK"
+            ]
+            result = {
+                "today_return": None,
+                "yesterday_return": None,
+                "return_5d": None,
+                "return_20d": None,
+                "relative_strength": None,
+                "relative_momentum": None,
+                "symbols": ", ".join(mapped_symbols) if mapped_symbols else "未設定對照",
+                "valid_symbols": ", ".join(usable_symbols) if usable_symbols else "無可用行情",
+                "valid_count": len(usable_symbols),
+                "total_count": len(mapped_symbols),
+                "data_dates": ", ".join(sorted({
+                    str(us_quote_lookup[symbol].get("data_date") or "")
+                    for symbol in usable_symbols
+                    if us_quote_lookup[symbol].get("data_date")
+                })) or "無可用日期",
+            }
+            if not usable_symbols:
+                return result
+
+            # 每個主題以有效美股指標股的每日報酬算術平均建立等權觀察序列。
+            theme_daily = us_daily_returns_df[usable_symbols].mean(axis=1, skipna=True).dropna()
+            if theme_daily.empty:
+                return result
+            theme_index = (1.0 + theme_daily / 100.0).cumprod() * 100.0
+            result["today_return"] = float(theme_daily.iloc[-1])
+            if len(theme_daily) >= 2:
+                result["yesterday_return"] = float(theme_daily.iloc[-2])
+            if len(theme_index) >= 6:
+                result["return_5d"] = float((theme_index.iloc[-1] / theme_index.iloc[-6] - 1.0) * 100.0)
+            if len(theme_index) >= 21:
+                result["return_20d"] = float((theme_index.iloc[-1] / theme_index.iloc[-21] - 1.0) * 100.0)
+
+            # 相對強弱：主題等權指數相對 SPY，除以 50 日相對比值均值；
+            # 相對動能：RS 相較 10 個交易日前的變化。指標 100 代表中性。
+            benchmark_returns = us_daily_returns_df.get("SPY")
+            if benchmark_returns is not None:
+                aligned = pd.concat([
+                    theme_daily.rename("theme"),
+                    benchmark_returns.rename("benchmark"),
+                ], axis=1).dropna()
+                if len(aligned) >= 61:
+                    theme_path = (1.0 + aligned["theme"] / 100.0).cumprod()
+                    benchmark_path = (1.0 + aligned["benchmark"] / 100.0).cumprod()
+                    relative = theme_path / benchmark_path * 100.0
+                    relative_strength = relative / relative.rolling(50, min_periods=50).mean() * 100.0
+                    relative_momentum = relative_strength / relative_strength.shift(10) * 100.0
+                    if not relative_strength.dropna().empty:
+                        result["relative_strength"] = float(relative_strength.dropna().iloc[-1])
+                    if not relative_momentum.dropna().empty:
+                        result["relative_momentum"] = float(relative_momentum.dropna().iloc[-1])
+            return result
+
+        # 所選「排行依據」直接決定美股圖顯示的數值；兩張圖各自按所選指標由高至低排序。
         us_average_rows = []
         for row in average_rows:
             internal_name = next(
                 (name for name in by_name if rotation_label(name) == row["name"]),
                 row["name"],
             )
-            indicators = US_INDUSTRY_INDICATORS.get(internal_name, [])
-            valid_quotes = []
-            mapped_symbols = []
-            for indicator in indicators:
-                symbol = str(indicator.get("symbol", "")).upper()
-                mapped_symbols.append(symbol)
-                quote = us_quote_lookup.get(symbol, {})
+            theme_metrics = _us_theme_metrics(internal_name)
+            us_value = theme_metrics.get(us_metric_for_sort[sort_by])
+            if us_value is not None:
                 try:
-                    quote_pct = float(quote.get("change_pct"))
-                    if quote.get("status") == "OK" and np.isfinite(quote_pct):
-                        valid_quotes.append((symbol, quote_pct, str(quote.get("data_date") or "")))
+                    us_value = float(us_value)
+                    if not np.isfinite(us_value):
+                        us_value = None
                 except (TypeError, ValueError):
-                    continue
-            us_return = (
-                float(np.mean([item[1] for item in valid_quotes]))
-                if valid_quotes else None
-            )
+                    us_value = None
             us_average_rows.append({
                 "name": row["name"],
-                "return_pct": us_return,
-                "symbols": ", ".join(mapped_symbols) if mapped_symbols else "未設定對照",
-                "valid_symbols": ", ".join(item[0] for item in valid_quotes) if valid_quotes else "無可用行情",
-                "valid_count": len(valid_quotes),
-                "total_count": len(mapped_symbols),
-                "data_dates": ", ".join(sorted({item[2] for item in valid_quotes if item[2]})) or "無可用日期",
+                "return_pct": us_value,
+                **theme_metrics,
             })
 
-        # 美股圖獨立依自身平均漲跌幅由高至低排序；無可用報價的族群排在最後。
         us_average_rows.sort(
             key=lambda row: (
-                row["return_pct"] is None or not np.isfinite(float(row["return_pct"])),
+                row["return_pct"] is None,
                 -(float(row["return_pct"])
                   if row["return_pct"] is not None and np.isfinite(float(row["return_pct"]))
                   else 0.0),
@@ -2344,30 +2437,28 @@ def _render_published_rotation(payload: dict) -> None:
             float(row["return_pct"]) for row in us_average_rows
             if row["return_pct"] is not None and np.isfinite(float(row["return_pct"]))
         ]
-        us_max_abs = max([abs(value) for value in us_returns] or [1.0])
-        us_pad = max(0.25, us_max_abs * 0.15)
-        us_xrange = [-us_max_abs - us_pad, us_max_abs + us_pad]
-
+        tw_values = [float(row["metric_value"]) for row in average_rows]
         if metric_is_index:
-            tw_values = [float(row["metric_value"]) for row in average_rows]
-            low = min([100.0] + tw_values)
-            high = max([100.0] + tw_values)
-            pad = max(1.0, (high - low) * 0.15)
+            combined_values = [100.0] + tw_values + us_returns
+            low, high = min(combined_values), max(combined_values)
+            pad = max(0.5, (high - low) * 0.15)
             tw_xrange = [low - pad, high + pad]
+            us_xrange = list(tw_xrange)
         elif sort_by in ("族群平均漲跌幅", "前一日平均漲跌幅"):
-            # 只有同屬單日報酬的情況才共用百分比尺度。
-            daily_values = [float(row["metric_value"]) for row in average_rows]
-            daily_values.extend(us_returns)
+            # 同為單日百分比時，台股與美股共用百分比尺度，方便直接比較。
+            daily_values = tw_values + us_returns
             max_abs = max([abs(value) for value in daily_values] or [1.0])
             pad = max(0.25, max_abs * 0.15)
             tw_xrange = [-max_abs - pad, max_abs + pad]
             us_xrange = list(tw_xrange)
         else:
-            # 5／20 日報酬不能與美股單日漲跌幅共用尺度。
-            tw_values = [float(row["metric_value"]) for row in average_rows]
+            # 近 5／20 日為區間累積報酬，各市場以百分比單位顯示並保留合適刻度。
             tw_max_abs = max([abs(value) for value in tw_values] or [1.0])
             tw_pad = max(0.25, tw_max_abs * 0.15)
             tw_xrange = [-tw_max_abs - tw_pad, tw_max_abs + tw_pad]
+            us_max_abs = max([abs(value) for value in us_returns] or [1.0])
+            us_pad = max(0.25, us_max_abs * 0.15)
+            us_xrange = [-us_max_abs - us_pad, us_max_abs + us_pad]
         chart_height = max(620, len(average_rows) * 25)
 
         def build_industry_return_chart(rows, *, us_market: bool):
@@ -2375,7 +2466,7 @@ def _render_published_rotation(payload: dict) -> None:
                 row["return_pct"] if us_market else row["metric_value"]
                 for row in rows
             ]
-            threshold = 0.0 if us_market or not metric_is_index else 100.0
+            threshold = 100.0 if metric_is_index else 0.0
             colors = [
                 "#c62828" if value is not None and value > threshold
                 else "#16803c" if value is not None and value < threshold
@@ -2387,15 +2478,19 @@ def _render_published_rotation(payload: dict) -> None:
                     [row["symbols"], row["valid_symbols"], row["valid_count"], row["total_count"], row["data_dates"]]
                     for row in rows
                 ]
+                us_value_format = ".2f" if metric_is_index else "+.2f"
+                us_value_suffix = "" if metric_is_index else "%"
+                us_metric_title = "相對強弱指數" if sort_by == "相對強弱" else "相對動能指數" if sort_by == "相對動能" else chart_metric_label
                 hovertemplate = (
-                    "%{y}<br>美股對應指標平均漲跌幅：%{x:+.2f}%"
+                    f"%{{y}}<br>美股對應指標{us_metric_title}：%{{x:{us_value_format}}}{us_value_suffix}"
                     "<br>對照代號：%{customdata[0]}"
                     "<br>有效行情：%{customdata[2]}/%{customdata[3]}"
                     "<br>有效代號：%{customdata[1]}"
                     "<br>美東資料日期：%{customdata[4]}<extra></extra>"
                 )
                 labels = [
-                    f"{value:+.2f}%" if value is not None and np.isfinite(float(value)) else "—"
+                    (f"{float(value):.2f}" if metric_is_index else f"{float(value):+.2f}%")
+                    if value is not None and np.isfinite(float(value)) else "—"
                     for value in values
                 ]
                 x_values = [
@@ -2442,7 +2537,7 @@ def _render_published_rotation(payload: dict) -> None:
                 if missing_names:
                     # 即使某個產業暫時抓不到美股報價，仍在該列標註「—」，不要誤認為 0%。
                     chart.add_trace(go.Scatter(
-                        x=[0.0] * len(missing_names),
+                        x=[100.0 if metric_is_index else 0.0] * len(missing_names),
                         y=missing_names,
                         mode="text",
                         text=["—"] * len(missing_names),
@@ -2456,8 +2551,10 @@ def _render_published_rotation(payload: dict) -> None:
                 line_color="#8793a1",
                 line_width=1,
             )
-            if us_market:
-                xaxis_title = "對應美股指標平均漲跌幅（%）"
+            if us_market and metric_is_index:
+                xaxis_title = f"對應美股指標{us_metric_title}（100＝中性基準）"
+            elif us_market:
+                xaxis_title = f"對應美股指標{chart_metric_label}（%）"
             elif metric_is_index:
                 xaxis_title = f"{chart_metric_label}（100＝中性基準）"
             else:
@@ -2502,9 +2599,15 @@ def _render_published_rotation(payload: dict) -> None:
                 config={"displaylogo": False, "responsive": True},
             )
         with us_col:
+            if sort_by == "相對強弱":
+                us_heading = "美股｜產業族群相對強弱"
+            elif sort_by == "相對動能":
+                us_heading = "美股｜產業族群相對動能"
+            else:
+                us_heading = f"美股｜產業族群{chart_metric_label}（%）"
             st.markdown(
                 '<span style="color:#9ca3af; font-size:0.85rem;">盤前看</span> '
-                '<strong>美股｜產業族群平均漲跌幅（%）</strong>',
+                f'<strong>{us_heading}</strong>',
                 unsafe_allow_html=True,
             )
             st.plotly_chart(
@@ -2514,11 +2617,10 @@ def _render_published_rotation(payload: dict) -> None:
                 config={"displaylogo": False, "responsive": True},
             )
         st.caption(
-            f"台股排行依據：{sort_by}；台股資料日期：{average_date or '未知'}。"
-            "左側台股依所選排行依據排序；右側美股固定顯示美股對應產業代表股平均漲跌幅，並依美股自身漲跌幅由高至低排序。"
-            "兩張圖的左側均顯示產業族群名稱；單日報酬共用百分比尺度，近 5／20 日報酬與美股單日漲跌幅採各自尺度。"
-            "漲跌報酬圖以 0 為基準；相對強弱／相對動能以 100 為中性基準。"
-            "紅色代表高於基準、綠色代表低於基準；美股對照資料快取 15 分鐘，且部分美股為供應鏈代理，並非完全相同的純標的。"
+            f"目前排行依據：{sort_by}；台股資料日期：{average_date or '未知'}。"
+            f"台股與美股均依所選指標重新計算並由高至低排序；美股值為該主題對照指標股的等權平均。"
+            "單日／區間報酬以百分比呈現；相對強弱與相對動能以 100 為中性基準，美股相對指標使用主題等權報酬對照 SPY，RS 採 50 日均值、動能比較 10 個交易日前。"
+            "兩張圖左側均顯示產業族群名稱；紅色代表高於基準、綠色代表低於基準。美股行情快取 15 分鐘，且部分美股為供應鏈代理，並非完全相同的純標的。"
         )
 
     st.markdown('<div class="feature-section-title">02｜產業輪動圖</div>', unsafe_allow_html=True)
