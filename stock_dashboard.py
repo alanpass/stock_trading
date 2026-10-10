@@ -2334,22 +2334,30 @@ def _render_published_rotation(payload: dict) -> None:
             float(row["return_pct"]) for row in us_average_rows
             if row["return_pct"] is not None and np.isfinite(float(row["return_pct"]))
         ]
+        us_max_abs = max([abs(value) for value in us_returns] or [1.0])
+        us_pad = max(0.25, us_max_abs * 0.15)
+        us_xrange = [-us_max_abs - us_pad, us_max_abs + us_pad]
+
         if metric_is_index:
             tw_values = [float(row["metric_value"]) for row in average_rows]
             low = min([100.0] + tw_values)
             high = max([100.0] + tw_values)
             pad = max(1.0, (high - low) * 0.15)
             tw_xrange = [low - pad, high + pad]
-            us_max_abs = max([abs(value) for value in us_returns] or [1.0])
-            us_pad = max(0.25, us_max_abs * 0.15)
-            us_xrange = [-us_max_abs - us_pad, us_max_abs + us_pad]
-        else:
-            all_returns = [float(row["metric_value"]) for row in average_rows]
-            all_returns.extend(us_returns)
-            max_abs = max([abs(value) for value in all_returns] or [1.0])
+        elif sort_by in ("族群平均漲跌幅", "前一日平均漲跌幅"):
+            # 只有同屬單日報酬的情況才共用百分比尺度。
+            daily_values = [float(row["metric_value"]) for row in average_rows]
+            daily_values.extend(us_returns)
+            max_abs = max([abs(value) for value in daily_values] or [1.0])
             pad = max(0.25, max_abs * 0.15)
             tw_xrange = [-max_abs - pad, max_abs + pad]
             us_xrange = list(tw_xrange)
+        else:
+            # 5／20 日報酬不能與美股單日漲跌幅共用尺度。
+            tw_values = [float(row["metric_value"]) for row in average_rows]
+            tw_max_abs = max([abs(value) for value in tw_values] or [1.0])
+            tw_pad = max(0.25, tw_max_abs * 0.15)
+            tw_xrange = [-tw_max_abs - tw_pad, tw_max_abs + tw_pad]
         chart_height = max(620, len(average_rows) * 25)
 
         def build_industry_return_chart(rows, *, us_market: bool):
@@ -2385,13 +2393,19 @@ def _render_published_rotation(payload: dict) -> None:
                     for value in values
                 ]
             else:
-                chart_customdata = [[row["rising"], row["falling"]] for row in rows]
                 tw_value_format = ".2f" if metric_is_index else "+.2f"
                 tw_suffix = "" if metric_is_index else "%"
-                hovertemplate = (
-                    f"%{{y}}<br>{chart_metric_label}：%{{x:{tw_value_format}}}{tw_suffix}"
-                    "<br>上漲／下跌代表股：%{customdata[0]}／%{customdata[1]}<extra></extra>"
-                )
+                if metric_key == "today_return":
+                    chart_customdata = [[row["rising"], row["falling"]] for row in rows]
+                    hovertemplate = (
+                        f"%{{y}}<br>{chart_metric_label}：%{{x:{tw_value_format}}}{tw_suffix}"
+                        "<br>上漲／下跌代表股：%{customdata[0]}／%{customdata[1]}<extra></extra>"
+                    )
+                else:
+                    chart_customdata = None
+                    hovertemplate = (
+                        f"%{{y}}<br>{chart_metric_label}：%{{x:{tw_value_format}}}{tw_suffix}<extra></extra>"
+                    )
                 labels = [
                     f"{float(value):.2f}" if metric_is_index else f"{float(value):+.2f}%"
                     for value in values
@@ -2461,7 +2475,7 @@ def _render_published_rotation(payload: dict) -> None:
             )
             return chart
 
-        # 同一產業排序、共用百分比範圍，兩側每一列均可直接比較。
+        # 兩側產業列順序一致；單日報酬共用百分比尺度，其餘指標採適當的獨立尺度。
         tw_chart = build_industry_return_chart(average_rows, us_market=False)
         us_chart = build_industry_return_chart(us_average_rows, us_market=True)
         tw_col, us_col = st.columns(2, gap="medium")
@@ -2484,6 +2498,7 @@ def _render_published_rotation(payload: dict) -> None:
         st.caption(
             f"台股排行依據：{sort_by}；台股資料日期：{average_date or '未知'}。"
             "右側美股圖固定顯示對應美股指標股平均漲跌幅，產業列順序會跟隨左側台股所選排行依據。"
+            "單日報酬共用百分比尺度；近 5／20 日報酬與美股單日漲跌幅使用各自尺度。"
             "漲跌報酬圖以 0 為基準；相對強弱／相對動能以 100 為中性基準。"
             "紅色代表高於基準、綠色代表低於基準；美股對照資料快取 15 分鐘，且部分美股為供應鏈代理，並非完全相同的純標的。"
         )
