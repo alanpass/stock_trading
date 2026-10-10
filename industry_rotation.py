@@ -942,22 +942,39 @@ def update_industry_rotation(base_dir: str | Path, force: bool = False, publish:
     now = now_taipei()
     today = pd.Timestamp(now.date())
     trading_today = is_twse_trading_day(now, base)
+    is_morning_refresh = dt_time(8, 20) <= now.time() < dt_time(9, 0)
+    is_after_close_refresh = now.time() >= dt_time(15, 10)
     if not force:
         if not trading_today:
             return {"ok": True, "skipped": True, "reason": "今天不是台股交易日", "date": today.strftime("%Y-%m-%d")}
-        if now.time() < dt_time(15, 10):
-            return {"ok": True, "skipped": True, "reason": "尚未到排程時間 15:10", "date": today.strftime("%Y-%m-%d")}
+        if not (is_morning_refresh or is_after_close_refresh):
+            return {
+                "ok": True, "skipped": True,
+                "reason": "不在排程更新時段；設定時段為 08:20 與 15:10",
+                "date": today.strftime("%Y-%m-%d"),
+            }
 
     client = FugleClient()
     errors: list[str] = []
     taiex = pd.DataFrame()
 
-    # 排程執行時只接受今日官方資料；手動 --force 在週末／休市日可用最近交易日資料初始化。
+    # 08:20 尚未收盤，採最近已完成交易日；15:10 則要求當日官方指數資料。
+    # 手動 --force 在週末／休市日仍可用最近交易日資料初始化。
     if force and not trading_today:
         taiex = _load_taiex_history(base, today)
         if taiex.empty:
             raise RuntimeError("無法取得 TWSE 加權指數歷史資料；沒有覆蓋上一份成功資料。")
         target_date = pd.to_datetime(taiex["date"], errors="coerce").max().normalize()
+    elif not force and is_morning_refresh:
+        taiex = _load_taiex_history(base, today)
+        if taiex.empty:
+            raise RuntimeError("08:20 盤前更新無法取得 TWSE 加權指數歷史資料；沒有覆蓋上一份成功資料。")
+        available_dates = pd.to_datetime(taiex["date"], errors="coerce").dropna().dt.normalize()
+        completed_dates = available_dates[available_dates < today]
+        if completed_dates.empty:
+            raise RuntimeError("08:20 盤前更新找不到最近一個已完成交易日的官方指數資料；沒有覆蓋上一份成功資料。")
+        target_date = completed_dates.max()
+        print(f"08:20 盤前更新：使用最近已完成交易日 {target_date.date()} 的官方指數資料", flush=True)
     else:
         target_date = today
         for attempt in range(6):
