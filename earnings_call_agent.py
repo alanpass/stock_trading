@@ -250,9 +250,9 @@ class FugleMemoCrawler:
 
             # 有些回應是 JS 外殼，或文章網址只出現在 script JSON，另以 regex 補捉。
             patterns = (
-                r"""https?://blog\.fugle\.tw/post/earnings-call-[^"'<>\\s?&#]+""",
-                r"""//blog\.fugle\.tw/post/earnings-call-[^"'<>\\s?&#]+""",
-                r"""/post/earnings-call-[^"'<>\\s?&#]+""",
+                r"""https?://blog\.fugle\.tw/post/earnings-call-[^"'<>\s?&#]+""",
+                r"""//blog\.fugle\.tw/post/earnings-call-[^"'<>\s?&#]+""",
+                r"""/post/earnings-call-[^"'<>\s?&#]+""",
             )
             for pattern in patterns:
                 for match in re.findall(pattern, raw, flags=re.I):
@@ -640,38 +640,104 @@ class FugleEarningsCallAgent:
         if sym: rows=[x for x in rows if str(x.get("symbol","")).upper()==sym]
         return rows[:max_events]
 
-    def daily_run(self,days=14,limit=80,force=False,watchlist=None,skip_urls=None):
-        discovered=self.crawler.discover(); cutoff=(datetime.now()-timedelta(days=max(0, int(days)-1))).date(); chosen=[]
+    def daily_run(self, days=14, limit=80, force=False, watchlist=None, skip_urls=None):
+        discovered = self.crawler.discover()
+        discovery_debug = getattr(self.crawler, "_last_discovery_debug", {})
+        cutoff = (datetime.now() - timedelta(days=max(0, int(days) - 1))).date()
+        chosen = []
+        recent_count = 0
+
         for x in discovered:
-            d=x.get("published_date",""); inside=True
+            d = x.get("published_date", "")
+            inside = True
             if d:
-                try:inside=datetime.fromisoformat(d).date()>=cutoff
-                except Exception:pass
-            if skip_urls and x["url"] in skip_urls:
+                try:
+                    inside = datetime.fromisoformat(d).date() >= cutoff
+                except Exception:
+                    # 網址日期無法解析時不直接丟棄；留給正文日期與後續驗證判斷。
+                    inside = True
+            if inside:
+                recent_count += 1
+            if skip_urls and x.get("url") in skip_urls:
                 continue
-            old_hash,_=self.crawler.db_get(x["url"])
-            if inside or not old_hash:chosen.append(x)
-        chosen=chosen[:limit]; items=[]; errors=[]
+            old_hash, _ = self.crawler.db_get(x.get("url", ""))
+            if inside or not old_hash:
+                chosen.append(x)
+
+        selected_count = min(len(chosen), max(0, int(limit)))
+        chosen = chosen[:limit]
+        items = []
+        errors = []
+
+        if not discovered:
+            errors.append({
+                "url": TOPIC_URL,
+                "warning": "Fugle 法說會主題頁探索到 0 個文章網址；請檢查 requests/curl_cffi/Selenium 取得的頁面與網路連線。",
+                "discovery_debug": discovery_debug,
+            })
+        elif recent_count == 0:
+            errors.append({
+                "url": TOPIC_URL,
+                "warning": f"已探索到 {len(discovered)} 個文章網址，但沒有日期落在最近 {days} 天（截止日 {cutoff.isoformat()}）的文章。",
+                "latest_discovered": [x.get("url", "") for x in discovered[:8]],
+            })
+
         for x in chosen:
             try:
                 try:
                     # 主要路徑：由 Qwen3 Agent 自己呼叫 read_fugle_memo。
-                    a=self.analyze_one(x["url"])
-                    article=self.crawler.extract_article(x["url"])
+                    a = self.analyze_one(x["url"])
+                    article = self.crawler.extract_article(x["url"])
                 except Exception as agent_exc:
-                    # 保底路徑：即使 Ollama tool-calling / JSON 輸出失敗，也不要丟掉已成功取得的法說正文。
-                    article=self.crawler.extract_article(x["url"])
-                    a=self._fallback(article)
-                    errors.append({"url":x.get("url"),"title":x.get("title"),"warning":f"Ollama 分析失敗，使用正文 fallback：{agent_exc}"})
-                self.crawler.db_save(article,a)
-                items.append({**article,**a,"memo_opened":True,"source_type":"Fugle 法說會備忘錄","agent_source":"Ollama Tool Calling -> read_fugle_memo(url) -> detailed article正文 / fallback","detail_read_verified":True})
-            except Exception as exc:errors.append({"url":x.get("url"),"title":x.get("title"),"error":str(exc)})
-        watch={str(s).strip().upper() for s in (watchlist or [])}
-        for x in items:x["in_watchlist"]=str(x.get("symbol","")) in watch
-        items.sort(key=lambda x:(x.get("published_date",""),x.get("symbol","")),reverse=True)
-        digest=self._digest(items,watch)
-        out={"as_of":datetime.now().isoformat(),"topic_url":TOPIC_URL,"discovered_count":len(discovered),"processed_count":len(items),"errors":errors,"items":items,"daily_digest":digest,"primary_source":"Fugle 法說會備忘錄","agent_flow":"Ollama Agent -> read_fugle_memo(url) -> article正文 -> structured analysis"}
-        od=self.base/"output"/"research_reports";od.mkdir(parents=True,exist_ok=True); (od/f"fugle_earnings_memo_{datetime.now():%Y-%m-%d}.json").write_text(json.dumps(out,ensure_ascii=False,indent=2,default=str),encoding="utf-8")
+                    # Ollama tool-calling / JSON 失敗時，若可取得正文，改用正文 fallback。
+                    article = self.crawler.extract_article(x["url"])
+                    a = self._fallback(article)
+                    errors.append({
+                        "url": x.get("url"),
+                        "title": x.get("title"),
+                        "warning": f"Ollama 分析失敗，使用正文 fallback：{agent_exc}",
+                    })
+                self.crawler.db_save(article, a)
+                items.append({
+                    **article,
+                    **a,
+                    "memo_opened": True,
+                    "source_type": "Fugle 法說會備忘錄",
+                    "agent_source": "Ollama Tool Calling -> read_fugle_memo(url) -> detailed article正文 / fallback",
+                    "detail_read_verified": True,
+                })
+            except Exception as exc:
+                errors.append({
+                    "url": x.get("url"),
+                    "title": x.get("title"),
+                    "error": str(exc),
+                })
+
+        watch = {str(s).strip().upper() for s in (watchlist or [])}
+        for x in items:
+            x["in_watchlist"] = str(x.get("symbol", "")) in watch
+        items.sort(key=lambda x: (x.get("published_date", ""), x.get("symbol", "")), reverse=True)
+        digest = self._digest(items, watch)
+        out = {
+            "as_of": datetime.now().isoformat(),
+            "topic_url": TOPIC_URL,
+            "discovered_count": len(discovered),
+            "recent_count": recent_count,
+            "selected_count": selected_count,
+            "processed_count": len(items),
+            "discovery_debug": discovery_debug,
+            "errors": errors,
+            "items": items,
+            "daily_digest": digest,
+            "primary_source": "Fugle 法說會備忘錄",
+            "agent_flow": "Ollama Agent -> read_fugle_memo(url) -> article正文 -> structured analysis",
+        }
+        od = self.base / "output" / "research_reports"
+        od.mkdir(parents=True, exist_ok=True)
+        (od / f"fugle_earnings_memo_{datetime.now():%Y-%m-%d}.json").write_text(
+            json.dumps(out, ensure_ascii=False, indent=2, default=str),
+            encoding="utf-8",
+        )
         self.crawler.close()
         return out
 
