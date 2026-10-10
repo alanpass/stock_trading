@@ -1538,21 +1538,115 @@ def _news_item_html(item: dict, is_open: bool = False) -> str:
 
 
 def _earning_item_html(item: dict, label: str, is_open: bool = False) -> str:
+    """法說會卡片：以新聞摘要相同的螢光重點呈現，並使用法說會 Agent 的結構化分析。"""
     from html import escape as _esc
-    hl = item.get("highlights") or []
-    pts = item.get("ai_points") or []
+
+    highlights = item.get("highlights") or []
+    summary = str(
+        item.get("one_line_summary")
+        or item.get("ai_summary")
+        or item.get("summary")
+        or _record_summary(item)
+        or ""
+    ).strip()
+    points = item.get("ai_points") or item.get("key_points") or []
+    points = [str(point).strip() for point in points if str(point).strip()] if isinstance(points, (list, tuple)) else []
+    signal = (
+        item.get("sentiment")
+        or item.get("impact")
+        or item.get("signal")
+        or item.get("judgement")
+    )
+    badge = _fin_badge(str(signal)) if signal else ""
     body = []
-    if pts:
-        body.append('<ul class="fin-list">' + "".join(f"<li>{_fin_hl(p, hl)}</li>" for p in pts) + "</ul>")
-    else:
-        body.append(f'<div>{_esc(str(_record_summary(item)))}</div>')
-    signal = item.get("impact") or item.get("signal") or item.get("judgement") or item.get("sentiment")
-    if signal:
-        body.append(f'<div class="fin-meta"><b>判斷：</b>{_esc(str(signal))}</div>')
+
+    # 與財經新聞一致：先放一行摘要，再以條列列出可掃讀的 AI 重點。
+    if summary:
+        body.append(
+            f'<div class="fin-why"><b>法說會摘要：</b>{_fin_hl(summary, highlights)}</div>'
+        )
+    if points:
+        body.append(
+            '<div class="fin-sub">📌 AI 分析重點</div>'
+            '<ul class="fin-list">'
+            + "".join(f'<li>{_fin_hl(point, highlights)}</li>' for point in points[:5])
+            + "</ul>"
+        )
+    elif not summary:
+        body.append(f'<div>{_fin_hl(str(_record_summary(item)), highlights)}</div>')
+
+    # 這些陣列由 Fugle 法說會 Agent 直接產生；用巢狀展開區保留詳細資訊，
+    # 預設不拉長整個摘要清單。新聞摘要的函式與呈現保持不動。
+    detail_sections = [
+        ("財務表現", item.get("financial_highlights")),
+        ("營運重點", item.get("operating_highlights")),
+        ("展望與指引", item.get("guidance")),
+        ("利多因素", item.get("positive_factors")),
+        ("利空因素", item.get("negative_factors")),
+        ("關鍵風險", item.get("key_risks")),
+        ("Q&A 重點", item.get("qa_highlights")),
+    ]
+    detail_parts = []
+    for heading, values in detail_sections:
+        if isinstance(values, str):
+            values = [values]
+        if not isinstance(values, (list, tuple)):
+            continue
+        clean_values = [str(value).strip() for value in values if str(value).strip()]
+        if not clean_values:
+            continue
+        rows = "".join(
+            f'<li>{_fin_hl(value[:420], highlights)}</li>'
+            for value in clean_values[:3]
+        )
+        detail_parts.append(
+            f'<div><div class="fin-sub">{_esc(heading)}</div><ul class="fin-list">{rows}</ul></div>'
+        )
+
+    reasoning = str(item.get("reasoning") or "").strip()
+    confidence = item.get("confidence")
+    try:
+        confidence_text = f"分析信心度：{float(confidence):.0f}%" if confidence not in (None, "") else ""
+    except (TypeError, ValueError):
+        confidence_text = ""
+    analysis_source = str(
+        item.get("analysis_source")
+        or ("Qwen3 法說會 Agent" if item.get("agent_tool_used") else "正文規則備援")
+    ).strip()
+
+    if detail_parts or reasoning or confidence_text:
+        inner = []
+        if detail_parts:
+            inner.append('<div class="fin-two">' + "".join(detail_parts) + "</div>")
+        if reasoning:
+            inner.append(f'<div class="fin-why"><b>判斷依據：</b>{_fin_hl(reasoning[:900], highlights)}</div>')
+        meta_bits = [x for x in (analysis_source, confidence_text) if x]
+        if meta_bits:
+            inner.append(f'<div class="fin-meta">{"　｜　".join(_esc(x) for x in meta_bits)}</div>')
+        body.append(
+            '<details class="fin-item"><summary>查看法說會 Agent 詳細分析</summary>'
+            f'<div class="fin-body">{"".join(inner)}</div></details>'
+        )
+
+    meta = []
+    published = str(item.get("published_date") or item.get("event_date") or item.get("date") or "")[:16]
+    if published:
+        meta.append(_esc(published))
+    if item.get("industry_name"):
+        meta.append(_esc(str(item.get("industry_name"))))
+    if meta:
+        body.append(f'<div class="fin-meta">{"　｜　".join(meta)}</div>')
+
+    chips = _fin_chips(item.get("sectors") or []) + _fin_chips(item.get("stocks") or [], "stock")
+    if chips:
+        body.append(f"<div>{chips}</div>")
+
     url = _safe_url(item.get("source_url") or item.get("url"))
     if url:
-        body.append(f'<div><a href="{url}" target="_blank" rel="noopener noreferrer">查看來源 ↗</a></div>')
-    badge = _fin_badge(item.get("sentiment")) if item.get("sentiment") else ""
+        body.append(
+            f'<div style="margin-top:6px"><a href="{url}" target="_blank" rel="noopener noreferrer">查看 Fugle 原文 ↗</a></div>'
+        )
+
     return (
         f'<details class="fin-item"{" open" if is_open else ""}>'
         f'<summary>{badge}{_esc(label)}</summary><div class="fin-body">{"".join(body)}</div></details>'
