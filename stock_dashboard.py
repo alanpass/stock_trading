@@ -1286,7 +1286,7 @@ def _load_finance_info_cache() -> dict:
     return {"_data_source": "資料讀取失敗"}
 
 
-def _recent_earnings_items(days: int = 2):
+def _recent_earnings_items(days: int = 5):
     """讀取 08:30 / 18:00 財經資訊快取，並以實際事件日期過濾。"""
     today = taiwan_now().date()
     cutoff = today - pd.Timedelta(days=max(0, int(days) - 1))
@@ -1572,7 +1572,7 @@ def render_finance_workspace() -> None:
         unsafe_allow_html=True,
     )
     cache = _load_finance_info_cache()
-    earnings = _recent_earnings_items(days=2)
+    earnings = _recent_earnings_items(days=5)
     news = _recent_news_items(days=2)
 
     if cache.get("updated_at"):
@@ -1590,7 +1590,7 @@ def render_finance_workspace() -> None:
 
     st.markdown(
         f"<div class='info-strip'>法說會：{len(earnings)} 筆｜財經新聞：{len(news)} 筆｜"
-        f"自動更新：每天 {_FIN_SCHEDULE_TEXT}（涵蓋前一日 00:00 至現在）。晨報 08:30、盤後分析 14:30。</div>",
+        f"更新排程：每天 {_FIN_SCHEDULE_TEXT}｜法說會摘要範圍：最近 5 天｜財經新聞範圍：最近 2 天。晨報 08:30、盤後分析 14:30。</div>",
         unsafe_allow_html=True,
     )
 
@@ -1605,7 +1605,7 @@ def render_finance_workspace() -> None:
         if edig.get("headline"):
             st.markdown(f'<div class="fin-meta">{_fin_hl(edig["headline"], [])}</div>', unsafe_allow_html=True)
         if not earnings:
-            st.info("最近 2 天目前沒有發現新的可用 Fugle 法說會摘要；這不代表財經資訊快取未更新。")
+            st.info("最近 5 天目前沒有發現新的可用 Fugle 法說會摘要；這不代表財經資訊快取未更新。")
         else:
             html_items = "".join(
                 _earning_item_html(item, f"{item['_date'].strftime('%Y-%m-%d')}｜{_record_company(item)}", i == 0)
@@ -1761,7 +1761,7 @@ def render_home_workspace() -> None:
         <div>''' + _site_image_html(5, wide=False) + '''</div>
       </div>
       <div class="home-copy"><div class="eyebrow">DAILY FINANCE</div><h2>每日財經資訊</h2>
-      <p>集中查看最近 2 天的法說會摘要與財經新聞摘要，先理解市場事件，再回到操作策略與未來分析。</p>
+      <p>集中查看最近 5 天的法說會摘要與最近 2 天的財經新聞摘要，先理解市場事件，再回到操作策略與未來分析。</p>
       <div class="home-accordion-hints"><div><strong>01．財經新聞摘要</strong><span>最新財經事件重點</span></div><div><strong>02．法說會摘要</strong><span>企業展望與營運訊息</span></div></div>
       <a class="home-link" href="?section=finance" target="_self">財經資訊 →</a></div>
     </div></section>''', unsafe_allow_html=True)
