@@ -730,7 +730,10 @@ class FinanceNewsAgent:
                 point = compact_point("摘要", summary, title)
                 if point:
                     points.append(point)
-            if not points:
+
+            # 舊快取可能有一行摘要但沒有新格式 key_points；仍從 Agent 的財務／營運／
+            # 展望／利多與風險欄位補足 3～5 點，避免一整場法說會只剩一個摘要句。
+            if len(points) < 5:
                 for label, values in (
                     ("財務", row.get("financial_highlights") or sections.get("財務表現")),
                     ("營運", row.get("operating_highlights") or sections.get("營運摘要")),
@@ -741,7 +744,19 @@ class FinanceNewsAgent:
                 ):
                     for value in as_values(values):
                         point = compact_point(label, value, title)
-                        if point and point not in points:
+                        point_core = re.sub(r"^[^：:]{1,8}[：:]", "", point)
+                        point_signature = re.sub(r"[\\W_]+", "", point_core).lower()
+                        duplicates = False
+                        for existing in points:
+                            existing_core = re.sub(r"^[^：:]{1,8}[：:]", "", existing)
+                            existing_signature = re.sub(r"[\\W_]+", "", existing_core).lower()
+                            if point_signature and existing_signature and (
+                                point_signature in existing_signature
+                                or existing_signature in point_signature
+                            ):
+                                duplicates = True
+                                break
+                        if point and not duplicates:
                             points.append(point)
                             break
                     if len(points) >= 5:
