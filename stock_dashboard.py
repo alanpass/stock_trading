@@ -2217,14 +2217,48 @@ def _render_published_rotation(payload: dict) -> None:
     previous_date = str(payload.get("previous_data_asof") or "")
     latest_label = f"最新交易日 {asof[5:]}" if len(asof) >= 10 else "最新交易日"
     previous_label = f"前一交易日 {previous_date[5:]}" if len(previous_date) >= 10 else "前一交易日"
-    average_day = st.radio(
-        "資料日期（使用最新已完成交易日，不以日曆日判斷）",
-        [latest_label, previous_label],
-        horizontal=True,
-        key="rotation_published_avg_return_day_v1",
-    )
-    average_key = "yesterday_return" if average_day == previous_label else "today_return"
-    average_date = previous_date if average_day == previous_label else asof
+
+    # 「排行依據」同時控制下方台股產業圖的數值、排序、標籤與基準線。
+    chart_metric_fields = {
+        "族群平均漲跌幅": "today_return",
+        "前一日平均漲跌幅": "yesterday_return",
+        "近 20 日": "return_20d",
+        "近 5 日": "return_5d",
+        "相對強弱": "relative_strength",
+        "相對動能": "relative_momentum",
+    }
+    chart_metric_labels = {
+        "族群平均漲跌幅": "平均漲跌幅",
+        "前一日平均漲跌幅": "前一日平均漲跌幅",
+        "近 20 日": "近 20 日報酬",
+        "近 5 日": "近 5 日報酬",
+        "相對強弱": "相對強弱指數",
+        "相對動能": "相對動能指數",
+    }
+    chart_metric_label = chart_metric_labels[sort_by]
+    metric_is_index = sort_by in ("相對強弱", "相對動能")
+
+    if sort_by == "族群平均漲跌幅":
+        average_day = st.radio(
+            "資料日期（使用最新已完成交易日，不以日曆日判斷）",
+            [latest_label, previous_label],
+            horizontal=True,
+            key="rotation_published_avg_return_day_v1",
+        )
+        metric_key = "yesterday_return" if average_day == previous_label else "today_return"
+        average_date = previous_date if average_day == previous_label else asof
+    elif sort_by == "前一日平均漲跌幅":
+        average_day = previous_label
+        metric_key = "yesterday_return"
+        average_date = previous_date
+        st.caption(f"目前排行依據：前一日平均漲跌幅（資料日期：{average_date or '未知'}）")
+    else:
+        average_day = chart_metric_label
+        metric_key = chart_metric_fields[sort_by]
+        average_date = asof
+
+    # 漲跌報酬以 0 為基準；相對強弱／動能以 100 為中性基準。
+    axis_baseline = 100.0 if metric_is_index else 0.0
 
     average_rows = []
     for group in groups:
@@ -2239,11 +2273,12 @@ def _render_published_rotation(payload: dict) -> None:
             continue
         average_rows.append({
             "name": rotation_label(group.get("name", "")),
-            "return_pct": value,
-            "rising": int(group.get("rising", 0) or 0) if average_key == "today_return" else None,
-            "falling": int(group.get("falling", 0) or 0) if average_key == "today_return" else None,
+            "metric_value": value,
+            "rising": int(group.get("rising", 0) or 0) if metric_key == "today_return" else None,
+            "falling": int(group.get("falling", 0) or 0) if metric_key == "today_return" else None,
         })
-    average_rows.sort(key=lambda row: row["return_pct"], reverse=True)
+    # 讓台股圖表順序和「排行依據」一致；美股對照圖沿用此產業順序。
+    average_rows.sort(key=lambda row: row["metric_value"], reverse=True)
     if not average_rows:
         st.info("目前快照沒有可用的族群平均漲跌幅資料，請確認代表股歷史日 K 是否成功更新。")
     else:
@@ -2292,21 +2327,37 @@ def _render_published_rotation(payload: dict) -> None:
                 "data_dates": ", ".join(sorted({item[2] for item in valid_quotes if item[2]})) or "無可用日期",
             })
 
-        all_returns = [float(row["return_pct"]) for row in average_rows]
-        all_returns.extend(
+        us_returns = [
             float(row["return_pct"]) for row in us_average_rows
             if row["return_pct"] is not None and np.isfinite(float(row["return_pct"]))
-        )
-        max_abs = max([abs(value) for value in all_returns] or [1.0])
-        pad = max(0.25, max_abs * 0.15)
-        shared_xrange = [-max_abs - pad, max_abs + pad]
+        ]
+        if metric_is_index:
+            tw_values = [float(row["metric_value"]) for row in average_rows]
+            low = min([100.0] + tw_values)
+            high = max([100.0] + tw_values)
+            pad = max(1.0, (high - low) * 0.15)
+            tw_xrange = [low - pad, high + pad]
+            us_max_abs = max([abs(value) for value in us_returns] or [1.0])
+            us_pad = max(0.25, us_max_abs * 0.15)
+            us_xrange = [-us_max_abs - us_pad, us_max_abs + us_pad]
+        else:
+            all_returns = [float(row["metric_value"]) for row in average_rows]
+            all_returns.extend(us_returns)
+            max_abs = max([abs(value) for value in all_returns] or [1.0])
+            pad = max(0.25, max_abs * 0.15)
+            tw_xrange = [-max_abs - pad, max_abs + pad]
+            us_xrange = list(tw_xrange)
         chart_height = max(620, len(average_rows) * 25)
 
         def build_industry_return_chart(rows, *, us_market: bool):
-            values = [row["return_pct"] for row in rows]
+            values = [
+                row["return_pct"] if us_market else row["metric_value"]
+                for row in rows
+            ]
+            threshold = 0.0 if us_market or not metric_is_index else 100.0
             colors = [
-                "#c62828" if value is not None and value > 0
-                else "#16803c" if value is not None and value < 0
+                "#c62828" if value is not None and value > threshold
+                else "#16803c" if value is not None and value < threshold
                 else "#94a3b8"
                 for value in values
             ]
@@ -2332,11 +2383,16 @@ def _render_published_rotation(payload: dict) -> None:
                 ]
             else:
                 chart_customdata = [[row["rising"], row["falling"]] for row in rows]
+                tw_value_format = ".2f" if metric_is_index else "+.2f"
+                tw_suffix = "" if metric_is_index else "%"
                 hovertemplate = (
-                    "%{y}<br>台股族群平均漲跌幅：%{x:+.2f}%"
+                    f"%{{y}}<br>{chart_metric_label}：%{{x:{tw_value_format}}}{tw_suffix}"
                     "<br>上漲／下跌代表股：%{customdata[0]}／%{customdata[1]}<extra></extra>"
                 )
-                labels = [f"{float(value):+.2f}%" for value in values]
+                labels = [
+                    f"{float(value):.2f}" if metric_is_index else f"{float(value):+.2f}%"
+                    for value in values
+                ]
                 x_values = [float(value) for value in values]
 
             chart = go.Figure(go.Bar(
@@ -2368,18 +2424,28 @@ def _render_published_rotation(payload: dict) -> None:
                         showlegend=False,
                         hoverinfo="skip",
                     ))
-            chart.add_vline(x=0, line_color="#8793a1", line_width=1)
+            chart.add_vline(
+                x=0.0 if us_market else axis_baseline,
+                line_color="#8793a1",
+                line_width=1,
+            )
+            if us_market:
+                xaxis_title = "對應美股指標平均漲跌幅（%）"
+            elif metric_is_index:
+                xaxis_title = f"{chart_metric_label}（100＝中性基準）"
+            else:
+                xaxis_title = f"{chart_metric_label}（%）"
             chart.update_layout(
                 height=chart_height, autosize=True,
                 margin=dict(l=160 if not us_market else 10, r=55, t=14, b=48),
                 showlegend=False,
-                xaxis_title="平均漲跌幅（%）",
+                xaxis_title=xaxis_title,
                 yaxis_title=None,
                 hovermode="closest",
                 bargap=0.24,
             )
             chart.update_xaxes(
-                range=shared_xrange,
+                range=us_xrange if us_market else tw_xrange,
                 zeroline=False,
                 gridcolor="rgba(130,145,160,0.18)",
             )
@@ -2397,25 +2463,26 @@ def _render_published_rotation(payload: dict) -> None:
         us_chart = build_industry_return_chart(us_average_rows, us_market=True)
         tw_col, us_col = st.columns(2, gap="medium")
         with tw_col:
-            st.markdown("**台股｜產業族群平均漲跌幅**")
+            st.markdown(f"**台股｜產業族群{chart_metric_label}**")
             st.plotly_chart(
                 tw_chart,
                 use_container_width=True,
-                key=f"rotation_published_avg_return_tw_{average_day}_{len(average_rows)}",
+                key=f"rotation_published_avg_return_tw_{metric_key}_{average_day}_{len(average_rows)}",
                 config={"displaylogo": False, "responsive": True},
             )
         with us_col:
-            st.markdown("**美股｜對應指標股平均漲跌幅**")
+            st.markdown("**美股｜對應指標股平均漲跌幅（%）**")
             st.plotly_chart(
                 us_chart,
                 use_container_width=True,
-                key=f"rotation_published_avg_return_us_{average_day}_{len(us_average_rows)}",
+                key=f"rotation_published_avg_return_us_{metric_key}_{average_day}_{len(us_average_rows)}",
                 config={"displaylogo": False, "responsive": True},
             )
         st.caption(
-            f"台股資料日期：{average_date or '未知'}；美股使用最近可取得的交易日漲跌幅（日期依各指標股行情顯示）。"
-            "台股族群平均為代表股日漲跌幅算術平均；美股族群平均為該台股子產業對應美股指標股 change_pct 算術平均。"
-            "兩側共用漲跌幅比例與產業排序；紅色為上漲、綠色為下跌。部分美股為供應鏈代理，不是完全相同的純標的；美股查詢快取 15 分鐘。"
+            f"台股排行依據：{sort_by}；台股資料日期：{average_date or '未知'}。"
+            "右側美股圖固定顯示對應美股指標股平均漲跌幅，產業列順序會跟隨左側台股所選排行依據。"
+            "漲跌報酬圖以 0 為基準；相對強弱／相對動能以 100 為中性基準。"
+            "紅色代表高於基準、綠色代表低於基準；美股對照資料快取 15 分鐘，且部分美股為供應鏈代理，並非完全相同的純標的。"
         )
 
     st.markdown('<div class="feature-section-title">02｜產業輪動圖</div>', unsafe_allow_html=True)
