@@ -2213,7 +2213,6 @@ def _render_published_rotation(payload: dict) -> None:
     kpis[4].metric("落後", f"{quadrants['落後']} 群")
 
     # 族群平均漲跌幅：依最新完成交易日各主題代表股的日漲跌幅算術平均。
-    st.markdown('<div class="feature-section-title">01｜產業族群平均漲跌幅</div>', unsafe_allow_html=True)
     previous_date = str(payload.get("previous_data_asof") or "")
     latest_label = f"最新交易日 {asof[5:]}" if len(asof) >= 10 else "最新交易日"
     previous_label = f"前一交易日 {previous_date[5:]}" if len(previous_date) >= 10 else "前一交易日"
@@ -2236,6 +2235,10 @@ def _render_published_rotation(payload: dict) -> None:
         "相對動能": "相對動能指數",
     }
     chart_metric_label = chart_metric_labels[sort_by]
+    st.markdown(
+        f'<div class="feature-section-title">01｜產業族群{chart_metric_label}</div>',
+        unsafe_allow_html=True,
+    )
     metric_is_index = sort_by in ("相對強弱", "相對動能")
 
     if sort_by == "族群平均漲跌幅":
@@ -2262,7 +2265,7 @@ def _render_published_rotation(payload: dict) -> None:
 
     average_rows = []
     for group in groups:
-        raw_value = group.get(average_key)
+        raw_value = group.get(metric_key)
         if raw_value is None:
             continue
         try:
@@ -2280,7 +2283,7 @@ def _render_published_rotation(payload: dict) -> None:
     # 讓台股圖表順序和「排行依據」一致；美股對照圖沿用此產業順序。
     average_rows.sort(key=lambda row: row["metric_value"], reverse=True)
     if not average_rows:
-        st.info("目前快照沒有可用的族群平均漲跌幅資料，請確認代表股歷史日 K 是否成功更新。")
+        st.info(f"目前快照沒有可用的「{sort_by}」資料，請確認產業分析快照包含此指標。")
     else:
         # 取得各台股子產業對應的美股指標股行情；採既有 15 分鐘快取，避免重複請求。
         us_symbols = tuple(get_us_indicator_symbols(tuple(US_INDUSTRY_INDICATORS.keys())))
