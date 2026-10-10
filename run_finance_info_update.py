@@ -8,7 +8,7 @@ AI 台股研究中心｜財經資訊自動更新（新聞 + 法說會 → Agent 
 
 每次執行：
     1. 爬鉅亨新聞（前一日 00:00 ～ 現在，頭條 + 台股 + 國際股 + 外匯 + 期貨）
-    2. 取得最近 2 天 Fugle 法說會備忘錄（已分析過的不重做）
+    2. 取得最近 5 天 Fugle 法說會備忘錄（已分析過的不重做）
     3. FinanceNewsAgent：每篇摘要成 1~3 點、標示關鍵詞、判斷利多利空與產業、算重要度、
        再產出「今日重點」總覽
     4. 原子式覆蓋 output/research_reports/finance_info_latest.json
@@ -40,7 +40,8 @@ from finance_agent import FinanceNewsAgent
 TAIPEI = ZoneInfo("Asia/Taipei")
 BASE = Path(__file__).resolve().parent
 FINANCE_SCHEDULE = ["08:10", "11:00", "13:30", "16:00", "18:00", "23:00"]
-LOOKBACK_DAYS = 2
+NEWS_LOOKBACK_DAYS = 2
+EARNINGS_LOOKBACK_DAYS = 5
 NEWS_DATE_KEYS = ("published_ts", "published", "published_at", "published_time", "date", "created_at", "updated_at")
 EARN_DATE_KEYS = ("event_date", "eventDate", "published_date", "modified_date", "date", "published_at", "published_time", "published_ts", "published", "created_at")
 
@@ -183,7 +184,7 @@ def _crawl_news(base: Path, errors: list[str]) -> tuple[list[dict[str, Any]], di
     crawl_info: dict[str, Any] = {"ok": False}
     log("新聞：開始爬取鉅亨（頭條／台股／國際股／外匯／期貨，前一日 00:00 至現在）")
     try:
-        result = crawler.crawl_rolling(days=LOOKBACK_DAYS)
+        result = crawler.crawl_rolling(days=NEWS_LOOKBACK_DAYS)
         log(f"新聞：爬到 {result.get('article_count', 0)} 篇，各分類 {result.get('per_category_count')}")
         crawl_info = {
             "ok": result.get("article_count", 0) > 0,
@@ -204,7 +205,7 @@ def _crawl_news(base: Path, errors: list[str]) -> tuple[list[dict[str, Any]], di
     if not articles:
         try:
             cached = crawler.load_latest() or crawler.load_recent_cached(
-                before_date=(now_taipei().date() + timedelta(days=1)).isoformat(), days=LOOKBACK_DAYS, max_search_days=7
+                before_date=(now_taipei().date() + timedelta(days=1)).isoformat(), days=NEWS_LOOKBACK_DAYS, max_search_days=7
             )
             articles = _extract_list(cached, ("articles",))
             if articles:
@@ -213,10 +214,10 @@ def _crawl_news(base: Path, errors: list[str]) -> tuple[list[dict[str, Any]], di
         except Exception as exc:
             errors.append(f"CNYES 快取讀取失敗：{type(exc).__name__}: {exc}")
 
-    articles = _filter_recent_calendar_days(articles, LOOKBACK_DAYS, NEWS_DATE_KEYS)
+    articles = _filter_recent_calendar_days(articles, NEWS_LOOKBACK_DAYS, NEWS_DATE_KEYS)
     min_news = int(os.getenv("FINANCE_MIN_NEWS", "8"))
     if len(articles) < min_news:
-        extra = _filter_recent_calendar_days(_google_news_fallback(LOOKBACK_DAYS), LOOKBACK_DAYS, NEWS_DATE_KEYS)
+        extra = _filter_recent_calendar_days(_google_news_fallback(NEWS_LOOKBACK_DAYS), NEWS_LOOKBACK_DAYS, NEWS_DATE_KEYS)
         known = {str(a.get("title")) for a in articles}
         added = [x for x in extra if str(x.get("title")) not in known]
         if added:
@@ -231,7 +232,7 @@ def _crawl_news(base: Path, errors: list[str]) -> tuple[list[dict[str, Any]], di
 # ----------------------------------------------------------------------
 def _load_earnings(base: Path, previous: dict[str, Any], watchlist: list[str], errors: list[str]) -> list[dict[str, Any]]:
     prev_items = [x for x in (previous.get("earnings") or []) if isinstance(x, dict)]
-    prev_items = _filter_recent_calendar_days(prev_items, LOOKBACK_DAYS, EARN_DATE_KEYS)
+    prev_items = _filter_recent_calendar_days(prev_items, EARNINGS_LOOKBACK_DAYS, EARN_DATE_KEYS)
     force = os.getenv("EARNINGS_FORCE_REFRESH", "false").strip().lower() in {"1", "true", "yes", "on"}
     skip = set() if force else {str(x.get("url") or x.get("source_url")) for x in prev_items if (x.get("url") or x.get("source_url"))}
     fresh: list[dict[str, Any]] = []
@@ -247,7 +248,7 @@ def _load_earnings(base: Path, previous: dict[str, Any], watchlist: list[str], e
 
         def work():
             agent = EarningsCallAgent(base, ollama_model=os.getenv("OLLAMA_MODEL", "qwen3:8b"))
-            return agent.daily_run(days=LOOKBACK_DAYS, limit=per_run, force=force, watchlist=[], skip_urls=skip or None)
+            return agent.daily_run(days=EARNINGS_LOOKBACK_DAYS, limit=per_run, force=force, watchlist=[], skip_urls=skip or None)
 
         payload = _run_with_timeout(work, timeout)
         fresh = _extract_list(payload, ("items", "earnings_calls", "events", "data"))
@@ -262,7 +263,7 @@ def _load_earnings(base: Path, previous: dict[str, Any], watchlist: list[str], e
     except Exception as exc:
         errors.append(f"法說會資料更新失敗：{type(exc).__name__}: {exc}")
         log(f"法說會：失敗 {type(exc).__name__}: {exc}")
-    return _filter_recent_calendar_days(fresh + prev_items, LOOKBACK_DAYS, EARN_DATE_KEYS)
+    return _filter_recent_calendar_days(fresh + prev_items, EARNINGS_LOOKBACK_DAYS, EARN_DATE_KEYS)
 
 
 # ----------------------------------------------------------------------
@@ -298,7 +299,8 @@ def update_finance_info(base_dir: str | Path = BASE, watchlist: list[str] | None
             "report_date": started.date().isoformat(),
             "updated_at": started.isoformat(timespec="seconds"),
             "finished_at": now_taipei().isoformat(timespec="seconds"),
-            "lookback_days": LOOKBACK_DAYS,
+            "lookback_days": NEWS_LOOKBACK_DAYS,
+            "earnings_lookback_days": EARNINGS_LOOKBACK_DAYS,
             "schedule": FINANCE_SCHEDULE,
             "stale": stale,
             "news": news,
@@ -317,7 +319,7 @@ def update_finance_info(base_dir: str | Path = BASE, watchlist: list[str] | None
     if refresh_news:
         articles, crawl_info = _crawl_news(base, errors)
     else:
-        articles = _filter_recent_calendar_days([x for x in previous.get("news", []) if isinstance(x, dict)], LOOKBACK_DAYS, NEWS_DATE_KEYS)
+        articles = _filter_recent_calendar_days([x for x in previous.get("news", []) if isinstance(x, dict)], NEWS_LOOKBACK_DAYS, NEWS_DATE_KEYS)
         crawl_info = {"ok": bool(articles), "skipped": True}
     log(f"新聞：進入 Agent 分析（{len(articles)} 篇）")
 
@@ -334,7 +336,7 @@ def update_finance_info(base_dir: str | Path = BASE, watchlist: list[str] | None
         else:
             news, news_digest = [], {}
     log(f"新聞：Agent 完成 {agent.stats}")
-    prev_earn = _filter_recent_calendar_days([x for x in previous.get("earnings", []) if isinstance(x, dict)], LOOKBACK_DAYS, EARN_DATE_KEYS)
+    prev_earn = _filter_recent_calendar_days([x for x in previous.get("earnings", []) if isinstance(x, dict)], EARNINGS_LOOKBACK_DAYS, EARN_DATE_KEYS)
     _atomic_write_json(latest, build_payload(news, news_digest, prev_earn, previous.get("earnings_digest", {}), crawl_info, stale, agent.stats))
     log("已先寫入新聞結果（儀表板現在就能看到）")
 
