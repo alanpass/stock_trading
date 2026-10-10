@@ -2330,6 +2330,16 @@ def _render_published_rotation(payload: dict) -> None:
                 "data_dates": ", ".join(sorted({item[2] for item in valid_quotes if item[2]})) or "無可用日期",
             })
 
+        # 美股圖獨立依自身平均漲跌幅由高至低排序；無可用報價的族群排在最後。
+        us_average_rows.sort(
+            key=lambda row: (
+                row["return_pct"] is None or not np.isfinite(float(row["return_pct"])),
+                -(float(row["return_pct"])
+                  if row["return_pct"] is not None and np.isfinite(float(row["return_pct"]))
+                  else 0.0),
+            )
+        )
+
         us_returns = [
             float(row["return_pct"]) for row in us_average_rows
             if row["return_pct"] is not None and np.isfinite(float(row["return_pct"]))
@@ -2454,7 +2464,7 @@ def _render_published_rotation(payload: dict) -> None:
                 xaxis_title = f"{chart_metric_label}（%）"
             chart.update_layout(
                 height=chart_height, autosize=True,
-                margin=dict(l=160 if not us_market else 10, r=55, t=14, b=48),
+                margin=dict(l=165, r=55, t=14, b=48),
                 showlegend=False,
                 xaxis_title=xaxis_title,
                 yaxis_title=None,
@@ -2471,7 +2481,7 @@ def _render_published_rotation(payload: dict) -> None:
                 categoryorder="array",
                 categoryarray=[row["name"] for row in rows],
                 automargin=True,
-                showticklabels=not us_market,
+                showticklabels=True,
             )
             return chart
 
@@ -2480,7 +2490,11 @@ def _render_published_rotation(payload: dict) -> None:
         us_chart = build_industry_return_chart(us_average_rows, us_market=True)
         tw_col, us_col = st.columns(2, gap="medium")
         with tw_col:
-            st.markdown(f"**台股｜產業族群{chart_metric_label}**")
+            st.markdown(
+                f'<span style="color:#9ca3af; font-size:0.85rem;">盤後看</span> '
+                f'<strong>台股｜產業族群{chart_metric_label}</strong>',
+                unsafe_allow_html=True,
+            )
             st.plotly_chart(
                 tw_chart,
                 use_container_width=True,
@@ -2488,7 +2502,11 @@ def _render_published_rotation(payload: dict) -> None:
                 config={"displaylogo": False, "responsive": True},
             )
         with us_col:
-            st.markdown("**美股｜對應指標股平均漲跌幅（%）**")
+            st.markdown(
+                '<span style="color:#9ca3af; font-size:0.85rem;">盤前看</span> '
+                '<strong>美股｜產業族群平均漲跌幅（%）</strong>',
+                unsafe_allow_html=True,
+            )
             st.plotly_chart(
                 us_chart,
                 use_container_width=True,
@@ -2497,8 +2515,8 @@ def _render_published_rotation(payload: dict) -> None:
             )
         st.caption(
             f"台股排行依據：{sort_by}；台股資料日期：{average_date or '未知'}。"
-            "右側美股圖固定顯示對應美股指標股平均漲跌幅，產業列順序會跟隨左側台股所選排行依據。"
-            "單日報酬共用百分比尺度；近 5／20 日報酬與美股單日漲跌幅使用各自尺度。"
+            "左側台股依所選排行依據排序；右側美股固定顯示美股對應產業代表股平均漲跌幅，並依美股自身漲跌幅由高至低排序。"
+            "兩張圖的左側均顯示產業族群名稱；單日報酬共用百分比尺度，近 5／20 日報酬與美股單日漲跌幅採各自尺度。"
             "漲跌報酬圖以 0 為基準；相對強弱／相對動能以 100 為中性基準。"
             "紅色代表高於基準、綠色代表低於基準；美股對照資料快取 15 分鐘，且部分美股為供應鏈代理，並非完全相同的純標的。"
         )
