@@ -172,9 +172,12 @@ def _num(value: Any) -> float | None:
 
 
 def _fetch_one(symbol: str) -> dict[str, Any]:
-    """查詢單一美股最近可取得的日線與官方 quote metadata。"""
+    """查詢美股一年日線，供單日、5／20日報酬與相對強弱計算共用。"""
+    from datetime import timezone
+
     url = YAHOO_CHART_URL.format(symbol=symbol)
-    params = {"range": "5d", "interval": "1d", "events": "history"}
+    # 需要約 60 個交易日計算 50 日相對強弱均線與 10 日動能，取一年歷史。
+    params = {"range": "1y", "interval": "1d", "events": "history"}
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/131.0.0.0 Safari/537.36",
         "Accept": "application/json,text/plain,*/*",
@@ -187,11 +190,12 @@ def _fetch_one(symbol: str) -> dict[str, Any]:
         "currency": "USD",
         "data_date": None,
         "volume": None,
+        "history": [],
         "status": "行情暫不可用",
         "source": "Yahoo Finance chart",
     }
     try:
-        response = requests.get(url, params=params, headers=headers, timeout=(4, 9))
+        response = requests.get(url, params=params, headers=headers, timeout=(4, 12))
         response.raise_for_status()
         payload = response.json()
         chart = payload.get("chart", {}) if isinstance(payload, dict) else {}
@@ -205,48 +209,75 @@ def _fetch_one(symbol: str) -> dict[str, Any]:
         meta = result.get("meta") or {}
         quote_list = (result.get("indicators") or {}).get("quote") or [{}]
         quote = quote_list[0] if quote_list else {}
-        closes = result.get("timestamp") or []
+        timestamps = result.get("timestamp") or []
         close_values = quote.get("close") or []
-        valid_closes = []
-        for timestamp, close in zip(closes, close_values):
-            value = _num(close)
-            if value is not None and value > 0:
-                valid_closes.append((int(timestamp), value))
-        if not valid_closes:
-            base["status"] = "沒有有效收盤價"
-            return base
+        volume_values = quote.get("volume") or []
 
-        # 美股開市期間以 regularMarketPrice 顯示目前價格；收市／假日則是最近一個收盤價。
+        # Yahoo 的日線時間戳以 UTC 日期為鍵，方便不同美股與 SPY 基準對齊。
+        history_by_date: dict[str, dict[str, Any]] = {}
+        for idx, timestamp in enumerate(timestamps):
+            if idx >= len(close_values):
+                continue
+            ts = int(timestamp)
+            close = _num(close_values[idx])
+            if close is None or close <= 0:
+                continue
+            date_key = datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%Y-%m-%d")
+            volume = _num(volume_values[idx]) if idx < len(volume_values) else None
+            history_by_date[date_key] = {"date": date_key, "close": float(close), "volume": volume}
+
         price = _num(meta.get("regularMarketPrice"))
         latest_ts = meta.get("regularMarketTime")
+        latest_valid = next(
+            ((int(ts), _num(close)) for ts, close in reversed(list(zip(timestamps, close_values)))
+             if _num(close) is not None and _num(close) > 0),
+            None,
+        )
         if price is None or price <= 0:
-            latest_ts, price = valid_closes[-1]
+            if latest_valid is None:
+                base["status"] = "沒有有效收盤價"
+                return base
+            latest_ts, price = latest_valid
 
-        prior_close = _num(meta.get("chartPreviousClose"))
-        # 用這次查詢得到的日線最後兩根作為前收備援，避免 metadata 欄位偶爾缺漏。
-        if len(valid_closes) >= 2:
-            prior_close = valid_closes[-2][1]
-            if latest_ts is None:
-                latest_ts = valid_closes[-1][0]
-        elif prior_close is None or prior_close <= 0:
-            prior_close = _num(meta.get("previousClose"))
-
-        change = price - prior_close if prior_close is not None and prior_close > 0 else None
-        change_pct = (price / prior_close - 1.0) * 100.0 if prior_close is not None and prior_close > 0 else None
+        if latest_ts is None:
+            latest_ts = latest_valid[0] if latest_valid else None
         if latest_ts is not None:
-            data_date = datetime.fromtimestamp(int(latest_ts), tz=US_MARKET_TZ).strftime("%Y-%m-%d")
+            latest_date = datetime.fromtimestamp(int(latest_ts), tz=US_MARKET_TZ).strftime("%Y-%m-%d")
+            quote_session_date = datetime.fromtimestamp(int(latest_ts), tz=timezone.utc).strftime("%Y-%m-%d")
         else:
-            data_date = datetime.fromtimestamp(valid_closes[-1][0], tz=US_MARKET_TZ).strftime("%Y-%m-%d")
+            latest_date = None
+            quote_session_date = None
+
+        # 以最新可取得報價更新對應交易日；盤中尚未形成收盤 K 時也能納入最新價格。
+        if quote_session_date and price is not None:
+            history_by_date[quote_session_date] = {
+                "date": quote_session_date,
+                "close": float(price),
+                "volume": _num(meta.get("regularMarketVolume")) or (
+                    _num(volume_values[-1]) if volume_values else None
+                ),
+            }
+        history = [history_by_date[key] for key in sorted(history_by_date)]
+        closes = [float(item["close"]) for item in history if _num(item.get("close")) is not None]
+
+        # 用最近一筆與前一筆交易日收盤／最新價格計算漲跌，避免盤中誤拿兩日前收盤價。
+        prior_close = closes[-2] if len(closes) >= 2 else _num(meta.get("chartPreviousClose"))
+        change = float(price) - prior_close if prior_close is not None and prior_close > 0 else None
+        change_pct = (float(price) / prior_close - 1.0) * 100.0 if prior_close is not None and prior_close > 0 else None
 
         volumes = quote.get("volume") or []
-        volume = next((_num(v) for v in reversed(volumes) if _num(v) is not None), None)
+        volume = _num(meta.get("regularMarketVolume"))
+        if volume is None:
+            volume = next((_num(v) for v in reversed(volumes) if _num(v) is not None), None)
+
         base.update({
-            "price": price,
+            "price": float(price),
             "change": change,
             "change_pct": change_pct,
             "currency": str(meta.get("currency") or "USD"),
-            "data_date": data_date,
+            "data_date": latest_date or (history[-1]["date"] if history else None),
             "volume": volume,
+            "history": history,
             "status": "OK",
             "source": "Yahoo Finance chart",
         })
@@ -254,7 +285,6 @@ def _fetch_one(symbol: str) -> dict[str, Any]:
     except Exception as exc:
         base["status"] = f"取得失敗（{type(exc).__name__}）"
         return base
-
 
 def fetch_us_indicators(symbols: list[str] | tuple[str, ...]) -> list[dict[str, Any]]:
     """平行取得多檔美股最新可用行情；單檔失敗不會中斷整個產業頁面。"""
@@ -271,7 +301,7 @@ def fetch_us_indicators(symbols: list[str] | tuple[str, ...]) -> list[dict[str, 
             except Exception as exc:
                 records[symbol] = {
                     "symbol": symbol, "price": None, "change": None, "change_pct": None,
-                    "currency": "USD", "data_date": None, "volume": None,
+                    "currency": "USD", "data_date": None, "volume": None, "history": [],
                     "status": f"取得失敗（{type(exc).__name__}）", "source": "Yahoo Finance chart",
                 }
     return [records[symbol] for symbol in unique_symbols]
