@@ -8,7 +8,7 @@ import hashlib, hmac, json, os, re, secrets, sys
 from pathlib import Path
 from typing import Any
 
-EMAIL_RE = re.compile(r"^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
+EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 ITERATIONS = 310_000
 ADMIN_EMAIL = "a1113359@mail.nuk.edu.tw"
 
@@ -47,7 +47,13 @@ def request_account(email: str, base_dir: str | Path) -> dict[str, Any]:
         agent = EmailAgent(base_dir)
         if not agent.status().get("configured"):
             return {"sent": False, "error": "管理員通知 Email 尚未設定，請檢查 EMAIL_SENDER、EMAIL_APP_PASSWORD 與 EMAIL_RECIPIENT。"}
+        previous_admin = os.environ.get("EMAIL_ADMIN_RECIPIENT")
+        os.environ["EMAIL_ADMIN_RECIPIENT"] = ADMIN_EMAIL
         result = agent.send_subscription_notice(name="網站帳號申請", email=email, message="使用者申請網站登入帳號。請管理員確認後，手動將帳號與密碼雜湊加入 Streamlit Secrets 的 AUTH_USERS_JSON；系統不會自動建立帳號。", subscribed=False)
+        if previous_admin is None:
+            os.environ.pop("EMAIL_ADMIN_RECIPIENT", None)
+        else:
+            os.environ["EMAIL_ADMIN_RECIPIENT"] = previous_admin
         return {"sent": True} if result.get("sent") else {"sent": False, "error": str(result.get("error") or "管理員通知寄送失敗。")}
     except Exception as exc:
         return {"sent": False, "error": "寄送申請通知失敗：" + type(exc).__name__ + ": " + str(exc)}
