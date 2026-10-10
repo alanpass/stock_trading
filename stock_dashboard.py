@@ -2356,7 +2356,7 @@ def _render_published_rotation(payload: dict) -> None:
         "該群仍會列在下方報酬表及成分股分類名單。"
     )
 
-    st.markdown('<div class="feature-section-title">02｜產業報酬與輪動狀態</div>', unsafe_allow_html=True)
+    st.markdown('<div class="feature-section-title">03｜產業報酬與輪動狀態</div>', unsafe_allow_html=True)
     fields = {"族群平均漲跌幅": "today_return", "前一日平均漲跌幅": "yesterday_return",
               "近 20 日": "return_20d", "近 5 日": "return_5d", "今日": "today_return",
               "相對強弱": "relative_strength", "相對動能": "relative_momentum"}
@@ -2390,7 +2390,7 @@ def _render_published_rotation(payload: dict) -> None:
         hide_index=True,
     )
 
-    st.markdown('<div class="feature-section-title">03｜美股產業指標股資訊</div>', unsafe_allow_html=True)
+    st.markdown('<div class="feature-section-title">04｜美股產業指標股資訊</div>', unsafe_allow_html=True)
     st.caption(
         "依台股供應鏈子產業整理美股上市指標公司，顯示最新可取得價格與當日漲跌幅。"
         "美股價格與日期來自 Yahoo Finance；每一筆以來源回傳的美東交易日期為準。"
