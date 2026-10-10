@@ -1,13 +1,32 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
+from datetime import datetime, timedelta
 import argparse, json
 from earnings_call_agent import FugleEarningsCallAgent
 
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument("symbols", nargs="*", default=["6582","6142","2029","1473","1416"]); ap.add_argument("--limit", type=int, default=20); ap.add_argument("--crawl-only", action="store_true"); args=ap.parse_args()
+    ap=argparse.ArgumentParser(); ap.add_argument("symbols", nargs="*", default=["6582","6142","2029","1473","1416"]); ap.add_argument("--limit", type=int, default=20); ap.add_argument("--crawl-only", action="store_true"); ap.add_argument("--discover-only", action="store_true", help="只測試 Fugle 文章探索與最近 5 天日期，不讀正文、不呼叫 Ollama"); args=ap.parse_args()
     agent=FugleEarningsCallAgent(Path(__file__).resolve().parent)
     discovered=agent.crawler.discover()
     print(f"DISCOVERED={len(discovered)}")
+    if args.discover_only:
+        cutoff=(datetime.now()-timedelta(days=4)).date()
+        recent=[]
+        for row in discovered:
+            value=str(row.get("published_date") or "").strip()
+            try:
+                if value and datetime.fromisoformat(value).date() >= cutoff:
+                    recent.append(row)
+            except Exception:
+                pass
+        print(f"RECENT_5_DAYS={len(recent)}")
+        print(f"CUTOFF_DATE={cutoff.isoformat()}")
+        print("DISCOVERY_DEBUG="+json.dumps(getattr(agent.crawler,"_last_discovery_debug",{}),ensure_ascii=False,indent=2))
+        for row in discovered[:args.limit]:
+            mark="RECENT" if row in recent else "OLDER/UNKNOWN"
+            print(f"{mark} | {row.get('published_date','')} | {row.get('symbol','')} | {row.get('title','')} | {row.get('url','')}")
+        agent.crawler.close()
+        return
     selected=[x for x in discovered if not args.symbols or str(x.get("symbol")) in set(args.symbols)]
     if not selected: selected=discovered[:args.limit]
     for x in selected[:args.limit]:
