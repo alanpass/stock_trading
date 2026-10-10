@@ -2174,7 +2174,7 @@ def _render_published_rotation(payload: dict) -> None:
 
     a, b, c = st.columns([1, 3, 1.5])
     with a:
-        period = st.radio("輪動軌跡", ["1 個月", "3 個月", "半年", "1 年"], index=1, key="rotation_published_period")
+        period = st.radio("輪動軌跡", ["1 個月", "3 個月", "半年", "1 年"], index=0, key="rotation_published_period_v3")
     display_to_internal = {rotation_label(name): name for name in by_name}
     all_labels = list(display_to_internal.keys())
     selection_key = "rotation_published_groups_all_v3"
@@ -2296,13 +2296,28 @@ def _render_published_rotation(payload: dict) -> None:
         )
 
     st.markdown('<div class="feature-section-title">02｜產業輪動圖</div>', unsafe_allow_html=True)
-    st.caption("每條線代表主題相對加權指數的軌跡，每 5 個交易日取一點。RS 高於 100 代表相對強弱高於自身 50 日均值；動能高於 100 代表較 10 個交易日前增強。")
+    st.caption("每條線代表主題相對加權指數的軌跡，每 5 個交易日取一點。RS 高於 100 代表相對強弱高於自身 50 日均值；動能高於 100 代表較 10 個交易日前增強。預設顯示 1 個月與「領先」象限。圖表固定尺寸：先用工具列框選或放大按鈕放大，再切換平移工具移動視窗。")
+    quadrant_options = ["領先", "轉弱", "改善", "落後", "全選"]
+    quadrant_filter = st.radio(
+        "當前所在的象限",
+        quadrant_options,
+        index=0,
+        horizontal=True,
+        key="rotation_published_quadrant_filter_v1",
+        help="只顯示目前位於指定象限的產業軌跡；「全選」會顯示所有象限。",
+    )
+    plot_selected = [
+        name for name in selected
+        if quadrant_filter == "全選"
+        or str(by_name.get(name, {}).get("quadrant", "")) == quadrant_filter
+    ]
+
     n_points = {"1 個月": 6, "3 個月": 15, "半年": 28, "1 年": 53}[period]
     fig = go.Figure()
     colors = {"領先": "#c65b62", "轉弱": "#d9a441", "落後": "#64748b", "改善": "#319879"}
     all_x, all_y = [], []
     rrg_plot_groups = 0
-    for name in selected:
+    for name in plot_selected:
         g = by_name.get(name, {})
         display_label = rotation_label(name)
         pts = [x for x in g.get("rrg", []) if isinstance(x, dict)][-n_points:]
@@ -2316,13 +2331,14 @@ def _render_published_rotation(payload: dict) -> None:
         fig.add_trace(go.Scatter(
             x=xs, y=ys, mode="lines+markers", name=display_label,
             line=dict(width=2, color=color),
-            marker=dict(size=[5] * max(0, len(pts) - 1) + [10], color=color),
+            marker=dict(size=[6] * max(0, len(pts) - 1) + [12], color=color),
             text=labels,
             hovertemplate=display_label + "<br>日期 %{text}<br>相對強弱 %{x:.1f}<br>相對動能 %{y:.1f}<extra></extra>",
         ))
         fig.add_trace(go.Scatter(
-            x=[xs[-1]], y=[ys[-1]], mode="text", text=[display_label],
-            textposition="top center", textfont=dict(size=10, color=color),
+            x=[xs[-1]], y=[ys[-1]], mode="text", text=[f"<b>{display_label}</b>"],
+            textposition="top center",
+            textfont=dict(size=14, color=color, family="Arial Black, Arial, sans-serif"),
             showlegend=False, hoverinfo="skip",
         ))
         all_x.extend(xs)
@@ -2332,26 +2348,84 @@ def _render_published_rotation(payload: dict) -> None:
         ypad = max(2.5, (max(all_y) - min(all_y)) * .12)
         xr = [min(min(all_x) - xpad, 97), max(max(all_x) + xpad, 103)]
         yr = [min(min(all_y) - ypad, 97), max(max(all_y) + ypad, 103)]
+        # 以半透明淡色填滿四個 RRG 象限；區塊放在資料線後方，避免遮住軌跡。
+        quadrant_fill = {
+            "領先": "rgba(252, 232, 232, 0.58)",
+            "轉弱": "rgba(255, 241, 223, 0.58)",
+            "落後": "rgba(237, 241, 245, 0.58)",
+            "改善": "rgba(229, 244, 237, 0.58)",
+        }
+        quadrant_rects = [
+            ("改善", xr[0], 100, 100, yr[1]),
+            ("領先", 100, 100, xr[1], yr[1]),
+            ("落後", xr[0], yr[0], 100, 100),
+            ("轉弱", 100, yr[0], xr[1], 100),
+        ]
+        for quadrant_name, x0, y0, x1, y1 in quadrant_rects:
+            fig.add_shape(
+                type="rect", xref="x", yref="y",
+                x0=x0, y0=y0, x1=x1, y1=y1,
+                fillcolor=quadrant_fill[quadrant_name],
+                line=dict(width=0, color="rgba(80, 90, 100, 0)"),
+                layer="below",
+            )
         fig.add_shape(type="line", x0=100, x1=100, y0=yr[0], y1=yr[1], line=dict(color="#9aa7b5", dash="dash"))
         fig.add_shape(type="line", x0=xr[0], x1=xr[1], y0=100, y1=100, line=dict(color="#9aa7b5", dash="dash"))
-        fig.update_xaxes(range=xr, title_text="相對強弱", zeroline=False)
-        fig.update_yaxes(range=yr, title_text="相對動能", zeroline=False)
-    fig.update_layout(height=600, margin=dict(l=25, r=20, t=12, b=24), hovermode="closest", dragmode="pan",
-                      legend=dict(orientation="h", yanchor="bottom", y=1.0, xanchor="left", x=0), showlegend=True)
+        # 象限文字以半透明深灰色顯示，並避開中心交界附近的軌跡密集區。
+        quadrant_labels = [
+            ("改善", xr[0] + (100 - xr[0]) * 0.18, 100 + (yr[1] - 100) * 0.86),
+            ("領先", 100 + (xr[1] - 100) * 0.82, 100 + (yr[1] - 100) * 0.86),
+            ("落後", xr[0] + (100 - xr[0]) * 0.18, yr[0] + (100 - yr[0]) * 0.14),
+            ("轉弱", 100 + (xr[1] - 100) * 0.82, yr[0] + (100 - yr[0]) * 0.14),
+        ]
+        for quadrant_name, label_x, label_y in quadrant_labels:
+            fig.add_annotation(
+                x=label_x, y=label_y, xref="x", yref="y",
+                text=f"<b>{quadrant_name}</b>",
+                showarrow=False, xanchor="center", yanchor="middle",
+                font=dict(size=16, color="rgba(55, 65, 81, 0.76)", family="Arial Black, Arial, sans-serif"),
+                opacity=0.92,
+            )
+        fig.update_xaxes(range=xr, title_text="相對強弱", zeroline=False, fixedrange=False)
+        fig.update_yaxes(range=yr, title_text="相對動能", zeroline=False, fixedrange=False)
+    # 固定畫布尺寸，預設框選放大；放大後可切換工具列的平移工具移動視窗。
+    # 不提供縮小／重設按鈕、不使用滑鼠滾輪縮放或雙擊還原，避免檢視時意外縮回全圖。
+    fig.update_layout(
+        width=1400, height=760, autosize=False,
+        margin=dict(l=45, r=35, t=28, b=40),
+        hovermode="closest", dragmode="zoom",
+        uirevision=f"rotation_rrg_{period}_{quadrant_filter}",
+        legend=dict(
+            orientation="h", yanchor="bottom", y=1.0, xanchor="left", x=0,
+            font=dict(size=11, family="Arial Black, Arial, sans-serif"),
+        ),
+        showlegend=True,
+    )
     if all_x and all_y:
         st.plotly_chart(
             fig,
-            use_container_width=True,
-            key=f"rotation_published_rrg_v2_{period}_{len(selected)}",
-            config={"scrollZoom": True, "doubleClick": "reset", "displaylogo": False, "responsive": True},
+            use_container_width=False,
+            key=f"rotation_published_rrg_v3_{period}_{quadrant_filter}_{len(plot_selected)}",
+            config={
+                "scrollZoom": False,
+                "doubleClick": False,
+                "displaylogo": False,
+                "responsive": False,
+                "displayModeBar": True,
+                "modeBarButtonsToRemove": ["zoomOut2d", "autoScale2d", "resetScale2d"],
+            },
         )
-    elif not selected:
-        st.info("目前沒有選取任何產業群。請按「全選 27 群」或在上方選取要觀察的產業。")
+    elif not plot_selected:
+        if not selected:
+            st.info("目前沒有選取任何產業群。請按「全選 27 群」或在上方選取要觀察的產業。")
+        else:
+            st.info(f"目前「{quadrant_filter}」象限沒有符合條件的已選產業。請切換到其他象限或「全選」。")
     else:
-        st.info("所選產業目前都缺少足夠的 RRG 歷史座標；請查看下方報酬表與成分股分類。")
+        st.info("符合篩選的產業目前缺少足夠的 RRG 歷史座標；請查看下方報酬表與成分股分類。")
 
     st.caption(
-        f"已選 {len(selected)} / {len(groups)} 群；目前有 {rrg_plot_groups} 群具備可繪製的 RRG 歷史軌跡。"
+        f"產業篩選 {len(selected)} / {len(groups)} 群；符合「{quadrant_filter}」象限條件 {len(plot_selected)} 群，其中 {rrg_plot_groups} 群具備可繪製的 RRG 歷史軌跡。"
+        "框選圖表可放大；放大後請切換工具列的平移工具移動視窗。縮小、重設與滑鼠滾輪縮放已關閉。"
         "若某群沒有軌跡，代表快照中的相對強弱／動能歷史點不足，不代表該產業分類不存在；"
         "該群仍會列在下方報酬表及成分股分類名單。"
     )
