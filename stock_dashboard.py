@@ -2350,6 +2350,24 @@ def _render_published_rotation(payload: dict) -> None:
                 customdata=chart_customdata,
                 hovertemplate=hovertemplate,
             ))
+            if us_market:
+                missing_names = [
+                    row["name"] for row in rows
+                    if row["return_pct"] is None
+                    or not np.isfinite(float(row["return_pct"]))
+                ]
+                if missing_names:
+                    # 即使某個產業暫時抓不到美股報價，仍在該列標註「—」，不要誤認為 0%。
+                    chart.add_trace(go.Scatter(
+                        x=[0.0] * len(missing_names),
+                        y=missing_names,
+                        mode="text",
+                        text=["—"] * len(missing_names),
+                        textposition="middle right",
+                        textfont=dict(size=12, color="#64748b"),
+                        showlegend=False,
+                        hoverinfo="skip",
+                    ))
             chart.add_vline(x=0, line_color="#8793a1", line_width=1)
             chart.update_layout(
                 height=chart_height, autosize=True,
