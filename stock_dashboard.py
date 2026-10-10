@@ -2689,6 +2689,77 @@ def _render_published_rotation(payload: dict) -> None:
         hide_index=True,
     )
 
+    # 每個產業主題各自提供可展開的成分股清單，行情直接沿用排程快照。
+    st.markdown("**各產業主題概念股明細**")
+    st.caption(
+        "展開任一主題，即可查看納入該主題的代表概念股、個股收盤價、當日漲跌幅、"
+        "5／20／60 日與今年以來報酬、成交量、成交金額及行情日期。"
+    )
+    for detail_group in table_groups:
+        group_name = str(detail_group.get("name") or "")
+        symbols = ROTATION_THEMES.get(group_name, [])
+        group_components = {
+            str(item.get("symbol", "")).strip(): item
+            for item in (detail_group.get("components") or [])
+            if isinstance(item, dict) and item.get("symbol") is not None
+        }
+        valid_count = int(detail_group.get("members_fresh") or 0)
+        total_count = int(detail_group.get("members_total") or len(symbols))
+        coverage = detail_group.get("data_coverage_pct")
+        coverage_text = f"{float(coverage):.0f}%" if coverage is not None and pd.notna(pd.to_numeric(coverage, errors="coerce")) else "—"
+        expander_title = (
+            f"{rotation_label(group_name)}｜今日 {pct(detail_group, 'today_return')}｜"
+            f"{detail_group.get('quadrant') or '資料不足'}｜有效行情 {valid_count}/{total_count}"
+        )
+        with st.expander(expander_title, expanded=False):
+            st.caption(
+                f"快照日期：{asof}｜資料覆蓋率：{coverage_text}｜"
+                "族群平均報酬為有效代表股等權平均，並非官方產業指數。"
+            )
+            component_rows = []
+            for symbol in symbols:
+                item = group_components.get(str(symbol), {})
+                close_value = pd.to_numeric(item.get("close"), errors="coerce")
+                volume_value = pd.to_numeric(item.get("volume"), errors="coerce")
+                turnover_value = pd.to_numeric(item.get("traded_value"), errors="coerce")
+                has_quote = pd.notna(close_value)
+                if not item:
+                    status_text = "尚無行情"
+                elif item.get("fresh"):
+                    status_text = "最新有效行情"
+                elif has_quote:
+                    status_text = "非最新行情"
+                else:
+                    status_text = "尚無有效收盤價"
+                component_rows.append({
+                    "股票代號": str(symbol),
+                    "概念股名稱": item.get("name") or NAME_FALLBACKS.get(str(symbol), str(symbol)),
+                    "行情日期": item.get("data_date") or "尚無行情",
+                    "收盤價": f"{float(close_value):,.2f}" if has_quote else "—",
+                    "今日漲跌幅": pct(item, "change_1d"),
+                    "5 日報酬": pct(item, "return_5d"),
+                    "20 日報酬": pct(item, "return_20d"),
+                    "60 日報酬": pct(item, "return_60d"),
+                    "今年以來": pct(item, "return_ytd"),
+                    "成交量（股）": f"{int(volume_value):,}" if pd.notna(volume_value) else "—",
+                    "成交金額（元）": f"{float(turnover_value):,.0f}" if pd.notna(turnover_value) else "—",
+                    "52 週新高": ("是" if item.get("year_high") else "否") if item else "—",
+                    "行情狀態": status_text,
+                })
+            detail_df = pd.DataFrame(component_rows)
+            if not detail_df.empty:
+                st.dataframe(
+                    styled_frame(
+                        detail_df,
+                        ["今日漲跌幅", "5 日報酬", "20 日報酬", "60 日報酬", "今年以來"],
+                    ),
+                    use_container_width=True,
+                    hide_index=True,
+                    height=min(560, 42 + len(detail_df) * 35),
+                )
+            else:
+                st.info("此主題目前沒有設定代表概念股。")
+
     st.markdown('<div class="feature-section-title">04｜美股產業指標股資訊</div>', unsafe_allow_html=True)
     st.caption(
         "依台股供應鏈子產業整理美股上市指標公司，顯示最新可取得價格與當日漲跌幅。"
@@ -2772,66 +2843,7 @@ def _render_published_rotation(payload: dict) -> None:
     else:
         st.caption("目前沒有可用的象限轉換紀錄，或輪動方向尚未跨越象限。")
 
-    component_names = [n for n in (selected or list(by_name)) if by_name.get(n, {}).get("components")]
-    if component_names:
-        st.markdown('<div class="feature-section-title">06｜成分股技術資訊</div>', unsafe_allow_html=True)
-        c1, c2 = st.columns([2, 1])
-        with c1:
-            chosen_label = st.selectbox(
-                "檢視主題成分股",
-                [rotation_label(n) for n in component_names],
-                key="rotation_published_component_group",
-            )
-            chosen = display_to_internal.get(chosen_label, chosen_label)
-        with c2:
-            component_sort = st.selectbox("排序", ["今日漲幅", "5 日報酬", "20 日報酬", "成交量"], key="rotation_published_component_sort")
-        comps = [dict(x) for x in by_name[chosen].get("components", [])]
-        skey = {"今日漲幅": "change_1d", "5 日報酬": "return_5d", "20 日報酬": "return_20d", "成交量": "volume"}[component_sort]
-        comps.sort(key=lambda x: x.get(skey) if x.get(skey) is not None else -999999, reverse=True)
-        components_df = pd.DataFrame([{
-            "代號": x.get("symbol"), "名稱": x.get("name"), "資料日期": x.get("data_date"),
-            "收盤價": x.get("close"), "今日": pct(x, "change_1d"), "5 日": pct(x, "return_5d"),
-            "20 日": pct(x, "return_20d"), "60 日": pct(x, "return_60d"), "今年以來": pct(x, "return_ytd"),
-            "成交量": x.get("volume"), "52 週新高": "是" if x.get("year_high") else "否",
-        } for x in comps])
-        st.dataframe(
-            styled_frame(components_df, ["今日", "5 日", "20 日", "60 日", "今年以來"]),
-            use_container_width=True,
-            hide_index=True,
-        )
-
-    # 完整分類總覽列出每個主題對應的所有代表股，即使該股票當天沒有有效行情。
-    with st.expander("查看全部 27 個產業主題與成分股分類", expanded=True):
-        component_lookup = {}
-        for group_data in groups:
-            for item in group_data.get("components", []):
-                if item.get("symbol") is not None:
-                    component_lookup[(str(group_data.get("name")), str(item.get("symbol")))] = item
-        categorized_rows = []
-        for group_name in by_name:
-            for symbol in ROTATION_THEMES.get(group_name, []):
-                item = component_lookup.get((group_name, str(symbol)), {})
-                categorized_rows.append({
-                    "產業主題": rotation_label(group_name),
-                    "代號": str(symbol),
-                    "名稱": item.get("name") or NAME_FALLBACKS.get(str(symbol), str(symbol)),
-                    "資料日期": item.get("data_date") or "尚無行情",
-                    "收盤價": item.get("close"),
-                    "今日": pct(item, "change_1d"),
-                    "5 日": pct(item, "return_5d"),
-                    "20 日": pct(item, "return_20d"),
-                    "成交量": item.get("volume"),
-                })
-        category_df = pd.DataFrame(categorized_rows)
-        st.dataframe(
-            styled_frame(category_df, ["今日", "5 日", "20 日"]),
-            use_container_width=True,
-            hide_index=True,
-        )
-        st.caption("分類依代表股主要產品與供應鏈用途整理；同一檔股票可能屬於多個主題。『尚無行情』表示尚未取得可用日 K，不代表該股不屬於此類。")
-
-
-    st.markdown('<div class="feature-section-title">07｜成分股漲跌前十</div>', unsafe_allow_html=True)
+    st.markdown('<div class="feature-section-title">06｜成分股漲跌前十</div>', unsafe_allow_html=True)
     upcol, downcol = st.columns(2)
     for col, data_key, label in [(upcol, "gainers", "漲幅前十"), (downcol, "losers", "跌幅前十")]:
         with col:
@@ -2847,7 +2859,7 @@ def _render_published_rotation(payload: dict) -> None:
                 hide_index=True,
             )
 
-    st.markdown('<div class="feature-section-title">08｜輪動解讀與資料限制</div>', unsafe_allow_html=True)
+    st.markdown('<div class="feature-section-title">07｜輪動解讀與資料限制</div>', unsafe_allow_html=True)
     st.markdown("""
     <div class="rotation-quadrants">
       <div class="rotation-leading"><strong>領先｜右上</strong><br>相對大盤偏強，動能持續增強。</div>
