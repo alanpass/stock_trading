@@ -745,11 +745,11 @@ class FinanceNewsAgent:
                     for value in as_values(values):
                         point = compact_point(label, value, title)
                         point_core = re.sub(r"^[^：:]{1,8}[：:]", "", point)
-                        point_signature = re.sub(r"[\\W_]+", "", point_core).lower()
+                        point_signature = re.sub(r"[\W_]+", "", point_core).lower()
                         duplicates = False
                         for existing in points:
                             existing_core = re.sub(r"^[^：:]{1,8}[：:]", "", existing)
-                            existing_signature = re.sub(r"[\\W_]+", "", existing_core).lower()
+                            existing_signature = re.sub(r"[\W_]+", "", existing_core).lower()
                             if point_signature and existing_signature and (
                                 point_signature in existing_signature
                                 or existing_signature in point_signature
