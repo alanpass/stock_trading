@@ -637,7 +637,7 @@ class FinanceNewsAgent:
         return digest
 
     # ---------------- 法說會 ----------------
-    def analyze_earnings(self, items: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    def analyze_earnings(self, items: list[dict[str, Any]], days: int = 5) -> tuple[list[dict[str, Any]], dict[str, Any]]:
         out = []
         counts = {"利多": 0, "利空": 0, "中性": 0, "混合": 0}
         for it in items:
@@ -663,6 +663,6 @@ class FinanceNewsAgent:
         digest = {
             "total": len(out),
             **counts,
-            "headline": f"最近 2 天共 {len(out)} 場法說會備忘錄：利多 {counts['利多']}、利空 {counts['利空']}、中性 {counts['中性']}、混合 {counts['混合']}。" if out else "最近 2 天沒有可用的法說會備忘錄。",
+            "headline": f"最近 {int(days)} 天共 {len(out)} 場法說會備忘錄：利多 {counts['利多']}、利空 {counts['利空']}、中性 {counts['中性']}、混合 {counts['混合']}。" if out else f"最近 {int(days)} 天沒有可用的法說會備忘錄。",
         }
         return out, digest
