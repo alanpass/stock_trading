@@ -9,6 +9,7 @@
 - 顯示今日／昨日、5／20／60 日、今年以來平均報酬、上漲／下跌家數、52 週新高、RRG 四象限、成分股前十強弱。
 - 新增「產業族群平均漲跌幅」水平長條圖，預設顯示最新已完成交易日，可切換前一交易日；紅色代表族群平均上漲、綠色代表平均下跌。
 - 族群平均漲跌幅＝該主題有有效行情的代表股日漲跌幅算術平均，每檔代表股等權計算；此為研究用代表股指標，不等同官方產業指數。
+- 新增「美股產業指標股資訊」節點，將 27 個台股供應鏈子產業對照到美股代表公司，列出代號、公司名稱、產業對照角色、最新可取得價格、當日漲跌額／漲跌幅與美東資料日期；行情採 Yahoo Finance chart endpoint，15 分鐘快取，無需付費 API Key。
 - 排行表預設依最新交易日族群平均漲跌幅排序，漲跌相關數值依台股慣例紅漲綠跌。
 - 僅在取得可驗證的當日加權指數資料後發布。若資料未更新、品質檢查失敗或遇休市日，保留上一份成功快照。
 
@@ -26,6 +27,7 @@ Windows Task Scheduler（週一至週五 15:10）
 → 檢查台股交易日與 TWSE 官方加權指數日期
 → 增量更新代表股歷史日 K
 → 計算產業等權指數、相對強弱、動能、績效與族群平均漲跌幅（%）
+→ 查詢美股供應鏈指標股行情並於網站端快取 15 分鐘
 → 寫入 output/research_reports/industry_rotation_public.json
 → 使用 GITHUB_TOKEN 更新同一路徑到 main
 → Streamlit Cloud 重新部署後顯示最新資料
@@ -34,7 +36,7 @@ Windows Task Scheduler（週一至週五 15:10）
 
 ## 專案檔案
 
-- 新增程式：industry_rotation.py、run_industry_rotation_update.py
+- 新增程式：industry_rotation.py、run_industry_rotation_update.py、us_industry_indicators.py
 - 修改程式：stock_dashboard.py
 - 新增設定：設定產業分析排程.ps1
 - 公開快照：output/research_reports/industry_rotation_public.json
