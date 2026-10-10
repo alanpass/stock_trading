@@ -638,31 +638,159 @@ class FinanceNewsAgent:
 
     # ---------------- 法說會 ----------------
     def analyze_earnings(self, items: list[dict[str, Any]], days: int = 5) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+        """保留法說會 Agent 的結構化分析，再補足精簡要點與可驗證的螢光標記；不影響新聞分析流程。"""
         out = []
         counts = {"利多": 0, "利空": 0, "中性": 0, "混合": 0}
+
+        def as_values(value: Any) -> list[str]:
+            if isinstance(value, (list, tuple)):
+                source = value
+            elif value in (None, ""):
+                source = []
+            else:
+                source = [value]
+            return [clean for clean in (_clean(x) for x in source) if clean]
+
+        def compact_point(label: str, value: Any, title: str) -> str:
+            """將單一 Agent 段落縮成一條可讀重點，保留重要數字與事實。"""
+            text = _clean(value)
+            if not text:
+                return ""
+            points = self.extract_points(
+                {"title": title, "content": text, "summary": ""},
+                max_points=1,
+                max_chars=105,
+            )
+            snippet = points[0] if points else text[:105].rstrip("，、；;：: ") + ("…" if len(text) > 105 else "")
+            if not snippet:
+                return ""
+            if label and not snippet.startswith((label + "：", label + ":")):
+                snippet = f"{label}：{snippet}"
+            return snippet[:130]
+
         for it in items:
             if not isinstance(it, dict):
                 continue
             row = dict(it)
-            raw = row.get("one_line_summary") or row.get("summary") or row.get("memo_text") or row.get("content") or ""
-            if isinstance(raw, list):
-                raw = "；".join(str(x) for x in raw)
-            fake = {"title": row.get("title", ""), "content": str(raw), "summary": str(raw)}
-            points = self.extract_points(fake, max_points=3, max_chars=100)
-            text = f"{row.get('title','')} {raw}"
-            sentiment = str(row.get("impact") or row.get("judgement") or "").strip()
+            title = str(row.get("title") or row.get("headline") or "法說會備忘錄").strip()
+            summary = _clean(
+                row.get("one_line_summary")
+                or row.get("agent_headline")
+                or row.get("summary")
+                or ""
+            )
+            # 正文與結構化段落都要參與判斷，避免只用一句摘要遺失風險／展望脈絡。
+            sections = row.get("sections") if isinstance(row.get("sections"), dict) else {}
+            section_text = " ".join(
+                _clean(value)
+                for key in (
+                    "financial_highlights", "operating_highlights", "guidance",
+                    "positive_factors", "negative_factors", "key_risks", "qa_highlights",
+                )
+                for value in as_values(row.get(key))
+            )
+            raw = _clean(
+                row.get("memo_text")
+                or row.get("content")
+                or row.get("summary")
+                or summary
+                or ""
+            )
+            if not raw and sections:
+                raw = _clean(" ".join(str(v) for v in sections.values()))
+            analysis_text = f"{title} {summary} {raw[:9000]} {section_text[:4000]}"
+            sentiment = str(
+                row.get("impact") or row.get("judgement") or row.get("sentiment") or ""
+            ).strip()
             if sentiment not in counts:
-                sentiment, _ = self.detect_sentiment(text)
+                sentiment, _ = self.detect_sentiment(analysis_text)
             counts[sentiment] += 1
-            sectors = self.detect_sectors(text)
+
+            sectors = row.get("sectors")
+            if not isinstance(sectors, list) or not sectors:
+                sectors = self.detect_sectors(analysis_text)
+            else:
+                sectors = self._canon_sectors(sectors, analysis_text)
+
+            symbol = str(
+                row.get("symbol") or row.get("stock_code") or row.get("code") or ""
+            ).strip().upper()
+            stocks = [symbol] if symbol else []
+            for stock in row.get("stocks") or []:
+                text_stock = str(stock).strip().upper()
+                if re.fullmatch(r"[0-9]{4}[A-Z]?", text_stock):
+                    stocks.append(text_stock)
+            stocks = _dedupe_keep_order(stocks)[:8]
+
+            # 優先採用法說會 Agent 的 key_points；舊快取沒有該欄位時，
+            # 再從 Agent 已整理的財務、營運、展望、風險段落補出同格式重點。
+            points = as_values(row.get("key_points") or row.get("ai_points"))
+            points = [p[:140] for p in points if len(p.strip()) >= 6][:5]
+            if not points and summary:
+                point = compact_point("摘要", summary, title)
+                if point:
+                    points.append(point)
+            if not points:
+                for label, values in (
+                    ("財務", row.get("financial_highlights") or sections.get("財務表現")),
+                    ("營運", row.get("operating_highlights") or sections.get("營運摘要")),
+                    ("展望", row.get("guidance") or sections.get("展望與指引")),
+                    ("利多", row.get("positive_factors")),
+                    ("風險", row.get("negative_factors") or row.get("key_risks")),
+                    ("Q&A", row.get("qa_highlights") or sections.get("Q&A 重點") or sections.get("Q&A")),
+                ):
+                    for value in as_values(values):
+                        point = compact_point(label, value, title)
+                        if point and point not in points:
+                            points.append(point)
+                            break
+                    if len(points) >= 5:
+                        break
+            if not points:
+                points = self.extract_points(
+                    {"title": title, "content": raw[:6000], "summary": summary},
+                    max_points=3,
+                    max_chars=100,
+                )
+
+            # LLM 產生的 highlights 必須逐字出現在摘要／重點中，並以規則再補公司代號、
+            # 數字和產業詞；畫面只會標示真正在文字裡的字詞，不創造額外關鍵字。
+            highlight_blob = " ".join([summary] + points)
+            agent_highlights = [
+                word for word in as_values(row.get("highlights"))
+                if word in highlight_blob
+            ]
+            rule_highlights = self.extract_highlights(points, title, stocks, sectors)
+            highlights = _dedupe_keep_order(agent_highlights + rule_highlights)
+            highlights = [
+                word for word in highlights
+                if len(word) > 1 and word in highlight_blob
+            ][:12]
+
+            row["one_line_summary"] = summary or (points[0] if points else title)
             row["ai_points"] = points
+            row["ai_summary"] = "；".join(points)
+            row["summary"] = row["one_line_summary"]
             row["sentiment"] = sentiment
+            row["impact"] = str(row.get("impact") or sentiment)
             row["sectors"] = sectors
-            row["highlights"] = self.extract_highlights(points, row.get("title", ""), [str(row.get("symbol") or "")], sectors)
+            row["stocks"] = stocks
+            row["highlights"] = highlights
+            row["analysis_source"] = (
+                "Qwen3 法說會 Agent"
+                if row.get("agent_tool_used")
+                else "正文規則備援"
+            )
             out.append(row)
+
         digest = {
             "total": len(out),
             **counts,
-            "headline": f"最近 {int(days)} 天共 {len(out)} 場法說會備忘錄：利多 {counts['利多']}、利空 {counts['利空']}、中性 {counts['中性']}、混合 {counts['混合']}。" if out else f"最近 {int(days)} 天沒有可用的法說會備忘錄。",
+            "headline": (
+                f"最近 {int(days)} 天共 {len(out)} 場法說會備忘錄："
+                f"利多 {counts['利多']}、利空 {counts['利空']}、"
+                f"中性 {counts['中性']}、混合 {counts['混合']}。"
+                if out else f"最近 {int(days)} 天沒有可用的法說會備忘錄。"
+            ),
         }
         return out, digest
