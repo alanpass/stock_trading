@@ -2547,7 +2547,7 @@ def _render_published_rotation(payload: dict) -> None:
                         hoverinfo="skip",
                     ))
             chart.add_vline(
-                x=0.0 if us_market else axis_baseline,
+                x=(100.0 if metric_is_index else 0.0) if us_market else axis_baseline,
                 line_color="#8793a1",
                 line_width=1,
             )
@@ -2582,7 +2582,7 @@ def _render_published_rotation(payload: dict) -> None:
             )
             return chart
 
-        # 台股依所選排行依據排序；美股依自身平均漲跌幅排序，兩側均顯示產業族群名稱。
+        # 台股與美股均依所選排行依據排序，兩側均顯示產業族群名稱。
         tw_chart = build_industry_return_chart(average_rows, us_market=False)
         us_chart = build_industry_return_chart(us_average_rows, us_market=True)
         tw_col, us_col = st.columns(2, gap="medium")
