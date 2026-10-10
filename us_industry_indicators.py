@@ -21,7 +21,7 @@ import requests
 US_MARKET_TZ = ZoneInfo("America/New_York")
 YAHOO_CHART_URL = "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
 
-# 每個台股子產業對應 1～3 檔美股指標股。
+# 每個台股子產業對應 1～4 檔美股指標股。
 # role 說明對照理由；「供應鏈代理」表示美國沒有完全一對一的上市純標的。
 US_INDUSTRY_INDICATORS: dict[str, list[dict[str, str]]] = {
     "晶圓代工": [
@@ -31,6 +31,7 @@ US_INDUSTRY_INDICATORS: dict[str, list[dict[str, str]]] = {
         {"symbol": "AVGO", "name": "Broadcom", "role": "客製化 ASIC／網路晶片"},
         {"symbol": "MRVL", "name": "Marvell Technology", "role": "資料中心 ASIC／高速互連"},
         {"symbol": "ARM", "name": "Arm Holdings", "role": "CPU IP／矽智財"},
+        {"symbol": "NVDA", "name": "NVIDIA", "role": "AI 加速器需求端指標；非 ASIC／IP 純標的"},
     ],
     "BMC／伺服器管理晶片": [
         {"symbol": "SMCI", "name": "Super Micro Computer", "role": "伺服器系統供應鏈代理；非 BMC 純標的"},
