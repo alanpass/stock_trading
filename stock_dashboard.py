@@ -1166,14 +1166,14 @@ def render_strategy_search() -> None:
     result = st.session_state.get("search_result") or {}
     if result and code not in st.session_state.watchlist:
         st.info(f'目前分析標的：{result.get("name", code)}（{code}）尚未加入自選股。')
-        if st.button("加入自選股", key=f"add_watch_site_{code}"):
-            if not is_authenticated():
-                st.warning("請先登入，才能新增自選股。")
-            else:
+        if is_authenticated():
+            if st.button("加入自選股", key=f"add_watch_site_{code}"):
                 st.session_state.watchlist.append(code)
                 st.session_state.watchlist = list(dict.fromkeys(st.session_state.watchlist))
                 save_watchlist(st.session_state.watchlist)
                 st.rerun()
+        else:
+            st.caption("登入後才能新增自選股。")
 
     st.markdown(f'<div class="selected-strip"><span>目前分析標的</span><strong>{code}</strong><span>｜自選股 {len(st.session_state.watchlist)} 檔</span></div>', unsafe_allow_html=True)
 
