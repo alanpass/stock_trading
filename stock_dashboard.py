@@ -2338,6 +2338,12 @@ def _render_published_rotation(payload: dict) -> None:
             "相對強弱": "relative_strength",
             "相對動能": "relative_momentum",
         }
+        # 若台股單日報酬圖切換到前一交易日，美股也改用美股前一個有效交易日。
+        us_metric_selected = us_metric_for_sort[sort_by]
+        us_chart_metric_label = chart_metric_label
+        if sort_by == "族群平均漲跌幅" and average_day == previous_label:
+            us_metric_selected = "yesterday_return"
+            us_chart_metric_label = "前一日平均漲跌幅"
 
         def _us_theme_metrics(internal_name: str) -> dict:
             """計算美股主題等權平均報酬、相對強弱與相對動能。"""
@@ -2410,7 +2416,7 @@ def _render_published_rotation(payload: dict) -> None:
                 row["name"],
             )
             theme_metrics = _us_theme_metrics(internal_name)
-            us_value = theme_metrics.get(us_metric_for_sort[sort_by])
+            us_value = theme_metrics.get(us_metric_selected)
             if us_value is not None:
                 try:
                     us_value = float(us_value)
@@ -2480,7 +2486,7 @@ def _render_published_rotation(payload: dict) -> None:
                 ]
                 us_value_format = ".2f" if metric_is_index else "+.2f"
                 us_value_suffix = "" if metric_is_index else "%"
-                us_metric_title = "相對強弱指數" if sort_by == "相對強弱" else "相對動能指數" if sort_by == "相對動能" else chart_metric_label
+                us_metric_title = "相對強弱指數" if sort_by == "相對強弱" else "相對動能指數" if sort_by == "相對動能" else us_chart_metric_label
                 hovertemplate = (
                     f"%{{y}}<br>美股對應指標{us_metric_title}：%{{x:{us_value_format}}}{us_value_suffix}"
                     "<br>對照代號：%{customdata[0]}"
@@ -2554,7 +2560,7 @@ def _render_published_rotation(payload: dict) -> None:
             if us_market and metric_is_index:
                 xaxis_title = f"對應美股指標{us_metric_title}（100＝中性基準）"
             elif us_market:
-                xaxis_title = f"對應美股指標{chart_metric_label}（%）"
+                xaxis_title = f"對應美股指標{us_chart_metric_label}（%）"
             elif metric_is_index:
                 xaxis_title = f"{chart_metric_label}（100＝中性基準）"
             else:
@@ -2604,7 +2610,7 @@ def _render_published_rotation(payload: dict) -> None:
             elif sort_by == "相對動能":
                 us_heading = "美股｜產業族群相對動能"
             else:
-                us_heading = f"美股｜產業族群{chart_metric_label}（%）"
+                us_heading = f"美股｜產業族群{us_chart_metric_label}（%）"
             st.markdown(
                 '<span style="color:#9ca3af; font-size:0.85rem;">盤前看</span> '
                 f'<strong>{us_heading}</strong>',
