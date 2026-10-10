@@ -53,6 +53,7 @@ def _load_cloud_secret_env() -> None:
             "EMAIL_ATTACH_REPORT",
             "SUBSCRIBER_SYNC_URL",
             "SUBSCRIBER_SYNC_TOKEN",
+            "AUTH_USERS_JSON",
         ]
         for name in secret_keys:
             try:
@@ -85,6 +86,7 @@ from theme_agent import theme_sankey_frame
 from post_market_analysis import PostMarketAnalyzer
 from email_agent import EmailAgent
 from subscriber_service import register_subscriber, subscription_status
+from auth_service import authenticate, request_account, ADMIN_EMAIL
 from industry_rotation import ROTATION_THEMES, ROTATION_DEFAULT_THEMES, ROTATION_DISPLAY_NAMES, NAME_FALLBACKS, load_published_rotation
 from us_industry_indicators import US_INDUSTRY_INDICATORS, get_us_indicator_symbols, fetch_us_indicators
 
@@ -1164,11 +1166,14 @@ def render_strategy_search() -> None:
     result = st.session_state.get("search_result") or {}
     if result and code not in st.session_state.watchlist:
         st.info(f'目前分析標的：{result.get("name", code)}（{code}）尚未加入自選股。')
-        if st.button("加入自選股", key=f"add_watch_site_{code}"):
-            st.session_state.watchlist.append(code)
-            st.session_state.watchlist = list(dict.fromkeys(st.session_state.watchlist))
-            save_watchlist(st.session_state.watchlist)
-            st.rerun()
+        if is_authenticated():
+            if st.button("加入自選股", key=f"add_watch_site_{code}"):
+                st.session_state.watchlist.append(code)
+                st.session_state.watchlist = list(dict.fromkeys(st.session_state.watchlist))
+                save_watchlist(st.session_state.watchlist)
+                st.rerun()
+        else:
+            st.caption("登入後才能新增自選股。")
 
     st.markdown(f'<div class="selected-strip"><span>目前分析標的</span><strong>{code}</strong><span>｜自選股 {len(st.session_state.watchlist)} 檔</span></div>', unsafe_allow_html=True)
 
@@ -3487,6 +3492,9 @@ def _watch_select(code: str) -> None:
 
 
 def _watch_remove(code: str) -> None:
+    if not is_authenticated():
+        st.warning("請先登入，才能刪除自選股。")
+        return
     new_watchlist = [x for x in st.session_state.watchlist if x != code]
     st.session_state.watchlist = new_watchlist
     save_watchlist(new_watchlist)
@@ -3596,7 +3604,7 @@ def render_watchlist(compact: bool = False):
                                 if st.button("\u200b", key=f"watch_select_{r['code']}_{idx}", icon=":material/visibility:", help="選取此股票", use_container_width=True):
                                     _watch_select(r['code'])
                             with b3:
-                                if st.button("\u200b", key=f"watch_remove_{r['code']}_{idx}", icon=":material/delete:", help=f"從自選股移除 {r['code']}", use_container_width=True):
+                                if is_authenticated() and st.button("\u200b", key=f"watch_remove_{r['code']}_{idx}", icon=":material/delete:", help=f"從自選股移除 {r['code']}", use_container_width=True):
                                     _watch_remove(r['code'])
                     else:
                         b1,b2,b3,b4,b5,b6 = st.columns([3.25, 0.82, 0.82, 1.7, 1.65, 1.75], gap="small")
@@ -3609,7 +3617,7 @@ def render_watchlist(compact: bool = False):
                             if st.button("\u200b", key=f"watch_select_{r['code']}_{idx}", icon=":material/visibility:", use_container_width=True, type="secondary", help="查看此股票"):
                                 _watch_select(r['code'])
                         with b3:
-                            if st.button("\u200b", key=f"watch_remove_{r['code']}_{idx}", icon=":material/delete:", use_container_width=True, type="secondary", help=f"從自選股移除 {r['code']}"):
+                            if is_authenticated() and st.button("\u200b", key=f"watch_remove_{r['code']}_{idx}", icon=":material/delete:", use_container_width=True, type="secondary", help=f"從自選股移除 {r['code']}"):
                                 _watch_remove(r['code'])
                         with b4:
                             st.markdown(f"<div class='watch-value watch-price-cell{value_class}' style='color:{vcolor}'>{price_txt}</div>", unsafe_allow_html=True)
@@ -6050,6 +6058,45 @@ div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公�
 }
 </style>''', unsafe_allow_html=True)
 
+
+def is_authenticated() -> bool:
+    return bool(st.session_state.get("auth_user"))
+
+def render_auth_panel() -> None:
+    """側邊欄登入／登出／帳號申請。"""
+    with st.sidebar:
+        st.markdown("### 帳號登入")
+        current_user = str(st.session_state.get("auth_user") or "")
+        if current_user:
+            st.success("已登入：" + current_user)
+            if st.button("登出", key="auth_logout", use_container_width=True):
+                st.session_state.pop("auth_user", None)
+                st.rerun()
+            return
+        with st.expander("登入", expanded=True):
+            with st.form("account_login_form"):
+                email = st.text_input("電子郵件", key="auth_login_email").strip().lower()
+                password = st.text_input("密碼", type="password", key="auth_login_password")
+                login_submit = st.form_submit_button("登入", use_container_width=True)
+            if login_submit:
+                if authenticate(email, password):
+                    st.session_state["auth_user"] = email
+                    st.success("登入成功。")
+                    st.rerun()
+                else:
+                    st.error("帳號或密碼錯誤，或尚未建立此帳號。")
+        with st.expander("申請帳號", expanded=False):
+            st.caption("輸入電子郵件後，系統會寄送申請通知給管理員；管理員確認後才會建立帳號。")
+            with st.form("account_request_form"):
+                request_email = st.text_input("欲註冊的電子郵件", key="auth_request_email")
+                request_submit = st.form_submit_button("寄送帳號申請", use_container_width=True)
+            if request_submit:
+                result = request_account(request_email, BASE)
+                if result.get("sent"):
+                    st.success("申請已寄送給管理員；帳號密碼需由管理員手動建立。")
+                else:
+                    st.error(result.get("error", "帳號申請寄送失敗。"))
+
 # ============================================================
 # App entry point
 # ============================================================
@@ -6072,6 +6119,7 @@ _components.html(
     height=0,
 )
 render_header_and_search()
+render_auth_panel()
 current_section = render_site_navigation()
 
 if current_section == "home":
@@ -6079,7 +6127,11 @@ if current_section == "home":
 elif current_section == "strategy":
     render_strategy_workspace()
 elif current_section == "future":
-    render_future_workspace()
+    if is_authenticated():
+        render_future_workspace()
+    else:
+        st.markdown("<div class=\"content-heading\"><h1>未來分析</h1><p>此功能僅限登入使用者。</p></div>", unsafe_allow_html=True)
+        st.info("請從左側登入，或展開「申請帳號」寄送申請。")
 elif current_section == "finance":
     render_finance_workspace()
 elif current_section == "rotation":
