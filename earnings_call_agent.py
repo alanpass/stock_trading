@@ -94,8 +94,6 @@ class FugleMemoCrawler:
         self.root = self.base / "data" / "research" / "fugle_memo_agent"
         self.root.mkdir(parents=True, exist_ok=True)
         self.db_path = self.root / "earnings_memo.db"
-        # 重用 Agent tool 已讀取的正文，避免同篇文章在同一次排程再次爬取。
-        self._last_read_article = None
         self.session = requests.Session()
         self.session.headers.update({
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36",
@@ -420,6 +418,13 @@ class FugleMemoCrawler:
         return clean(text),title,published,modified,reader
 
     def extract_article(self, url: str) -> dict[str, Any]:
+        """同一個程序內同一篇只抓一次（Agent 工具讀取與後續存檔原本會各開一次瀏覽器）。"""
+        cache = self.__dict__.setdefault("_article_cache", {})
+        if url not in cache:
+            cache[url] = self._extract_article_uncached(url)
+        return cache[url]
+
+    def _extract_article_uncached(self, url: str) -> dict[str, Any]:
         if not url.startswith(POST_PREFIX): raise ValueError("只允許讀取 Fugle earnings-call 詳細文章")
         errors=[]; raw=""; final_url=url; fetch_method=""; self._last_rendered_text=""
         for fn in (
@@ -462,9 +467,7 @@ class FugleMemoCrawler:
         con.commit(); con.close()
 
     def read_memo_tool(self,url:str):
-        article=self.extract_article(url)
-        self._last_read_article = article
-        self.db_save(article,None)
+        article=self.extract_article(url); self.db_save(article,None)
         return {"ok":True,**{k:article[k] for k in ("url","symbol","title","published_date","modified_date","content_hash","sections","memo_text","reader_method","detail_read_verified")}}
 
 
@@ -644,11 +647,9 @@ class FugleEarningsCallAgent:
         if sym: rows=[x for x in rows if str(x.get("symbol","")).upper()==sym]
         return rows[:max_events]
 
-    def daily_run(self, days=14, limit=80, force=False, watchlist=None, skip_urls=None):
-        started_at = time.time()
+    def daily_run(self, days=14, limit=80, force=False, watchlist=None, skip_urls=None, deadline_ts=None, on_item=None):
         discovered = self.crawler.discover()
         discovery_debug = getattr(self.crawler, "_last_discovery_debug", {})
-        print(f"[Fugle] 探索完成：{len(discovered)} 個文章網址；診斷={json.dumps(discovery_debug, ensure_ascii=False)[:1200]}", flush=True)
         cutoff = (datetime.now() - timedelta(days=max(0, int(days) - 1))).date()
         chosen = []
         recent_count = 0
@@ -667,8 +668,9 @@ class FugleEarningsCallAgent:
             if skip_urls and x.get("url") in skip_urls:
                 continue
             old_hash, _ = self.crawler.db_get(x.get("url", ""))
-            if inside or not old_hash:
+            if inside:  # 只分析範圍內的文章；範圍外的舊文不再佔用時間
                 chosen.append(x)
+        chosen.sort(key=lambda x: x.get("published_date", ""), reverse=True)  # 新的優先
 
         selected_count = min(len(chosen), max(0, int(limit)))
         chosen = chosen[:limit]
@@ -688,25 +690,21 @@ class FugleEarningsCallAgent:
                 "latest_discovered": [x.get("url", "") for x in discovered[:8]],
             })
 
-        for index, x in enumerate(chosen, start=1):
-            url = str(x.get("url") or "")
-            print(f"[Fugle] 分析 {index}/{len(chosen)}：{x.get('symbol', '')} {url}", flush=True)
+        for x in chosen:
+            if deadline_ts and time.time() > deadline_ts:
+                errors.append({"warning": f"已達時間上限，本次先處理 {len(items)} 場，剩下的會在下一個時段繼續。"})
+                break
             try:
-                self.crawler._last_read_article = None
                 try:
-                    # 主要路徑：Agent tool 讀取正文；重用 tool 讀到的正文，避免重複爬取。
-                    a = self.analyze_one(url)
-                    article = self.crawler._last_read_article
-                    if not isinstance(article, dict) or article.get("url") != url:
-                        article = self.crawler.extract_article(url)
+                    # 主要路徑：由 Qwen3 Agent 自己呼叫 read_fugle_memo。
+                    a = self.analyze_one(x["url"])
+                    article = self.crawler.extract_article(x["url"])
                 except Exception as agent_exc:
-                    # Agent/JSON 失敗時優先重用已讀取的正文，只有未讀到才重新爬取。
-                    article = self.crawler._last_read_article
-                    if not isinstance(article, dict) or article.get("url") != url:
-                        article = self.crawler.extract_article(url)
+                    # Ollama tool-calling / JSON 失敗時，若可取得正文，改用正文 fallback。
+                    article = self.crawler.extract_article(x["url"])
                     a = self._fallback(article)
                     errors.append({
-                        "url": url,
+                        "url": x.get("url"),
                         "title": x.get("title"),
                         "warning": f"Ollama 分析失敗，使用正文 fallback：{agent_exc}",
                     })
@@ -719,14 +717,17 @@ class FugleEarningsCallAgent:
                     "agent_source": "Ollama Tool Calling -> read_fugle_memo(url) -> detailed article正文 / fallback",
                     "detail_read_verified": True,
                 })
-                print(f"[Fugle] 完成 {index}/{len(chosen)}：{x.get('symbol', '')}", flush=True)
+                if on_item:
+                    try:
+                        on_item(items[-1])
+                    except Exception:
+                        pass
             except Exception as exc:
                 errors.append({
-                    "url": url,
+                    "url": x.get("url"),
                     "title": x.get("title"),
                     "error": str(exc),
                 })
-                print(f"[Fugle] 失敗 {index}/{len(chosen)}：{x.get('symbol', '')} {exc}", flush=True)
 
         watch = {str(s).strip().upper() for s in (watchlist or [])}
         for x in items:
@@ -752,12 +753,6 @@ class FugleEarningsCallAgent:
         (od / f"fugle_earnings_memo_{datetime.now():%Y-%m-%d}.json").write_text(
             json.dumps(out, ensure_ascii=False, indent=2, default=str),
             encoding="utf-8",
-        )
-        out["elapsed_seconds"] = round(time.time() - started_at, 1)
-        print(
-            f"[Fugle] 完成：發現 {len(discovered)}、符合日期 {recent_count}、選取 {selected_count}、成功 {len(items)}、"
-            f"失敗 {len(errors)}、耗時 {out['elapsed_seconds']} 秒",
-            flush=True,
         )
         self.crawler.close()
         return out

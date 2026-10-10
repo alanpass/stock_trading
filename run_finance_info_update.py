@@ -247,9 +247,15 @@ def _load_earnings(base: Path, previous: dict[str, Any], watchlist: list[str], e
 
         log(f"法說會：開始（已有 {len(prev_items)} 筆；本次最多新分析 {per_run} 場，逾時 {timeout} 秒）")
 
+        partial: list[dict[str, Any]] = []          # 每分析完一場就先收起來，逾時也不會全部丟掉
+        deadline = time.time() + max(60, timeout - 150)  # 到時間自己停，留時間給最後一場收尾
+
         def work():
             agent = EarningsCallAgent(base, ollama_model=os.getenv("OLLAMA_MODEL", "qwen3:8b"))
-            return agent.daily_run(days=EARNINGS_LOOKBACK_DAYS, limit=per_run, force=force, watchlist=[], skip_urls=skip or None)
+            return agent.daily_run(
+                days=EARNINGS_LOOKBACK_DAYS, limit=per_run, force=force, watchlist=[], skip_urls=skip or None,
+                deadline_ts=deadline, on_item=partial.append,
+            )
 
         payload = _run_with_timeout(work, timeout)
         fresh = _extract_list(payload, ("items", "earnings_calls", "events", "data"))
@@ -271,8 +277,9 @@ def _load_earnings(base: Path, previous: dict[str, Any], watchlist: list[str], e
                         errors.append(f"法說會：{message}")
         log(f"法說會：新增 {len(fresh)} 筆")
     except TimeoutError as exc:
-        errors.append(f"法說會逾時（{exc}），本次沿用既有資料；剩下的會在下一個時段繼續。")
-        log(f"法說會：逾時，沿用既有 {len(prev_items)} 筆")
+        fresh = list(partial)
+        errors.append(f"法說會逾時（{exc}），本次保留已完成的 {len(fresh)} 筆並沿用既有資料；剩下的會在下一個時段繼續。")
+        log(f"法說會：逾時，保留本次已完成 {len(fresh)} 筆＋既有 {len(prev_items)} 筆")
     except Exception as exc:
         errors.append(f"法說會資料更新失敗：{type(exc).__name__}: {exc}")
         log(f"法說會：失敗 {type(exc).__name__}: {exc}")
