@@ -254,7 +254,7 @@ def _load_earnings(base: Path, previous: dict[str, Any], watchlist: list[str], e
             agent = EarningsCallAgent(base, ollama_model=os.getenv("OLLAMA_MODEL", "qwen3:8b"))
             return agent.daily_run(
                 days=EARNINGS_LOOKBACK_DAYS, limit=per_run, force=force, watchlist=[], skip_urls=skip or None,
-                deadline_ts=deadline, on_item=partial.append,
+                deadline_ts=deadline, on_item=partial.append, log_fn=log,
             )
 
         payload = _run_with_timeout(work, timeout)

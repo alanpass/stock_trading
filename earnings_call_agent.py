@@ -647,8 +647,12 @@ class FugleEarningsCallAgent:
         if sym: rows=[x for x in rows if str(x.get("symbol","")).upper()==sym]
         return rows[:max_events]
 
-    def daily_run(self, days=14, limit=80, force=False, watchlist=None, skip_urls=None, deadline_ts=None, on_item=None):
+    def daily_run(self, days=14, limit=80, force=False, watchlist=None, skip_urls=None, deadline_ts=None, on_item=None, log_fn=None):
+        _log = log_fn or (lambda msg: None)
+        _t0 = time.time()
+        _log("法說會：開始探索 Fugle 主題頁（可能開瀏覽器，最久約 2 分鐘）")
         discovered = self.crawler.discover()
+        _log(f"法說會：探索完成，共 {len(discovered)} 個文章網址（{time.time() - _t0:.0f} 秒）")
         discovery_debug = getattr(self.crawler, "_last_discovery_debug", {})
         cutoff = (datetime.now() - timedelta(days=max(0, int(days) - 1))).date()
         chosen = []
@@ -690,7 +694,10 @@ class FugleEarningsCallAgent:
                 "latest_discovered": [x.get("url", "") for x in discovered[:8]],
             })
 
-        for x in chosen:
+        _log(f"法說會：範圍內（最近 {days} 天）{recent_count} 個，本次要分析 {len(chosen)} 個")
+        for _n, x in enumerate(chosen, 1):
+            _t1 = time.time()
+            _log(f"法說會：分析 {_n}/{len(chosen)} {x.get('published_date', '')} {x.get('url', '')}")
             if deadline_ts and time.time() > deadline_ts:
                 errors.append({"warning": f"已達時間上限，本次先處理 {len(items)} 場，剩下的會在下一個時段繼續。"})
                 break
@@ -717,6 +724,7 @@ class FugleEarningsCallAgent:
                     "agent_source": "Ollama Tool Calling -> read_fugle_memo(url) -> detailed article正文 / fallback",
                     "detail_read_verified": True,
                 })
+                _log(f"法說會：完成 {_n}/{len(chosen)}（{time.time() - _t1:.0f} 秒）")
                 if on_item:
                     try:
                         on_item(items[-1])
