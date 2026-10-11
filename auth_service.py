@@ -57,9 +57,29 @@ def verify_password(password: str, record: Any) -> bool:
         return False
 
 
+def _account_login_allowed(email: str) -> bool:
+    """既有帳號維持原行為；由申請流程建立的新帳號需通過資料庫啟用時間檢查。"""
+    try:
+        import account_provisioning
+        if not account_provisioning.is_configured():
+            return True
+        state = account_provisioning.account_login_state(email)
+        if state.get("error"):
+            return False
+        if state.get("found"):
+            return bool(state.get("allowed"))
+        return True
+    except Exception:
+        # 資料庫已參與帳號啟用流程時採 fail-closed，避免繞過 5 分鐘啟用延遲。
+        return not bool(os.getenv("ACCOUNT_DB_URL", "").strip() and os.getenv("ACCOUNT_DB_SERVICE_ROLE_KEY", "").strip())
+
+
 def authenticate(email: str, password: str) -> bool:
     email = str(email or "").strip().lower()
-    return bool(EMAIL_RE.fullmatch(email) and password and verify_password(password, _users().get(email)))
+    users = _users()
+    if not (EMAIL_RE.fullmatch(email) and password and verify_password(password, users.get(email))):
+        return False
+    return _account_login_allowed(email)
 
 
 def _session_signing_key() -> bytes:
@@ -110,6 +130,8 @@ def verify_session_token(token: str | None, now: int | None = None) -> str | Non
         record = _users().get(email)
         if current >= expires_at or not record or not isinstance(record, str):
             return None
+        if not _account_login_allowed(email):
+            return None
         current_credential_hash = hashlib.sha256(record.encode("utf-8")).hexdigest()
         if not hmac.compare_digest(str(payload.get("credential_hash") or ""), current_credential_hash):
             return None
@@ -119,12 +141,21 @@ def verify_session_token(token: str | None, now: int | None = None) -> str | Non
 
 
 def request_account(email: str, base_dir: str | Path) -> dict[str, Any]:
-    """寄送帳號申請通知；不會自動建立帳號或密碼。"""
+    """建立雲端帳號申請、寄送管理員審核連結與申請者確認信。"""
     email = str(email or "").strip().lower()
     if not EMAIL_RE.fullmatch(email):
         return {"sent": False, "error": "請輸入有效的電子郵件地址。"}
-    previous_admin = os.environ.get("EMAIL_ADMIN_RECIPIENT")
+    if email in _users():
+        return {"sent": False, "error": "此電子郵件已存在網站帳號，請直接登入或聯絡管理員。"}
+
     try:
+        import account_provisioning
+        if not account_provisioning.is_configured():
+            return {
+                "sent": False,
+                "error": "雲端永久資料庫尚未設定。請依 ACCOUNT_PROVISIONING_SETUP.md 建立 Supabase 資料表並設定 Streamlit Secrets。",
+            }
+
         from email_agent import EmailAgent
         agent = EmailAgent(base_dir)
         if not agent.status().get("configured"):
@@ -132,17 +163,20 @@ def request_account(email: str, base_dir: str | Path) -> dict[str, Any]:
                 "sent": False,
                 "error": "管理員通知 Email 尚未設定，請檢查 EMAIL_SENDER、EMAIL_APP_PASSWORD 與 EMAIL_RECIPIENT。",
             }
-        os.environ["EMAIL_ADMIN_RECIPIENT"] = ADMIN_EMAIL
-        result = agent.send_subscription_notice(
-            name="網站帳號申請",
-            email=email,
-            message="使用者申請網站登入帳號。請管理員確認後，手動將帳號與密碼雜湊加入 Streamlit Secrets 的 AUTH_USERS_JSON；系統不會自動建立帳號。",
-            subscribed=False,
-        )
-        if not result.get("sent"):
-            return {"sent": False, "error": str(result.get("error") or "管理員通知寄送失敗。")}
 
-        # 先確認管理員通知已寄出，再回覆使用者；確認信失敗不應讓申請者重送管理員通知。
+        request = account_provisioning.create_account_request(email)
+        approve_url = account_provisioning.public_review_url("approve", request["approve_token"])
+        reject_url = account_provisioning.public_review_url("reject", request["reject_token"])
+        notice = agent.send_account_review_request(
+            email=email,
+            approve_url=approve_url,
+            reject_url=reject_url,
+            expires_at=request["expires_at"],
+        )
+        if not notice.get("sent"):
+            account_provisioning.cancel_account_request(email)
+            return {"sent": False, "error": str(notice.get("error") or "管理員審核通知寄送失敗。")}
+
         confirmation = agent.send_account_request_confirmation(email=email)
         return {
             "sent": True,
@@ -151,12 +185,7 @@ def request_account(email: str, base_dir: str | Path) -> dict[str, Any]:
             "confirmation_error": str(confirmation.get("error") or "") if not confirmation.get("sent") else "",
         }
     except Exception as exc:
-        return {"sent": False, "error": "寄送申請通知失敗：" + type(exc).__name__ + ": " + str(exc)}
-    finally:
-        if previous_admin is None:
-            os.environ.pop("EMAIL_ADMIN_RECIPIENT", None)
-        else:
-            os.environ["EMAIL_ADMIN_RECIPIENT"] = previous_admin
+        return {"sent": False, "error": "建立帳號申請失敗：" + type(exc).__name__ + ": " + str(exc)}
 
 
 if __name__ == "__main__" and len(sys.argv) >= 3 and sys.argv[1] == "hash-password":
