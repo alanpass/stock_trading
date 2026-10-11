@@ -30,6 +30,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
 import streamlit as st
+import extra_streamlit_components as stx
 from streamlit_autorefresh import st_autorefresh
 
 
