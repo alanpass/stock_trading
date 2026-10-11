@@ -1939,6 +1939,120 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
                 "error": f"SMTP 寄送管理者通知失敗：{type(exc).__name__}: {exc}",
             }
 
+    def send_account_review_request(
+        self, *, email: str, approve_url: str, reject_url: str, expires_at: str
+    ) -> dict[str, Any]:
+        """寄送含一次性同意／拒絕連結的帳號審核信給管理員。"""
+        status = self.status()
+        if not status.get("configured"):
+            return {"sent": False, "error": f"Email 尚未設定：{status.get('missing', [])}"}
+        admin = "a1113359@mail.nuk.edu.tw"
+        applicant = re.sub(r"[\r\n]+", "", str(email or "")).strip().lower()
+        safe_email = html.escape(applicant)
+        safe_approve = html.escape(str(approve_url), quote=True)
+        safe_reject = html.escape(str(reject_url), quote=True)
+        msg = EmailMessage()
+        msg["Subject"] = "【AI 台股網站】帳號申請待審核"
+        msg["From"] = formataddr((self.config.display_name, self.config.sender))
+        msg["To"] = admin
+        msg.set_content(
+            "網站收到新的帳號申請\n\n"
+            f"申請者：{applicant}\n"
+            f"審核期限：{expires_at}\n\n"
+            "同意申請：\n" + approve_url + "\n\n"
+            "拒絕申請：\n" + reject_url + "\n\n"
+            "開啟連結後仍需在網站按下確認，避免郵件安全掃描器誤觸。"
+        )
+        msg.add_alternative(
+            '<div style="font-family:Arial,Microsoft JhengHei,sans-serif;line-height:1.8;color:#292929">'
+            '<h2 style="color:#8e2b2f">網站帳號申請待審核</h2>'
+            f'<p><b>申請者：</b>{safe_email}</p>'
+            f'<p><b>審核期限：</b>{html.escape(str(expires_at))}</p>'
+            '<p>請選擇審核動作：</p>'
+            f'<p><a href="{safe_approve}" style="display:inline-block;padding:10px 18px;background:#237a45;color:white;text-decoration:none;border-radius:6px">同意申請</a></p>'
+            f'<p><a href="{safe_reject}" style="display:inline-block;padding:10px 18px;background:#8e2b2f;color:white;text-decoration:none;border-radius:6px">拒絕申請</a></p>'
+            '<p style="font-size:12px;color:#666">連結有效 48 小時。開啟連結後仍需在網站按下確認，避免郵件安全掃描器誤觸。</p>'
+            '</div>',
+            subtype="html",
+            charset="utf-8",
+        )
+        try:
+            return {"sent": True, "recipient": admin, "smtp_log": self._smtp_send(msg)}
+        except Exception as exc:
+            return {"sent": False, "error": f"寄送帳號審核通知失敗：{type(exc).__name__}: {exc}"}
+
+    def send_account_approved_credentials(
+        self, *, email: str, password: str, activate_at: str
+    ) -> dict[str, Any]:
+        """核准後寄送初始登入資訊給申請者。"""
+        status = self.status()
+        if not status.get("configured"):
+            return {"sent": False, "error": f"Email 尚未設定：{status.get('missing', [])}"}
+        to_addr = re.sub(r"[\r\n]+", "", str(email or "")).strip().lower()
+        if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", to_addr):
+            return {"sent": False, "error": "收件者電子郵件格式不正確。"}
+        msg = EmailMessage()
+        msg["Subject"] = "【AI 台股網站】帳號已核准｜初始登入資訊"
+        msg["From"] = formataddr((self.config.display_name, self.config.sender))
+        msg["To"] = to_addr
+        msg.set_content(
+            "您好：\n\n您的 AI 台股網站帳號申請已核准。\n\n"
+            f"登入帳號：{to_addr}\n初始密碼：{password}\n\n"
+            "帳號將於管理員核准後 5 分鐘啟用。網站管理員仍需完成 AUTH_USERS_JSON 設定；"
+            "若 5 分鐘後仍無法登入，請稍候或聯絡管理員。\n"
+            f"核准時間：{activate_at}\n\n"
+            "首次登入後請妥善保管初始密碼，並避免轉寄此郵件。\n"
+        )
+        try:
+            return {"sent": True, "recipient": to_addr, "smtp_log": self._smtp_send(msg)}
+        except Exception as exc:
+            return {"sent": False, "error": f"寄送帳號核准通知失敗：{type(exc).__name__}: {exc}"}
+
+    def send_account_rejected(self, *, email: str) -> dict[str, Any]:
+        """申請遭拒絕時通知申請者。"""
+        status = self.status()
+        if not status.get("configured"):
+            return {"sent": False, "error": f"Email 尚未設定：{status.get('missing', [])}"}
+        to_addr = re.sub(r"[\r\n]+", "", str(email or "")).strip().lower()
+        if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", to_addr):
+            return {"sent": False, "error": "收件者電子郵件格式不正確。"}
+        msg = EmailMessage()
+        msg["Subject"] = "【AI 台股網站】帳號申請審核結果"
+        msg["From"] = formataddr((self.config.display_name, self.config.sender))
+        msg["To"] = to_addr
+        msg.set_content(
+            "您好：\n\n您的 AI 台股網站帳號申請目前未獲核准，因此不會建立登入帳號。\n"
+            "若您認為這是誤判，請回覆此信聯絡網站管理員。\n\n"
+            "AI 台股即時互動式分析系統\n"
+        )
+        try:
+            return {"sent": True, "recipient": to_addr, "smtp_log": self._smtp_send(msg)}
+        except Exception as exc:
+            return {"sent": False, "error": f"寄送帳號拒絕通知失敗：{type(exc).__name__}: {exc}"}
+
+    def send_account_hash_for_admin(self, *, email: str, password_hash: str) -> dict[str, Any]:
+        """寄給管理員供人工更新 AUTH_USERS_JSON；郵件不包含明文密碼。"""
+        status = self.status()
+        if not status.get("configured"):
+            return {"sent": False, "error": f"Email 尚未設定：{status.get('missing', [])}"}
+        admin = "a1113359@mail.nuk.edu.tw"
+        msg = EmailMessage()
+        msg["Subject"] = "【AI 台股網站】請將新帳號雜湊加入 AUTH_USERS_JSON"
+        msg["From"] = formataddr((self.config.display_name, self.config.sender))
+        msg["To"] = admin
+        snippet = json.dumps({str(email).strip().lower(): password_hash}, ensure_ascii=False)
+        msg.set_content(
+            "帳號申請已核准，資料庫已保存密碼雜湊。\n\n"
+            "請到 Streamlit Cloud → App Settings → Secrets，將下列 email/hash 項目合併到現有 AUTH_USERS_JSON，"
+            "不要覆蓋或刪除其他帳號。\n\n"
+            + snippet + "\n\n"
+            "此通知不含明文密碼；申請者的初始密碼已另外寄送。"
+        )
+        try:
+            return {"sent": True, "recipient": admin, "smtp_log": self._smtp_send(msg)}
+        except Exception as exc:
+            return {"sent": False, "error": f"寄送管理員帳號設定通知失敗：{type(exc).__name__}: {exc}"}
+
     def send_account_request_confirmation(self, *, email: str) -> dict[str, Any]:
         """帳號申請通知成功送達管理員後，寄送確認信給申請者。"""
         status = self.status()
@@ -1956,9 +2070,9 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
         msg.set_content(
             "您好：\n\n"
             "我們已收到您透過「AI 台股即時互動式分析系統」提交的網站帳號申請，"
-            "並已將申請通知寄送給管理員進行人工處理。\n\n"
+            "並已將含有同意／拒絕連結的審核通知寄送給管理員。\n\n"
             "請注意：此信僅代表申請已送出，不代表帳號已建立或啟用。"
-            "管理員完成確認及帳號設定後，您才能登入網站。\n\n"
+            "管理員核准申請並完成 AUTH_USERS_JSON 設定後，您才能登入網站。\n\n"
             "請留意您的電子郵件收件匣及垃圾郵件匣（或促銷內容資料夾），"
             "避免錯過管理員後續通知。\n\n"
             "若您並未提交此申請，請忽略此信。\n\n"

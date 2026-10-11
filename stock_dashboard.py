@@ -56,6 +56,9 @@ def _load_cloud_secret_env() -> None:
             "SUBSCRIBER_SYNC_TOKEN",
             "AUTH_USERS_JSON",
             "AUTH_SESSION_SECRET",
+            "ACCOUNT_DB_URL",
+            "ACCOUNT_DB_SERVICE_ROLE_KEY",
+            "ACCOUNT_PUBLIC_BASE_URL",
         ]
         for name in secret_keys:
             try:
@@ -6323,14 +6326,14 @@ def render_auth_panel() -> None:
                     st.session_state["auth_panel_mode"] = "request"
                     st.rerun()
             else:
-                st.caption("輸入欲註冊的電子郵件，管理員收到通知後會手動建立帳號與密碼。")
+                st.caption("輸入欲註冊的電子郵件；管理員將透過 Email 審核，核准後系統會寄送初始密碼。")
                 with st.form("account_request_form"):
                     request_email = st.text_input("欲註冊的電子郵件", key="auth_request_email")
                     request_submit = st.form_submit_button("寄送帳號申請", use_container_width=True)
                 if request_submit:
                     result = request_account(request_email, BASE)
                     if result.get("sent"):
-                        st.success("申請通知已寄送給管理員；帳號密碼仍需由管理員人工建立。")
+                        st.success("帳號申請已送出，管理員將收到同意／拒絕審核連結。")
                         if result.get("confirmation_sent"):
                             st.info("確認信已寄到 " + str(request_email).strip() + "，請留意收件匣及垃圾郵件匣。")
                         else:
@@ -6340,6 +6343,113 @@ def render_auth_panel() -> None:
                 if st.button("返回登入", key="auth_switch_to_login", use_container_width=True):
                     st.session_state["auth_panel_mode"] = "login"
                     st.rerun()
+
+
+def render_account_review_action() -> None:
+    """處理管理員從審核 Email 開啟的連結；GET 僅預覽，按下確認才會提交審核。"""
+    decision = str(st.query_params.get("account_review", "") or "").strip().lower()
+    token = str(st.query_params.get("token", "") or "").strip()
+    if decision not in {"approve", "reject"}:
+        return
+    st.title("網站帳號申請審核")
+    st.caption("AI 台股即時互動式分析系統")
+    if not token:
+        st.error("審核連結缺少驗證資訊，請回到原始通知信重新開啟。")
+        st.stop()
+
+    import hashlib as _hashlib
+    result_key = "account_review_result_" + _hashlib.sha256(token.encode("utf-8")).hexdigest()[:16]
+    cached = st.session_state.get(result_key)
+    if cached:
+        if cached.get("decision") == "approve":
+            st.success("此帳號申請已完成核准處理。")
+            st.write("申請者：" + str(cached.get("email", "")))
+            st.write("申請者密碼郵件：" + ("已寄出" if cached.get("credential_sent") else "寄送失敗"))
+            st.write("管理員雜湊設定通知：" + ("已寄出" if cached.get("admin_hash_sent") else "寄送失敗"))
+            if not cached.get("credential_sent"):
+                st.warning("密碼郵件未成功送出。請使用下方一次性處理資訊聯絡申請者，勿公開分享此頁面。")
+                if cached.get("fallback_password"):
+                    st.code("初始密碼：" + str(cached["fallback_password"]))
+            if not cached.get("admin_hash_sent"):
+                st.warning("管理員雜湊通知未成功送出；可複製下列內容手動更新 AUTH_USERS_JSON。")
+                if cached.get("hash_json"):
+                    st.code(cached["hash_json"], language="json")
+        else:
+            st.success("此帳號申請已拒絕處理。")
+            st.write("申請者：" + str(cached.get("email", "")))
+            st.write("拒絕通知郵件：" + ("已寄出" if cached.get("applicant_sent") else "寄送失敗"))
+        st.stop()
+
+    try:
+        import account_provisioning
+        request = account_provisioning.get_request_for_token(token, decision)
+    except Exception as exc:
+        st.error("無法連線帳號審核資料庫：" + type(exc).__name__)
+        st.stop()
+    if not request:
+        st.error("此審核連結已失效、已逾期，或已被使用。請勿重複操作。")
+        st.stop()
+
+    action_label = "同意建立帳號" if decision == "approve" else "拒絕帳號申請"
+    st.subheader(action_label)
+    st.write("申請者電子郵件：" + str(request.get("email", "")))
+    st.write("申請時間：" + str(request.get("created_at", "")))
+    if decision == "approve":
+        st.info("確認後系統會產生 8 位英數初始密碼寄給申請者，並寄送密碼雜湊給管理員。帳號將於核准後 5 分鐘啟用；管理員仍須更新 AUTH_USERS_JSON。")
+    else:
+        st.warning("確認後系統會將申請標記為拒絕，並寄送審核結果給申請者。此操作無法撤回。")
+    with st.form("account_review_confirm_form"):
+        confirmed = st.checkbox("我已確認申請者與審核動作正確。", key="account_review_confirmed")
+        submit = st.form_submit_button(action_label, type="primary", disabled=not confirmed, use_container_width=True)
+    if submit:
+        try:
+            result = account_provisioning.decide_account_request(token, decision)
+            from email_agent import EmailAgent
+            agent = EmailAgent(Path(__file__).resolve().parent)
+            if decision == "approve":
+                try:
+                    credential_mail = agent.send_account_approved_credentials(
+                        email=result["email"],
+                        password=result["password"],
+                        activate_at=result["activate_at"],
+                    )
+                except Exception as mail_exc:
+                    credential_mail = {"sent": False, "error": type(mail_exc).__name__}
+                try:
+                    admin_mail = agent.send_account_hash_for_admin(
+                        email=result["email"],
+                        password_hash=result["password_hash"],
+                    )
+                except Exception as mail_exc:
+                    admin_mail = {"sent": False, "error": type(mail_exc).__name__}
+                cached_result = {
+                    "decision": decision,
+                    "email": result["email"],
+                    "credential_sent": bool(credential_mail.get("sent")),
+                    "admin_hash_sent": bool(admin_mail.get("sent")),
+                }
+                if not credential_mail.get("sent"):
+                    cached_result["fallback_password"] = result["password"]
+                if not admin_mail.get("sent"):
+                    import json as _json
+                    cached_result["hash_json"] = _json.dumps(
+                        {result["email"]: result["password_hash"]}, ensure_ascii=False
+                    )
+                st.session_state[result_key] = cached_result
+            else:
+                try:
+                    applicant_mail = agent.send_account_rejected(email=result["email"])
+                except Exception as mail_exc:
+                    applicant_mail = {"sent": False, "error": type(mail_exc).__name__}
+                st.session_state[result_key] = {
+                    "decision": decision,
+                    "email": result["email"],
+                    "applicant_sent": bool(applicant_mail.get("sent")),
+                }
+            st.rerun()
+        except Exception as exc:
+            st.error("審核處理失敗：" + str(exc))
+    st.stop()
 
 
 def sync_sidebar_visibility(section: str) -> None:
@@ -6423,6 +6533,7 @@ _components.html(
     </script>""",
     height=0,
 )
+render_account_review_action()
 auth_cookie_manager = stx.CookieManager(key="stock_trading_auth_cookie_manager")
 _restore_auth_from_cookie(auth_cookie_manager)
 _flush_auth_cookie_op(auth_cookie_manager)
