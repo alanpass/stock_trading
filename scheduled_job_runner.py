@@ -22,9 +22,12 @@ LOG_DIR.mkdir(parents=True, exist_ok=True)
 JOBS = {
     "morning": "run_morning_report.py",              # 08:30 晨報
     "afterclose": "run_after_close_research.py",     # 14:30 盤後分析報導
-    "finance": "run_finance_info_update.py",         # 08:10 11:00 13:30 16:00 18:00 23:00 新聞／法說會爬取 + Agent 摘要
+    "finance": "run_finance_info_update.py",         # 08:10 11:00 13:30 16:00 23:00 只更新新聞 + Agent 摘要（法說會不爬）
     "cnyes": "run_finance_info_update.py",           # 舊排程名稱（相容）：同樣走財經資訊更新
+    "earnings": "run_finance_info_update.py",        # 18:00 每天一次：新聞 + 法說會（完整更新）
 }
+# finance／cnyes＝只更新新聞（法說會沿用上次結果，不爬）；earnings＝完整更新（含法說會）
+FINANCE_JOBS = {"finance", "cnyes", "earnings"}
 
 
 def today() -> str:
@@ -80,7 +83,7 @@ def validate_output(job: str) -> tuple[bool, str]:
             return False, f"Morning report invalid: {exc}"
 
 
-    if job in {"finance", "cnyes"}:
+    if job in FINANCE_JOBS:
         path = research_dir / "finance_info_latest.json"
         if not path.exists():
             return False, f"Finance info output missing: {path}"
@@ -140,12 +143,12 @@ def main() -> int:
             stale_minutes = 90.0
         del args[i:i + 2]
     if len(args) != 1 or args[0].lower() not in JOBS:
-        print("Usage: python scheduled_job_runner.py morning|afterclose|finance [--if-stale-minutes N]")
+        print("Usage: python scheduled_job_runner.py morning|afterclose|finance|earnings [--if-stale-minutes N]")
         return 2
 
     job = args[0].lower()
     # 開機／登入後補跑：資料還新鮮就不重爬（避免和整點排程重複）
-    if stale_minutes is not None and job in {"finance", "cnyes"}:
+    if stale_minutes is not None and job in FINANCE_JOBS:
         age = _finance_cache_age_minutes()
         if age is not None and age <= stale_minutes:
             print(f"財經資訊 {age:.0f} 分鐘前才更新過（門檻 {stale_minutes:.0f} 分鐘），略過補跑。")
@@ -162,6 +165,11 @@ def main() -> int:
     env = os.environ.copy()
     env["PYTHONUNBUFFERED"] = "1"
     env["TZ"] = "Asia/Taipei"
+    # 法說會一天只更新一次：只有 earnings 這個工作會爬法說會，finance 只更新新聞
+    if job == "earnings":
+        env.pop("FINANCE_SKIP_EARNINGS", None)
+    elif job in FINANCE_JOBS:
+        env["FINANCE_SKIP_EARNINGS"] = "true"
 
     write_status(job, "running", script=str(script), python=sys.executable)
     with lp.open("a", encoding="utf-8", errors="replace") as log:
@@ -233,7 +241,7 @@ def main() -> int:
 
         # 財經資料驗證成功後，自動發布精簡 JSON 到 GitHub。
         # 只有發布成功才回報整條流程成功，避免誤以為網站已同步。
-        if job in {"finance", "cnyes"}:
+        if job in FINANCE_JOBS:
             publisher = BASE / "publish_research_data.py"
             if not publisher.exists():
                 message = f"Finance publisher missing: {publisher}"

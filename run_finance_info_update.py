@@ -40,7 +40,8 @@ from finance_agent import FinanceNewsAgent
 
 TAIPEI = ZoneInfo("Asia/Taipei")
 BASE = Path(__file__).resolve().parent
-FINANCE_SCHEDULE = ["08:10", "11:00", "13:30", "16:00", "18:00", "23:00"]
+FINANCE_SCHEDULE = ["08:10", "11:00", "13:30", "16:00", "18:00", "23:00"]  # 新聞更新時段
+EARNINGS_SCHEDULE = ["18:00"]  # 法說會每天只更新一次
 NEWS_LOOKBACK_DAYS = 2
 EARNINGS_LOOKBACK_DAYS = 5
 NEWS_DATE_KEYS = ("published_ts", "published", "published_at", "published_time", "date", "created_at", "updated_at")
@@ -238,7 +239,7 @@ def _load_earnings(base: Path, previous: dict[str, Any], watchlist: list[str], e
     skip = set() if force else {str(x.get("url") or x.get("source_url")) for x in prev_items if (x.get("url") or x.get("source_url"))}
     fresh: list[dict[str, Any]] = []
     if os.getenv("FINANCE_SKIP_EARNINGS", "").strip().lower() in {"1", "true", "yes", "on"}:
-        log("法說會：略過（--no-earnings）")
+        log("法說會：本時段不爬（每天只在 18:00 更新一次），沿用上次結果")
         return prev_items
     per_run = int(os.getenv("EARNINGS_NEW_PER_RUN", "12"))      # 每次最多新分析幾場，多的留給下一個時段
     timeout = int(os.getenv("EARNINGS_TIMEOUT_SEC", "600"))
@@ -322,6 +323,7 @@ def update_finance_info(base_dir: str | Path = BASE, watchlist: list[str] | None
             "lookback_days": NEWS_LOOKBACK_DAYS,
             "earnings_lookback_days": EARNINGS_LOOKBACK_DAYS,
             "schedule": FINANCE_SCHEDULE,
+            "earnings_schedule": EARNINGS_SCHEDULE,
             "stale": stale,
             "news": news,
             "news_count": len(news),
