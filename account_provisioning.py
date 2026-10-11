@@ -77,6 +77,11 @@ def create_account_request(email: str) -> dict[str, Any]:
     clean_email = str(email or "").strip().lower()
     if not clean_email or len(clean_email) > 254 or "@" not in clean_email:
         raise AccountProvisioningError("申請者電子郵件格式不正確。")
+    now = _utc_now()
+    # 先將此信箱已逾期的 pending 申請失效，避免 48 小時後仍被舊紀錄卡住。
+    _request("PATCH", params={"email": f"eq.{clean_email}", "status": "eq.pending",
+        "token_expires_at": f"lte.{_iso(now)}"},
+        payload={"status": "notification_failed", "approve_token_hash": None, "reject_token_hash": None})
     existing = _request("GET", params={"select": "id,email,status,created_at", "email": f"eq.{clean_email}",
                                        "status": "in.(pending,approved)", "limit": "1"})
     if existing:
@@ -84,7 +89,6 @@ def create_account_request(email: str) -> dict[str, Any]:
             raise AccountProvisioningError("此電子郵件已有待審核申請，請勿重複送出。")
         raise AccountProvisioningError("此電子郵件已有已核准帳號紀錄。")
     approve_token, reject_token = secrets.token_urlsafe(32), secrets.token_urlsafe(32)
-    now = _utc_now()
     row = {"email": clean_email, "status": "pending",
            "approve_token_hash": _hash_token(approve_token), "reject_token_hash": _hash_token(reject_token),
            "token_expires_at": _iso(now + timedelta(hours=TOKEN_TTL_HOURS)), "created_at": _iso(now)}
@@ -143,7 +147,9 @@ def account_login_state(email: str) -> dict[str, Any]:
         return {"found": False, "configured": False, "allowed": None}
     clean_email = str(email or "").strip().lower()
     try:
-        rows = _request("GET", params={"select": "email,status,activate_at", "email": f"eq.{clean_email}", "limit": "1"})
+        # 同一信箱可能存在歷史拒絕／失敗紀錄；必須依建立時間讀取最新申請。
+        rows = _request("GET", params={"select": "email,status,activate_at,created_at",
+            "email": f"eq.{clean_email}", "order": "created_at.desc", "limit": "1"})
     except AccountProvisioningError as exc:
         return {"found": False, "configured": True, "allowed": False, "error": str(exc)}
     if not rows:
