@@ -6389,7 +6389,11 @@ def render_account_review_action() -> None:
         st.stop()
 
     if not review_state:
-        st.error("此審核連結已失效或已逾期。請以最新的申請通知為準。")
+        st.info(
+            "此審核連結已失效或已逾期，不能再執行同意或拒絕。"
+            "若這筆申請先前已經核准或拒絕，原審核結果不會被改變。"
+        )
+        st.caption("原始 Email 是已寄出的歷史郵件，網站無法遠端刪除或改寫；請在信箱自行封存或刪除舊信。")
         st.stop()
 
     review_status = str(review_state.get("status", "")).strip().lower()
