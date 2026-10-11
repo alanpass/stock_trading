@@ -6156,15 +6156,15 @@ def render_auth_header_actions(cookie_manager) -> None:
         spacer, login_col, request_col = st.columns([10, 1.05, 1.75], gap="small", vertical_alignment="center")
         if is_authenticated():
             with spacer:
-                st.caption("已登入：" + str(st.session_state.get("auth_user", "")))
+                st.empty()
             with login_col:
+                st.caption("已登入")
+            with request_col:
                 if st.button("登出", key="auth_top_logout", use_container_width=True):
                     _delete_auth_cookie(cookie_manager)
                     st.session_state.pop("auth_user", None)
                     st.session_state["auth_panel_open"] = False
                     st.rerun()
-            with request_col:
-                st.empty()
         else:
             with login_col:
                 if st.button("登入", key="auth_top_login", use_container_width=True):
