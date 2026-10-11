@@ -7,6 +7,8 @@
 - 帳號申請只收電子郵件，通知寄到 `a1113359@mail.nuk.edu.tw`；不會自動建立帳號或寄出密碼。
 - 帳號清單只放在 Streamlit Secrets／環境變數 `AUTH_USERS_JSON`，不應提交到 GitHub。
 - 密碼以 PBKDF2-HMAC-SHA256 雜湊儲存，不保存明文密碼。
+- 登入狀態使用有效期 14 天的簽章 Cookie；切換網站分頁或 Streamlit 重建 session 後可還原登入狀態。修改該帳號密碼雜湊後，舊 Cookie 會失效。
+- 頁首右上角提供紅色「登入」與「申請帳號」入口，點擊後才展開左側帳號面板；按面板上的「✕」可收回。
 
 ## 1. 建立管理員密碼雜湊
 
@@ -24,15 +26,16 @@ python auth_service.py hash-password a1113359@mail.nuk.edu.tw
 
 ```toml
 AUTH_USERS_JSON = '{"a1113359@mail.nuk.edu.tw":"將這裡替換成 hash-password 輸出的完整雜湊字串"}'
+AUTH_SESSION_SECRET = "填入隨機產生的長字串"
 ```
 
-將範例中的整段佔位文字替換成實際雜湊值。請確認 `.streamlit/secrets.toml` 已被 Git 忽略，不可提交。
+將範例中的雜湊佔位文字替換成實際雜湊值，並為 `AUTH_SESSION_SECRET` 設定獨立的隨機長字串。可在 PowerShell 執行 `python -c "import secrets; print(secrets.token_urlsafe(48))"` 產生，之後將同一字串放入本機與 Cloud Secrets。請確認 `.streamlit/secrets.toml` 已被 Git 忽略，不可提交。
 
 本機使用 `streamlit run stock_dashboard.py` 啟動後，即可用管理員電子郵件與設定的密碼登入。
 
 ## 3. Streamlit Community Cloud
 
-開啟此 App 的 **Settings → Secrets**，加入相同格式的 `AUTH_USERS_JSON`。Cloud 不會讀取你 Windows 本機的 `.streamlit/secrets.toml`，所以這一步必須另外設定。
+開啟此 App 的 **Settings → Secrets**，加入相同的 `AUTH_USERS_JSON` 與 `AUTH_SESSION_SECRET`。Cloud 不會讀取你 Windows 本機的 `.streamlit/secrets.toml`，所以這一步必須另外設定。`requirements.txt` 已新增 `extra-streamlit-components`，部署時 Cloud 會安裝 Cookie Manager 相依套件。
 
 網站寄送帳號申請通知時，也需要既有 Email 設定有效：`EMAIL_SENDER`、`EMAIL_APP_PASSWORD`、`EMAIL_RECIPIENT`。申請通知收件者固定為 `a1113359@mail.nuk.edu.tw`。
 
