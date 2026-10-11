@@ -19,7 +19,7 @@ import time
 from pathlib import Path
 from typing import Any
 
-EMAIL_RE = re.compile(r"^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")
+EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 ITERATIONS = 310_000
 ADMIN_EMAIL = "a1113359@mail.nuk.edu.tw"
 SESSION_COOKIE_NAME = "stock_trading_auth_v1"
