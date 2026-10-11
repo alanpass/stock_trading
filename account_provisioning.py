@@ -202,7 +202,7 @@ def account_login_state(email: str) -> dict[str, Any]:
     clean_email = str(email or "").strip().lower()
     try:
         # 同一信箱可能存在歷史拒絕／失敗紀錄；必須依建立時間讀取最新申請。
-        rows = _request("GET", params={"select": "email,status,activate_at,created_at",
+        rows = _request("GET", params={"select": "email,status,password_hash,activate_at,created_at",
             "email": f"eq.{clean_email}", "order": "created_at.desc", "limit": "1"})
     except AccountProvisioningError as exc:
         return {"found": False, "configured": True, "allowed": False, "error": str(exc)}
@@ -215,8 +215,15 @@ def account_login_state(email: str) -> dict[str, Any]:
         activate_at = datetime.fromisoformat(str(row["activate_at"]).replace("Z", "+00:00"))
     except (ValueError, TypeError):
         return {"found": True, "configured": True, "allowed": False, "error": "啟用時間資料格式錯誤。"}
-    return {"found": True, "configured": True, "allowed": _utc_now() >= activate_at,
-            "status": row.get("status"), "activate_at": str(row["activate_at"])}
+    allowed = _utc_now() >= activate_at
+    return {
+        "found": True,
+        "configured": True,
+        "allowed": allowed,
+        "status": row.get("status"),
+        "activate_at": str(row["activate_at"]),
+        "password_hash": row.get("password_hash") if allowed else None,
+    }
 
 def public_review_url(decision: str, token: str) -> str:
     base = os.getenv("ACCOUNT_PUBLIC_BASE_URL",
