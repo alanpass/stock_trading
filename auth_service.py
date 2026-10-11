@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """網站登入、簽章登入工作階段與帳號申請服務。
 
-帳號資料只從 AUTH_USERS_JSON 讀取，不寫進 GitHub 程式碼。
+既有帳號從 AUTH_USERS_JSON 讀取；經審核的新帳號直接使用 Supabase 內的密碼雜湊。
 密碼使用 PBKDF2-HMAC-SHA256；登入工作階段使用 HMAC 簽章 cookie，
 讓使用者切換網站分頁或 Streamlit 重新建立 session 後仍能保持登入。
 """
@@ -74,10 +74,35 @@ def _account_login_allowed(email: str) -> bool:
         return not bool(os.getenv("ACCOUNT_DB_URL", "").strip() and os.getenv("ACCOUNT_DB_SERVICE_ROLE_KEY", "").strip())
 
 
+def _credential_record(email: str) -> str | None:
+    """取得登入用的密碼雜湊：既有帳號優先使用 Secrets，新帳號回退至 Supabase。"""
+    clean_email = str(email or "").strip().lower()
+    record = _users().get(clean_email)
+    if isinstance(record, str) and record:
+        return record
+
+    # 新申請帳號的雜湊已在核准時寫入 public.account_requests。
+    # 只有核准且已到 activate_at，才允許取回雜湊進行密碼驗證。
+    try:
+        import account_provisioning
+        if not account_provisioning.is_configured():
+            return None
+        state = account_provisioning.account_login_state(clean_email)
+        if state.get("error") or not state.get("found") or not state.get("allowed"):
+            return None
+        db_record = state.get("password_hash")
+        if isinstance(db_record, str) and db_record.startswith("pbkdf2_sha256$"):
+            return db_record
+    except Exception:
+        # 查詢失敗時拒絕資料庫新帳號登入，不跳過核准／啟用檢查。
+        return None
+    return None
+
+
 def authenticate(email: str, password: str) -> bool:
     email = str(email or "").strip().lower()
-    users = _users()
-    if not (EMAIL_RE.fullmatch(email) and password and verify_password(password, users.get(email))):
+    record = _credential_record(email)
+    if not (EMAIL_RE.fullmatch(email) and password and verify_password(password, record)):
         return False
     return _account_login_allowed(email)
 
@@ -95,10 +120,11 @@ def _session_signing_key() -> bytes:
 def create_session_token(email: str, now: int | None = None) -> str:
     """建立有效 14 天的簽章工作階段 token，不包含明文密碼。"""
     clean_email = str(email or "").strip().lower()
-    users = _users()
-    record = users.get(clean_email)
-    if not record or not isinstance(record, str):
-        raise ValueError("帳號不存在，無法建立登入工作階段。")
+    record = _credential_record(clean_email)
+    if not record:
+        raise ValueError("帳號不存在、尚未核准或尚未到啟用時間，無法建立登入工作階段。")
+    if not _account_login_allowed(clean_email):
+        raise ValueError("帳號尚未啟用，無法建立登入工作階段。")
     issued_at = int(time.time() if now is None else now)
     payload = {
         "email": clean_email,
@@ -127,8 +153,8 @@ def verify_session_token(token: str | None, now: int | None = None) -> str | Non
         email = str(payload.get("email") or "").strip().lower()
         expires_at = int(payload.get("exp") or 0)
         current = int(time.time() if now is None else now)
-        record = _users().get(email)
-        if current >= expires_at or not record or not isinstance(record, str):
+        record = _credential_record(email)
+        if current >= expires_at or not record:
             return None
         if not _account_login_allowed(email):
             return None
