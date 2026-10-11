@@ -139,9 +139,17 @@ def request_account(email: str, base_dir: str | Path) -> dict[str, Any]:
             message="使用者申請網站登入帳號。請管理員確認後，手動將帳號與密碼雜湊加入 Streamlit Secrets 的 AUTH_USERS_JSON；系統不會自動建立帳號。",
             subscribed=False,
         )
-        if result.get("sent"):
-            return {"sent": True}
-        return {"sent": False, "error": str(result.get("error") or "管理員通知寄送失敗。")}
+        if not result.get("sent"):
+            return {"sent": False, "error": str(result.get("error") or "管理員通知寄送失敗。")}
+
+        # 先確認管理員通知已寄出，再回覆使用者；確認信失敗不應讓申請者重送管理員通知。
+        confirmation = agent.send_account_request_confirmation(email=email)
+        return {
+            "sent": True,
+            "admin_notified": True,
+            "confirmation_sent": bool(confirmation.get("sent")),
+            "confirmation_error": str(confirmation.get("error") or "") if not confirmation.get("sent") else "",
+        }
     except Exception as exc:
         return {"sent": False, "error": "寄送申請通知失敗：" + type(exc).__name__ + ": " + str(exc)}
     finally:
