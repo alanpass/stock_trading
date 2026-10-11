@@ -6400,7 +6400,12 @@ def render_account_review_action() -> None:
         st.warning("確認後系統會將申請標記為拒絕，並寄送審核結果給申請者。此操作無法撤回。")
     with st.form("account_review_confirm_form"):
         confirmed = st.checkbox("我已確認申請者與審核動作正確。", key="account_review_confirmed")
-        submit = st.form_submit_button(action_label, type="primary", disabled=not confirmed, use_container_width=True)
+        # Streamlit 表單內的元件不會在變更時單獨 rerun，因此不能用
+        # disabled=not confirmed 控制同一個表單的提交按鈕，否則按鈕可能永遠停用。
+        submit = st.form_submit_button(action_label, type="primary", use_container_width=True)
+    if submit and not confirmed:
+        st.warning("請先勾選「我已確認申請者與審核動作正確」，再提交審核。")
+        st.stop()
     if submit:
         try:
             result = account_provisioning.decide_account_request(token, decision)
