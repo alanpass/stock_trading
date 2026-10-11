@@ -2051,58 +2051,22 @@ def _set_nav_section(section: str) -> None:
 
 
 def render_site_navigation() -> str:
-    """使用 Streamlit 原生按鈕切換頁面，不再用 <a href="?section=..."> 觸發整頁重新載入。
-
-    整頁載入會建立新的 Streamlit session，讓 session_state 裡的登入者消失；
-    原生按鈕透過 query params + rerun 切換區段，可保留目前 session 與登入狀態。
-    """
+    """Restore the original HTML navigation appearance while retaining hidden controls for session-safe navigation."""
     current = _get_nav_section()
     nav = [("home", "首頁"), ("strategy", "操作策略"), ("future", "未來分析"), ("finance", "財經資訊"), ("rotation", "產業分析"), ("subscribe", "訂閱系統")]
-
-    # 將 Streamlit 按鈕呈現為原本的文字導覽列樣式。
+    links = []
+    for key, label in nav:
+        active = " active" if current == key else ""
+        links.append(f'<a class="site-nav-link{active}" href="?section={key}" target="_self">{label}</a>')
+    st.markdown('<nav translate="no" class="site-nav">' + ''.join(links) + '</nav>', unsafe_allow_html=True)
     st.markdown(
-        f"""
-        <style>
-        .st-key-site_nav_control [data-testid="stButton"] > button {{
-            background: transparent !important;
-            border: 0 !important;
-            border-bottom: 1px solid transparent !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
-            color: #777 !important;
-            min-height: 30px !important;
-            padding: 3px 0 5px !important;
-            white-space: nowrap !important;
-        }}
-        .st-key-site_nav_control [data-testid="stButton"] > button p {{
-            font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif !important;
-            font-size: 11px !important;
-            letter-spacing: .6px !important;
-            font-weight: 400 !important;
-            margin: 0 !important;
-        }}
-        .st-key-site_nav_control [data-testid="stButton"] > button:hover {{
-            color: #8e2b2f !important;
-            border-bottom-color: #8e2b2f !important;
-        }}
-        .st-key-site_nav_control .st-key-nav_section_{current} [data-testid="stButton"] > button {{
-            color: #8e2b2f !important;
-            border-bottom-color: #8e2b2f !important;
-        }}
-        .st-key-site_nav_control .st-key-nav_section_{current} [data-testid="stButton"] > button p {{
-            font-weight: 800 !important;
-        }}
-        </style>
-        """,
+        '<style>.st-key-site_nav_control{position:fixed!important;left:-10000px!important;top:0!important;width:1px!important;height:1px!important;overflow:hidden!important;opacity:0!important;pointer-events:none!important;z-index:-1!important;}</style>',
         unsafe_allow_html=True,
     )
     with st.container(key="site_nav_control"):
-        columns = st.columns(len(nav), gap="small")
-        for column, (section, label) in zip(columns, nav):
-            with column:
-                if st.button(label, key=f"nav_section_{section}", use_container_width=True):
-                    _set_nav_section(section)
-
+        for section, label in nav:
+            if st.button(label, key=f"nav_section_{section}"):
+                _set_nav_section(section)
     st.markdown('<div class="site-rule"></div>', unsafe_allow_html=True)
     return current
 
