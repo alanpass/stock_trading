@@ -6378,14 +6378,36 @@ def render_account_review_action() -> None:
             st.success("此帳號申請已拒絕處理。")
             st.write("申請者：" + str(cached.get("email", "")))
             st.write("拒絕通知郵件：" + ("已寄出" if cached.get("applicant_sent") else "寄送失敗"))
+            st.write("管理員結案通知：" + ("已寄出" if cached.get("admin_notice_sent") else "寄送失敗"))
         st.stop()
 
     try:
         import account_provisioning
-        request = account_provisioning.get_request_for_token(token, decision)
+        review_state = account_provisioning.get_review_state_for_token(token, decision)
     except Exception as exc:
         st.error("無法連線帳號審核資料庫：" + type(exc).__name__)
         st.stop()
+
+    if not review_state:
+        st.error("此審核連結已失效或已逾期。請以最新的申請通知為準。")
+        st.stop()
+
+    review_status = str(review_state.get("status", "")).strip().lower()
+    if review_status != "pending":
+        status_labels = {
+            "approved": "此帳號申請已核准，原信件中的同意／拒絕連結均已失效。",
+            "rejected": "此帳號申請已拒絕，原信件中的同意／拒絕連結均已失效。",
+            "notification_failed": "此帳號申請未成功送出管理員通知，原審核連結已失效。",
+        }
+        message = status_labels.get(review_status, "此帳號申請已結案或不再接受審核，原連結已失效。")
+        st.info(message)
+        st.write("申請者：" + str(review_state.get("email", "")))
+        if review_state.get("decided_at"):
+            st.write("處理時間：" + str(review_state.get("decided_at", "")))
+        st.caption("原始 Email 是已寄出的歷史郵件，無法從收件匣遠端刪除；但此連結不會再執行任何審核動作。")
+        st.stop()
+
+    request = account_provisioning.get_request_for_token(token, decision)
     if not request:
         st.error("此審核連結已失效、已逾期，或已被使用。請勿重複操作。")
         st.stop()
@@ -6446,10 +6468,19 @@ def render_account_review_action() -> None:
                     applicant_mail = agent.send_account_rejected(email=result["email"])
                 except Exception as mail_exc:
                     applicant_mail = {"sent": False, "error": type(mail_exc).__name__}
+                try:
+                    admin_notice = agent.send_account_review_decision_notice(
+                        email=result["email"],
+                        decision="rejected",
+                        decided_at=str(result.get("decided_at", "")),
+                    )
+                except Exception as mail_exc:
+                    admin_notice = {"sent": False, "error": type(mail_exc).__name__}
                 st.session_state[result_key] = {
                     "decision": decision,
                     "email": result["email"],
                     "applicant_sent": bool(applicant_mail.get("sent")),
+                    "admin_notice_sent": bool(admin_notice.get("sent")),
                 }
             st.rerun()
         except Exception as exc:
