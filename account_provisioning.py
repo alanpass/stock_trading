@@ -153,14 +153,30 @@ def get_request_for_token(token: str, decision: str) -> dict[str, Any] | None:
         "token_expires_at": f"gt.{_iso(_utc_now())}", "limit": "1"})
     return rows[0] if rows else None
 
+def get_review_state_for_token(token: str, decision: str) -> dict[str, Any] | None:
+    """查詢有效期限內的審核連結狀態；包含已核准／拒絕的紀錄，讓舊信件能顯示已結案。"""
+    if decision not in {"approve", "reject"} or not token or len(token) > 200:
+        return None
+    field = "approve_token_hash" if decision == "approve" else "reject_token_hash"
+    rows = _request("GET", params={
+        "select": "id,email,status,token_expires_at,created_at,decided_at",
+        field: f"eq.{_hash_token(token)}",
+        "token_expires_at": f"gt.{_iso(_utc_now())}",
+        "limit": "1",
+    })
+    return rows[0] if rows else None
+
+
 def decide_account_request(token: str, decision: str) -> dict[str, Any]:
     """一次性核准或拒絕；條件更新避免重複審核。"""
     if decision not in {"approve", "reject"} or not token or len(token) > 200:
         raise AccountProvisioningError("審核連結無效。")
     now = _utc_now()
     token_field = "approve_token_hash" if decision == "approve" else "reject_token_hash"
+    # 保留 token 雜湊直到原始 48 小時期限結束，讓舊 Email 連結能顯示
+    # 「已核准／已拒絕」；真正操作仍要求 status=pending，無法重複審核。
     payload: dict[str, Any] = {"status": "approved" if decision == "approve" else "rejected",
-        "decided_at": _iso(now), "approve_token_hash": None, "reject_token_hash": None}
+        "decided_at": _iso(now)}
     password, password_hash, activation_at = "", "", None
     if decision == "approve":
         password = _generate_password(8)
