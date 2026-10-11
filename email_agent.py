@@ -2038,7 +2038,7 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
         if not status.get("configured"):
             return {"sent": False, "error": f"Email 尚未設定：{status.get('missing', [])}"}
         admin = "a1113359@mail.nuk.edu.tw"
-        applicant = re.sub(r"[\\r\\n]+", "", str(email or "")).strip().lower()
+        applicant = re.sub(r"[\r\n]+", "", str(email or "")).strip().lower()
         if decision not in {"approved", "rejected"}:
             return {"sent": False, "error": "審核結果不正確。"}
 
@@ -2054,13 +2054,13 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
         msg["From"] = formataddr((self.config.display_name, self.config.sender))
         msg["To"] = admin
         msg.set_content(
-            "網站帳號申請審核已完成。\\n\\n"
-            f"申請者：{applicant}\\n"
-            f"審核結果：{result_text}\\n"
-            f"處理時間：{decided_at or '請以網站資料庫紀錄為準'}\\n\\n"
+            "網站帳號申請審核已完成。\n\n"
+            f"申請者：{applicant}\n"
+            f"審核結果：{result_text}\n"
+            f"處理時間：{decided_at or '請以網站資料庫紀錄為準'}\n\n"
             "重要提醒：原本主旨為「帳號申請待審核」的郵件無法從收件匣遠端撤回，"
             "但其中的同意／拒絕連結已不能再次執行審核。於連結有效期限內開啟舊連結，"
-            "網站會顯示此申請已結案，不會再次核准或拒絕。\\n"
+            "網站會顯示此申請已結案，不會再次核准或拒絕。\n"
         )
         try:
             return {"sent": True, "recipient": admin, "smtp_log": self._smtp_send(msg)}
