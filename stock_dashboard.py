@@ -6367,9 +6367,13 @@ def render_account_review_action() -> None:
             st.write("申請者密碼郵件：" + ("已寄出" if cached.get("credential_sent") else "寄送失敗"))
             st.write("管理員雜湊設定通知：" + ("已寄出" if cached.get("admin_hash_sent") else "寄送失敗"))
             if not cached.get("credential_sent"):
-                st.warning("密碼郵件未成功送出，請聯絡管理員處理；為避免明文密碼被重複曝光，系統不會在頁面顯示密碼。")
+                st.warning("密碼郵件未成功送出。請使用下方一次性處理資訊聯絡申請者，勿公開分享此頁面。")
+                if cached.get("fallback_password"):
+                    st.code("初始密碼：" + str(cached["fallback_password"]))
             if not cached.get("admin_hash_sent"):
-                st.warning("管理員雜湊通知未成功送出，請檢查 Email 設定。")
+                st.warning("管理員雜湊通知未成功送出；可複製下列內容手動更新 AUTH_USERS_JSON。")
+                if cached.get("hash_json"):
+                    st.code(cached["hash_json"], language="json")
         else:
             st.success("此帳號申請已拒絕處理。")
             st.write("申請者：" + str(cached.get("email", "")))
@@ -6403,23 +6407,40 @@ def render_account_review_action() -> None:
             from email_agent import EmailAgent
             agent = EmailAgent(Path(__file__).resolve().parent)
             if decision == "approve":
-                credential_mail = agent.send_account_approved_credentials(
-                    email=result["email"],
-                    password=result["password"],
-                    activate_at=result["activate_at"],
-                )
-                admin_mail = agent.send_account_hash_for_admin(
-                    email=result["email"],
-                    password_hash=result["password_hash"],
-                )
-                st.session_state[result_key] = {
+                try:
+                    credential_mail = agent.send_account_approved_credentials(
+                        email=result["email"],
+                        password=result["password"],
+                        activate_at=result["activate_at"],
+                    )
+                except Exception as mail_exc:
+                    credential_mail = {"sent": False, "error": type(mail_exc).__name__}
+                try:
+                    admin_mail = agent.send_account_hash_for_admin(
+                        email=result["email"],
+                        password_hash=result["password_hash"],
+                    )
+                except Exception as mail_exc:
+                    admin_mail = {"sent": False, "error": type(mail_exc).__name__}
+                cached_result = {
                     "decision": decision,
                     "email": result["email"],
                     "credential_sent": bool(credential_mail.get("sent")),
                     "admin_hash_sent": bool(admin_mail.get("sent")),
                 }
+                if not credential_mail.get("sent"):
+                    cached_result["fallback_password"] = result["password"]
+                if not admin_mail.get("sent"):
+                    import json as _json
+                    cached_result["hash_json"] = _json.dumps(
+                        {result["email"]: result["password_hash"]}, ensure_ascii=False
+                    )
+                st.session_state[result_key] = cached_result
             else:
-                applicant_mail = agent.send_account_rejected(email=result["email"])
+                try:
+                    applicant_mail = agent.send_account_rejected(email=result["email"])
+                except Exception as mail_exc:
+                    applicant_mail = {"sent": False, "error": type(mail_exc).__name__}
                 st.session_state[result_key] = {
                     "decision": decision,
                     "email": result["email"],
