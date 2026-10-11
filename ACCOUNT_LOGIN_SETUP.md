@@ -29,7 +29,7 @@ AUTH_USERS_JSON = '{"a1113359@mail.nuk.edu.tw":"將這裡替換成 hash-password
 AUTH_SESSION_SECRET = "填入隨機產生的長字串"
 ```
 
-將範例中的雜湊佔位文字替換成實際雜湊值，並為 `AUTH_SESSION_SECRET` 設定獨立的隨機長字串。可在 PowerShell 執行 `python -c "import secrets; print(secrets.token_urlsafe(48))"` 產生，之後將同一字串放入本機與 Cloud Secrets。請確認 `.streamlit/secrets.toml` 已被 Git 忽略，不可提交。
+將範例中的雜湊佔位文字替換成實際雜湊值，並為 `AUTH_SESSION_SECRET` 設定獨立的隨機長字串。可在 PowerShell 執行 `python -c "import secrets; print(secrets.token_urlsafe(48))"` 產生，之後將同一字串放入本機與 Cloud Secrets。請確認 `.streamlit/secrets.toml` 已被 Git 忽略，不可提交。 建議務必設定此值；若省略，程式會從 `AUTH_USERS_JSON` 導出相容性金鑰，每次新增／移除帳號都會使現有登入 Cookie 失效。
 
 本機使用 `streamlit run stock_dashboard.py` 啟動後，即可用管理員電子郵件與設定的密碼登入。
 
