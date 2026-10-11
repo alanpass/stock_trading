@@ -6412,13 +6412,36 @@ import streamlit.components.v1 as _components
 _components.html(
     """<script>
     try {
-      const d = window.parent.document;
+      const w = window.parent;
+      const d = w.document;
       d.documentElement.setAttribute('lang', 'zh-TW');
       d.documentElement.setAttribute('translate', 'no');
       if (!d.querySelector('meta[name="google"]')) {
         const m = d.createElement('meta'); m.name = 'google'; m.content = 'notranslate'; d.head.appendChild(m);
       }
       d.body.classList.add('notranslate');
+
+      // 將首頁卡片與頁尾的 section 連結導向同一組 Streamlit 原生導覽按鈕，
+      // 避免 href="?section=..." 讓瀏覽器整頁載入並重建 session。
+      if (!w.__stockTradingSectionNavInstalled) {
+        w.__stockTradingSectionNavInstalled = true;
+        d.addEventListener("click", function(event) {
+          const anchor = event.target && event.target.closest
+            ? event.target.closest('a[href*="section="]') : null;
+          if (!anchor) return;
+          let target;
+          try { target = new URL(anchor.getAttribute("href"), w.location.href); }
+          catch (err) { return; }
+          const section = target.searchParams.get("section");
+          const allowed = ["home", "strategy", "future", "finance", "rotation", "subscribe"];
+          if (!allowed.includes(section)) return;
+          const button = d.querySelector(".st-key-nav_section_" + section + " button");
+          if (!button) return;
+          event.preventDefault();
+          event.stopPropagation();
+          button.click();
+        }, true);
+      }
     } catch (e) {}
     </script>""",
     height=0,
