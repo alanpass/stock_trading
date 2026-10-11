@@ -1939,6 +1939,43 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
                 "error": f"SMTP 寄送管理者通知失敗：{type(exc).__name__}: {exc}",
             }
 
+    def send_account_request_confirmation(self, *, email: str) -> dict[str, Any]:
+        """帳號申請通知成功送達管理員後，寄送確認信給申請者。"""
+        status = self.status()
+        if not status.get("configured"):
+            return {"sent": False, "error": f"Email 尚未設定：{status.get('missing', [])}"}
+
+        to_addr = re.sub(r"[\r\n]+", "", str(email or "")).strip()
+        if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", to_addr):
+            return {"sent": False, "error": "收件者電子郵件格式不正確。"}
+
+        msg = EmailMessage()
+        msg["Subject"] = "【AI 台股網站】已收到您的網站帳號申請"
+        msg["From"] = formataddr((self.config.display_name, self.config.sender))
+        msg["To"] = to_addr
+        msg.set_content(
+            "您好：\n\n"
+            "我們已收到您透過「AI 台股即時互動式分析系統」提交的網站帳號申請，"
+            "並已將申請通知寄送給管理員進行人工處理。\n\n"
+            "請注意：此信僅代表申請已送出，不代表帳號已建立或啟用。"
+            "管理員完成確認及帳號設定後，您才能登入網站。\n\n"
+            "請留意您的電子郵件收件匣及垃圾郵件匣（或促銷內容資料夾），"
+            "避免錯過管理員後續通知。\n\n"
+            "若您並未提交此申請，請忽略此信。\n\n"
+            "AI 台股即時互動式分析系統\n"
+            "管理員聯絡信箱：a1113359@mail.nuk.edu.tw\n",
+            charset="utf-8",
+        )
+
+        try:
+            smtp_log = self._smtp_send(msg)
+            return {"sent": True, "recipient": to_addr, "smtp_log": smtp_log}
+        except Exception as exc:
+            return {
+                "sent": False,
+                "error": f"SMTP 寄送帳號申請確認信失敗：{type(exc).__name__}: {exc}",
+            }
+
     def send_subscription_welcome(self, *, name: str, email: str) -> dict[str, Any]:
         """訂閱成功後，自動寄一封確認信到訂閱者自己的信箱。"""
         status = self.status()

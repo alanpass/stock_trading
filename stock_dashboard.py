@@ -6330,7 +6330,11 @@ def render_auth_panel() -> None:
                 if request_submit:
                     result = request_account(request_email, BASE)
                     if result.get("sent"):
-                        st.success("申請已寄送給管理員；帳號密碼需由管理員手動建立。")
+                        st.success("申請通知已寄送給管理員；帳號密碼仍需由管理員人工建立。")
+                        if result.get("confirmation_sent"):
+                            st.info("確認信已寄到 " + str(request_email).strip() + "，請留意收件匣及垃圾郵件匣。")
+                        else:
+                            st.warning("管理員已收到申請通知，但寄給你的確認信未成功送出。請確認電子郵件地址，或直接聯絡管理員。")
                     else:
                         st.error(result.get("error", "帳號申請寄送失敗。"))
                 if st.button("返回登入", key="auth_switch_to_login", use_container_width=True):
