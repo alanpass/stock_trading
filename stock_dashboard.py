@@ -6253,7 +6253,9 @@ def sync_sidebar_visibility(section: str) -> None:
               if (!sidebar) return;
               const expanded = sidebar.getAttribute('aria-expanded') === 'true';
               if (shouldOpen && !expanded) {{
-                const node = d.querySelector('[data-testid="stSidebarCollapsedControl"]');
+                // 新版 Streamlit 使用 stSidebarCollapseButton；舊版保留 CollapsedControl 作為備援。
+                const node = d.querySelector('[data-testid="stSidebarCollapseButton"]')
+                  || d.querySelector('[data-testid="stSidebarCollapsedControl"]');
                 const button = node && (node.tagName === 'BUTTON' ? node : node.querySelector('button'));
                 if (button) button.click();
               }} else if (!shouldOpen && expanded) {{
