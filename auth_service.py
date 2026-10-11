@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import base64
+import binascii
 import hashlib
 import hmac
 import json
@@ -113,7 +114,7 @@ def verify_session_token(token: str | None, now: int | None = None) -> str | Non
         if not hmac.compare_digest(str(payload.get("credential_hash") or ""), current_credential_hash):
             return None
         return email if EMAIL_RE.fullmatch(email) else None
-    except (ValueError, TypeError, KeyError, json.JSONDecodeError, UnicodeDecodeError):
+    except (ValueError, TypeError, KeyError, json.JSONDecodeError, UnicodeDecodeError, binascii.Error):
         return None
 
 
