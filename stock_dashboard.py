@@ -30,6 +30,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
 import streamlit as st
+import extra_streamlit_components as stx
 from streamlit_autorefresh import st_autorefresh
 
 
@@ -6074,66 +6075,74 @@ def is_authenticated() -> bool:
 
 
 def _restore_auth_from_cookie(cookie_manager=None) -> None:
-    """還原登入者。
-
-    切換分頁（?section=...）是整頁重新載入，Streamlit 會建立全新的 session，
-    session_state 會被清空。登入狀態因此存在簽章 cookie 裡，
-    並直接讀取瀏覽器隨連線送出的 cookie（st.context.cookies）：
-    頁面一載入就拿得到，不必等任何前端元件回傳，所以不會出現「先當成未登入」的空窗。
-    """
+    """從瀏覽器 Cookie 還原登入者；Streamlit Cloud 使用 CookieManager 讀取自訂 Cookie。"""
     if st.session_state.get("auth_user"):
         return
     if st.session_state.get("auth_logged_out"):
-        # 本 session 已按過登出；瀏覽器送來的 cookie 是登出前的舊值，不能再拿來還原。
         st.session_state["auth_user"] = ""
         return
+
     token = None
-    try:
-        token = st.context.cookies.get(SESSION_COOKIE_NAME)
-    except Exception:
-        token = None
+    if cookie_manager is not None:
+        try:
+            token = cookie_manager.get(SESSION_COOKIE_NAME)
+        except Exception:
+            token = None
+    # 相容可直接由 Streamlit context 讀到 Cookie 的環境。
+    if not token:
+        try:
+            token = st.context.cookies.get(SESSION_COOKIE_NAME)
+        except Exception:
+            token = None
+
     email = verify_session_token(str(token)) if token else None
     st.session_state["auth_user"] = email or ""
 
 
 def _write_auth_cookie(email: str) -> None:
-    """建立登入 token，並排入「下一次執行時寫入瀏覽器 cookie」。
-
-    不能在寫 cookie 的同一次執行裡立刻 st.rerun()，否則前端元件還沒送出就被中斷、cookie 寫不進去。
-    所以這裡只排隊，真正寫入由 _flush_auth_cookie_op() 在下一次執行開頭完成。
-    """
+    """建立簽章 token 並排隊，下一次執行時透過 CookieManager 寫入瀏覽器。"""
     token = create_session_token(email)
     st.session_state["_auth_cookie_op"] = ("set", token)
     st.session_state.pop("auth_logged_out", None)
 
 
 def _delete_auth_cookie() -> None:
+    """排隊刪除登入 Cookie。"""
     st.session_state["_auth_cookie_op"] = ("delete", "")
     st.session_state["auth_logged_out"] = True
 
 
-def _flush_auth_cookie_op() -> None:
-    """把排隊中的 cookie 寫入／刪除動作交給瀏覽器執行（同源 iframe 操作 parent document）。"""
+def _flush_auth_cookie_op(cookie_manager=None) -> None:
+    """使用 CookieManager 寫入／刪除 Cookie，避免直接操作 iframe 的 parent document 失敗。"""
     op = st.session_state.pop("_auth_cookie_op", None)
     if not op:
         return
+    if cookie_manager is None:
+        # 元件尚不可用時保留工作，避免丟失登入／登出指令。
+        st.session_state["_auth_cookie_op"] = op
+        return
+
     action, token = op
-    name = json.dumps(SESSION_COOKIE_NAME)
-    if action == "set":
-        body = (
-            f"d.cookie = {name} + '=' + {json.dumps(token)} + "
-            f"'; path=/; max-age={int(SESSION_TTL_SECONDS)}; SameSite=Lax' + sec;"
-        )
-    else:
-        body = (
-            f"d.cookie = {name} + "
-            "'=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax' + sec;"
-        )
-    _components.html(
-        "<script>(function(){try{const w=window.parent;const d=w.document;"
-        "const sec=(w.location.protocol==='https:')?'; Secure':'';" + body + "}catch(e){}})();</script>",
-        height=0,
-    )
+    try:
+        if action == "set":
+            cookie_manager.set(
+                SESSION_COOKIE_NAME,
+                token,
+                key="stock_trading_auth_cookie_set",
+                path="/",
+                expires_at=datetime.now() + timedelta(seconds=SESSION_TTL_SECONDS),
+                max_age=SESSION_TTL_SECONDS,
+                same_site="lax",
+            )
+        else:
+            cookie_manager.delete(
+                SESSION_COOKIE_NAME,
+                key="stock_trading_auth_cookie_delete",
+            )
+    except Exception:
+        # 不影響 App 的其他頁面；保留動作供下一次 rerun 重試。
+        st.session_state["_auth_cookie_op"] = op
+        raise
 
 
 def _toggle_auth_panel(mode: str) -> None:
@@ -6410,8 +6419,9 @@ _components.html(
     </script>""",
     height=0,
 )
-_restore_auth_from_cookie()
-_flush_auth_cookie_op()
+auth_cookie_manager = stx.CookieManager(key="stock_trading_auth_cookie_manager")
+_restore_auth_from_cookie(auth_cookie_manager)
+_flush_auth_cookie_op(auth_cookie_manager)
 render_header_and_search()
 render_auth_header_actions()
 current_section = render_site_navigation()
