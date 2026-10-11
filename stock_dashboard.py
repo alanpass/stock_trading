@@ -1169,11 +1169,14 @@ def render_strategy_search() -> None:
     result = st.session_state.get("search_result") or {}
     if result and code not in st.session_state.watchlist:
         st.info(f'目前分析標的：{result.get("name", code)}（{code}）尚未加入自選股。')
-        if st.button("加入自選股", key=f"add_watch_site_{code}"):
-            st.session_state.watchlist.append(code)
-            st.session_state.watchlist = list(dict.fromkeys(st.session_state.watchlist))
-            save_watchlist(st.session_state.watchlist)
-            st.rerun()
+        if is_authenticated():
+            if st.button("加入自選股", key=f"add_watch_site_{code}"):
+                st.session_state.watchlist.append(code)
+                st.session_state.watchlist = list(dict.fromkeys(st.session_state.watchlist))
+                save_watchlist(st.session_state.watchlist)
+                st.rerun()
+        else:
+            st.caption("登入後才能新增自選股。")
 
     st.markdown(f'<div class="selected-strip"><span>目前分析標的</span><strong>{code}</strong><span>｜自選股 {len(st.session_state.watchlist)} 檔</span></div>', unsafe_allow_html=True)
 
@@ -3492,6 +3495,9 @@ def _watch_select(code: str) -> None:
 
 
 def _watch_remove(code: str) -> None:
+    if not is_authenticated():
+        st.warning("請先登入，才能刪除自選股。")
+        return
     new_watchlist = [x for x in st.session_state.watchlist if x != code]
     st.session_state.watchlist = new_watchlist
     save_watchlist(new_watchlist)
@@ -3601,7 +3607,7 @@ def render_watchlist(compact: bool = False):
                                 if st.button("\u200b", key=f"watch_select_{r['code']}_{idx}", icon=":material/visibility:", help="選取此股票", use_container_width=True):
                                     _watch_select(r['code'])
                             with b3:
-                                if st.button("\u200b", key=f"watch_remove_{r['code']}_{idx}", icon=":material/delete:", help=f"從自選股移除 {r['code']}", use_container_width=True):
+                                if is_authenticated() and st.button("\u200b", key=f"watch_remove_{r['code']}_{idx}", icon=":material/delete:", help=f"從自選股移除 {r['code']}", use_container_width=True):
                                     _watch_remove(r['code'])
                     else:
                         b1,b2,b3,b4,b5,b6 = st.columns([3.25, 0.82, 0.82, 1.7, 1.65, 1.75], gap="small")
@@ -3614,7 +3620,7 @@ def render_watchlist(compact: bool = False):
                             if st.button("\u200b", key=f"watch_select_{r['code']}_{idx}", icon=":material/visibility:", use_container_width=True, type="secondary", help="查看此股票"):
                                 _watch_select(r['code'])
                         with b3:
-                            if st.button("\u200b", key=f"watch_remove_{r['code']}_{idx}", icon=":material/delete:", use_container_width=True, type="secondary", help=f"從自選股移除 {r['code']}"):
+                            if is_authenticated() and st.button("\u200b", key=f"watch_remove_{r['code']}_{idx}", icon=":material/delete:", use_container_width=True, type="secondary", help=f"從自選股移除 {r['code']}"):
                                 _watch_remove(r['code'])
                         with b4:
                             st.markdown(f"<div class='watch-value watch-price-cell{value_class}' style='color:{vcolor}'>{price_txt}</div>", unsafe_allow_html=True)
