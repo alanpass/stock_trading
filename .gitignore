@@ -1,0 +1,9 @@
+# Local secrets and credentials
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Python generated files
+__pycache__/
+*.py[cod]
