@@ -1998,8 +1998,8 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
         msg.set_content(
             "您好：\n\n您的 AI 台股網站帳號申請已核准。\n\n"
             f"登入帳號：{to_addr}\n初始密碼：{password}\n\n"
-            "帳號將於管理員核准後 5 分鐘啟用。網站管理員仍需完成 AUTH_USERS_JSON 設定；"
-            "若 5 分鐘後仍無法登入，請稍候或聯絡管理員。\n"
+            "系統已將密碼雜湊安全儲存於帳號資料庫，不需要管理員手動加入登入名單。"
+            "帳號將於管理員核准後 5 分鐘啟用；啟用後可直接使用此帳密登入。\n"
             f"核准時間：{activate_at}\n\n"
             "首次登入後請妥善保管初始密碼，並避免轉寄此郵件。\n"
         )
@@ -2067,29 +2067,6 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
         except Exception as exc:
             return {"sent": False, "error": f"寄送審核結案通知失敗：{type(exc).__name__}: {exc}"}
 
-    def send_account_hash_for_admin(self, *, email: str, password_hash: str) -> dict[str, Any]:
-        """寄給管理員供人工更新 AUTH_USERS_JSON；郵件不包含明文密碼。"""
-        status = self.status()
-        if not status.get("configured"):
-            return {"sent": False, "error": f"Email 尚未設定：{status.get('missing', [])}"}
-        admin = "a1113359@mail.nuk.edu.tw"
-        msg = EmailMessage()
-        msg["Subject"] = "【AI 台股網站】請將新帳號雜湊加入 AUTH_USERS_JSON"
-        msg["From"] = formataddr((self.config.display_name, self.config.sender))
-        msg["To"] = admin
-        snippet = json.dumps({str(email).strip().lower(): password_hash}, ensure_ascii=False)
-        msg.set_content(
-            "帳號申請已核准，資料庫已保存密碼雜湊。\n\n"
-            "請到 Streamlit Cloud → App Settings → Secrets，將下列 email/hash 項目合併到現有 AUTH_USERS_JSON，"
-            "不要覆蓋或刪除其他帳號。\n\n"
-            + snippet + "\n\n"
-            "此通知不含明文密碼；申請者的初始密碼已另外寄送。"
-        )
-        try:
-            return {"sent": True, "recipient": admin, "smtp_log": self._smtp_send(msg)}
-        except Exception as exc:
-            return {"sent": False, "error": f"寄送管理員帳號設定通知失敗：{type(exc).__name__}: {exc}"}
-
     def send_account_request_confirmation(self, *, email: str) -> dict[str, Any]:
         """帳號申請通知成功送達管理員後，寄送確認信給申請者。"""
         status = self.status()
@@ -2109,7 +2086,7 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
             "我們已收到您透過「AI 台股即時互動式分析系統」提交的網站帳號申請，"
             "並已將含有同意／拒絕連結的審核通知寄送給管理員。\n\n"
             "請注意：此信僅代表申請已送出，不代表帳號已建立或啟用。"
-            "管理員核准申請並完成 AUTH_USERS_JSON 設定後，您才能登入網站。\n\n"
+            "管理員核准後，系統會自動保存登入憑證；核准後 5 分鐘即可使用初始密碼登入。\n\n"
             "請留意您的電子郵件收件匣及垃圾郵件匣（或促銷內容資料夾），"
             "避免錯過管理員後續通知。\n\n"
             "若您並未提交此申請，請忽略此信。\n\n"
