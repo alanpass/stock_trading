@@ -35,7 +35,7 @@ AUTH_SESSION_SECRET = "填入隨機產生的長字串"
 
 ## 3. Streamlit Community Cloud
 
-開啟此 App 的 **Settings → Secrets**，加入相同的 `AUTH_USERS_JSON` 與 `AUTH_SESSION_SECRET`。Cloud 不會讀取你 Windows 本機的 `.streamlit/secrets.toml`，所以這一步必須另外設定。`requirements.txt` 已新增 `extra-streamlit-components`，部署時 Cloud 會安裝 Cookie Manager 相依套件。
+開啟此 App 的 **Settings → Secrets**，加入相同的 `AUTH_USERS_JSON` 與 `AUTH_SESSION_SECRET`。Cloud 不會讀取你 Windows 本機的 `.streamlit/secrets.toml`，所以這一步必須另外設定。登入狀態會透過 Streamlit `st.context.cookies` 讀取，再由簽章驗證；不需額外安裝 Cookie Manager 套件。
 
 網站寄送帳號申請通知時，也需要既有 Email 設定有效：`EMAIL_SENDER`、`EMAIL_APP_PASSWORD`、`EMAIL_RECIPIENT`。申請通知收件者固定為 `a1113359@mail.nuk.edu.tw`。
 
