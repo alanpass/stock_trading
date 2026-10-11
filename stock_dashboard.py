@@ -88,7 +88,8 @@ from theme_agent import theme_sankey_frame
 from post_market_analysis import PostMarketAnalyzer
 from email_agent import EmailAgent
 from subscriber_service import register_subscriber, subscription_status
-from auth_service import (authenticate, request_account, ADMIN_EMAIL, create_session_token,\n                         verify_session_token, SESSION_COOKIE_NAME, SESSION_TTL_SECONDS)
+from auth_service import (authenticate, request_account, ADMIN_EMAIL, create_session_token,
+                         verify_session_token, SESSION_COOKIE_NAME, SESSION_TTL_SECONDS)
 from industry_rotation import ROTATION_THEMES, ROTATION_DEFAULT_THEMES, ROTATION_DISPLAY_NAMES, NAME_FALLBACKS, load_published_rotation
 from us_industry_indicators import US_INDUSTRY_INDICATORS, get_us_indicator_symbols, fetch_us_indicators
 
