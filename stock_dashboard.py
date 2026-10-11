@@ -6412,7 +6412,8 @@ import streamlit.components.v1 as _components
 _components.html(
     """<script>
     try {
-      const d = window.parent.document;
+      const w = window.parent;
+      const d = w.document;
       d.documentElement.setAttribute('lang', 'zh-TW');
       d.documentElement.setAttribute('translate', 'no');
       if (!d.querySelector('meta[name="google"]')) {
