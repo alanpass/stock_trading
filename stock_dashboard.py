@@ -3836,7 +3836,7 @@ def render_kline():
     with reset_col:
         st.markdown(
             """<style>
-            div[class*="st-key-technical-reset-button"] [data-testid="stButton"] > button {
+            div[class*="st-key-technical-reset-button"] button {
                 background:#fbf1f1 !important;
                 background-color:#fbf1f1 !important;
                 color:#8e2b2f !important;
@@ -3846,7 +3846,7 @@ def render_kline():
                 font-weight:700 !important;
                 white-space:nowrap !important;
             }
-            div[class*="st-key-technical-reset-button"] [data-testid="stButton"] > button:hover {
+            div[class*="st-key-technical-reset-button"] button:hover {
                 background:#f5e4e4 !important;
                 border-color:#d8b9b9 !important;
                 color:#6f2024 !important;
@@ -6073,6 +6073,145 @@ div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公�
 }
 </style>''', unsafe_allow_html=True)
 
+# 毛筆書法字體（頁首標題用；Google Fonts，需連網。沒載入時依序退回 標楷體 等系統字體）
+st.markdown(r'''<style>@import url("https://fonts.googleapis.com/css2?family=Yuji+Boku&family=Yuji+Syuku&display=swap");</style>''', unsafe_allow_html=True)
+
+# ============================================================
+# UI 美化（只改外觀，不動系統架構）
+#   1. 自選股側欄：產業／類別標題與股票卡片拉開距離
+#   2. 技術 K 線「回到最新」按鈕：淺色系（單選／複選框維持原樣）
+#   3. 往下捲動時，裝飾圖片與文字由下往上浮現（CSS + 小段 JS；分析圖表不套用）
+#   4. 頁尾不再被自選股側欄蓋住  5. 頁首標題：主題紅＋毛筆字體
+# ============================================================
+st.markdown(r'''<style>
+/* ---------- 1) 自選股側欄間距 ---------- */
+.stApp [data-testid="stSidebar"] .watch-industry-header{margin:16px 0 14px !important;padding:9px 12px !important;}
+.stApp [data-testid="stSidebar"] .watch-business-header{margin:12px 0 14px !important;padding:7px 12px !important;}
+.stApp [data-testid="stSidebar"] .watch-industry-separator{margin:22px 0 12px !important;}
+.stApp [data-testid="stSidebar"] .watch-row-divider{margin:6px 0 !important;}
+.stApp [class*="st-key-wc_"]{margin:0 0 14px !important;padding:14px 14px !important;}
+.stApp [class*="st-key-wc_"] [data-testid="stHorizontalBlock"]{gap:10px !important;}
+.stApp .wc-info{gap:8px !important;min-height:64px !important;}
+.stApp .wc-vals{gap:14px !important;}
+.stApp [data-testid="stSidebar"] [data-testid="stVerticalBlock"]{gap:.5rem !important;}
+
+/* ---------- 2) 技術 K 線「回到最新」按鈕：淺色系 ---------- */
+/* 技術 K 線「回到最新」：淡粉底＋紅字（按鈕外層有提示文字時 DOM 會多一層，所以用後代選擇器） */
+.stApp [class*="st-key-technical-reset-button"] button,
+.stApp [class*="st-key-technical-reset-button"] button:focus,
+.stApp [class*="st-key-technical-reset-button"] button:active{
+  background:#fbf1f1 !important;background-color:#fbf1f1 !important;background-image:none !important;
+  color:#8e2b2f !important;-webkit-text-fill-color:#8e2b2f !important;
+  border:1px solid #e6d3d3 !important;border-radius:10px !important;box-shadow:none !important;
+  font-weight:800 !important;white-space:nowrap !important;
+}
+.stApp [class*="st-key-technical-reset-button"] button:hover{
+  background:#f5e4e4 !important;background-color:#f5e4e4 !important;border-color:#d8b9b9 !important;
+  color:#6f2024 !important;-webkit-text-fill-color:#6f2024 !important;
+}
+.stApp [class*="st-key-technical-reset-button"] button *{
+  color:inherit !important;-webkit-text-fill-color:inherit !important;background:transparent !important;
+}
+/* ---------- 3) 捲動動態（只套在裝飾圖片與文字，分析圖表／表格不受影響） ----------
+   由 _inject_scroll_reveal() 的小段 JS 偵測「元素捲進畫面」並加上 rv-in：
+   文字由下往上浮起（由模糊變清晰、同區塊依序延後），裝飾圖片以遮罩由下往上展開。
+   JS 沒載入時不會加上 .rv，所以內容永遠不會被藏起來。 */
+.rv{opacity:0;transform:translateY(46px);filter:blur(5px);will-change:opacity,transform;
+  transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1),
+             filter .9s ease,clip-path 1s cubic-bezier(.2,.7,.2,1);}
+.rv.rv-in{opacity:1;transform:none;filter:blur(0);}
+.rv.rv-img{clip-path:inset(22% 0 0 0 round 10px);}
+.rv.rv-img.rv-in{clip-path:inset(-40px round 10px);}
+
+@keyframes siteImgSettle{from{transform:scale(1.2)}to{transform:scale(1)}}
+@keyframes siteParallax{from{transform:scale(1.16) translateY(-5%)}to{transform:scale(1.16) translateY(5%)}}
+@keyframes siteTitleIn{from{opacity:0;transform:translateY(28px);letter-spacing:.28em}to{opacity:1;transform:none;letter-spacing:inherit}}
+.page-image-title{animation:siteTitleIn 1.1s .25s cubic-bezier(.2,.7,.2,1) both;}
+/* 支援捲動驅動動畫的瀏覽器：區塊內圖片進場時由放大緩緩縮回；橫幅圖片隨捲動視差位移 */
+@supports (animation-timeline: view()){
+  .home-image-grid>* img,.home-image-stack>* img,.contact-band img{
+    animation:siteImgSettle linear both;animation-timeline:view();animation-range:entry 0% cover 55%;
+  }
+  .page-image-banner>img{animation:siteParallax linear both;animation-timeline:view();animation-range:cover 0% cover 100%;}
+}
+/* 連結：滑過時底線由左向右畫出 */
+.home-link,.contact-link{background-image:linear-gradient(currentColor,currentColor);background-repeat:no-repeat;
+  background-position:0 100%;background-size:0 1.5px;transition:background-size .4s cubic-bezier(.2,.7,.2,1);}
+.home-link:hover,.contact-link:hover{background-size:100% 1.5px;}
+
+/* ---------- 4) 頁尾：自選股側欄展開時，頁尾改成縮在主內容區（不再橫跨到側欄底下被蓋住） ---------- */
+body:has([data-testid="stSidebar"][aria-expanded="true"] .side-watch-title) .site-footer{
+  width:100% !important;margin-left:0 !important;margin-right:0 !important;border-radius:14px 14px 0 0;
+}
+
+/* ---------- 5) 頁首標題：網站主題紅＋毛筆書法字體（寫字般由左向右顯現） ---------- */
+.stApp .brand-name{
+  font-family:"Yuji Boku","Yuji Syuku","Zhi Mang Xing","DFKai-SB","BiauKai","標楷體","Noto Serif TC",serif !important;
+  font-size:42px !important;font-weight:400 !important;letter-spacing:.14em !important;line-height:1.25 !important;
+  color:#8e2b2f !important;-webkit-text-fill-color:#8e2b2f !important;
+  animation:brushWrite 1.6s cubic-bezier(.3,.6,.2,1) both;
+}
+@keyframes brushWrite{from{clip-path:inset(-14px 100% -14px 0)}to{clip-path:inset(-14px -14px -14px -14px)}}
+@media(max-width:900px){.stApp .brand-name{font-size:34px !important;}}
+@media(max-width:600px){.stApp .brand-name{font-size:26px !important;letter-spacing:.08em !important;}}
+
+@media (prefers-reduced-motion: reduce){
+  .rv,.rv.rv-img{opacity:1 !important;transform:none !important;filter:none !important;clip-path:none !important;transition:none !important;}
+  .page-image-banner>img,.home-image-grid>* img,.home-image-stack>* img,.contact-band img,
+  .page-image-title,.stApp .brand-name{animation:none !important;}
+}
+</style>''', unsafe_allow_html=True)
+
+
+def _inject_scroll_reveal() -> None:
+    """安裝「捲動浮現」：元素捲進畫面時由下往上浮起。腳本裝在父頁面一次，Streamlit 重新執行時不會重複安裝。"""
+    js = r"""
+(function(){
+  if (window.__siteRevealOn) return; window.__siteRevealOn = true;
+  var IMG = ['.page-image-banner','.contact-band','.home-image-grid > *','.home-image-stack > *'];
+  var TXT = ['.home-copy > *','.content-heading > *','.feature-section-title','.contact-info-card > *','.footer-inner > *',
+    '[data-testid="stMain"] [data-testid="stHeading"]','[data-testid="stMain"] [data-testid="stCaptionContainer"]',
+    '[data-testid="stMain"] [data-testid="stMarkdownContainer"] > h1','[data-testid="stMain"] [data-testid="stMarkdownContainer"] > h2',
+    '[data-testid="stMain"] [data-testid="stMarkdownContainer"] > h3','[data-testid="stMain"] [data-testid="stMarkdownContainer"] > h4',
+    '[data-testid="stMain"] [data-testid="stMarkdownContainer"] > p'];
+  var SKIP = '[data-testid="stSidebar"],[data-testid="stPlotlyChart"],[data-testid="stDataFrame"],[data-testid="stTable"],' +
+    '[data-testid="stVegaLiteChart"],[data-testid="stWidgetLabel"],label,button,summary,[role="tab"],[role="radiogroup"],' +
+    '[data-baseweb="select"],[data-baseweb="tab-list"],.hero-carousel,[class*="st-key-auth_"],.site-nav';
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (!e.isIntersecting) return;
+      var el = e.target; el.classList.add('rv-in'); io.unobserve(el);
+      setTimeout(function(){ el.classList.remove('rv','rv-in','rv-img'); el.style.transitionDelay=''; el.style.willChange='auto'; }, 1800);
+    });
+  }, {threshold: 0.08, rootMargin: '0px 0px -8% 0px'});
+  function mark(sel, isImg){
+    var list; try { list = document.querySelectorAll(sel); } catch(err){ return; }
+    list.forEach(function(el){
+      if (el.__rv || el.closest(SKIP)) return;
+      var r = el.getBoundingClientRect();
+      if (r.height === 0 || r.width === 0) return;           // 還沒顯示（例如別的分頁），之後再試
+      el.__rv = 1;
+      if (r.bottom <= 0 || r.top < window.innerHeight * 0.96) return;   // 已經在畫面內或已捲過：不動它，避免閃爍
+      el.classList.add('rv'); if (isImg) el.classList.add('rv-img');
+      var i = Array.prototype.indexOf.call(el.parentNode.children, el);
+      el.style.transitionDelay = (Math.min(Math.max(i,0), 4) * 80) + 'ms';
+      io.observe(el);
+    });
+  }
+  function scan(){ IMG.forEach(function(q){ mark(q, true); }); TXT.forEach(function(q){ mark(q, false); }); }
+  var timer = null;
+  new MutationObserver(function(){ if (timer) return; timer = setTimeout(function(){ timer = null; scan(); }, 250); })
+    .observe(document.body, {childList: true, subtree: true});
+  scan();
+})();
+"""
+    _components.html(
+        "<script>(function(){try{var w=window.parent;if(w.__siteRevealInstalled)return;w.__siteRevealInstalled=true;"
+        "var s=w.document.createElement('script');s.textContent=" + json.dumps(js) + ";w.document.head.appendChild(s);}catch(e){}})();</script>",
+        height=0,
+    )
+
+
 def is_authenticated() -> bool:
     return bool(st.session_state.get("auth_user"))
 
@@ -6259,17 +6398,16 @@ def render_auth_header_actions() -> None:
         unsafe_allow_html=True,
     )
     with st.container(key="auth_header_actions"):
-        login_col, request_col = st.columns([1, 1], gap="small", vertical_alignment="center")
         if is_authenticated():
-            with login_col:
-                st.markdown('<div class="auth-status">已登入</div>', unsafe_allow_html=True)
-            with request_col:
+            (logout_col,) = st.columns(1)
+            with logout_col:
                 if st.button("登出", key="auth_top_logout"):
                     _delete_auth_cookie()
                     st.session_state.pop("auth_user", None)
                     st.session_state["auth_panel_open"] = False
                     st.rerun()
         else:
+            login_col, request_col = st.columns([1, 1], gap="small", vertical_alignment="center")
             with login_col:
                 if st.button("登入", key="auth_top_login"):
                     _toggle_auth_panel("login")
@@ -6561,6 +6699,7 @@ render_account_review_action()
 auth_cookie_manager = stx.CookieManager(key="stock_trading_auth_cookie_manager")
 _restore_auth_from_cookie(auth_cookie_manager)
 _flush_auth_cookie_op(auth_cookie_manager)
+_inject_scroll_reveal()
 render_header_and_search()
 render_auth_header_actions()
 current_section = render_site_navigation()
