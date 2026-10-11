@@ -30,7 +30,6 @@ import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
 import streamlit as st
-import extra_streamlit_components as stx
 from streamlit_autorefresh import st_autorefresh
 
 
@@ -6088,7 +6087,7 @@ def _restore_auth_from_cookie(cookie_manager=None) -> None:
     st.session_state["auth_user"] = email or ""
 
 
-def _write_auth_cookie(cookie_manager, email: str) -> None:
+def _write_auth_cookie(email: str) -> None:
     """建立登入 token，並排入「下一次執行時寫入瀏覽器 cookie」。
 
     不能在寫 cookie 的同一次執行裡立刻 st.rerun()，否則前端元件還沒送出就被中斷、cookie 寫不進去。
@@ -6099,7 +6098,7 @@ def _write_auth_cookie(cookie_manager, email: str) -> None:
     st.session_state.pop("auth_logged_out", None)
 
 
-def _delete_auth_cookie(cookie_manager=None) -> None:
+def _delete_auth_cookie() -> None:
     st.session_state["_auth_cookie_op"] = ("delete", "")
     st.session_state["auth_logged_out"] = True
 
@@ -6137,7 +6136,7 @@ def _toggle_auth_panel(mode: str) -> None:
     st.session_state["auth_panel_mode"] = mode
 
 
-def render_auth_header_actions(cookie_manager) -> None:
+def render_auth_header_actions() -> None:
     """頁首右上角的「登入／申請帳號」：粗體紅字超連結樣式（不是按鈕）；點擊後才展開左側帳號面板。"""
     st.markdown(
         """
@@ -6245,7 +6244,7 @@ def render_auth_header_actions(cookie_manager) -> None:
                 st.markdown('<div class="auth-status">已登入</div>', unsafe_allow_html=True)
             with request_col:
                 if st.button("登出", key="auth_top_logout"):
-                    _delete_auth_cookie(cookie_manager)
+                    _delete_auth_cookie()
                     st.session_state.pop("auth_user", None)
                     st.session_state["auth_panel_open"] = False
                     st.rerun()
@@ -6260,7 +6259,7 @@ def render_auth_header_actions(cookie_manager) -> None:
                     st.rerun()
 
 
-def render_auth_panel(cookie_manager) -> None:
+def render_auth_panel() -> None:
     """使用者點擊頁首入口後才顯示側邊登入／申請帳號面板。"""
     if not st.session_state.get("auth_panel_open", False):
         return
@@ -6293,7 +6292,7 @@ def render_auth_panel(cookie_manager) -> None:
                 if login_submit:
                     if authenticate(email, password):
                         try:
-                            _write_auth_cookie(cookie_manager, email)
+                            _write_auth_cookie(email)
                         except Exception as exc:
                             st.error("建立登入工作階段失敗：" + type(exc).__name__)
                         else:
@@ -6379,12 +6378,12 @@ _components.html(
     </script>""",
     height=0,
 )
-auth_cookie_manager = stx.CookieManager(key="stock_trading_auth_cookie_manager")
-_restore_auth_from_cookie(auth_cookie_manager)
+_restore_auth_from_cookie()
+_flush_auth_cookie_op()
 render_header_and_search()
-render_auth_header_actions(auth_cookie_manager)
+render_auth_header_actions()
 current_section = render_site_navigation()
-render_auth_panel(auth_cookie_manager)
+render_auth_panel()
 sync_sidebar_visibility(current_section)
 
 if current_section == "home":
@@ -6395,7 +6394,7 @@ elif current_section == "future":
     if is_authenticated():
         render_future_workspace()
     else:
-        st.markdown("<div class=\\"content-heading\\"><h1>未來分析</h1><p>此功能僅限登入使用者。</p></div>", unsafe_allow_html=True)
+        st.markdown('<div class="content-heading"><h1>未來分析</h1><p>此功能僅限登入使用者。</p></div>', unsafe_allow_html=True)
         st.info("請點擊頁面右上角的「登入」或「申請帳號」，開啟左側選單。")
 elif current_section == "finance":
     render_finance_workspace()
