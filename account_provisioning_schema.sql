@@ -15,6 +15,8 @@ create table if not exists public.account_requests (
     activate_at timestamptz
 );
 create index if not exists account_requests_email_idx on public.account_requests (lower(email));
+create unique index if not exists account_requests_one_active_email_idx
+    on public.account_requests (lower(email)) where status in ('pending', 'approved');
 create index if not exists account_requests_status_expiry_idx on public.account_requests (status, token_expires_at);
 alter table public.account_requests enable row level security;
 alter table public.account_requests drop constraint if exists account_requests_email_length_check;
