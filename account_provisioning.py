@@ -4,7 +4,7 @@ from __future__ import annotations
 import hashlib, os, secrets, string
 from datetime import datetime, timedelta, timezone
 from typing import Any
-from urllib.parse import quote
+from urllib.parse import quote, urlsplit, urlunsplit
 import requests
 
 TABLE = "account_requests"
@@ -16,12 +16,50 @@ TIMEOUT_SECONDS = 15
 class AccountProvisioningError(RuntimeError):
     """帳號申請／審核服務錯誤。"""
 
+def _normalize_project_url(raw_url: str) -> str:
+    """正規化 Supabase 網址，避免把 /rest/v1 重複接到 API URL 後面。"""
+    value = str(raw_url or "").strip()
+    try:
+        parsed = urlsplit(value)
+    except ValueError as exc:
+        raise AccountProvisioningError("ACCOUNT_DB_URL 格式不正確，請填 Supabase Project URL。") from exc
+
+    if parsed.scheme.lower() not in {"https", "http"} or not parsed.netloc:
+        raise AccountProvisioningError(
+            "ACCOUNT_DB_URL 必須是完整網址，例如 https://<project-ref>.supabase.co。"
+        )
+    if parsed.username or parsed.password:
+        raise AccountProvisioningError(
+            "ACCOUNT_DB_URL 不應包含帳號或密碼；請只填 Supabase Project URL。"
+        )
+
+    # Supabase REST API 的正式路徑由程式統一附加。
+    # 同時容忍誤貼 https://<project-ref>.supabase.co/rest/v1
+    # 或 /rest/v1/account_requests 的情況，避免形成 /rest/v1/rest/v1/...
+    parts = [segment for segment in parsed.path.split("/") if segment]
+    rest_index = next(
+        (index for index in range(len(parts) - 1)
+         if parts[index].lower() == "rest" and parts[index + 1].lower() == "v1"),
+        None,
+    )
+    if rest_index is not None:
+        parts = parts[:rest_index]
+    elif parts:
+        raise AccountProvisioningError(
+            "ACCOUNT_DB_URL 不應包含額外路徑。請填 Supabase Project URL；"
+            "即使網址尾端有 /rest/v1，程式也會自動整理。"
+        )
+
+    base_path = "/" + "/".join(parts) if parts else ""
+    return urlunsplit((parsed.scheme.lower(), parsed.netloc, base_path, "", "")).rstrip("/")
+
+
 def _config() -> tuple[str, str]:
-    url = os.getenv("ACCOUNT_DB_URL", "").strip().rstrip("/")
+    raw_url = os.getenv("ACCOUNT_DB_URL", "").strip()
     key = os.getenv("ACCOUNT_DB_SERVICE_ROLE_KEY", "").strip()
-    if not url or not key:
+    if not raw_url or not key:
         raise AccountProvisioningError("尚未設定 ACCOUNT_DB_URL 與 ACCOUNT_DB_SERVICE_ROLE_KEY；請先設定 Supabase 永久資料庫。")
-    return url, key
+    return _normalize_project_url(raw_url), key
 
 def is_configured() -> bool:
     return bool(os.getenv("ACCOUNT_DB_URL", "").strip() and os.getenv("ACCOUNT_DB_SERVICE_ROLE_KEY", "").strip())
