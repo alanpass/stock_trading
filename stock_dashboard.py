@@ -6365,15 +6365,11 @@ def render_account_review_action() -> None:
             st.success("此帳號申請已完成核准處理。")
             st.write("申請者：" + str(cached.get("email", "")))
             st.write("申請者密碼郵件：" + ("已寄出" if cached.get("credential_sent") else "寄送失敗"))
-            st.write("管理員雜湊設定通知：" + ("已寄出" if cached.get("admin_hash_sent") else "寄送失敗"))
+            st.write("登入憑證：" + ("已自動儲存至 Supabase，不需手動更新 AUTH_USERS_JSON。" if cached.get("database_credential_saved") else "資料庫儲存狀態需再確認。"))
             if not cached.get("credential_sent"):
                 st.warning("密碼郵件未成功送出。請使用下方一次性處理資訊聯絡申請者，勿公開分享此頁面。")
                 if cached.get("fallback_password"):
                     st.code("初始密碼：" + str(cached["fallback_password"]))
-            if not cached.get("admin_hash_sent"):
-                st.warning("管理員雜湊通知未成功送出；可複製下列內容手動更新 AUTH_USERS_JSON。")
-                if cached.get("hash_json"):
-                    st.code(cached["hash_json"], language="json")
         else:
             st.success("此帳號申請已拒絕處理。")
             st.write("申請者：" + str(cached.get("email", "")))
@@ -6421,7 +6417,7 @@ def render_account_review_action() -> None:
     st.write("申請者電子郵件：" + str(request.get("email", "")))
     st.write("申請時間：" + str(request.get("created_at", "")))
     if decision == "approve":
-        st.info("確認後系統會產生 8 位英數初始密碼寄給申請者，並寄送密碼雜湊給管理員。帳號將於核准後 5 分鐘啟用；管理員仍須更新 AUTH_USERS_JSON。")
+        st.info("確認後系統會自動產生初始密碼並將密碼雜湊儲存至 Supabase。帳號於核准後 5 分鐘啟用，無須管理員手動更新 AUTH_USERS_JSON。")
     else:
         st.warning("確認後系統會將申請標記為拒絕，並寄送審核結果給申請者。此操作無法撤回。")
     with st.form("account_review_confirm_form"):
@@ -6446,26 +6442,14 @@ def render_account_review_action() -> None:
                     )
                 except Exception as mail_exc:
                     credential_mail = {"sent": False, "error": type(mail_exc).__name__}
-                try:
-                    admin_mail = agent.send_account_hash_for_admin(
-                        email=result["email"],
-                        password_hash=result["password_hash"],
-                    )
-                except Exception as mail_exc:
-                    admin_mail = {"sent": False, "error": type(mail_exc).__name__}
                 cached_result = {
                     "decision": decision,
                     "email": result["email"],
                     "credential_sent": bool(credential_mail.get("sent")),
-                    "admin_hash_sent": bool(admin_mail.get("sent")),
+                    "database_credential_saved": bool(result.get("password_hash")),
                 }
                 if not credential_mail.get("sent"):
                     cached_result["fallback_password"] = result["password"]
-                if not admin_mail.get("sent"):
-                    import json as _json
-                    cached_result["hash_json"] = _json.dumps(
-                        {result["email"]: result["password_hash"]}, ensure_ascii=False
-                    )
                 st.session_state[result_key] = cached_result
             else:
                 try:
