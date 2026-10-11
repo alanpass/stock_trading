@@ -7,8 +7,8 @@
 - 帳號申請只收電子郵件，通知寄到 `a1113359@mail.nuk.edu.tw`；不會自動建立帳號或寄出密碼。
 - 帳號清單只放在 Streamlit Secrets／環境變數 `AUTH_USERS_JSON`，不應提交到 GitHub。
 - 密碼以 PBKDF2-HMAC-SHA256 雜湊儲存，不保存明文密碼。
-- 登入狀態使用有效期 14 天的簽章 Cookie；切換網站分頁或 Streamlit 重建 session 後可還原登入狀態。修改該帳號密碼雜湊後，舊 Cookie 會失效。
-- 頁首右上角提供紅色「登入」與「申請帳號」入口，點擊後才展開左側帳號面板；按面板上的「✕」可收回。
+- 登入狀態使用有效期 14 天的簽章 Cookie；切換網站分頁（`?section=...` 會整頁重新載入）或 Streamlit 重建 session 後，直接讀取瀏覽器送來的 Cookie（`st.context.cookies`）還原登入狀態，登入／登出時由頁面 JavaScript 寫入／刪除 Cookie，不再依賴 Cookie Manager 元件。修改該帳號密碼雜湊後，舊 Cookie 會失效。
+- 頁首右上角提供粗體紅字超連結樣式的「登入」與「申請帳號」入口（不是按鈕），點擊後才展開左側帳號面板；面板內按鈕為淺色系，按面板上的「✕」可收回。
 
 ## 1. 建立管理員密碼雜湊
 

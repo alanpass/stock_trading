@@ -18,7 +18,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from datetime import datetime, time as dt_time
+from datetime import datetime, timedelta, time as dt_time
 from zoneinfo import ZoneInfo
 import re
 import json
@@ -53,6 +53,8 @@ def _load_cloud_secret_env() -> None:
             "EMAIL_ATTACH_REPORT",
             "SUBSCRIBER_SYNC_URL",
             "SUBSCRIBER_SYNC_TOKEN",
+            "AUTH_USERS_JSON",
+            "AUTH_SESSION_SECRET",
         ]
         for name in secret_keys:
             try:
@@ -85,6 +87,8 @@ from theme_agent import theme_sankey_frame
 from post_market_analysis import PostMarketAnalyzer
 from email_agent import EmailAgent
 from subscriber_service import register_subscriber, subscription_status
+from auth_service import (authenticate, request_account, ADMIN_EMAIL, create_session_token,
+                         verify_session_token, SESSION_COOKIE_NAME, SESSION_TTL_SECONDS)
 from industry_rotation import ROTATION_THEMES, ROTATION_DEFAULT_THEMES, ROTATION_DISPLAY_NAMES, NAME_FALLBACKS, load_published_rotation
 from us_industry_indicators import US_INDUSTRY_INDICATORS, get_us_indicator_symbols, fetch_us_indicators
 
@@ -149,7 +153,7 @@ def _site_favicon():
     return "📈"
 
 
-st.set_page_config(page_title="台股即時互動式分析系統", page_icon=_site_favicon(), layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="台股即時互動式分析系統", page_icon=_site_favicon(), layout="wide", initial_sidebar_state="collapsed")
 
 
 # ---- 所有 Plotly 圖表統一使用與網頁背景相配的淺色系 ----
@@ -1164,11 +1168,14 @@ def render_strategy_search() -> None:
     result = st.session_state.get("search_result") or {}
     if result and code not in st.session_state.watchlist:
         st.info(f'目前分析標的：{result.get("name", code)}（{code}）尚未加入自選股。')
-        if st.button("加入自選股", key=f"add_watch_site_{code}"):
-            st.session_state.watchlist.append(code)
-            st.session_state.watchlist = list(dict.fromkeys(st.session_state.watchlist))
-            save_watchlist(st.session_state.watchlist)
-            st.rerun()
+        if is_authenticated():
+            if st.button("加入自選股", key=f"add_watch_site_{code}"):
+                st.session_state.watchlist.append(code)
+                st.session_state.watchlist = list(dict.fromkeys(st.session_state.watchlist))
+                save_watchlist(st.session_state.watchlist)
+                st.rerun()
+        else:
+            st.caption("登入後才能新增自選股。")
 
     st.markdown(f'<div class="selected-strip"><span>目前分析標的</span><strong>{code}</strong><span>｜自選股 {len(st.session_state.watchlist)} 檔</span></div>', unsafe_allow_html=True)
 
@@ -1413,7 +1420,6 @@ def _record_summary(item: dict) -> str:
 
 
 _FIN_SCHEDULE_TEXT = "08:10、11:00、13:30、16:00、18:00、23:00"
-_EARN_SCHEDULE_TEXT = "18:00"
 
 
 def _fin_hl(text, terms) -> str:
@@ -1728,7 +1734,7 @@ def render_finance_workspace() -> None:
 
     st.markdown(
         f"<div class='info-strip'>法說會：{len(earnings)} 筆｜財經新聞：{len(news)} 筆｜"
-        f"新聞更新：每天 {_FIN_SCHEDULE_TEXT}｜法說會更新：每天 {_EARN_SCHEDULE_TEXT} 一次｜法說會摘要範圍：最近 5 天｜財經新聞範圍：最近 2 天。晨報 08:30、盤後分析 14:30。</div>",
+        f"更新排程：每天 {_FIN_SCHEDULE_TEXT}｜法說會摘要範圍：最近 5 天｜財經新聞範圍：最近 2 天。晨報 08:30、盤後分析 14:30。</div>",
         unsafe_allow_html=True,
     )
 
@@ -3488,6 +3494,9 @@ def _watch_select(code: str) -> None:
 
 
 def _watch_remove(code: str) -> None:
+    if not is_authenticated():
+        st.warning("請先登入，才能刪除自選股。")
+        return
     new_watchlist = [x for x in st.session_state.watchlist if x != code]
     st.session_state.watchlist = new_watchlist
     save_watchlist(new_watchlist)
@@ -3597,7 +3606,7 @@ def render_watchlist(compact: bool = False):
                                 if st.button("\u200b", key=f"watch_select_{r['code']}_{idx}", icon=":material/visibility:", help="選取此股票", use_container_width=True):
                                     _watch_select(r['code'])
                             with b3:
-                                if st.button("\u200b", key=f"watch_remove_{r['code']}_{idx}", icon=":material/delete:", help=f"從自選股移除 {r['code']}", use_container_width=True):
+                                if is_authenticated() and st.button("\u200b", key=f"watch_remove_{r['code']}_{idx}", icon=":material/delete:", help=f"從自選股移除 {r['code']}", use_container_width=True):
                                     _watch_remove(r['code'])
                     else:
                         b1,b2,b3,b4,b5,b6 = st.columns([3.25, 0.82, 0.82, 1.7, 1.65, 1.75], gap="small")
@@ -3610,7 +3619,7 @@ def render_watchlist(compact: bool = False):
                             if st.button("\u200b", key=f"watch_select_{r['code']}_{idx}", icon=":material/visibility:", use_container_width=True, type="secondary", help="查看此股票"):
                                 _watch_select(r['code'])
                         with b3:
-                            if st.button("\u200b", key=f"watch_remove_{r['code']}_{idx}", icon=":material/delete:", use_container_width=True, type="secondary", help=f"從自選股移除 {r['code']}"):
+                            if is_authenticated() and st.button("\u200b", key=f"watch_remove_{r['code']}_{idx}", icon=":material/delete:", use_container_width=True, type="secondary", help=f"從自選股移除 {r['code']}"):
                                 _watch_remove(r['code'])
                         with b4:
                             st.markdown(f"<div class='watch-value watch-price-cell{value_class}' style='color:{vcolor}'>{price_txt}</div>", unsafe_allow_html=True)
@@ -6051,6 +6060,305 @@ div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公�
 }
 </style>''', unsafe_allow_html=True)
 
+
+def is_authenticated() -> bool:
+    return bool(st.session_state.get("auth_user"))
+
+
+def _restore_auth_from_cookie(cookie_manager=None) -> None:
+    """還原登入者。
+
+    切換分頁（?section=...）是整頁重新載入，Streamlit 會建立全新的 session，
+    session_state 會被清空。登入狀態因此存在簽章 cookie 裡，
+    並直接讀取瀏覽器隨連線送出的 cookie（st.context.cookies）：
+    頁面一載入就拿得到，不必等任何前端元件回傳，所以不會出現「先當成未登入」的空窗。
+    """
+    if st.session_state.get("auth_user"):
+        return
+    if st.session_state.get("auth_logged_out"):
+        # 本 session 已按過登出；瀏覽器送來的 cookie 是登出前的舊值，不能再拿來還原。
+        st.session_state["auth_user"] = ""
+        return
+    token = None
+    try:
+        token = st.context.cookies.get(SESSION_COOKIE_NAME)
+    except Exception:
+        token = None
+    email = verify_session_token(str(token)) if token else None
+    st.session_state["auth_user"] = email or ""
+
+
+def _write_auth_cookie(cookie_manager, email: str) -> None:
+    """建立登入 token，並排入「下一次執行時寫入瀏覽器 cookie」。
+
+    不能在寫 cookie 的同一次執行裡立刻 st.rerun()，否則前端元件還沒送出就被中斷、cookie 寫不進去。
+    所以這裡只排隊，真正寫入由 _flush_auth_cookie_op() 在下一次執行開頭完成。
+    """
+    token = create_session_token(email)
+    st.session_state["_auth_cookie_op"] = ("set", token)
+    st.session_state.pop("auth_logged_out", None)
+
+
+def _delete_auth_cookie(cookie_manager=None) -> None:
+    st.session_state["_auth_cookie_op"] = ("delete", "")
+    st.session_state["auth_logged_out"] = True
+
+
+def _flush_auth_cookie_op() -> None:
+    """把排隊中的 cookie 寫入／刪除動作交給瀏覽器執行（同源 iframe 操作 parent document）。"""
+    op = st.session_state.pop("_auth_cookie_op", None)
+    if not op:
+        return
+    action, token = op
+    name = json.dumps(SESSION_COOKIE_NAME)
+    if action == "set":
+        body = (
+            f"d.cookie = {name} + '=' + {json.dumps(token)} + "
+            f"'; path=/; max-age={int(SESSION_TTL_SECONDS)}; SameSite=Lax' + sec;"
+        )
+    else:
+        body = (
+            f"d.cookie = {name} + "
+            "'=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax' + sec;"
+        )
+    _components.html(
+        "<script>(function(){try{const w=window.parent;const d=w.document;"
+        "const sec=(w.location.protocol==='https:')?'; Secure':'';" + body + "}catch(e){}})();</script>",
+        height=0,
+    )
+
+
+def _toggle_auth_panel(mode: str) -> None:
+    same_panel = (
+        bool(st.session_state.get("auth_panel_open", False))
+        and str(st.session_state.get("auth_panel_mode", "login")) == mode
+    )
+    st.session_state["auth_panel_open"] = not same_panel
+    st.session_state["auth_panel_mode"] = mode
+
+
+def render_auth_header_actions(cookie_manager) -> None:
+    """頁首右上角的「登入／申請帳號」：粗體紅字超連結樣式（不是按鈕）；點擊後才展開左側帳號面板。"""
+    st.markdown(
+        """
+        <style>
+        /* ---- 右上角入口：貼在頁首最右上角，登入／申請帳號（或已登入／登出）排成一列 ---- */
+        [data-testid="stMainBlockContainer"], .stMainBlockContainer, .block-container {position:relative;}
+        .stApp .st-key-auth_header_actions{
+          position:absolute!important;top:10px;right:6px;z-index:60;
+          width:auto!important;min-width:0!important;
+        }
+        .stApp .st-key-auth_header_actions [data-testid="stHorizontalBlock"]{
+          display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+          width:auto!important;gap:22px!important;align-items:center!important;justify-content:flex-end!important;
+        }
+        .stApp .st-key-auth_header_actions [data-testid="stColumn"],
+        .stApp .st-key-auth_header_actions [data-testid="column"]{
+          width:auto!important;min-width:0!important;flex:0 0 auto!important;
+        }
+        .stApp .st-key-auth_header_actions .auth-status{
+          display:flex;align-items:center;height:30px;line-height:30px;margin:0;
+          color:#8e2b2f;font-weight:700;font-size:15px;white-space:nowrap;
+        }
+        @media(max-width:700px){
+          .stApp .st-key-auth_header_actions{position:static!important;width:100%!important;}
+          .stApp .st-key-auth_header_actions [data-testid="stHorizontalBlock"]{justify-content:flex-end!important;gap:14px!important;}
+        }
+        /* ---- 入口按鈕：全站有多條 !important 的按鈕樣式，這裡用更高的權重蓋回超連結外觀 ---- */
+        .stApp .st-key-auth_header_actions div[data-testid="stButton"]{
+          display:flex!important;justify-content:flex-end!important;
+        }
+        .stApp .st-key-auth_header_actions div[data-testid="stButton"] > button[kind],
+        .stApp .st-key-auth_header_actions div[data-testid="stButton"] > button[kind]:hover,
+        .stApp .st-key-auth_header_actions div[data-testid="stButton"] > button[kind]:focus,
+        .stApp .st-key-auth_header_actions div[data-testid="stButton"] > button[kind]:active {
+          background:transparent!important;background-color:transparent!important;
+          border:0!important;border-radius:0!important;box-shadow:none!important;outline:0!important;
+          transform:none!important;width:auto!important;min-width:0!important;
+          min-height:30px!important;height:30px!important;padding:0 6px!important;
+          color:#8e2b2f!important;-webkit-text-fill-color:#8e2b2f!important;
+          font-weight:800!important;white-space:nowrap!important;
+          display:flex!important;align-items:center!important;justify-content:flex-end!important;
+        }
+        .stApp .st-key-auth_header_actions div[data-testid="stButton"] > button[kind]::before{display:none!important;}
+        .stApp .st-key-auth_header_actions div[data-testid="stButton"] > button[kind] p{
+          color:#8e2b2f!important;-webkit-text-fill-color:#8e2b2f!important;
+          font-size:15px!important;font-weight:800!important;margin:0!important;
+        }
+        .stApp .st-key-auth_header_actions div[data-testid="stButton"] > button[kind]:hover p{
+          color:#6f2024!important;-webkit-text-fill-color:#6f2024!important;
+          text-decoration:underline!important;text-underline-offset:5px!important;
+        }
+        .stApp .st-key-auth_header_actions [data-testid="stCaptionContainer"] p{
+          color:#8e2b2f!important;font-weight:700!important;font-size:13px!important;text-align:right;margin:0!important;
+        }
+
+        /* ---- 左側帳號面板：按鈕一律淺色系（淡粉底＋紅字），不用黑色 ---- */
+        .st-key-auth_drawer {border:1px solid #e6d3d3;border-radius:12px;
+          background:#fffaf9;padding:12px 12px 16px!important;margin-bottom:12px;}
+        .stApp .st-key-auth_drawer div[data-testid="stButton"] > button[kind],
+        .stApp .st-key-auth_drawer [data-testid="stFormSubmitButton"] > button {
+          background:#f8e9e9!important;background-color:#f8e9e9!important;
+          color:#8e2b2f!important;-webkit-text-fill-color:#8e2b2f!important;
+          border:1px solid #e3c6c6!important;border-radius:10px!important;
+          box-shadow:none!important;font-weight:800!important;opacity:1!important;
+        }
+        .stApp .st-key-auth_drawer div[data-testid="stButton"] > button[kind] p,
+        .stApp .st-key-auth_drawer [data-testid="stFormSubmitButton"] > button p {
+          color:#8e2b2f!important;-webkit-text-fill-color:#8e2b2f!important;font-weight:800!important;
+        }
+        .stApp .st-key-auth_drawer div[data-testid="stButton"] > button[kind]:hover,
+        .stApp .st-key-auth_drawer [data-testid="stFormSubmitButton"] > button:hover {
+          background:#f1d9d9!important;background-color:#f1d9d9!important;
+          border-color:#cf9d9d!important;color:#6f2024!important;-webkit-text-fill-color:#6f2024!important;
+        }
+        .stApp .st-key-auth_drawer .st-key-auth_close_panel button,
+        .stApp .st-key-auth_drawer .st-key-auth_close_panel button:hover,
+        .stApp .st-key-auth_drawer .st-key-auth_close_panel button:focus,
+        .stApp .st-key-auth_drawer .st-key-auth_close_panel button:active{
+          background:#f8e9e9!important;background-color:#f8e9e9!important;background-image:none!important;
+          color:#8e2b2f!important;-webkit-text-fill-color:#8e2b2f!important;
+          border:1px solid #e3c6c6!important;border-radius:10px!important;box-shadow:none!important;
+          min-width:38px!important;padding:0 !important;font-size:16px!important;font-weight:800!important;
+        }
+        .stApp .st-key-auth_drawer .st-key-auth_close_panel button:hover{
+          background:#f1d9d9!important;background-color:#f1d9d9!important;border-color:#cf9d9d!important;
+        }
+        .stApp .st-key-auth_drawer .st-key-auth_close_panel button *{
+          color:#8e2b2f!important;-webkit-text-fill-color:#8e2b2f!important;background:transparent!important;
+        }
+        .stApp .st-key-auth_drawer .st-key-auth_close_panel button::before{display:none!important;}
+        body:has(.st-key-auth_drawer) [data-testid="stSidebarCollapseButton"] {
+          display:none!important;
+        }
+        @media(max-width:600px) {
+          .stApp .st-key-auth_header_actions div[data-testid="stButton"] > button[kind] p{font-size:13px!important;}
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    with st.container(key="auth_header_actions"):
+        login_col, request_col = st.columns([1, 1], gap="small", vertical_alignment="center")
+        if is_authenticated():
+            with login_col:
+                st.markdown('<div class="auth-status">已登入</div>', unsafe_allow_html=True)
+            with request_col:
+                if st.button("登出", key="auth_top_logout"):
+                    _delete_auth_cookie(cookie_manager)
+                    st.session_state.pop("auth_user", None)
+                    st.session_state["auth_panel_open"] = False
+                    st.rerun()
+        else:
+            with login_col:
+                if st.button("登入", key="auth_top_login"):
+                    _toggle_auth_panel("login")
+                    st.rerun()
+            with request_col:
+                if st.button("申請帳號", key="auth_top_request"):
+                    _toggle_auth_panel("request")
+                    st.rerun()
+
+
+def render_auth_panel(cookie_manager) -> None:
+    """使用者點擊頁首入口後才顯示側邊登入／申請帳號面板。"""
+    if not st.session_state.get("auth_panel_open", False):
+        return
+
+    with st.sidebar:
+        with st.container(key="auth_drawer"):
+            top_col, close_col = st.columns([4, 1], vertical_alignment="center")
+            mode = str(st.session_state.get("auth_panel_mode", "login"))
+            with top_col:
+                st.markdown("### " + ("帳號登入" if mode == "login" else "申請帳號"))
+            with close_col:
+                if st.button("✕", key="auth_close_panel", help="收回帳號選單", use_container_width=True):
+                    st.session_state["auth_panel_open"] = False
+                    st.rerun()
+
+            if is_authenticated():
+                st.success("已登入：" + str(st.session_state.get("auth_user", "")))
+                if st.button("登出", key="auth_panel_logout", use_container_width=True):
+                    _delete_auth_cookie(cookie_manager)
+                    st.session_state.pop("auth_user", None)
+                    st.session_state["auth_panel_open"] = False
+                    st.rerun()
+                return
+
+            if mode == "login":
+                with st.form("account_login_form"):
+                    email = st.text_input("電子郵件", key="auth_login_email").strip().lower()
+                    password = st.text_input("密碼", type="password", key="auth_login_password")
+                    login_submit = st.form_submit_button("登入", use_container_width=True)
+                if login_submit:
+                    if authenticate(email, password):
+                        try:
+                            _write_auth_cookie(cookie_manager, email)
+                        except Exception as exc:
+                            st.error("建立登入工作階段失敗：" + type(exc).__name__)
+                        else:
+                            st.session_state["auth_user"] = email
+                            st.session_state["auth_panel_open"] = False
+                            st.rerun()
+                    else:
+                        st.error("帳號或密碼錯誤，或尚未建立此帳號。")
+                if st.button("還沒有帳號？申請帳號", key="auth_switch_to_request", use_container_width=True):
+                    st.session_state["auth_panel_mode"] = "request"
+                    st.rerun()
+            else:
+                st.caption("輸入欲註冊的電子郵件，管理員收到通知後會手動建立帳號與密碼。")
+                with st.form("account_request_form"):
+                    request_email = st.text_input("欲註冊的電子郵件", key="auth_request_email")
+                    request_submit = st.form_submit_button("寄送帳號申請", use_container_width=True)
+                if request_submit:
+                    result = request_account(request_email, BASE)
+                    if result.get("sent"):
+                        st.success("申請已寄送給管理員；帳號密碼需由管理員手動建立。")
+                    else:
+                        st.error(result.get("error", "帳號申請寄送失敗。"))
+                if st.button("返回登入", key="auth_switch_to_login", use_container_width=True):
+                    st.session_state["auth_panel_mode"] = "login"
+                    st.rerun()
+
+
+def sync_sidebar_visibility(section: str) -> None:
+    """操作策略固定顯示自選股側欄；其他頁面僅在登入／申請面板開啟時展開。"""
+    should_open = (section == "strategy") or bool(st.session_state.get("auth_panel_open", False))
+    js_open = "true" if should_open else "false"
+    _components.html(
+        f"""
+        <script>
+        (function() {{
+          const shouldOpen = {js_open};
+          function setSidebarState() {{
+            try {{
+              const d = window.parent.document;
+              const sidebar = d.querySelector('[data-testid="stSidebar"]');
+              if (!sidebar) return;
+              const expanded = sidebar.getAttribute('aria-expanded') === 'true';
+              if (shouldOpen && !expanded) {{
+                // 新版 Streamlit 使用 stSidebarCollapseButton；舊版保留 CollapsedControl 作為備援。
+                const node = d.querySelector('[data-testid="stSidebarCollapseButton"]')
+                  || d.querySelector('[data-testid="stSidebarCollapsedControl"]');
+                const button = node && (node.tagName === 'BUTTON' ? node : node.querySelector('button'));
+                if (button) button.click();
+              }} else if (!shouldOpen && expanded) {{
+                const node = d.querySelector('[data-testid="stSidebarCollapseButton"]');
+                const button = node && (node.tagName === 'BUTTON' ? node : node.querySelector('button'));
+                if (button) button.click();
+              }}
+            }} catch (e) {{}}
+          }}
+          setSidebarState();
+          setTimeout(setSidebarState, 140);
+          setTimeout(setSidebarState, 360);
+        }})();
+        </script>
+        """,
+        height=0,
+    )
+
+
 # ============================================================
 # App entry point
 # ============================================================
@@ -6072,15 +6380,26 @@ _components.html(
     </script>""",
     height=0,
 )
+# 登入狀態：讀取瀏覽器送來的簽章 cookie（st.context.cookies）還原；寫入／刪除由 _flush_auth_cookie_op 以 JS 完成。
+auth_cookie_manager = None
+_restore_auth_from_cookie(auth_cookie_manager)
+_flush_auth_cookie_op()
 render_header_and_search()
+render_auth_header_actions(auth_cookie_manager)
 current_section = render_site_navigation()
+render_auth_panel(auth_cookie_manager)
+sync_sidebar_visibility(current_section)
 
 if current_section == "home":
     render_home_workspace()
 elif current_section == "strategy":
     render_strategy_workspace()
 elif current_section == "future":
-    render_future_workspace()
+    if is_authenticated():
+        render_future_workspace()
+    else:
+        st.markdown("<div class=\"content-heading\"><h1>未來分析</h1><p>此功能僅限登入使用者。</p></div>", unsafe_allow_html=True)
+        st.info("請點擊頁面右上角的「登入」或「申請帳號」，開啟左側選單。")
 elif current_section == "finance":
     render_finance_workspace()
 elif current_section == "rotation":
