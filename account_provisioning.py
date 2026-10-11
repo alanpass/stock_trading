@@ -94,6 +94,13 @@ def create_account_request(email: str) -> dict[str, Any]:
     return {"request_id": created[0].get("id"), "email": clean_email, "approve_token": approve_token,
             "reject_token": reject_token, "expires_at": row["token_expires_at"]}
 
+def cancel_account_request(email: str) -> None:
+    """管理員通知無法寄出時，讓申請可重新提交並使舊 token 失效。"""
+    clean_email = str(email or "").strip().lower()
+    _request("PATCH", params={"email": f"eq.{clean_email}", "status": "eq.pending"},
+             payload={"status": "notification_failed", "approve_token_hash": None, "reject_token_hash": None})
+
+
 def get_request_for_token(token: str, decision: str) -> dict[str, Any] | None:
     """只查詢有效待審核 token；不修改資料庫。"""
     if decision not in {"approve", "reject"} or not token or len(token) > 200:
