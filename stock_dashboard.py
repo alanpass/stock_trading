@@ -18,7 +18,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from datetime import datetime, time as dt_time
+from datetime import datetime, timedelta, time as dt_time
 from zoneinfo import ZoneInfo
 import re
 import json
@@ -30,6 +30,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
 import streamlit as st
+import extra_streamlit_components as stx
 from streamlit_autorefresh import st_autorefresh
 
 
@@ -54,6 +55,7 @@ def _load_cloud_secret_env() -> None:
             "SUBSCRIBER_SYNC_URL",
             "SUBSCRIBER_SYNC_TOKEN",
             "AUTH_USERS_JSON",
+            "AUTH_SESSION_SECRET",
         ]
         for name in secret_keys:
             try:
@@ -86,7 +88,7 @@ from theme_agent import theme_sankey_frame
 from post_market_analysis import PostMarketAnalyzer
 from email_agent import EmailAgent
 from subscriber_service import register_subscriber, subscription_status
-from auth_service import authenticate, request_account, ADMIN_EMAIL
+from auth_service import (authenticate, request_account, ADMIN_EMAIL, create_session_token,\n                         verify_session_token, SESSION_COOKIE_NAME, SESSION_TTL_SECONDS)
 from industry_rotation import ROTATION_THEMES, ROTATION_DEFAULT_THEMES, ROTATION_DISPLAY_NAMES, NAME_FALLBACKS, load_published_rotation
 from us_industry_indicators import US_INDUSTRY_INDICATORS, get_us_indicator_symbols, fetch_us_indicators
 
@@ -151,7 +153,7 @@ def _site_favicon():
     return "📈"
 
 
-st.set_page_config(page_title="台股即時互動式分析系統", page_icon=_site_favicon(), layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="台股即時互動式分析系統", page_icon=_site_favicon(), layout="wide", initial_sidebar_state="collapsed")
 
 
 # ---- 所有 Plotly 圖表統一使用與網頁背景相配的淺色系 ----
@@ -6062,40 +6064,213 @@ div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公�
 def is_authenticated() -> bool:
     return bool(st.session_state.get("auth_user"))
 
-def render_auth_panel() -> None:
-    """側邊欄登入／登出／帳號申請。"""
-    with st.sidebar:
-        st.markdown("### 帳號登入")
-        current_user = str(st.session_state.get("auth_user") or "")
-        if current_user:
-            st.success("已登入：" + current_user)
-            if st.button("登出", key="auth_logout", use_container_width=True):
-                st.session_state.pop("auth_user", None)
-                st.rerun()
-            return
-        with st.expander("登入", expanded=True):
-            with st.form("account_login_form"):
-                email = st.text_input("電子郵件", key="auth_login_email").strip().lower()
-                password = st.text_input("密碼", type="password", key="auth_login_password")
-                login_submit = st.form_submit_button("登入", use_container_width=True)
-            if login_submit:
-                if authenticate(email, password):
-                    st.session_state["auth_user"] = email
-                    st.success("登入成功。")
+
+def _restore_auth_from_cookie(cookie_manager) -> None:
+    """從簽章 cookie 還原登入者，避免頁面以網址切換時 session_state 遺失。"""
+    try:
+        cookies = cookie_manager.get_all()
+        token = cookies.get(SESSION_COOKIE_NAME) if isinstance(cookies, dict) else None
+    except Exception:
+        token = None
+
+    if token:
+        email = verify_session_token(str(token))
+        if email:
+            st.session_state["auth_user"] = email
+        else:
+            st.session_state.pop("auth_user", None)
+    elif "auth_user" not in st.session_state:
+        st.session_state["auth_user"] = ""
+
+
+def _write_auth_cookie(cookie_manager, email: str) -> None:
+    token = create_session_token(email)
+    try:
+        current_url = str(st.context.url or "")
+        secure_cookie = current_url.lower().startswith("https://")
+    except Exception:
+        secure_cookie = False
+    cookie_manager.set(
+        SESSION_COOKIE_NAME,
+        token,
+        key="set_auth_session_cookie",
+        path="/",
+        expires_at=datetime.now() + timedelta(seconds=SESSION_TTL_SECONDS),
+        max_age=SESSION_TTL_SECONDS,
+        secure=secure_cookie,
+        same_site="lax",
+    )
+
+
+def _delete_auth_cookie(cookie_manager) -> None:
+    try:
+        cookie_manager.delete(SESSION_COOKIE_NAME, key="delete_auth_session_cookie")
+    except Exception:
+        pass
+
+
+def _toggle_auth_panel(mode: str) -> None:
+    same_panel = (
+        bool(st.session_state.get("auth_panel_open", False))
+        and str(st.session_state.get("auth_panel_mode", "login")) == mode
+    )
+    st.session_state["auth_panel_open"] = not same_panel
+    st.session_state["auth_panel_mode"] = mode
+
+
+def render_auth_header_actions(cookie_manager) -> None:
+    """頁首右上角的紅色登入／申請入口；登入面板未開啟時不佔用側邊欄。"""
+    st.markdown(
+        """
+        <style>
+        .st-key-auth_header_actions [data-testid="stButton"] > button {
+          background:transparent!important;background-color:transparent!important;
+          border:0!important;box-shadow:none!important;color:#8e2b2f!important;
+          -webkit-text-fill-color:#8e2b2f!important;font-weight:800!important;
+          font-size:14px!important;min-height:30px!important;height:30px!important;
+          padding:0 4px!important;white-space:nowrap!important;
+        }
+        .st-key-auth_header_actions [data-testid="stButton"] > button:hover {
+          background:#fbf1f1!important;color:#6f2024!important;
+          -webkit-text-fill-color:#6f2024!important;
+        }
+        .st-key-auth_drawer {border:1px solid #e6d3d3;border-radius:12px;
+          background:#fffaf9;padding:12px 12px 16px!important;margin-bottom:12px;}
+        .st-key-auth_drawer [data-testid="stButton"] > button {
+          color:#8e2b2f!important;border-color:#e6d3d3!important;
+        }
+        body:has(.st-key-auth_drawer) [data-testid="stSidebarCollapseButton"] {
+          display:none!important;
+        }
+        @media(max-width:600px) {
+          .st-key-auth_header_actions [data-testid="stButton"] > button {
+            font-size:12px!important;padding:0 2px!important;
+          }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    with st.container(key="auth_header_actions"):
+        spacer, login_col, request_col = st.columns([10, 1.05, 1.75], gap="small", vertical_alignment="center")
+        if is_authenticated():
+            with spacer:
+                st.caption("已登入：" + str(st.session_state.get("auth_user", "")))
+            with login_col:
+                if st.button("登出", key="auth_top_logout", use_container_width=True):
+                    _delete_auth_cookie(cookie_manager)
+                    st.session_state.pop("auth_user", None)
+                    st.session_state["auth_panel_open"] = False
                     st.rerun()
-                else:
-                    st.error("帳號或密碼錯誤，或尚未建立此帳號。")
-        with st.expander("申請帳號", expanded=False):
-            st.caption("輸入電子郵件後，系統會寄送申請通知給管理員；管理員確認後才會建立帳號。")
-            with st.form("account_request_form"):
-                request_email = st.text_input("欲註冊的電子郵件", key="auth_request_email")
-                request_submit = st.form_submit_button("寄送帳號申請", use_container_width=True)
-            if request_submit:
-                result = request_account(request_email, BASE)
-                if result.get("sent"):
-                    st.success("申請已寄送給管理員；帳號密碼需由管理員手動建立。")
-                else:
-                    st.error(result.get("error", "帳號申請寄送失敗。"))
+            with request_col:
+                st.empty()
+        else:
+            with login_col:
+                if st.button("登入", key="auth_top_login", use_container_width=True):
+                    _toggle_auth_panel("login")
+                    st.rerun()
+            with request_col:
+                if st.button("申請帳號", key="auth_top_request", use_container_width=True):
+                    _toggle_auth_panel("request")
+                    st.rerun()
+
+
+def render_auth_panel(cookie_manager) -> None:
+    """使用者點擊頁首入口後才顯示側邊登入／申請帳號面板。"""
+    if not st.session_state.get("auth_panel_open", False):
+        return
+
+    with st.sidebar:
+        with st.container(key="auth_drawer"):
+            top_col, close_col = st.columns([4, 1], vertical_alignment="center")
+            mode = str(st.session_state.get("auth_panel_mode", "login"))
+            with top_col:
+                st.markdown("### " + ("帳號登入" if mode == "login" else "申請帳號"))
+            with close_col:
+                if st.button("✕", key="auth_close_panel", help="收回帳號選單", use_container_width=True):
+                    st.session_state["auth_panel_open"] = False
+                    st.rerun()
+
+            if is_authenticated():
+                st.success("已登入：" + str(st.session_state.get("auth_user", "")))
+                if st.button("登出", key="auth_panel_logout", use_container_width=True):
+                    _delete_auth_cookie(cookie_manager)
+                    st.session_state.pop("auth_user", None)
+                    st.session_state["auth_panel_open"] = False
+                    st.rerun()
+                return
+
+            if mode == "login":
+                with st.form("account_login_form"):
+                    email = st.text_input("電子郵件", key="auth_login_email").strip().lower()
+                    password = st.text_input("密碼", type="password", key="auth_login_password")
+                    login_submit = st.form_submit_button("登入", use_container_width=True)
+                if login_submit:
+                    if authenticate(email, password):
+                        try:
+                            _write_auth_cookie(cookie_manager, email)
+                        except Exception as exc:
+                            st.error("建立登入工作階段失敗：" + type(exc).__name__)
+                        else:
+                            st.session_state["auth_user"] = email
+                            st.session_state["auth_panel_open"] = False
+                            st.rerun()
+                    else:
+                        st.error("帳號或密碼錯誤，或尚未建立此帳號。")
+                if st.button("還沒有帳號？申請帳號", key="auth_switch_to_request", use_container_width=True):
+                    st.session_state["auth_panel_mode"] = "request"
+                    st.rerun()
+            else:
+                st.caption("輸入欲註冊的電子郵件，管理員收到通知後會手動建立帳號與密碼。")
+                with st.form("account_request_form"):
+                    request_email = st.text_input("欲註冊的電子郵件", key="auth_request_email")
+                    request_submit = st.form_submit_button("寄送帳號申請", use_container_width=True)
+                if request_submit:
+                    result = request_account(request_email, BASE)
+                    if result.get("sent"):
+                        st.success("申請已寄送給管理員；帳號密碼需由管理員手動建立。")
+                    else:
+                        st.error(result.get("error", "帳號申請寄送失敗。"))
+                if st.button("返回登入", key="auth_switch_to_login", use_container_width=True):
+                    st.session_state["auth_panel_mode"] = "login"
+                    st.rerun()
+
+
+def sync_sidebar_visibility(section: str) -> None:
+    """操作策略固定顯示自選股側欄；其他頁面僅在登入／申請面板開啟時展開。"""
+    should_open = (section == "strategy") or bool(st.session_state.get("auth_panel_open", False))
+    js_open = "true" if should_open else "false"
+    _components.html(
+        f"""
+        <script>
+        (function() {{
+          const shouldOpen = {js_open};
+          function setSidebarState() {{
+            try {{
+              const d = window.parent.document;
+              const sidebar = d.querySelector('[data-testid="stSidebar"]');
+              if (!sidebar) return;
+              const expanded = sidebar.getAttribute('aria-expanded') === 'true';
+              if (shouldOpen && !expanded) {{
+                const node = d.querySelector('[data-testid="stSidebarCollapsedControl"]');
+                const button = node && (node.tagName === 'BUTTON' ? node : node.querySelector('button'));
+                if (button) button.click();
+              }} else if (!shouldOpen && expanded) {{
+                const node = d.querySelector('[data-testid="stSidebarCollapseButton"]');
+                const button = node && (node.tagName === 'BUTTON' ? node : node.querySelector('button'));
+                if (button) button.click();
+              }}
+            }} catch (e) {{}}
+          }}
+          setSidebarState();
+          setTimeout(setSidebarState, 140);
+          setTimeout(setSidebarState, 360);
+        }})();
+        </script>
+        """,
+        height=0,
+    )
+
 
 # ============================================================
 # App entry point
@@ -6118,9 +6293,14 @@ _components.html(
     </script>""",
     height=0,
 )
+# CookieManager 讓登入狀態在 Streamlit 透過網址切換頁面、重建 session 後仍可還原。
+auth_cookie_manager = stx.CookieManager(key="stock_trading_auth_cookie_manager")
+_restore_auth_from_cookie(auth_cookie_manager)
 render_header_and_search()
-render_auth_panel()
+render_auth_header_actions(auth_cookie_manager)
 current_section = render_site_navigation()
+render_auth_panel(auth_cookie_manager)
+sync_sidebar_visibility(current_section)
 
 if current_section == "home":
     render_home_workspace()
@@ -6131,7 +6311,7 @@ elif current_section == "future":
         render_future_workspace()
     else:
         st.markdown("<div class=\"content-heading\"><h1>未來分析</h1><p>此功能僅限登入使用者。</p></div>", unsafe_allow_html=True)
-        st.info("請從左側登入，或展開「申請帳號」寄送申請。")
+        st.info("請點擊頁面右上角的「登入」或「申請帳號」，開啟左側選單。")
 elif current_section == "finance":
     render_finance_workspace()
 elif current_section == "rotation":
