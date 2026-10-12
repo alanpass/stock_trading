@@ -13,7 +13,7 @@
 
 **Streamlit Dashboard**
 
-https://stocktrading-c66hschtsd2qh6vkyv4mtq.streamlit.app/
+[https://stocktrading-c66hschtsd2qh6vkyv4mtq.streamlit.app/](https://tpe-stock-dashboard.streamlit.app/)
 
 > 網站主要提供台股行情、個股研究、技術分析、籌碼資訊、AI 模型與研究結果的互動式介面。
 
