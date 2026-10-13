@@ -221,9 +221,12 @@ def render_trend_patterns_workspace(base_dir: str | Path) -> None:
                         f"日期：{row.get('last_major_change_at', '—')}｜"
                         f"最新用於判讀的 K 棒：{row.get('last_bar_date', '—')}"
                     )
+                    chart_visible_key = f"trend_pattern_chart_visible_{symbol}"
                     if st.button("載入／更新此股近三個月技術圖", key=f"trend_pattern_load_chart_{symbol}"):
+                        st.session_state[chart_visible_key] = True
+                    if st.session_state.get(chart_visible_key, False):
                         _render_live_chart(symbol)
-                    st.caption("近三個月圖由 Fugle 歷史日 K 即時查詢，顯示收盤價、MA20、MA50 與成交量；按下按鈕才查詢，避免一次呼叫所有股票。")
+                    st.caption("近三個月圖由 Fugle 歷史日 K 即時查詢，顯示收盤價、MA20、MA50 與成交量；首次按下按鈕才查詢，之後會保留圖表以避免頁面自動刷新時消失。")
 
     with st.expander("分析方法與更新規則", expanded=False):
         st.markdown(
