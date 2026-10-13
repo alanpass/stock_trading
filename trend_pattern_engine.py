@@ -441,10 +441,13 @@ def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bo
     except Exception:
         prior_payload = {}
     prior_rows = prior_payload.get("stocks", [])
+    # --no-publish 產生的本機預覽不能當作「已發布快照」；
+    # 下次以正常模式執行時，仍須把初始資料發布到 GitHub。
+    is_local_preview = prior_payload.get("publication_status") == "local_preview"
     prior = {
         clean_symbol(str(row.get("symbol") or "")): row
         for row in prior_rows if isinstance(row, dict) and row.get("symbol")
-    } if isinstance(prior_rows, list) else {}
+    } if isinstance(prior_rows, list) and not is_local_preview else {}
 
     symbols = sorted({clean_symbol(code) for codes in ROTATION_THEMES.values() for code in codes})
     client = FugleClient()
@@ -508,6 +511,7 @@ def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bo
         "schema_version": 1, "report_type": "trend_patterns_public",
         "updated_at": checked_at, "data_asof": data_asof,
         "check_mode": "daily_check_publish_on_material_change",
+        "publication_status": "published" if publish else "local_preview",
         "tracked_symbols": len(symbols), "usable_symbols": len(updated_rows), "changed_count": len(changes),
         "category_order": CATEGORY_ORDER,
         "methodology": (
