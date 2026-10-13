@@ -301,11 +301,13 @@ def detect_pattern(history: pd.DataFrame) -> dict[str, Any]:
     elif dt:
         pattern, confidence, resistance, note = dt
 
-    if pattern == "箱型整理" and width >= 45:
-        left_avg, mid_avg, right_avg = float(np.mean(close[:15])), float(np.mean(close[18:43])), float(np.mean(close[-12:]))
+    if pattern == "箱型整理" and width >= 40:
+        left_avg = float(np.mean(close[:10]))
+        mid_avg = float(np.mean(close[12:28]))
+        right_avg = float(np.mean(close[-10:]))
         trough_pos = int(np.argmin(close)) / max(len(close) - 1, 1)
-        if left_avg > mid_avg * 1.025 and right_avg > mid_avg * 1.035 and 0.28 <= trough_pos <= 0.78 and ret10 > 0:
-            pattern, confidence, resistance, note = "圓底", 0.64, float(np.max(highs[-30:-10])), "中段形成弧形低點、右側均價回升；仍需觀察前方壓力。"
+        if left_avg > mid_avg * 1.025 and right_avg > mid_avg * 1.035 and 0.25 <= trough_pos <= 0.75 and ret10 > 0:
+            pattern, confidence, resistance, note = "圓底", 0.64, float(np.max(highs[-30:-10])), "最近 40 個交易日中段形成弧形低點、右側均價回升；仍需觀察前方壓力。"
 
     # 三角形以價格區間前後半段的邊界變化近似辨識。
     if pattern == "箱型整理" and width >= 30:
