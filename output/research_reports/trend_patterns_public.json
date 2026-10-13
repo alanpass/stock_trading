@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "report_type": "trend_patterns_public",
+  "updated_at": "",
+  "data_asof": "",
+  "check_mode": "daily_check_publish_on_material_change",
+  "tracked_symbols": 0,
+  "usable_symbols": 0,
+  "changed_count": 0,
+  "category_order": [
+    "底部反轉候選",
+    "多頭延續／持續創高",
+    "整理待突破",
+    "高檔轉弱／反轉警示",
+    "下降趨勢／弱勢整理",
+    "中性觀察"
+  ],
+  "methodology": "尚未建立初始快照。請在本機執行 run_trend_pattern_update.py。",
+  "pattern_guide_url": "https://www.ig.com/cn/trading-strategies/10-chart-patterns-every-trader-needs-to-know-220907",
+  "changes": [],
+  "errors_count": 0,
+  "errors": [],
+  "stocks": []
+}
