@@ -264,7 +264,7 @@ def render_trend_patterns_workspace(base_dir: str | Path) -> None:
                             f"此股於 {row.get('suspected_gap_date', '未知日期')} 出現 "
                             f"{row.get('suspected_gap_pct', '未知')}% 價格跳空，已暫停趨勢型態判斷。"
                         )
-                    st.write(f"**判讀說明：** {row.get('reason', '目前沒有額外說明。')}"
+                    st.write(f"**判讀說明：** {row.get('reason', '目前沒有額外說明。')}")
                     st.write(f"**所屬產業主題：** {'、'.join(themes) if themes else '未分類'}")
                     st.caption(
                         f"最近重大型態變化：{row.get('major_change', '初始型態建檔')}｜"
