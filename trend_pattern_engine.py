@@ -519,8 +519,10 @@ def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bo
         "changes": changes[:160], "errors_count": len(errors), "errors": errors[:30], "stocks": rows,
     }
     serialized = json.dumps(payload, ensure_ascii=False, indent=2, allow_nan=False) + "\n"
-    _atomic_write(public_path, serialized)
+    # 發布成功後才更新本機「上次已發布」快照。
+    # 若 GitHub API／Token 暫時失敗，保留前一份本機快照，讓下次排程可以重新判定並重試發布。
     github = _publish_to_github(payload) if publish else None
+    _atomic_write(public_path, serialized)
     return {
         "ok": True, "skipped": False, "updated_at": checked_at, "data_asof": data_asof,
         "tracked_symbols": len(symbols), "usable_symbols": len(updated_rows), "changed_count": len(changes),
