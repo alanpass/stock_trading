@@ -35,6 +35,7 @@ CATEGORY_ORDER = [
 ]
 ADJUSTMENT_METHOD = "Fugle 還原股價（adjusted=True）"
 SUSPICIOUS_GAP_THRESHOLD = 0.35
+ANALYSIS_VERSION = "pattern_window_40_trading_days_v1"
 CONSOLIDATION_PATTERNS = {"杯柄", "多頭旗形", "空頭旗形", "上升三角形", "下降三角形", "對稱三角形", "箱型整理", "盤整待突破"}
 MATERIAL_EVENTS = {"箱頂突破", "近20日壓力突破", "連跌後轉穩（3日）", "上漲轉弱（3日）", "向下跌破支撐"}
 
@@ -204,7 +205,7 @@ def _find_head_shoulders(highs: np.ndarray, lows: np.ndarray, close: np.ndarray)
 
 
 def detect_pattern(history: pd.DataFrame) -> dict[str, Any]:
-    """近 3 個月辨識型態，並以約 6 個月資料判斷背景趨勢。"""
+    """使用最近 40 個交易日辨識型態，並以約 6 個月資料判斷背景趨勢。"""
     data = _normalise_history(history)
     if len(data) < 45:
         raise ValueError(f"可用日 K 不足 45 根，目前 {len(data)} 根")
@@ -213,13 +214,13 @@ def detect_pattern(history: pd.DataFrame) -> dict[str, Any]:
     all_high = data["high"].to_numpy(dtype=float)
     all_low = data["low"].to_numpy(dtype=float)
     n = len(data)
-    width = min(63, n)
+    width = min(40, n)
     close, highs, lows = all_close[-width:], all_high[-width:], all_low[-width:]
     last = float(close[-1])
     ret3 = last / float(close[-4]) - 1
     ret10 = last / float(close[-11]) - 1 if width >= 11 else ret3
     ret20 = last / float(close[-21]) - 1 if width >= 21 else ret3
-    ret3m = last / float(close[-64]) - 1 if width >= 64 else last / float(close[0]) - 1
+    ret40 = last / float(close[-64]) - 1 if width >= 64 else last / float(close[0]) - 1
     day_ret = pd.Series(close).pct_change().tail(3).dropna().to_numpy()
     ma20 = float(pd.Series(all_close).rolling(20).mean().iloc[-1])
     ma50 = float(pd.Series(all_close).rolling(50).mean().iloc[-1]) if n >= 50 else ma20
@@ -230,9 +231,9 @@ def detect_pattern(history: pd.DataFrame) -> dict[str, Any]:
     location = (last - trough) / max(peak - trough, 1e-9)
     ret6m = last / float(s_close[0]) - 1
     peak_idx, trough_idx = int(np.argmax(s_high)), int(np.argmin(s_low))
-    if peak_idx < int(six_n * 0.58) and last <= peak * 0.88 and ret3m < -0.02:
+    if peak_idx < int(six_n * 0.58) and last <= peak * 0.88 and ret40 < -0.02:
         direction6m = "近半年由高點回落"
-    elif trough_idx < int(six_n * 0.72) and last >= trough * 1.15 and ret3m > 0.02:
+    elif trough_idx < int(six_n * 0.72) and last >= trough * 1.15 and ret40 > 0.02:
         direction6m = "近半年由低點回升"
     elif location >= 0.72:
         direction6m = "半年區間偏高"
@@ -250,14 +251,15 @@ def detect_pattern(history: pd.DataFrame) -> dict[str, Any]:
         gap_pct = float(suspicious.iloc[-1]) * 100
         gap_date = pd.Timestamp(data["date"].iloc[gap_idx]).strftime("%Y-%m-%d")
         return {
+            "analysis_version": ANALYSIS_VERSION,
             "pattern_name": "價格基準待確認",
             "classification": "資料調整檢查",
-            "trend_3m": "暫不判定",
+            "trend_40d": "暫不判定",
             "market_direction_6m": "暫不判定（價格基準檢查中）",
             "return_3d_pct": round(ret3 * 100, 2),
             "return_10d_pct": round(ret10 * 100, 2),
             "return_20d_pct": round(ret20 * 100, 2),
-            "return_3m_pct": round(ret3m * 100, 2),
+            "return_40d_pct": round(ret40 * 100, 2),
             "return_6m_pct": round(ret6m * 100, 2),
             "close_at_assessment": round(last, 2),
             "support": round(float(np.min(lows[-20:])), 2),
@@ -276,13 +278,13 @@ def detect_pattern(history: pd.DataFrame) -> dict[str, Any]:
         }
 
     pattern, confidence = "箱型整理", 0.48
-    resistance, note = float(np.max(highs[-25:])), "近 3 個月價格在區間內反覆震盪，尚未符合更明確的典型形態。"
+    resistance, note = float(np.max(highs[-25:])), "最近 40 個交易日價格在區間內反覆震盪，尚未符合更明確的典型形態。"
     hs = _find_head_shoulders(highs, lows, close)
     db = _find_double_pattern(highs, lows, close, "bottom")
     dt = _find_double_pattern(highs, lows, close, "top")
 
     # 杯柄：兩側接近杯沿、中段形成杯底，最後約兩週出現較淺回檔。
-    if width >= 50:
+    if width >= 40:
         rim_l, rim_r = float(np.mean(close[:8])), float(np.mean(close[-20:-10]))
         rim = (rim_l + rim_r) / 2
         cup_low, handle_low = float(np.min(close[12:-15])), float(np.min(close[-10:]))
@@ -337,9 +339,9 @@ def detect_pattern(history: pd.DataFrame) -> dict[str, Any]:
             pattern, confidence, resistance, note = "下降楔形", 0.63, float(np.max(highs[-10:])), "高低點同步下移但上方壓力下降更快，留意向上突破。"
 
     if pattern == "箱型整理":
-        high3m, low3m = float(np.max(highs)), float(np.min(lows))
-        if last >= high3m * 0.975 and ret3m > 0.06 and last > ma20 and ma20 >= ma50 * 0.97:
-            pattern, confidence, resistance, note = "持續創高", 0.72, high3m, "收盤接近近 3 個月高點，且中短期均線與報酬偏多。"
+        high40, low40 = float(np.max(highs)), float(np.min(lows))
+        if last >= high40 * 0.975 and ret40 > 0.06 and last > ma20 and ma20 >= ma50 * 0.97:
+            pattern, confidence, resistance, note = "持續創高", 0.72, high40, "收盤接近最近 40 個交易日高點，且中短期均線與報酬偏多。"
         elif last < ma20 and ma20 < ma50 and ret20 < -0.05:
             pattern, confidence, resistance, note = "下降趨勢", 0.70, float(np.max(highs[-20:])), "收盤低於中短期均線，近 20 日報酬偏弱。"
         elif last > ma20 and ma20 > ma50 and ret20 > 0.04:
@@ -373,19 +375,20 @@ def detect_pattern(history: pd.DataFrame) -> dict[str, Any]:
     else:
         classification = "中性觀察"
 
-    trend3m = "上升" if ret3m >= 0.06 and last >= ma20 else "下降" if ret3m <= -0.06 and last <= ma20 else "區間／整理"
+    trend40d = "上升" if ret40 >= 0.06 and last >= ma20 else "下降" if ret40 <= -0.06 and last <= ma20 else "區間／整理"
     return {
-        "pattern_name": pattern, "classification": classification, "trend_3m": trend3m,
+        "analysis_version": ANALYSIS_VERSION,
+        "pattern_name": pattern, "classification": classification, "trend_40d": trend40d,
         "market_direction_6m": direction6m,
         "return_3d_pct": round(ret3 * 100, 2), "return_10d_pct": round(ret10 * 100, 2),
-        "return_20d_pct": round(ret20 * 100, 2), "return_3m_pct": round(ret3m * 100, 2),
+        "return_20d_pct": round(ret20 * 100, 2), "return_40d_pct": round(ret40 * 100, 2),
         "return_6m_pct": round(ret6m * 100, 2), "close_at_assessment": round(last, 2),
         "support": round(float(np.min(lows[-20:])), 2),
         "resistance": round(float(resistance if resistance is not None and np.isfinite(resistance) else np.max(highs[-20:])), 2),
         "confidence": round(float(confidence), 2), "event": event,
         "corporate_action_review": False,
         "adjustment_method": ADJUSTMENT_METHOD,
-        "reason": note + f" 近 3 個月報酬 {ret3m * 100:+.1f}%，近 3 日 {ret3 * 100:+.1f}%。",
+        "reason": note + f" 近 40 個交易日報酬 {ret40 * 100:+.1f}%，近 3 日 {ret3 * 100:+.1f}%。",
         "last_bar_date": pd.Timestamp(data["date"].iloc[-1]).strftime("%Y-%m-%d"),
     }
 
@@ -406,6 +409,8 @@ def _is_material_change(old: dict[str, Any] | None, new: dict[str, Any]) -> tupl
         return True, "初始型態建檔"
     if old.get("adjustment_method") != ADJUSTMENT_METHOD:
         return True, "改用還原股價重新校正型態"
+    if old.get("analysis_version") != ANALYSIS_VERSION:
+        return True, "型態判斷區間改為最近 40 個交易日，重新校正型態"
     if old.get("classification") != new.get("classification"):
         return True, _event_for_change(old, new)
     if old.get("pattern_name") != new.get("pattern_name") and float(new.get("confidence") or 0) >= 0.64:
@@ -431,7 +436,7 @@ def _build_symbol_record(symbol: str, name: str, data: dict[str, Any], old: dict
         **data,
         "last_major_change_at": checked_at,
         "major_change": event,
-        "assessment_basis": "近 3 個月日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀",
+        "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀",
     }
     return row, True
 
@@ -573,7 +578,7 @@ def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bo
         "category_order": CATEGORY_ORDER,
         "methodology": (
             "使用產業分析 ROTATION_THEMES 的全部概念股；所有分析 OHLC 都取 Fugle adjusted=True 還原股價，"
-            "以避免除權息、股票股利與分割造成的價格基準斷層。近 3 個月日 K 辨識頭肩、雙頂／雙底、圓底、杯柄、"
+            "以避免除權息、股票股利與分割造成的價格基準斷層。最近 40 個交易日日 K 辨識頭肩、雙頂／雙底、圓底、杯柄、"
             "楔形、旗形與三角形，近 6 個月位置辨識由高點回落或由低點回升。若還原後仍出現巨大單日跳空，"
             "先歸入資料調整檢查、不直接判斷趨勢；只在型態／趨勢狀態重大變化時更新快照。"
         ),
