@@ -2,8 +2,9 @@
 """Streamlit 趨勢型態頁面。"""
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 from typing import Any
 
 import pandas as pd
@@ -89,7 +90,7 @@ def _load_live_three_month_chart(symbol: str, end_day: str) -> pd.DataFrame:
 
 def _render_live_chart(symbol: str) -> None:
     try:
-        frame = _load_live_three_month_chart(symbol, date.today().isoformat())
+        frame = _load_live_three_month_chart(symbol, datetime.now(ZoneInfo("Asia/Taipei")).date().isoformat())
     except Exception as exc:
         st.warning(f"無法取得 {symbol} 最新日 K：{type(exc).__name__}: {exc}")
         return
