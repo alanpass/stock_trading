@@ -72,40 +72,70 @@ def _schematic_figure(pattern_name: str, height: int = 155) -> go.Figure:
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def _load_live_six_month_chart(symbol: str, end_day: str) -> pd.DataFrame:
-    """載入近半年還原日 K；額外抓取暖身資料計算 MA50，再只顯示約半年交易日。"""
+    """載入六個月還原日 K；額外取得歷史暖身資料計算可切換的長週期均線。"""
     end = pd.Timestamp(end_day).normalize()
-    # 260 個日曆日足夠涵蓋六個月圖表與 MA50 暖身期，單次歷史 API 查詢小於一年。
-    start = (end - pd.Timedelta(days=260)).date()
+    # 六個月圖表之外要保留 MA120/MA240 的計算暖身；分段下載避免單次歷史 API 區間過長。
+    start = end - pd.Timedelta(days=560)
     client = FugleClient()
-    frame = client.historical_candles(clean_symbol(symbol), start, end.date(), "D", adjusted=True)
-    if frame is None or frame.empty:
-        return pd.DataFrame()
+    parts: list[pd.DataFrame] = []
+    cursor = start
+    failures: list[str] = []
+    while cursor <= end:
+        chunk_end = min(cursor + pd.Timedelta(days=299), end)
+        try:
+            part = client.historical_candles(
+                clean_symbol(symbol), cursor.date(), chunk_end.date(), "D", adjusted=True
+            )
+            if part is not None and not part.empty:
+                parts.append(part)
+        except Exception as exc:
+            failures.append(f"{cursor.date()}~{chunk_end.date()}: {type(exc).__name__}")
+        cursor = chunk_end + pd.Timedelta(days=1)
 
-    frame = frame.copy()
-    frame["date"] = pd.to_datetime(frame["date"], errors="coerce", utc=True).dt.tz_convert("Asia/Taipei").dt.tz_localize(None).dt.normalize()
+    if not parts:
+        detail = "；".join(failures[-2:])
+        raise RuntimeError(f"Fugle 沒有回傳可用的還原日 K。{detail}")
+
+    frame = pd.concat(parts, ignore_index=True).copy()
+    frame["date"] = pd.to_datetime(
+        frame["date"], errors="coerce", utc=True
+    ).dt.tz_convert("Asia/Taipei").dt.tz_localize(None).dt.normalize()
     for field in ("open", "high", "low", "close", "volume"):
         if field not in frame:
             frame[field] = np.nan if field != "volume" else 0.0
         frame[field] = pd.to_numeric(frame[field], errors="coerce")
     frame = frame.replace([np.inf, -np.inf], np.nan)
-    # 只保留真實交易日且 OHLC 齊全的棒；非交易日／空值列不進入圖表。
+    # 僅保留 OHLC 齊全、價格有效的真實交易日；不補週末或休市日。
     frame = frame.dropna(subset=["date", "open", "high", "low", "close"])
-    frame = frame[(frame["open"] > 0) & (frame["high"] > 0) & (frame["low"] > 0) & (frame["close"] > 0)]
-    frame = frame.drop_duplicates("date", keep="last").sort_values("date").reset_index(drop=True)
+    frame = frame[
+        (frame["open"] > 0) & (frame["high"] > 0)
+        & (frame["low"] > 0) & (frame["close"] > 0)
+    ]
+    frame = (
+        frame.drop_duplicates("date", keep="last")
+        .sort_values("date")
+        .reset_index(drop=True)
+    )
     if frame.empty:
         return pd.DataFrame()
 
     frame["volume"] = frame["volume"].fillna(0).clip(lower=0)
-    frame["MA20"] = frame["close"].rolling(20, min_periods=1).mean()
-    frame["MA50"] = frame["close"].rolling(50, min_periods=1).mean()
-    # x 使用交易日文字標籤與類別軸；週末、國定假日不會留出空白區。
-    frame["date_label"] = frame["date"].dt.strftime("%Y-%m-%d")
-    return frame.tail(130).reset_index(drop=True)
+    # 先用完整暖身歷史計算均線，再裁切成六個日曆月，長週期均線才不會從圖表左端重新起算。
+    for window in (5, 10, 20, 60, 120, 240):
+        frame[f"MA{window}"] = frame["close"].rolling(window=window, min_periods=window).mean()
+
+    chart_start = end - pd.DateOffset(months=6)
+    visible = frame[(frame["date"] >= chart_start) & (frame["date"] <= end)].copy()
+    visible["date_label"] = visible["date"].dt.strftime("%Y-%m-%d")
+    return visible.reset_index(drop=True)
 
 
 def _render_live_chart(symbol: str) -> None:
+    """使用與操作策略相同的 K 線互動方式；範圍固定為最近六個日曆月。"""
     try:
-        frame = _load_live_six_month_chart(symbol, datetime.now(ZoneInfo("Asia/Taipei")).date().isoformat())
+        frame = _load_live_six_month_chart(
+            symbol, datetime.now(ZoneInfo("Asia/Taipei")).date().isoformat()
+        )
     except Exception as exc:
         st.warning(f"無法取得 {symbol} 最新六個月日 K：{type(exc).__name__}: {exc}")
         return
@@ -113,46 +143,179 @@ def _render_live_chart(symbol: str) -> None:
         st.info("行情來源沒有回傳可用的六個月 OHLC K 棒資料。")
         return
 
-    x = frame["date_label"].tolist()
-    volume_colors = [
-        "#d62728" if close >= open_ else "#16a34a"
-        for open_, close in zip(frame["open"].tolist(), frame["close"].tolist())
-    ]
-    daily_return = frame["close"].pct_change().abs()
-    if bool((daily_return >= 0.35).any()):
-        st.warning("還原股價序列仍出現超過 35% 的單日跳空；請先核對股票分割、股票股利或除權息資料，勿直接依圖表判斷趨勢。")
+    chart_x = frame["date_label"].tolist()
+    display_labels = frame["date"].dt.strftime("%m/%d").tolist()
+    n = len(chart_x)
+    if n == 0:
+        st.info("最近六個月沒有可繪製的交易日資料。")
+        return
 
-    fig = make_subplots(rows=2, cols=1, shared_xaxes=True, row_heights=[0.76, 0.24], vertical_spacing=0.04)
+    # 還原後若最近可見區間仍有異常價格跳空，明確提醒但不隱藏 K 棒。
+    daily_return = frame["close"].pct_change()
+    suspicious = daily_return[daily_return.abs() >= 0.35]
+    if not suspicious.empty:
+        gap_idx = int(suspicious.index[-1])
+        gap_date = pd.Timestamp(frame.loc[gap_idx, "date"]).strftime("%Y-%m-%d")
+        gap_pct = float(suspicious.loc[gap_idx] * 100)
+        st.warning(
+            f"{gap_date} 還原收盤價仍出現 {gap_pct:+.1f}% 單日跳空；"
+            "請先核對股票分割、股票股利或除權息資料，勿只依圖表判斷趨勢。"
+        )
+
+    reset_state_key = f"trend_technical_chart_reset_version_{symbol}"
+    control_col, reset_col = st.columns([5, 1])
+    with control_col:
+        st.caption(f"{symbol}｜近六個月日 K，最新交易日：{chart_x[-1]}")
+    with reset_col:
+        if st.button(
+            "回到最新",
+            key=f"trend_technical_reset_latest_{symbol}",
+            help="重設圖表範圍，回到這六個月的完整 K 線",
+        ):
+            st.session_state[reset_state_key] = int(
+                st.session_state.get(reset_state_key, 0)
+            ) + 1
+    reset_version = int(st.session_state.get(reset_state_key, 0))
+
+    ma_specs = [
+        ("MA5", 5, True), ("MA10", 10, False), ("MA20", 20, True),
+        ("MA60", 60, True), ("MA120", 120, False), ("MA240", 240, False),
+    ]
+    ma_cols = st.columns(6)
+    enabled_ma: dict[int, bool] = {}
+    for col, (label, window, default_on) in zip(ma_cols, ma_specs):
+        with col:
+            enabled_ma[window] = st.checkbox(
+                label,
+                value=default_on,
+                key=f"trend_technical_ma_{symbol}_{label}",
+            )
+
+    # 與操作策略一致：紅漲綠跌、價格與成交量共用交易日類別軸。
+    fig = make_subplots(
+        rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.035,
+        row_heights=[0.76, 0.24],
+    )
     fig.add_trace(
         go.Candlestick(
-            x=x, open=frame["open"], high=frame["high"], low=frame["low"], close=frame["close"],
-            name="日 K", increasing_line_color="#d62728", decreasing_line_color="#16a34a",
-            whiskerwidth=0.55,
-        ), row=1, col=1,
+            x=chart_x,
+            open=frame["open"],
+            high=frame["high"],
+            low=frame["low"],
+            close=frame["close"],
+            name="K 線",
+            increasing_line_color="#ef4444",
+            decreasing_line_color="#10b981",
+            increasing_fillcolor="#ef4444",
+            decreasing_fillcolor="#10b981",
+        ),
+        row=1, col=1,
     )
-    fig.add_trace(go.Scatter(x=x, y=frame["MA20"], mode="lines", name="MA20", line={"width": 1.5}), row=1, col=1)
-    fig.add_trace(go.Scatter(x=x, y=frame["MA50"], mode="lines", name="MA50", line={"width": 1.2, "dash": "dot"}), row=1, col=1)
+
+    ma_colors = {
+        5: "#2563eb", 10: "#f59e0b", 20: "#8b5cf6",
+        60: "#0891b2", 120: "#64748b", 240: "#a16207",
+    }
+    for label, window, _default_on in ma_specs:
+        if enabled_ma.get(window):
+            fig.add_trace(
+                go.Scatter(
+                    x=chart_x,
+                    y=frame[f"MA{window}"],
+                    mode="lines",
+                    name=label,
+                    line=dict(width=1.4, color=ma_colors[window]),
+                    connectgaps=False,
+                ),
+                row=1, col=1,
+            )
+
+    volume_colors = [
+        "#ef4444" if close >= open_ else "#10b981"
+        for open_, close in zip(frame["open"], frame["close"])
+    ]
     fig.add_trace(
-        go.Bar(x=x, y=frame["volume"], name="成交量", marker_color=volume_colors, opacity=0.55),
+        go.Bar(
+            x=chart_x,
+            y=frame["volume"],
+            name="成交量",
+            marker_color=volume_colors,
+            hovertemplate="%{x}<br>成交量 %{y:,.0f}<extra></extra>",
+        ),
         row=2, col=1,
     )
+
     fig.update_layout(
-        title=f"{symbol}｜近六個月日 K 技術圖（資料至 {x[-1]}）",
-        height=540, margin={"l": 10, "r": 10, "t": 55, "b": 25},
-        legend={"orientation": "h", "yanchor": "bottom", "y": 1.02, "x": 0},
-        hovermode="x unified", xaxis_rangeslider_visible=False,
+        width=1400,
+        height=760,
+        autosize=False,
+        margin=dict(l=38, r=45, t=28, b=36),
+        hovermode="x unified",
+        dragmode="zoom",
+        showlegend=True,
+        legend=dict(orientation="h", yanchor="bottom", y=1.0, xanchor="left", x=0),
+        uirevision=f"{symbol}-{reset_version}",
+        bargap=0.18,
     )
-    # 類別軸只包含真實交易日，週末及休市日不會顯示空值間隔。
-    category_axis = {"type": "category", "categoryorder": "array", "categoryarray": x}
-    fig.update_xaxes(**category_axis)
-    tick_values = x[::15]
-    if x[-1] not in tick_values:
-        tick_values.append(x[-1])
-    fig.update_xaxes(tickmode="array", tickvals=tick_values, ticktext=tick_values, tickangle=-35, row=2, col=1)
-    fig.update_yaxes(title_text="還原價格", row=1, col=1)
-    fig.update_yaxes(title_text="成交量", row=2, col=1)
-    st.plotly_chart(fig, use_container_width=True, key=f"trend_patterns_chart_{symbol}")
-    st.caption("圖表採 Fugle adjusted=True 還原日 K；非交易日與 OHLC 空值列已排除，x 軸使用實際交易日序列。")
+
+    tick_step = max(1, int(np.ceil((n - 1) / 8)))
+    tick_indexes = list(range(0, n, tick_step))
+    if tick_indexes[-1] != n - 1:
+        tick_indexes.append(n - 1)
+    tickvals = [chart_x[i] for i in tick_indexes]
+    ticktext = [display_labels[i] for i in tick_indexes]
+    for row_no in (1, 2):
+        fig.update_xaxes(
+            type="category",
+            categoryorder="array",
+            categoryarray=chart_x,
+            tickmode="array",
+            tickvals=tickvals,
+            ticktext=ticktext,
+            range=[-0.5, n - 0.5],
+            minallowed=-0.5,
+            maxallowed=n - 0.5,
+            showgrid=True,
+            gridcolor="#e6eaee",
+            rangeslider_visible=False,
+            row=row_no, col=1,
+        )
+
+    price_low = float(frame["low"].min())
+    price_high = float(frame["high"].max())
+    price_pad = max(
+        (price_high - price_low) * 0.04, abs(price_high) * 0.005, 0.01
+    )
+    price_range = [price_low - price_pad, price_high + price_pad]
+    volume_top = max(float(frame["volume"].max()), 1.0) * 1.08
+    volume_range = [0.0, volume_top]
+    fig.update_yaxes(
+        range=price_range, minallowed=price_range[0], maxallowed=price_range[1],
+        showgrid=True, gridcolor="#e6eaee", row=1, col=1,
+    )
+    fig.update_yaxes(
+        range=volume_range, minallowed=volume_range[0], maxallowed=volume_range[1],
+        showgrid=True, gridcolor="#e6eaee", row=2, col=1,
+    )
+
+    st.caption(
+        "操作方式與「操作策略」一致：滑鼠滾輪放大／縮小、雙擊重設回完整六個月；"
+        "放大後可切換工具列平移工具移動視窗。原始視圖範圍會鎖定，不能縮小到原圖之外。"
+        "日期軸只包含真實交易日，週末與休市日不留空格。"
+    )
+    st.plotly_chart(
+        fig,
+        use_container_width=False,
+        key=f"trend_patterns_chart_{symbol}_{reset_version}",
+        config={
+            "scrollZoom": True,
+            "doubleClick": "reset",
+            "displaylogo": False,
+            "responsive": False,
+            "displayModeBar": True,
+            "modeBarButtonsToRemove": ["zoomOut2d", "autoScale2d", "resetScale2d"],
+        },
+    )
 
 
 def render_trend_patterns_workspace(base_dir: str | Path) -> None:
@@ -276,7 +439,7 @@ def render_trend_patterns_workspace(base_dir: str | Path) -> None:
                         st.session_state[chart_visible_key] = True
                     if st.session_state.get(chart_visible_key, False):
                         _render_live_chart(symbol)
-                    st.caption("展開個股後按鈕才查詢六個月還原日 K，顯示真實 OHLC K 棒、MA20、MA50 與成交量；非交易日不建立空資料列。")
+                    st.caption("展開個股後按鈕才查詢六個月還原日 K；均線可自行勾選，並具備與「操作策略」相同的縮放、雙擊還原、固定視窗範圍及回到最新操作。")
 
     with st.expander("分析方法與更新規則", expanded=False):
         st.markdown(
@@ -285,7 +448,7 @@ def render_trend_patterns_workspace(base_dir: str | Path) -> None:
 
             **價格基準：** 趨勢分析與個股 K 棒均使用 Fugle `adjusted=True` 還原股價，避免股票分割、股票股利與除權息造成的價格斷層。還原後若仍出現 35% 以上單日跳空，會放入「資料調整檢查」，暫停方向判斷。
 
-            **時間尺度：** 最近 40 個交易日日 K 辨識目前圖表型態與 3／10／20／40 日報酬；近 6 個月資料判斷高低位置與背景方向。展開個股後顯示近六個月 OHLC K 棒、MA20、MA50 與成交量。
+            **時間尺度：** 最近 40 個交易日日 K 辨識目前圖表型態與 3／10／20／40 日報酬；近 6 個月資料判斷高低位置與背景方向。展開個股後顯示近六個月 OHLC K 棒、成交量，並可切換 MA5、MA10、MA20、MA60、MA120、MA240。均線使用圖表顯示期間以外的歷史暖身資料計算。
 
             **空值處理：** 圖表只使用 OHLC 齊全的真實交易日，日期軸採交易日類別序列，因此週末、國定假日與缺失行情不會形成空白日期。
 
