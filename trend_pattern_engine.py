@@ -220,7 +220,7 @@ def detect_pattern(history: pd.DataFrame) -> dict[str, Any]:
     ret3 = last / float(close[-4]) - 1
     ret10 = last / float(close[-11]) - 1 if width >= 11 else ret3
     ret20 = last / float(close[-21]) - 1 if width >= 21 else ret3
-    ret40 = last / float(close[-64]) - 1 if width >= 64 else last / float(close[0]) - 1
+    ret40 = last / float(close[0]) - 1
     day_ret = pd.Series(close).pct_change().tail(3).dropna().to_numpy()
     ma20 = float(pd.Series(all_close).rolling(20).mean().iloc[-1])
     ma50 = float(pd.Series(all_close).rolling(50).mean().iloc[-1]) if n >= 50 else ma20
