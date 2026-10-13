@@ -5,7 +5,7 @@
 - 分析 industry_rotation.py 的 ROTATION_THEMES 全部概念股，不只自選股。
 - 分析及型態辨識採用 Fugle `adjusted=True` 還原日 K，降低股票分割、股票股利與除權息造成的價格基準斷層；還原後若仍發現 35% 以上單日跳空，股票會先進入「資料調整檢查」，暫停方向判斷。
 - 以近 3 個月日 K 辨識頭肩頂、雙頂／雙底、圓底、杯柄、上升／下降楔形、旗形與三角形；再用約 6 個月的高低位與報酬判斷「由高點回落／由低點回升」的背景。
-- 類別分為「底部反轉候選」、「多頭延續／持續創高」、「整理待突破」、「高檔轉弱／反轉警示」、「下降趨勢／弱勢整理」及「中性觀察」。
+- 類別分為「資料調整檢查」、「底部反轉候選」、「多頭延續／持續創高」、「整理待突破」、「高檔轉弱／反轉警示」、「下降趨勢／弱勢整理」及「中性觀察」。
 - 追蹤箱型／三角形壓力突破、連跌後 3 日轉穩或多頭上漲後 3 日轉弱。沒有重大變化時不更新公開快照、不建立 GitHub commit。
 - 每檔個股展開後，可按按鈕抓取 Fugle 最新近 6 個月還原日 K，查看真實 OHLC K 棒、MA20、MA50 和成交量；排除 OHLC 缺值列，並以交易日類別軸移除週末／休市日空檔。
 
@@ -31,7 +31,7 @@ output\scheduler_logs\trend_patterns_runner.log 與 output\scheduler_logs\trend_
 
 ## GitHub 發布條件
 
-使用 GITHUB_TOKEN 或 GH_TOKEN，需要 alanpass/stock_trading 的 Contents 讀寫權限。若初次建立快照，所有成功辨識的股票都會列入；日後只在分類／型態狀態重大改變時改寫 output/research_reports/trend_patterns_public.json。網站上的個股三個月圖則在使用者按下按鈕後才透過 Fugle 查詢，避免一次對所有股票發送 API 請求。
+使用 GITHUB_TOKEN 或 GH_TOKEN，需要 alanpass/stock_trading 的 Contents 讀寫權限。若初次建立快照，所有成功辨識的股票都會列入；日後只在分類／型態狀態重大改變時改寫 output/research_reports/trend_patterns_public.json。網站上的個股近六個月 K 棒圖則在使用者按下按鈕後才透過 Fugle 查詢，避免一次對所有股票發送 API 請求。
 
 ## 需要留意的前提
 
