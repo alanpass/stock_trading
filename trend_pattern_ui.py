@@ -7,6 +7,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 from typing import Any
 
+import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
@@ -38,6 +39,7 @@ PATTERN_GUIDES: dict[str, dict[str, Any]] = {
     "上升趨勢": {"values": [0.10, 0.22, 0.18, 0.41, 0.36, 0.61, 0.53, 0.82, 0.96], "note": "高點與低點逐步墊高，趨勢仍需留意量價變化。"},
     "下降趨勢": {"values": [0.95, 0.79, 0.83, 0.62, 0.68, 0.42, 0.46, 0.22, 0.08], "note": "反彈高點與低點下移，暫未出現明確止跌訊號。"},
     "盤整待突破": {"values": [0.48, 0.72, 0.34, 0.68, 0.37, 0.70, 0.46, 0.62], "note": "暫未符合單一典型形態，觀察支撐、壓力與突破方向。"},
+    "價格基準待確認": {"values": [0.85, 0.87, 0.86, 0.34, 0.36, 0.35, 0.38], "note": "疑似價格基準斷層，先核對除權息／股票股利／分割與還原股價資料，不直接判斷趨勢。"},
 }
 
 
@@ -69,48 +71,88 @@ def _schematic_figure(pattern_name: str, height: int = 155) -> go.Figure:
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
-def _load_live_three_month_chart(symbol: str, end_day: str) -> pd.DataFrame:
+def _load_live_six_month_chart(symbol: str, end_day: str) -> pd.DataFrame:
+    """載入近半年還原日 K；額外抓取暖身資料計算 MA50，再只顯示約半年交易日。"""
     end = pd.Timestamp(end_day).normalize()
-    start = (end - pd.Timedelta(days=130)).date()
+    # 260 個日曆日足夠涵蓋六個月圖表與 MA50 暖身期，單次歷史 API 查詢小於一年。
+    start = (end - pd.Timedelta(days=260)).date()
     client = FugleClient()
-    frame = client.historical_candles(clean_symbol(symbol), start, end.date(), "D", adjusted=False)
+    frame = client.historical_candles(clean_symbol(symbol), start, end.date(), "D", adjusted=True)
     if frame is None or frame.empty:
         return pd.DataFrame()
+
     frame = frame.copy()
-    frame["date"] = pd.to_datetime(frame["date"], errors="coerce")
-    for field in ("close", "volume"):
+    frame["date"] = pd.to_datetime(frame["date"], errors="coerce", utc=True).dt.tz_convert("Asia/Taipei").dt.tz_localize(None).dt.normalize()
+    for field in ("open", "high", "low", "close", "volume"):
         if field not in frame:
-            frame[field] = 0.0
+            frame[field] = np.nan if field != "volume" else 0.0
         frame[field] = pd.to_numeric(frame[field], errors="coerce")
-    frame = frame.dropna(subset=["date", "close"]).sort_values("date").tail(75)
-    frame["MA20"] = frame["close"].rolling(20).mean()
-    frame["MA50"] = frame["close"].rolling(50).mean()
-    return frame.reset_index(drop=True)
+    frame = frame.replace([np.inf, -np.inf], np.nan)
+    # 只保留真實交易日且 OHLC 齊全的棒；非交易日／空值列不進入圖表。
+    frame = frame.dropna(subset=["date", "open", "high", "low", "close"])
+    frame = frame[(frame["open"] > 0) & (frame["high"] > 0) & (frame["low"] > 0) & (frame["close"] > 0)]
+    frame = frame.drop_duplicates("date", keep="last").sort_values("date").reset_index(drop=True)
+    if frame.empty:
+        return pd.DataFrame()
+
+    frame["volume"] = frame["volume"].fillna(0).clip(lower=0)
+    frame["MA20"] = frame["close"].rolling(20, min_periods=1).mean()
+    frame["MA50"] = frame["close"].rolling(50, min_periods=1).mean()
+    # x 使用交易日文字標籤與類別軸；週末、國定假日不會留出空白區。
+    frame["date_label"] = frame["date"].dt.strftime("%Y-%m-%d")
+    return frame.tail(130).reset_index(drop=True)
 
 
 def _render_live_chart(symbol: str) -> None:
     try:
-        frame = _load_live_three_month_chart(symbol, datetime.now(ZoneInfo("Asia/Taipei")).date().isoformat())
+        frame = _load_live_six_month_chart(symbol, datetime.now(ZoneInfo("Asia/Taipei")).date().isoformat())
     except Exception as exc:
-        st.warning(f"無法取得 {symbol} 最新日 K：{type(exc).__name__}: {exc}")
+        st.warning(f"無法取得 {symbol} 最新六個月日 K：{type(exc).__name__}: {exc}")
         return
     if frame.empty:
-        st.info("行情來源沒有回傳可用的三個月日 K 資料。")
+        st.info("行情來源沒有回傳可用的六個月 OHLC K 棒資料。")
         return
+
+    x = frame["date_label"].tolist()
+    volume_colors = [
+        "#d62728" if close >= open_ else "#16a34a"
+        for open_, close in zip(frame["open"].tolist(), frame["close"].tolist())
+    ]
+    daily_return = frame["close"].pct_change().abs()
+    if bool((daily_return >= 0.35).any()):
+        st.warning("還原股價序列仍出現超過 35% 的單日跳空；請先核對股票分割、股票股利或除權息資料，勿直接依圖表判斷趨勢。")
+
     fig = make_subplots(rows=2, cols=1, shared_xaxes=True, row_heights=[0.76, 0.24], vertical_spacing=0.04)
-    fig.add_trace(go.Scatter(x=frame["date"], y=frame["close"], mode="lines", name="收盤價", line={"width": 2}), row=1, col=1)
-    fig.add_trace(go.Scatter(x=frame["date"], y=frame["MA20"], mode="lines", name="MA20", line={"width": 1.5}), row=1, col=1)
-    fig.add_trace(go.Scatter(x=frame["date"], y=frame["MA50"], mode="lines", name="MA50", line={"width": 1.2, "dash": "dot"}), row=1, col=1)
-    fig.add_trace(go.Bar(x=frame["date"], y=frame["volume"], name="成交量", opacity=0.45), row=2, col=1)
-    fig.update_layout(
-        title=f"{symbol}｜近三個月簡易技術圖（資料至 {frame['date'].iloc[-1].date()}）",
-        height=420, margin={"l": 10, "r": 10, "t": 48, "b": 15},
-        legend={"orientation": "h", "yanchor": "bottom", "y": 1.02, "x": 0},
-        hovermode="x unified",
+    fig.add_trace(
+        go.Candlestick(
+            x=x, open=frame["open"], high=frame["high"], low=frame["low"], close=frame["close"],
+            name="日 K", increasing_line_color="#d62728", decreasing_line_color="#16a34a",
+            whiskerwidth=0.55,
+        ), row=1, col=1,
     )
-    fig.update_yaxes(title_text="價格", row=1, col=1)
-    fig.update_yaxes(title_text="量", row=2, col=1)
+    fig.add_trace(go.Scatter(x=x, y=frame["MA20"], mode="lines", name="MA20", line={"width": 1.5}), row=1, col=1)
+    fig.add_trace(go.Scatter(x=x, y=frame["MA50"], mode="lines", name="MA50", line={"width": 1.2, "dash": "dot"}), row=1, col=1)
+    fig.add_trace(
+        go.Bar(x=x, y=frame["volume"], name="成交量", marker_color=volume_colors, opacity=0.55),
+        row=2, col=1,
+    )
+    fig.update_layout(
+        title=f"{symbol}｜近六個月日 K 技術圖（資料至 {x[-1]}）",
+        height=540, margin={"l": 10, "r": 10, "t": 55, "b": 25},
+        legend={"orientation": "h", "yanchor": "bottom", "y": 1.02, "x": 0},
+        hovermode="x unified", xaxis_rangeslider_visible=False,
+    )
+    # 類別軸只包含真實交易日，週末及休市日不會顯示空值間隔。
+    category_axis = {"type": "category", "categoryorder": "array", "categoryarray": x}
+    fig.update_xaxes(**category_axis)
+    tick_values = x[::15]
+    if x[-1] not in tick_values:
+        tick_values.append(x[-1])
+    fig.update_xaxes(tickmode="array", tickvals=tick_values, ticktext=tick_values, tickangle=-35, row=2, col=1)
+    fig.update_yaxes(title_text="還原價格", row=1, col=1)
+    fig.update_yaxes(title_text="成交量", row=2, col=1)
     st.plotly_chart(fig, use_container_width=True, key=f"trend_patterns_chart_{symbol}")
+    st.caption("圖表採 Fugle adjusted=True 還原日 K；非交易日與 OHLC 空值列已排除，x 軸使用實際交易日序列。")
 
 
 def render_trend_patterns_workspace(base_dir: str | Path) -> None:
@@ -149,9 +191,10 @@ def render_trend_patterns_workspace(base_dir: str | Path) -> None:
         f"本次重大變化 {int(payload.get('changed_count', 0) or 0)} 檔"
     )
     counts = frame["classification"].value_counts()
-    metric_cols = st.columns(5)
-    for col, label in zip(metric_cols, CATEGORY_ORDER[:5]):
-        col.metric(label, int(counts.get(label, 0)))
+    for start_index in range(0, len(CATEGORY_ORDER), 4):
+        metric_cols = st.columns(min(4, len(CATEGORY_ORDER) - start_index))
+        for col, label in zip(metric_cols, CATEGORY_ORDER[start_index:start_index + 4]):
+            col.metric(label, int(counts.get(label, 0)))
     st.divider()
 
     all_themes = sorted({theme for items in frame["themes"].tolist() if isinstance(items, list) for theme in items})
@@ -178,7 +221,8 @@ def render_trend_patterns_workspace(base_dir: str | Path) -> None:
             "底部反轉候選": "常見於跌深後轉穩、雙底／倒頭肩／圓底等結構；仍須觀察壓力突破與成交量。",
             "多頭延續／持續創高": "價格趨勢偏多或突破短期壓力；需留意追高風險及突破失敗。",
             "整理待突破": "三角形、旗形、杯柄或箱型整理；方向未確認前不預設一定向上。",
-            "高檔轉弱／反轉警示": "雙頂、頭肩頂、上升楔形或上漲後三日轉弱，需留意支撐。",
+            "資料調整檢查": "還原股價仍有疑似價格斷層，先核對股票分割、股票股利或除權息，不進行方向判斷。",
+        "高檔轉弱／反轉警示": "雙頂、頭肩頂、上升楔形或上漲後三日轉弱，需留意支撐。",
             "下降趨勢／弱勢整理": "均線與報酬偏弱，或跌破重要支撐；不代表一定會持續下跌。",
             "中性觀察": "目前訊號不足以歸入更明確的方向。",
         }
@@ -214,6 +258,12 @@ def render_trend_patterns_workspace(base_dir: str | Path) -> None:
                         st.write(f"**近 3 個月報酬：** {row.get('return_3m_pct', '—')}%")
                         st.write(f"**支撐／壓力估計：** {row.get('support', '—')}／{row.get('resistance', '—')}")
                     st.write(f"**六個月方向判讀：** {row.get('market_direction_6m', '未提供')}")
+                    st.write(f"**價格調整方式：** {row.get('adjustment_method', '舊快照／未標記還原方式')}")
+                    if bool(row.get("corporate_action_review", False)):
+                        st.warning(
+                            f"此股於 {row.get('suspected_gap_date', '未知日期')} 出現 "
+                            f"{row.get('suspected_gap_pct', '未知')}% 價格跳空，已暫停趨勢型態判斷。"
+                        )
                     st.write(f"**判讀說明：** {row.get('reason', '目前沒有額外說明。')}")
                     st.write(f"**所屬產業主題：** {'、'.join(themes) if themes else '未分類'}")
                     st.caption(
@@ -222,21 +272,25 @@ def render_trend_patterns_workspace(base_dir: str | Path) -> None:
                         f"最新用於判讀的 K 棒：{row.get('last_bar_date', '—')}"
                     )
                     chart_visible_key = f"trend_pattern_chart_visible_{symbol}"
-                    if st.button("載入／更新此股近三個月技術圖", key=f"trend_pattern_load_chart_{symbol}"):
+                    if st.button("載入／更新此股近六個月 K 棒圖", key=f"trend_pattern_load_chart_{symbol}"):
                         st.session_state[chart_visible_key] = True
                     if st.session_state.get(chart_visible_key, False):
                         _render_live_chart(symbol)
-                    st.caption("近三個月圖由 Fugle 歷史日 K 即時查詢，顯示收盤價、MA20、MA50 與成交量；首次按下按鈕才查詢，之後會保留圖表以避免頁面自動刷新時消失。")
+                    st.caption("展開個股後按鈕才查詢六個月還原日 K，顯示真實 OHLC K 棒、MA20、MA50 與成交量；非交易日不建立空資料列。")
 
     with st.expander("分析方法與更新規則", expanded=False):
         st.markdown(
             """
             **資料範圍：** 產業分析 ROTATION_THEMES 的全部概念股；同一檔股票屬於多個主題時會保留全部主題。
 
-            **時間尺度：** 近 3 個月日 K 辨識圖表形態，近 6 個月位置辨識股價相對高低位與背景方向。支撐、壓力與型態信心均為啟發式估算。
+            **價格基準：** 趨勢分析與個股 K 棒均使用 Fugle `adjusted=True` 還原股價，避免股票分割、股票股利與除權息造成的價格斷層。還原後若仍出現 35% 以上單日跳空，會放入「資料調整檢查」，暫停方向判斷。
+
+            **時間尺度：** 近 3 個月日 K 辨識圖表型態，近 6 個月資料判斷高低位置與背景方向。展開個股後顯示近六個月 OHLC K 棒、MA20、MA50 與成交量。
+
+            **空值處理：** 圖表只使用 OHLC 齊全的真實交易日，日期軸採交易日類別序列，因此週末、國定假日與缺失行情不會形成空白日期。
 
             **重大變化：** 包含箱型／三角形／杯柄等壓力突破、連續下跌後三日轉穩或上漲，以及多頭趨勢三日轉弱、主要型態改變。沒有重大變化時不改寫公開快照。
 
-            **型態限制：** 自動規則是近似判斷，無法完全取代人眼辨識；形態可能失敗、假突破也可能發生，請勿單憑型態交易。
+            **型態限制：** 自動規則是近似判斷，無法完全取代人眼辨識；形態可能失敗，假突破也可能發生，請勿單憑型態交易。
             """
         )

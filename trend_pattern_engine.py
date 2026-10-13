@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 import requests
 
-from industry_rotation import ROTATION_THEMES, NAME_FALLBACKS, _load_symbol_history
+from industry_rotation import ROTATION_THEMES, NAME_FALLBACKS
 from market_calendar import is_twse_trading_day
 from stock_api import FugleClient, clean_symbol
 
@@ -30,9 +30,11 @@ PUBLIC_REPO_PATH = "output/research_reports/trend_patterns_public.json"
 USER_AGENT = "Mozilla/5.0 TaiwanStockTrendPatterns/1.0"
 
 CATEGORY_ORDER = [
-    "底部反轉候選", "多頭延續／持續創高", "整理待突破",
-    "高檔轉弱／反轉警示", "下降趨勢／弱勢整理", "中性觀察",
+    "資料調整檢查", "底部反轉候選", "多頭延續／持續創高",
+    "整理待突破", "高檔轉弱／反轉警示", "下降趨勢／弱勢整理", "中性觀察",
 ]
+ADJUSTMENT_METHOD = "Fugle 還原股價（adjusted=True）"
+SUSPICIOUS_GAP_THRESHOLD = 0.35
 CONSOLIDATION_PATTERNS = {"杯柄", "多頭旗形", "空頭旗形", "上升三角形", "下降三角形", "對稱三角形", "箱型整理", "盤整待突破"}
 MATERIAL_EVENTS = {"箱頂突破", "近20日壓力突破", "連跌後轉穩（3日）", "上漲轉弱（3日）", "向下跌破支撐"}
 
@@ -65,24 +67,41 @@ def _normalise_history(frame: pd.DataFrame | None) -> pd.DataFrame:
 
 
 def load_symbol_history(base: Path, client: FugleClient, symbol: str, asof: pd.Timestamp) -> pd.DataFrame:
-    """優先讀取產業分析共用的 560 日快取；必要時沿用同一增量更新函式補資料。"""
-    path = base / "data" / "rotation" / "history" / f"{clean_symbol(symbol)}.csv"
+    """取得近半年還原日 K，避免股票股利或分割被誤判成單日暴跌。
+
+    使用獨立快取，不混用產業輪動頁的 adjusted=False 資料。每次排程重新查近 260 天，
+    因為新除權息或股票股利可能追溯調整之前的歷史 OHLC。
+    """
+    clean = clean_symbol(symbol)
+    folder = base / "data" / "trend_patterns" / "history_adjusted"
+    folder.mkdir(parents=True, exist_ok=True)
+    path = folder / f"{clean}.csv"
+    start = (asof.normalize() - pd.Timedelta(days=260)).date()
+    end = asof.normalize().date()
+    cached = pd.DataFrame()
     try:
         cached = _normalise_history(pd.read_csv(path, parse_dates=["date"]))
     except Exception:
-        cached = pd.DataFrame()
-    needs_refresh = cached.empty or len(cached) < 100
-    if not cached.empty and pd.Timestamp(cached["date"].max()).normalize() < asof.normalize():
-        # 19:00 已收盤；若當日為交易日卻缺少當日 K 棒，就補抓最新日 K。
-        needs_refresh = True
-    if needs_refresh:
-        try:
-            refreshed = _normalise_history(_load_symbol_history(client, base, clean_symbol(symbol), asof))
-            if not refreshed.empty:
-                return refreshed
-        except Exception:
-            pass
-    return cached
+        pass
+
+    try:
+        # Fugle adjusted=True 使用還原股價序列；每次抓回完整分析窗，確保新公司行動能追溯調整歷史價格。
+        refreshed = client.historical_candles(clean, start, end, "D", adjusted=True)
+        refreshed = _normalise_history(refreshed)
+        refreshed = refreshed[refreshed["date"] >= pd.Timestamp(start)].tail(200).reset_index(drop=True)
+        if len(refreshed) < 45:
+            raise RuntimeError(f"Fugle adjusted=True 回傳日 K 不足 45 根（{len(refreshed)} 根）")
+        temp = path.with_suffix(".csv.tmp")
+        refreshed.to_csv(temp, index=False, encoding="utf-8-sig")
+        temp.replace(path)
+        return refreshed
+    except Exception as exc:
+        # 僅在快取足夠新、且資料本身已由 adjusted=True 取得時才容許沿用。
+        if not cached.empty and len(cached) >= 45:
+            latest = pd.Timestamp(cached["date"].max()).normalize()
+            if latest >= asof.normalize() - pd.Timedelta(days=5):
+                return cached
+        raise RuntimeError(f"{clean} 還原股價歷史資料取得失敗：{type(exc).__name__}: {exc}") from exc
 
 
 def _pivot_indices(values: np.ndarray, kind: str, order: int = 3) -> list[int]:
@@ -222,6 +241,40 @@ def detect_pattern(history: pd.DataFrame) -> dict[str, Any]:
     else:
         direction6m = "半年區間中段"
 
+    # 還原股價後若仍出現超出正常台股單日波動範圍的價格斷層，先做資料檢查。
+    recent_returns = data["close"].pct_change()
+    review_returns = recent_returns.iloc[max(1, n - 150):]
+    suspicious = review_returns[review_returns.abs() >= SUSPICIOUS_GAP_THRESHOLD]
+    if not suspicious.empty:
+        gap_idx = int(suspicious.index[-1])
+        gap_pct = float(suspicious.iloc[-1]) * 100
+        gap_date = pd.Timestamp(data["date"].iloc[gap_idx]).strftime("%Y-%m-%d")
+        return {
+            "pattern_name": "價格基準待確認",
+            "classification": "資料調整檢查",
+            "trend_3m": "暫不判定",
+            "market_direction_6m": "暫不判定（價格基準檢查中）",
+            "return_3d_pct": round(ret3 * 100, 2),
+            "return_10d_pct": round(ret10 * 100, 2),
+            "return_20d_pct": round(ret20 * 100, 2),
+            "return_3m_pct": round(ret3m * 100, 2),
+            "return_6m_pct": round(ret6m * 100, 2),
+            "close_at_assessment": round(last, 2),
+            "support": round(float(np.min(lows[-20:])), 2),
+            "resistance": round(float(np.max(highs[-20:])), 2),
+            "confidence": 0.0,
+            "event": "疑似公司行動／價格斷層",
+            "corporate_action_review": True,
+            "suspected_gap_date": gap_date,
+            "suspected_gap_pct": round(gap_pct, 2),
+            "adjustment_method": ADJUSTMENT_METHOD,
+            "reason": (
+                f"{gap_date} 的還原收盤價仍出現 {gap_pct:+.1f}% 單日跳空；"
+                "可能是股票分割、股票股利、除權息或異常行情。已暫停型態方向判斷，需先核對公司行動與資料來源。"
+            ),
+            "last_bar_date": pd.Timestamp(data["date"].iloc[-1]).strftime("%Y-%m-%d"),
+        }
+
     pattern, confidence = "箱型整理", 0.48
     resistance, note = float(np.max(highs[-25:])), "近 3 個月價格在區間內反覆震盪，尚未符合更明確的典型形態。"
     hs = _find_head_shoulders(highs, lows, close)
@@ -330,6 +383,8 @@ def detect_pattern(history: pd.DataFrame) -> dict[str, Any]:
         "support": round(float(np.min(lows[-20:])), 2),
         "resistance": round(float(resistance if resistance is not None and np.isfinite(resistance) else np.max(highs[-20:])), 2),
         "confidence": round(float(confidence), 2), "event": event,
+        "corporate_action_review": False,
+        "adjustment_method": ADJUSTMENT_METHOD,
         "reason": note + f" 近 3 個月報酬 {ret3m * 100:+.1f}%，近 3 日 {ret3 * 100:+.1f}%。",
         "last_bar_date": pd.Timestamp(data["date"].iloc[-1]).strftime("%Y-%m-%d"),
     }
@@ -349,6 +404,8 @@ def _event_for_change(old: dict[str, Any] | None, new: dict[str, Any]) -> str:
 def _is_material_change(old: dict[str, Any] | None, new: dict[str, Any]) -> tuple[bool, str]:
     if old is None:
         return True, "初始型態建檔"
+    if old.get("adjustment_method") != ADJUSTMENT_METHOD:
+        return True, "改用還原股價重新校正型態"
     if old.get("classification") != new.get("classification"):
         return True, _event_for_change(old, new)
     if old.get("pattern_name") != new.get("pattern_name") and float(new.get("confidence") or 0) >= 0.64:
@@ -515,9 +572,10 @@ def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bo
         "tracked_symbols": len(symbols), "usable_symbols": len(updated_rows), "changed_count": len(changes),
         "category_order": CATEGORY_ORDER,
         "methodology": (
-            "使用產業分析 ROTATION_THEMES 的全部概念股；近 3 個月日 K 辨識頭肩、雙頂／雙底、圓底、杯柄、"
-            "楔形、旗形與三角形等形態，近 6 個月位置辨識由高點回落或由低點回升。採規則式判讀，"
-            "只在型態／趨勢狀態重大變化時更新快照；展開個股可另抓最新近 3 個月日 K。"
+            "使用產業分析 ROTATION_THEMES 的全部概念股；所有分析 OHLC 都取 Fugle adjusted=True 還原股價，"
+            "以避免除權息、股票股利與分割造成的價格基準斷層。近 3 個月日 K 辨識頭肩、雙頂／雙底、圓底、杯柄、"
+            "楔形、旗形與三角形，近 6 個月位置辨識由高點回落或由低點回升。若還原後仍出現巨大單日跳空，"
+            "先歸入資料調整檢查、不直接判斷趨勢；只在型態／趨勢狀態重大變化時更新快照。"
         ),
         "pattern_guide_url": "https://www.ig.com/cn/trading-strategies/10-chart-patterns-every-trader-needs-to-know-220907",
         "changes": changes[:160], "errors_count": len(errors), "errors": errors[:30], "stocks": rows,
