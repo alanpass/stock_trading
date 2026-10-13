@@ -72,7 +72,8 @@ def load_symbol_history(base: Path, client: FugleClient, symbol: str, asof: pd.T
     except Exception:
         cached = pd.DataFrame()
     needs_refresh = cached.empty or len(cached) < 100
-    if not cached.empty and pd.Timestamp(cached["date"].max()).normalize() < asof.normalize() - pd.Timedelta(days=4):
+    if not cached.empty and pd.Timestamp(cached["date"].max()).normalize() < asof.normalize():
+        # 19:00 已收盤；若當日為交易日卻缺少當日 K 棒，就補抓最新日 K。
         needs_refresh = True
     if needs_refresh:
         try:
