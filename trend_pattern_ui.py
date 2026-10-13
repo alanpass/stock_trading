@@ -162,7 +162,7 @@ def render_trend_patterns_workspace(base_dir: str | Path) -> None:
     stocks = payload.get("stocks", []) if isinstance(payload, dict) else []
     st.markdown(
         '<div class="content-heading"><div class="eyebrow">TREND PATTERN ANALYSIS</div>'
-        '<h1>趨勢型態</h1><p>以產業分析的全部概念股為範圍，觀察近三個月圖表形態與近六個月所處位置；'
+        '<h1>趨勢型態</h1><p>以產業分析的全部概念股為範圍，使用最近 40 個交易日辨識型態、近六個月判斷背景趨勢；'
         '只在箱頂突破、三日轉折或主要型態改變時更新公開判讀。</p></div>',
         unsafe_allow_html=True,
     )
@@ -249,13 +249,13 @@ def render_trend_patterns_workspace(base_dir: str | Path) -> None:
                     left, right = st.columns(2)
                     with left:
                         st.write(f"**型態分類：** {category}")
-                        st.write(f"**近 3 個月趨勢：** {row.get('trend_3m', '未提供')}")
+                        st.write(f"**近 40 個交易日趨勢：** {row.get('trend_40d', '未提供')}")
                         st.write(f"**近 6 個月背景：** {row.get('market_direction_6m', '未提供')}")
                         st.write(f"**型態信心參考：** {float(row.get('confidence') or 0):.0%}")
                     with right:
                         st.write(f"**最近判讀收盤價：** {row.get('close_at_assessment', '—')}")
                         st.write(f"**近 3 日報酬：** {row.get('return_3d_pct', '—')}%")
-                        st.write(f"**近 3 個月報酬：** {row.get('return_3m_pct', '—')}%")
+                        st.write(f"**近 40 個交易日報酬：** {row.get('return_40d_pct', '—')}%")
                         st.write(f"**支撐／壓力估計：** {row.get('support', '—')}／{row.get('resistance', '—')}")
                     st.write(f"**六個月方向判讀：** {row.get('market_direction_6m', '未提供')}")
                     st.write(f"**價格調整方式：** {row.get('adjustment_method', '舊快照／未標記還原方式')}")
@@ -285,7 +285,7 @@ def render_trend_patterns_workspace(base_dir: str | Path) -> None:
 
             **價格基準：** 趨勢分析與個股 K 棒均使用 Fugle `adjusted=True` 還原股價，避免股票分割、股票股利與除權息造成的價格斷層。還原後若仍出現 35% 以上單日跳空，會放入「資料調整檢查」，暫停方向判斷。
 
-            **時間尺度：** 近 3 個月日 K 辨識圖表型態，近 6 個月資料判斷高低位置與背景方向。展開個股後顯示近六個月 OHLC K 棒、MA20、MA50 與成交量。
+            **時間尺度：** 最近 40 個交易日日 K 辨識目前圖表型態與 3／10／20／40 日報酬；近 6 個月資料判斷高低位置與背景方向。展開個股後顯示近六個月 OHLC K 棒、MA20、MA50 與成交量。
 
             **空值處理：** 圖表只使用 OHLC 齊全的真實交易日，日期軸採交易日類別序列，因此週末、國定假日與缺失行情不會形成空白日期。
 
