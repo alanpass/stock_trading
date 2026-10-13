@@ -1,0 +1,21 @@
+name: Trend pattern Python syntax
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - feature/trend-pattern-analysis
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Compile dashboard and trend pattern modules
+        run: python -m py_compile stock_dashboard.py trend_pattern_engine.py trend_pattern_ui.py run_trend_pattern_update.py

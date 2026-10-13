@@ -94,6 +94,7 @@ from subscriber_service import register_subscriber, subscription_status
 from auth_service import (authenticate, request_account, ADMIN_EMAIL, create_session_token,
                          verify_session_token, SESSION_COOKIE_NAME, SESSION_TTL_SECONDS)
 from industry_rotation import ROTATION_THEMES, ROTATION_DEFAULT_THEMES, ROTATION_DISPLAY_NAMES, NAME_FALLBACKS, load_published_rotation
+from trend_pattern_ui import render_trend_patterns_workspace
 from us_industry_indicators import US_INDUSTRY_INDICATORS, get_us_indicator_symbols, fetch_us_indicators
 
 
@@ -2041,7 +2042,7 @@ def _get_nav_section() -> str:
         value = str(value or default)
     except Exception:
         value = default
-    allowed = {"home", "strategy", "future", "finance", "rotation", "subscribe"}
+    allowed = {"home", "strategy", "trend", "future", "finance", "rotation", "subscribe"}
     return value if value in allowed else "home"
 
 
@@ -2057,7 +2058,7 @@ def _set_nav_section(section: str) -> None:
 def render_site_navigation() -> str:
     """Restore the original HTML navigation appearance while retaining hidden controls for session-safe navigation."""
     current = _get_nav_section()
-    nav = [("home", "首頁"), ("strategy", "操作策略"), ("future", "未來分析"), ("finance", "財經資訊"), ("rotation", "產業分析"), ("subscribe", "訂閱系統")]
+    nav = [("home", "首頁"), ("strategy", "操作策略"), ("trend", "趨勢型態"), ("future", "未來分析"), ("finance", "財經資訊"), ("rotation", "產業分析"), ("subscribe", "訂閱系統")]
     links = []
     for key, label in nav:
         active = " active" if current == key else ""
@@ -2079,7 +2080,7 @@ def _render_footer() -> None:
     """每一頁固定放頁尾，並顯示資料來源、新聞著作權與投資風險聲明。"""
     st.markdown('''
     <footer translate="no" class="site-footer"><div class="footer-inner"><div class="footer-contact">
-      <div class="footer-title">台股即時互動式分析系統</div><p>股票即時行情、操作策略、未來分析與每日財經資訊。</p>
+      <div class="footer-title">台股即時互動式分析系統</div><p>股票即時行情、操作策略、趨勢型態、未來分析與每日財經資訊。</p>
       <div class="footer-small">電子郵件：a1113359@mail.nuk.edu.tw</div><div class="footer-small">聯絡電話：+886-907-611-728</div>
     </div><div class="footer-form-note"><div class="footer-title">訂閱每日財經資訊</div>
       <p>輸入電子郵件後，可由訂閱系統留下需求。</p><a href="?section=subscribe" target="_self">前往訂閱系統 →</a>
@@ -6682,7 +6683,7 @@ _components.html(
           try { target = new URL(anchor.getAttribute("href"), w.location.href); }
           catch (err) { return; }
           const section = target.searchParams.get("section");
-          const allowed = ["home", "strategy", "future", "finance", "rotation", "subscribe"];
+          const allowed = ["home", "strategy", "trend", "future", "finance", "rotation", "subscribe"];
           if (!allowed.includes(section)) return;
           const button = d.querySelector(".st-key-nav_section_" + section + " button");
           if (!button) return;
@@ -6710,6 +6711,8 @@ if current_section == "home":
     render_home_workspace()
 elif current_section == "strategy":
     render_strategy_workspace()
+elif current_section == "trend":
+    render_trend_patterns_workspace(BASE)
 elif current_section == "future":
     if is_authenticated():
         render_future_workspace()
