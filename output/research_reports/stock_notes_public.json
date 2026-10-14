@@ -1,0 +1,724 @@
+{
+  "schema_version": 1,
+  "report_type": "stock_notes_public",
+  "report_date": "2026-10-14",
+  "generated_at": "2026-10-14T23:50:00+08:00",
+  "generated_by": "Claude 研究 Agent",
+  "disclaimer": "研究筆記僅整理公開資訊與證據，不構成投資建議。",
+  "count": 31,
+  "notes": [
+    {
+      "symbol": "2327",
+      "name": "國巨",
+      "category": "watchlist",
+      "headline": "被動元件族群走強，今日+4.67%",
+      "summary": "國巨為被動元件龍頭（電阻、電容、電感），今日上漲4.67%，與華新科、大毅同步走強。9月營收YoY +46.12%、EPS 8.48。鉅亨10/14分析將國巨列為AI核心供應鏈觀察股之一；研究包中沒有找到報價調漲等單一觸發事件，上漲原因較可能是營收成長加資金輪動。",
+      "positives": [
+        "營收YoY +46.12%",
+        "被動元件族群同步走強"
+      ],
+      "risks": [
+        "缺乏明確報價調漲證據",
+        "外資整體仍偏賣"
+      ],
+      "watch": [
+        "MLCC與電阻報價",
+        "10月營收"
+      ],
+      "evidence": [
+        "今日+4.67%",
+        "鉅亨：國巨列AI供應鏈觀察股（10/14）"
+      ],
+      "source_links": [
+        "https://news.cnyes.com/news/id/6630359"
+      ],
+      "confidence": 0.55
+    },
+    {
+      "symbol": "2492",
+      "name": "華新科",
+      "category": "watchlist",
+      "headline": "被動元件領漲，今日+8.67%",
+      "summary": "華新科為MLCC與被動元件廠，今日大漲8.67%，為自選股中漲幅最大。9月營收YoY +53.93%、EPS 4.93。族群（國巨、大毅）同步走強，但研究包內沒有找到個別公司公告或報價消息，原因標示待查證。",
+      "positives": [
+        "營收YoY +53.93%",
+        "族群同步上漲"
+      ],
+      "risks": [
+        "單日漲幅大，缺乏明確催化事件"
+      ],
+      "watch": [
+        "MLCC報價與稼動率",
+        "10月營收"
+      ],
+      "evidence": [
+        "今日+8.67%",
+        "營收YoY +53.93%"
+      ],
+      "source_links": [],
+      "confidence": 0.5
+    },
+    {
+      "symbol": "3037",
+      "name": "欣興",
+      "category": "watchlist",
+      "headline": "FactSet上修EPS預估，股價小漲",
+      "summary": "欣興為ABF載板與高階PCB廠，今日+0.42%。FactSet 10/14調查將其2026年EPS預估上修至21.6元、目標價1,262.5元；9月營收YoY +64.67%。10/13 PCB／CCL族群曾重挫，今日回穩但漲幅落後同族群。",
+      "positives": [
+        "EPS預估上修",
+        "營收YoY +64.67%"
+      ],
+      "risks": [
+        "族群評價波動大"
+      ],
+      "watch": [
+        "AI伺服器載板需求",
+        "10月營收"
+      ],
+      "evidence": [
+        "FactSet：EPS預估21.6元（10/14）"
+      ],
+      "source_links": [
+        "https://news.cnyes.com/news/id/6630455"
+      ],
+      "confidence": 0.65
+    },
+    {
+      "symbol": "3044",
+      "name": "健鼎",
+      "category": "watchlist",
+      "headline": "高階PCB族群走強，今日+5.42%",
+      "summary": "健鼎為高階電路板廠，今日上漲5.42%，與CCL、PCB族群同步走強。9月營收YoY +53.50%、EPS 13.02。上漲與AI伺服器高階板材需求、CCL漲價的新聞方向一致。",
+      "positives": [
+        "營收YoY +53.50%",
+        "族群題材明確"
+      ],
+      "risks": [
+        "原物料（CCL）漲價可能壓縮PCB毛利"
+      ],
+      "watch": [
+        "10月營收",
+        "毛利率"
+      ],
+      "evidence": [
+        "今日+5.42%",
+        "鉅亨：CCL三雄漲價分析（10/14）"
+      ],
+      "source_links": [
+        "https://news.cnyes.com/news/id/6630357"
+      ],
+      "confidence": 0.6
+    },
+    {
+      "symbol": "3533",
+      "name": "嘉澤",
+      "category": "watchlist",
+      "headline": "高速連接器，今日+4.03%",
+      "summary": "嘉澤為CPU插槽與高速連接器廠，今日上漲4.03%。9月營收YoY +16.13%、EPS 39.04，成長幅度低於同為AI周邊的PCB與被動元件。今日上漲較可能跟隨電子零組件族群，研究包沒有個別新聞。",
+      "positives": [
+        "EPS 39.04，獲利水準高"
+      ],
+      "risks": [
+        "營收成長相對溫和"
+      ],
+      "watch": [
+        "新平台插槽出貨"
+      ],
+      "evidence": [
+        "今日+4.03%",
+        "營收YoY +16.13%"
+      ],
+      "source_links": [],
+      "confidence": 0.45
+    },
+    {
+      "symbol": "2303",
+      "name": "聯電",
+      "category": "watchlist",
+      "headline": "9月營收創新高，股價持平",
+      "summary": "聯電今日+0.35%。9月營收253.5億元、年增27.2%，創單月新高，第三季營收超越財測高標。鉅亨報導指出AI伺服器帶動電源管理、網通晶片等成熟製程需求，資金開始關注二線晶圓代工；但今日股價反應有限。",
+      "positives": [
+        "9月營收創新高",
+        "成熟製程需求受AI外溢"
+      ],
+      "risks": [
+        "屬單一來源分析，待法說確認"
+      ],
+      "watch": [
+        "聯電法說",
+        "產能利用率"
+      ],
+      "evidence": [
+        "鉅亨：二線晶圓代工受矚（10/13）"
+      ],
+      "source_links": [
+        "https://news.cnyes.com/news/id/6629161"
+      ],
+      "confidence": 0.6
+    },
+    {
+      "symbol": "2330",
+      "name": "台積電",
+      "category": "watchlist",
+      "headline": "法說前平盤2,490元，外資連6賣",
+      "summary": "台積電今日收平盤2,490元。第三季營收約1.49兆元、年增50%，優於財測上緣；外資在法說前連6日賣超，10/13台積電單檔貢獻大盤約350點跌點。10/15法說的第四季財測、2奈米量產對毛利率的影響，是短線方向關鍵。",
+      "positives": [
+        "Q3營收年增50%",
+        "ASML訂單延伸至2030年顯示需求強"
+      ],
+      "risks": [
+        "外資持續賣超",
+        "美國升息疑慮壓抑評價"
+      ],
+      "watch": [
+        "10/15法說：Q4財測、毛利率、資本支出"
+      ],
+      "evidence": [
+        "鉅亨：台積電法說明登場（10/14）",
+        "鉅亨：外資連6賣（10/14）"
+      ],
+      "source_links": [
+        "https://news.cnyes.com/news/id/6630211",
+        "https://news.cnyes.com/news/id/6630349"
+      ],
+      "confidence": 0.75
+    },
+    {
+      "symbol": "2344",
+      "name": "華邦電",
+      "category": "watchlist",
+      "headline": "記憶體族群中相對抗跌，+2.17%",
+      "summary": "華邦電今日上漲2.17%，表現優於南亞科（-1.54%）。營收YoY +256.67%、EPS 7.65。記憶體族群受中國廠商追趕與美光連跌影響而分歧，華邦電今日相對強勢的原因研究包中沒有直接證據。",
+      "positives": [
+        "營收YoY +256.67%"
+      ],
+      "risks": [
+        "中國記憶體廠擴產",
+        "大摩提醒股價可能先於獲利見頂"
+      ],
+      "watch": [
+        "DRAM／NOR報價"
+      ],
+      "evidence": [
+        "今日+2.17%"
+      ],
+      "source_links": [
+        "https://news.cnyes.com/news/id/6629977"
+      ],
+      "confidence": 0.5
+    },
+    {
+      "symbol": "2408",
+      "name": "南亞科",
+      "category": "watchlist",
+      "headline": "基本面強但外資賣超，今日-1.54%",
+      "summary": "南亞科今日下跌1.54%。公司預期第四季DRAM價格續漲，營收YoY +576.62%、EPS 23.38，但外資10/14賣超2.3萬張，美光連跌、長鑫技術進展也帶來壓力。基本面與股價背離，需觀察是獲利了結或市場預期見頂。",
+      "positives": [
+        "營收YoY +576.62%",
+        "公司預期Q4 DRAM續漲"
+      ],
+      "risks": [
+        "外資賣超2.3萬張",
+        "中國記憶體廠追趕"
+      ],
+      "watch": [
+        "DRAM合約價",
+        "外資籌碼"
+      ],
+      "evidence": [
+        "鉅亨：外資倒貨南亞科2.3萬張（10/14）",
+        "鉅亨：南亞科預期DRAM Q4續漲（10/13）"
+      ],
+      "source_links": [
+        "https://news.cnyes.com/news/id/6630349",
+        "https://news.cnyes.com/news/id/6628856"
+      ],
+      "confidence": 0.7
+    },
+    {
+      "symbol": "6515",
+      "name": "穎崴",
+      "category": "watchlist",
+      "headline": "測試介面族群偏弱，-1.49%",
+      "summary": "穎崴為半導體測試座與探針卡廠，今日下跌1.49%，與鴻勁同屬今日偏弱的測試族群。營收YoY +87.72%、EPS 38.24，基本面成長強，股價走弱較可能與外資賣超半導體、京元電遭賣超有關。",
+      "positives": [
+        "營收YoY +87.72%"
+      ],
+      "risks": [
+        "測試族群籌碼轉弱"
+      ],
+      "watch": [
+        "AI晶片測試需求"
+      ],
+      "evidence": [
+        "今日-1.49%",
+        "鉅亨：外資賣超京元電2.2萬張（10/14）"
+      ],
+      "source_links": [
+        "https://news.cnyes.com/news/id/6630349"
+      ],
+      "confidence": 0.5
+    },
+    {
+      "symbol": "7769",
+      "name": "鴻勁",
+      "category": "watchlist",
+      "headline": "自選股跌幅最大，-4.78%",
+      "summary": "鴻勁為半導體測試分選設備廠，今日下跌4.78%，為自選股跌幅最大。營收YoY +100.22%、EPS 56.14，基本面強；研究包沒有找到個別利空新聞，下跌較可能是測試族群獲利了結與外資調節。",
+      "positives": [
+        "營收YoY +100.22%",
+        "EPS 56.14"
+      ],
+      "risks": [
+        "高價股在外資賣超期間波動大"
+      ],
+      "watch": [
+        "10月營收",
+        "測試族群籌碼"
+      ],
+      "evidence": [
+        "今日-4.78%"
+      ],
+      "source_links": [],
+      "confidence": 0.45
+    },
+    {
+      "symbol": "6488",
+      "name": "環球晶",
+      "category": "watchlist",
+      "headline": "營收衰退，股價小漲+0.49%",
+      "summary": "環球晶為矽晶圓廠，今日小漲0.49%。營收YoY -13.13%，是自選股中少數營收衰退的公司，EPS 11.87。矽晶圓需求復甦較慢，與AI相關族群的強勢形成對比。",
+      "positives": [
+        "EPS 11.87"
+      ],
+      "risks": [
+        "營收YoY -13.13%"
+      ],
+      "watch": [
+        "矽晶圓合約價與庫存"
+      ],
+      "evidence": [
+        "營收YoY -13.13%"
+      ],
+      "source_links": [],
+      "confidence": 0.55
+    },
+    {
+      "symbol": "3374",
+      "name": "精材",
+      "category": "watchlist",
+      "headline": "封測族群反彈，今日+7.20%",
+      "summary": "精材為晶圓級封裝廠，今日上漲7.20%。營收YoY +21.33%、EPS 2.88。同日台星科等封測股走強，但研究包中沒有精材的個別新聞，原因待查證。",
+      "positives": [
+        "封測族群同步走強"
+      ],
+      "risks": [
+        "缺乏個別催化事件"
+      ],
+      "watch": [
+        "先進封裝訂單"
+      ],
+      "evidence": [
+        "今日+7.20%"
+      ],
+      "source_links": [],
+      "confidence": 0.45
+    },
+    {
+      "symbol": "2377",
+      "name": "微星",
+      "category": "watchlist",
+      "headline": "今日+1.27%，研究包缺財務資料",
+      "summary": "微星為電競筆電與主機板廠，今日上漲1.27%。研究包沒有微星的營收與EPS資料，也沒有找到相關新聞，資料不足。",
+      "positives": [],
+      "risks": [
+        "資料不足"
+      ],
+      "watch": [
+        "10月營收"
+      ],
+      "evidence": [
+        "今日+1.27%"
+      ],
+      "source_links": [],
+      "confidence": 0.3
+    },
+    {
+      "symbol": "3450",
+      "name": "聯鈞",
+      "category": "watchlist",
+      "headline": "光通訊封裝，今日+5.71%",
+      "summary": "聯鈞為光通訊與封裝廠，今日上漲5.71%。營收YoY +99.78%、EPS 2.78。800G／1.6T光通訊題材在研究包中證據偏弱，今日上漲原因待查證。",
+      "positives": [
+        "營收YoY +99.78%"
+      ],
+      "risks": [
+        "光通訊題材證據偏弱"
+      ],
+      "watch": [
+        "800G／1.6T出貨"
+      ],
+      "evidence": [
+        "今日+5.71%"
+      ],
+      "source_links": [],
+      "confidence": 0.45
+    },
+    {
+      "symbol": "0050",
+      "name": "元大台灣50",
+      "category": "watchlist",
+      "headline": "跟隨大盤，今日+0.53%",
+      "summary": "元大台灣50今日上漲0.53%，與加權指數走勢一致。成分股權重以台積電最高，台積電平盤使其漲幅小於大盤。",
+      "positives": [
+        "大盤反彈"
+      ],
+      "risks": [
+        "台積電法說結果影響最大"
+      ],
+      "watch": [
+        "台積電法說"
+      ],
+      "evidence": [
+        "今日+0.53%"
+      ],
+      "source_links": [],
+      "confidence": 0.6
+    },
+    {
+      "symbol": "3006",
+      "name": "晶豪科",
+      "category": "watchlist",
+      "headline": "記憶體IC設計，今日+2.07%",
+      "summary": "晶豪科為記憶體IC設計公司，今日上漲2.07%。營收YoY +470.23%、EPS 27.58，受記憶體報價上漲帶動。今日與華邦電同屬記憶體族群中相對強勢者。",
+      "positives": [
+        "營收YoY +470.23%"
+      ],
+      "risks": [
+        "記憶體報價見頂風險"
+      ],
+      "watch": [
+        "利基型DRAM報價"
+      ],
+      "evidence": [
+        "今日+2.07%"
+      ],
+      "source_links": [],
+      "confidence": 0.5
+    },
+    {
+      "symbol": "3661",
+      "name": "世芯-KY",
+      "category": "watchlist",
+      "headline": "ASIC族群回檔，今日-2.84%",
+      "summary": "世芯-KY為AI ASIC設計服務廠，今日下跌2.84%。營收YoY +496.00%、EPS 37.57。Google明年AI支出預估增75%的新聞偏多，但今日股價與半導體高價股同步回檔。",
+      "positives": [
+        "營收YoY +496%",
+        "雲端業者AI支出成長"
+      ],
+      "risks": [
+        "高評價股受升息疑慮壓抑"
+      ],
+      "watch": [
+        "客戶ASIC量產時程"
+      ],
+      "evidence": [
+        "今日-2.84%",
+        "鉅亨：Google明年AI支出增75%（10/14）"
+      ],
+      "source_links": [
+        "https://news.cnyes.com/news/id/6629008"
+      ],
+      "confidence": 0.5
+    },
+    {
+      "symbol": "8299",
+      "name": "群聯",
+      "category": "watchlist",
+      "headline": "平盤，營收高成長但EPS低",
+      "summary": "群聯為NAND控制晶片廠，今日收平盤。營收YoY +370.26%，但研究包EPS僅0.27，財報期間未標示，數字需確認。長江存儲NAND出貨躍居全球第三，是NAND族群的競爭變數。",
+      "positives": [
+        "營收YoY +370.26%"
+      ],
+      "risks": [
+        "EPS資料需確認",
+        "中國NAND廠擴張"
+      ],
+      "watch": [
+        "NAND報價"
+      ],
+      "evidence": [
+        "今日0.00%"
+      ],
+      "source_links": [
+        "https://news.cnyes.com/news/id/6629853"
+      ],
+      "confidence": 0.4
+    },
+    {
+      "symbol": "2308",
+      "name": "台達電",
+      "category": "watchlist",
+      "headline": "Q3營收創新高，今日+0.56%",
+      "summary": "台達電今日上漲0.56%。Q3營收1,970.59億元、年增31.09%，創單季新高，9月營收654億元為歷史同期新高，受AI資料中心電源需求帶動。10/13曾是大盤主要跌點來源之一。",
+      "positives": [
+        "Q3營收創新高",
+        "AI電源需求"
+      ],
+      "risks": [
+        "權值股受外資賣超影響"
+      ],
+      "watch": [
+        "資料中心電源出貨"
+      ],
+      "evidence": [
+        "鉅亨：台達電Q3營收衝1970億元（10/13）"
+      ],
+      "source_links": [
+        "https://news.cnyes.com/news/id/6628856"
+      ],
+      "confidence": 0.65
+    },
+    {
+      "symbol": "6274",
+      "name": "台燿",
+      "category": "watchlist",
+      "headline": "高階CCL漲價題材，今日+4.83%",
+      "summary": "台燿為CCL銅箔基板廠，今日上漲4.83%。營收YoY +114.80%、EPS 12.4。鉅亨10/14兩篇分析聚焦CCL三雄的高階產品漲價與擴產進度，與股價走強方向一致。",
+      "positives": [
+        "營收YoY +114.80%",
+        "高階CCL漲價"
+      ],
+      "risks": [
+        "擴產後供給增加"
+      ],
+      "watch": [
+        "擴產進度",
+        "10月營收"
+      ],
+      "evidence": [
+        "鉅亨：CCL三雄誰最會賺？（10/14）"
+      ],
+      "source_links": [
+        "https://news.cnyes.com/news/id/6630357",
+        "https://news.cnyes.com/news/id/6630305"
+      ],
+      "confidence": 0.65
+    },
+    {
+      "symbol": "7822",
+      "name": "倍利科",
+      "category": "watchlist",
+      "headline": "今日+0.45%，資料有限",
+      "summary": "倍利科今日上漲0.45%，營收YoY +38.57%、EPS 10.12。研究包沒有公司業務分類與相關新聞，資料不足。",
+      "positives": [
+        "營收YoY +38.57%"
+      ],
+      "risks": [
+        "資料不足"
+      ],
+      "watch": [],
+      "evidence": [
+        "今日+0.45%"
+      ],
+      "source_links": [],
+      "confidence": 0.3
+    },
+    {
+      "symbol": "3163",
+      "name": "波若威",
+      "category": "watchlist",
+      "headline": "今日+1.24%，資料有限",
+      "summary": "波若威為光通訊元件廠，今日上漲1.24%。研究包沒有營收與EPS資料，也沒有相關新聞，資料不足。",
+      "positives": [],
+      "risks": [
+        "資料不足"
+      ],
+      "watch": [
+        "光通訊出貨"
+      ],
+      "evidence": [
+        "今日+1.24%"
+      ],
+      "source_links": [],
+      "confidence": 0.3
+    },
+    {
+      "symbol": "6933",
+      "name": "AMAX-KY",
+      "category": "hot",
+      "headline": "AI伺服器機殼族群，開盤漲停",
+      "summary": "AMAX-KY今日漲停（+9.95%）。鉅亨開盤報導將其與晟銘電、迎廣歸為AI伺服器機殼族群；同族群迎廣Q3營收創18年新高、伺服器比重上看75%。AMAX-KY的個別催化事件待查證。",
+      "positives": [
+        "AI伺服器族群題材"
+      ],
+      "risks": [
+        "個別原因待查證"
+      ],
+      "watch": [
+        "10月營收"
+      ],
+      "evidence": [
+        "鉅亨：AMAX-KY漲停（10/14）"
+      ],
+      "source_links": [
+        "https://news.cnyes.com/news/id/6630006"
+      ],
+      "confidence": 0.5
+    },
+    {
+      "symbol": "3265",
+      "name": "台星科",
+      "category": "hot",
+      "headline": "封測股再創新高，今日漲停",
+      "summary": "台星科今日上漲9.96%、再創新高，被鉅亨盤後整理列為量大強漲股。封測族群（精材+7.20%）同步走強。",
+      "positives": [
+        "量大創新高"
+      ],
+      "risks": [
+        "短線漲幅大"
+      ],
+      "watch": [
+        "營收是否跟上"
+      ],
+      "evidence": [
+        "鉅亨：量大強漲股整理（10/14）"
+      ],
+      "source_links": [
+        "https://news.cnyes.com/news/id/6630322"
+      ],
+      "confidence": 0.5
+    },
+    {
+      "symbol": "6290",
+      "name": "良維",
+      "category": "hot",
+      "headline": "連接器線束，今日漲停",
+      "summary": "良維今日漲停（+9.98%），20日股價表現強勢。研究包中沒有找到良維的個別新聞，上漲原因待查證，可能與AI伺服器周邊族群同步走強有關。",
+      "positives": [
+        "族群走強"
+      ],
+      "risks": [
+        "原因待查證"
+      ],
+      "watch": [
+        "10月營收"
+      ],
+      "evidence": [
+        "今日+9.98%"
+      ],
+      "source_links": [],
+      "confidence": 0.35
+    },
+    {
+      "symbol": "6590",
+      "name": "普鴻",
+      "category": "hot",
+      "headline": "後量子密碼演算獲認證，漲停",
+      "summary": "普鴻今日漲停（+10%）。鉅亨報導其自研後量子密碼演算法獲認證，切入資安商機；5日漲11.2%、20日漲21%。屬題材驅動，營收貢獻仍待觀察。",
+      "positives": [
+        "自研技術獲認證"
+      ],
+      "risks": [
+        "題材尚未反映在營收"
+      ],
+      "watch": [
+        "資安產品營收貢獻"
+      ],
+      "evidence": [
+        "鉅亨：普鴻拚資安商機 股價漲停（10/14）"
+      ],
+      "source_links": [
+        "https://news.cnyes.com/news/id/6629982"
+      ],
+      "confidence": 0.6
+    },
+    {
+      "symbol": "2478",
+      "name": "大毅",
+      "category": "hot",
+      "headline": "被動元件族群，今日漲停",
+      "summary": "大毅為電阻廠，今日漲停（+10%），與華新科、國巨同步走強。研究包中沒有大毅的個別新聞，屬族群性上漲，原因待查證。",
+      "positives": [
+        "被動元件族群走強"
+      ],
+      "risks": [
+        "缺乏個別催化"
+      ],
+      "watch": [
+        "電阻報價"
+      ],
+      "evidence": [
+        "今日+10%"
+      ],
+      "source_links": [],
+      "confidence": 0.4
+    },
+    {
+      "symbol": "2466",
+      "name": "冠西電",
+      "category": "hot",
+      "headline": "列處置股後跌停",
+      "summary": "冠西電近90個交易日漲幅約4倍，10/13公告列入處置股，今日跌停（-9.92%）。處置期間交易限制與獲利了結賣壓是主要原因。",
+      "positives": [],
+      "risks": [
+        "處置期間流動性降低",
+        "前波漲幅過大"
+      ],
+      "watch": [
+        "處置期結束時間"
+      ],
+      "evidence": [
+        "鉅亨：明起新增6檔股票抓去關（10/13）"
+      ],
+      "source_links": [
+        "https://news.cnyes.com/news/id/6629640"
+      ],
+      "confidence": 0.75
+    },
+    {
+      "symbol": "3406",
+      "name": "玉晶光",
+      "category": "hot",
+      "headline": "由漲停轉跌停，波動劇烈",
+      "summary": "玉晶光10/13在大盤重挫時逆勢漲停，FactSet將目標價上修至1,050元；今日卻跌停（-9.36%）。研究包沒有找到今日利空新聞，較可能是短線獲利了結。",
+      "positives": [
+        "FactSet目標價上修"
+      ],
+      "risks": [
+        "短線波動劇烈"
+      ],
+      "watch": [
+        "新機鏡頭出貨"
+      ],
+      "evidence": [
+        "鉅亨：玉晶光逆勢漲停（10/13）",
+        "FactSet目標價1,050元（10/13）"
+      ],
+      "source_links": [
+        "https://news.cnyes.com/news/id/6629325",
+        "https://news.cnyes.com/news/id/6629081"
+      ],
+      "confidence": 0.55
+    },
+    {
+      "symbol": "3055",
+      "name": "蔚華科",
+      "category": "hot",
+      "headline": "今日跌停，原因待查證",
+      "summary": "蔚華科今日跌停（-9.95%）。研究包中沒有找到相關新聞或公告，原因待查證。",
+      "positives": [],
+      "risks": [
+        "原因不明"
+      ],
+      "watch": [
+        "公司公告"
+      ],
+      "evidence": [
+        "今日-9.95%"
+      ],
+      "source_links": [],
+      "confidence": 0.3
+    }
+  ]
+}
