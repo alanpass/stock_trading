@@ -450,8 +450,66 @@ def _atomic_write(path: Path, content: str) -> None:
     temp.replace(path)
 
 
+def _get_github_token() -> str:
+    """Read the publishing token from the process environment or Windows user environment."""
+    token = str(os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN") or "").strip()
+    if token or os.name != "nt":
+        return token
+    try:
+        import winreg
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Environment") as key:
+            for name in ("GITHUB_TOKEN", "GH_TOKEN"):
+                try:
+                    value, _ = winreg.QueryValueEx(key, name)
+                    value = str(value or "").strip()
+                    if value:
+                        return value
+                except FileNotFoundError:
+                    continue
+    except Exception:
+        pass
+    return ""
+
+
+def _fetch_remote_public_snapshot() -> tuple[dict[str, Any] | None, str]:
+    """Read the currently published main-branch snapshot so local runs never compare against stale local JSON."""
+    repo = os.getenv("GITHUB_REPO", GITHUB_REPO_DEFAULT).strip() or GITHUB_REPO_DEFAULT
+    api_url = f"https://api.github.com/repos/{repo}/contents/{PUBLIC_REPO_PATH}"
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": USER_AGENT,
+    }
+    token = _get_github_token()
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    try:
+        response = requests.get(
+            api_url, params={"ref": "main"}, headers=headers, timeout=20
+        )
+        if response.status_code != 200:
+            return None, f"GitHub snapshot read HTTP {response.status_code}"
+        detail = response.json()
+        encoded = str(detail.get("content") or "").strip()
+        if not encoded:
+            download_url = str(detail.get("download_url") or "").strip()
+            if not download_url:
+                return None, "GitHub snapshot response has no content"
+            raw_response = requests.get(download_url, headers={"User-Agent": USER_AGENT}, timeout=20)
+            raw_response.raise_for_status()
+            payload = raw_response.json()
+        else:
+            decoded = base64.b64decode(encoded.encode("ascii")).decode("utf-8")
+            payload = json.loads(decoded)
+        if not isinstance(payload, dict) or payload.get("report_type") != "trend_patterns_public":
+            return None, "GitHub file is not a valid trend-pattern public snapshot"
+        return payload, "github:main"
+    except Exception as exc:
+        return None, f"GitHub snapshot read failed: {type(exc).__name__}: {exc}"
+
+
 def _publish_to_github(payload: dict[str, Any]) -> dict[str, Any]:
-    token = os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN")
+    token = _get_github_token()
     if not token:
         raise RuntimeError("找不到 GITHUB_TOKEN。請設定具有 Repository Contents 讀寫權限的 Token。")
     repo = os.getenv("GITHUB_REPO", GITHUB_REPO_DEFAULT)
@@ -499,11 +557,27 @@ def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bo
 
     public_path = base / PUBLIC_REPO_PATH
     try:
-        prior_payload = json.loads(public_path.read_text(encoding="utf-8"))
-        if not isinstance(prior_payload, dict):
-            prior_payload = {}
+        local_payload = json.loads(public_path.read_text(encoding="utf-8"))
+        if not isinstance(local_payload, dict):
+            local_payload = {}
     except Exception:
-        prior_payload = {}
+        local_payload = {}
+
+    # The published website's main-branch JSON is the source of truth. This matters because
+    # the Windows folder may not be a Git clone and its local snapshot can be stale.
+    remote_payload, baseline_source = _fetch_remote_public_snapshot()
+    prior_payload = remote_payload if remote_payload is not None else local_payload
+    if remote_payload is not None:
+        try:
+            _atomic_write(
+                public_path,
+                json.dumps(remote_payload, ensure_ascii=False, indent=2, allow_nan=False) + "\n",
+            )
+        except Exception:
+            pass
+    else:
+        # Keep the reason in the daily log; a publish will still fail clearly if the token/API is unavailable.
+        baseline_source = f"local fallback ({baseline_source})"
     prior_rows = prior_payload.get("stocks", [])
     # --no-publish 產生的本機預覽不能當作「已發布快照」；
     # 下次以正常模式執行時，仍須把初始資料發布到 GitHub。
@@ -524,7 +598,7 @@ def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bo
     log_path.parent.mkdir(parents=True, exist_ok=True)
 
     with log_path.open("a", encoding="utf-8") as log:
-        log.write(f"\n[{checked_at}] START symbols={len(symbols)} previous={len(prior)}\n")
+        log.write(f"\n[{checked_at}] START symbols={len(symbols)} previous={len(prior)} baseline={baseline_source}\n")
         for index, symbol in enumerate(symbols, start=1):
             try:
                 history = load_symbol_history(base, client, symbol, asof)
