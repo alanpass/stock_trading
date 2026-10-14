@@ -2100,39 +2100,36 @@ def render_strategy_workspace() -> None:
 
     # 自選股固定在左側欄（Streamlit 側邊欄本身固定、可獨立捲動），不會蓋到右側的分析圖表。
     with st.sidebar:
+        render_pinned_selected()
         st.markdown('<div class="feature-section-title side-watch-title">自選股即時行情</div>', unsafe_allow_html=True)
         render_watchlist(compact=True)
 
-    with st.container(key="strategy-02-selected"):
-        st.markdown('<div class="feature-section-title">01｜分析標的</div>', unsafe_allow_html=True)
-        render_selected_and_live(show_heading=False)
-
     with st.container(key="strategy-03-trend"):
-        st.markdown('<div class="feature-section-title">02｜股價趨勢</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">01｜股價趨勢</div>', unsafe_allow_html=True)
         render_trend()
 
     with st.container(key="strategy-04-kline"):
-        st.markdown('<div class="feature-section-title">03｜技術 K 線</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">02｜技術 K 線</div>', unsafe_allow_html=True)
         render_kline()
 
     with st.container(key="strategy-05-volume"):
-        st.markdown('<div class="feature-section-title">04｜成交量</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">03｜成交量</div>', unsafe_allow_html=True)
         render_volume_snapshot()
 
     with st.container(key="strategy-06-entry"):
-        st.markdown('<div class="feature-section-title">05｜進場建議分析系統</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">04｜進場建議分析系統</div>', unsafe_allow_html=True)
         render_entry_prediction()
 
     with st.container(key="strategy-07-tdcc"):
-        st.markdown('<div class="feature-section-title">06｜大戶 VS 散戶持有股比率</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">05｜大戶 VS 散戶持有股比率</div>', unsafe_allow_html=True)
         render_tdcc()
 
     with st.container(key="strategy-08-trades"):
-        st.markdown('<div class="feature-section-title">07｜交易明細（台灣時間）</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">06｜交易明細（台灣時間）</div>', unsafe_allow_html=True)
         render_trades()
 
     with st.container(key="strategy-09-institutions"):
-        st.markdown('<div class="feature-section-title">08｜三大法人 10 交易日買賣超</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">07｜三大法人 10 交易日買賣超</div>', unsafe_allow_html=True)
         render_institutions()
 
 def render_future_workspace() -> None:
@@ -3602,26 +3599,23 @@ def render_watchlist(compact: bool = False):
                     cp_txt = "--" if pd.isna(cp) else f"{cp:+.2f}%"
 
                     if compact:
-                        # 一檔股票 = 一張完整卡片：名稱、操作按鈕、現價／漲跌／漲跌幅都在同一個框裡
+                        # 一檔股票 = 一張完整卡片；點選卡片任一處即選取（透明按鈕覆蓋整張卡片）
+                        is_sel = str(r['code']) == str(st.session_state.get('selected'))
                         with st.container(key=f"wc_{r['code']}_{idx}"):
-                            b1, b2, b3 = st.columns([5.4, 1, 1], gap="small")
-                            with b1:
-                                st.markdown(
-                                    f"<div class='wc-info {name_class}'>"
-                                    f"<div class='wc-name'>{r['name']}<span>（{r['code']}）</span></div>"
-                                    "<div class='wc-vals'>"
-                                    f"<span class='wc-price' style='color:{vcolor}'>{price_txt}</span>"
-                                    f"<span style='color:{vcolor}'>{ch_txt}</span>"
-                                    f"<span style='color:{vcolor}'>{cp_txt}</span>"
-                                    "</div></div>",
-                                    unsafe_allow_html=True,
-                                )
-                            with b2:
-                                if st.button("\u200b", key=f"watch_select_{r['code']}_{idx}", icon=":material/visibility:", help="選取此股票", use_container_width=True):
-                                    _watch_select(r['code'])
-                            with b3:
-                                if is_authenticated() and st.button("\u200b", key=f"watch_remove_{r['code']}_{idx}", icon=":material/delete:", help=f"從自選股移除 {r['code']}", use_container_width=True):
-                                    _watch_remove(r['code'])
+                            st.markdown(
+                                f"<div class='wc-info {name_class}{' wc-selected' if is_sel else ''}{' wc-has-del' if is_authenticated() else ''}'>"
+                                f"<div class='wc-name'>{r['name']}<span>（{r['code']}）</span></div>"
+                                "<div class='wc-vals'>"
+                                f"<span class='wc-price' style='color:{vcolor}'>{price_txt}</span>"
+                                f"<span style='color:{vcolor}'>{ch_txt}</span>"
+                                f"<span style='color:{vcolor}'>{cp_txt}</span>"
+                                "</div></div>",
+                                unsafe_allow_html=True,
+                            )
+                            if st.button("\u200b", key=f"watch_select_{r['code']}_{idx}", help=f"選取 {r['name']}（{r['code']}）", use_container_width=True):
+                                _watch_select(r['code'])
+                            if is_authenticated() and st.button("刪除", key=f"wcdel_{r['code']}_{idx}", help=f"從自選股移除 {r['name']}（{r['code']}）"):
+                                _watch_remove(r['code'])
                     else:
                         b1,b2,b3,b4,b5,b6 = st.columns([3.25, 0.82, 0.82, 1.7, 1.65, 1.75], gap="small")
                         with b1:
@@ -3652,6 +3646,72 @@ def render_watchlist(compact: bool = False):
 # ============================================================
 # Selected header + fixed live card
 # ============================================================
+def render_pinned_selected() -> None:
+    """自選股側欄最上方的「分析標的」精簡卡（淺色、置頂常駐）。"""
+    selected = st.session_state.selected
+    rows, _ = watch_rows(tuple(st.session_state.watchlist))
+    sr = rows[rows.code == selected]
+    sr = sr.iloc[0] if not sr.empty else None
+    info = {}
+    if is_market_open_now():
+        try: info = get_ticker(selected)
+        except Exception: info = {}
+    name = info.get("name") or (sr["name"] if sr is not None else selected)
+    industry_code = INDUSTRY_OVERRIDES.get(selected, str((sr["industry"] if sr is not None else info.get("industry")) or WATCHLIST_INDUSTRY_FALLBACK.get(selected, "00")).zfill(2))
+    industry_name = INDUSTRIES.get(industry_code, "未知產業")
+    market = str(info.get("market") or (sr["market"] if sr is not None else "TSE"))
+    biz = ""
+    try:
+        bp = get_business_profiles_cached((selected,)).get(selected, {})
+        biz = bp.get("business_group") or ""
+    except Exception:
+        pass
+
+    live = {}
+    if is_market_open_now():
+        try: live = get_quote(selected)
+        except Exception: live = {}
+    elif sr is not None:
+        live = {"tradePrice": sr.get("price", np.nan), "change": sr.get("change", np.nan), "changePercent": sr.get("change_pct", np.nan)}
+    lp = pd.to_numeric(live.get("tradePrice", live.get("closePrice", np.nan)), errors="coerce")
+    lch = pd.to_numeric(live.get("change", np.nan), errors="coerce")
+    lcp = pd.to_numeric(live.get("changePercent", np.nan), errors="coerce")
+    ref = pd.to_numeric(live.get("referencePrice", live.get("previousClose", np.nan)), errors="coerce")
+    if pd.isna(lch) and pd.notna(lp) and pd.notna(ref): lch = lp - ref
+    if pd.isna(lcp) and pd.notna(lch) and pd.notna(ref) and ref != 0: lcp = lch / ref * 100
+    color = "#c62828" if pd.notna(lch) and lch > 0 else "#0f8a5f" if pd.notna(lch) and lch < 0 else "#475569"
+
+    try:
+        taiex = get_taiex()
+        tx = taiex.iloc[-1] if not taiex.empty else None
+    except Exception:
+        tx = None
+    if tx is not None:
+        ixch = float(tx["change"])
+        ixcolor = "#c62828" if ixch > 0 else "#0f8a5f" if ixch < 0 else "#475569"
+        ix_html = (f"<div class='pin-ix'><span class='pin-ix-label'>加權指數</span>"
+                   f"<b>{float(tx['index']):,.2f}</b>"
+                   f"<span style='color:{ixcolor}'>{ixch:+,.2f}　{float(tx['change_pct']):+.2f}%</span></div>")
+    else:
+        ix_html = "<div class='pin-ix'><span class='pin-ix-label'>加權指數</span><b>--</b></div>"
+
+    price_txt = "--" if pd.isna(lp) else f"{lp:,.2f}"
+    ch_txt = "--" if pd.isna(lch) else f"{lch:+,.2f}"
+    cp_txt = "--" if pd.isna(lcp) else f"{lcp:+.2f}%"
+    meta = f"{market}｜{industry_code} {industry_name}" + (f"｜{biz}" if biz else "")
+    with st.container(key="side_pinned"):
+        st.markdown(
+            "<div class='pin-card'>"
+            "<div class='pin-tag'>分析標的</div>"
+            f"<div class='pin-name'>{name}<span>（{selected}）</span></div>"
+            f"<div class='pin-vals' style='color:{color}'><b>{price_txt}</b><span>{ch_txt}</span><span>{cp_txt}</span></div>"
+            f"<div class='pin-meta'>{meta}</div>"
+            f"{ix_html}"
+            "</div>",
+            unsafe_allow_html=True,
+        )
+
+
 def render_selected_and_live(show_heading: bool = True):
     selected = st.session_state.selected
     rows, _ = watch_rows(tuple(st.session_state.watchlist))
@@ -5947,6 +6007,62 @@ a[data-testid^="stBaseLinkButton"]{
 }
 [data-testid="stSidebar"] [data-testid="stButton"] > button p{font-size:13px !important;margin:0 !important;}
 
+/* ---------- V19：卡片整張可點、置頂分析標的、側欄收放 ---------- */
+.stApp [class*="st-key-wc_"]{position:relative;cursor:pointer;}
+/* 整張卡片的透明點選層（用最高優先序蓋過舊的淺藍按鈕樣式） */
+body .stApp.stApp [class*="st-key-wc_"] [class*="st-key-watch_select_"]{position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;margin:0 !important;z-index:5;}
+body .stApp.stApp [class*="st-key-wc_"] [class*="st-key-watch_select_"] [data-testid="stButton"]{position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;margin:0 !important;display:block !important;}
+body .stApp.stApp [class*="st-key-wc_"] [class*="st-key-watch_select_"] button,
+body .stApp.stApp [class*="st-key-wc_"] [class*="st-key-watch_select_"] [data-testid="stButton"] > button[kind]{
+  position:absolute !important;inset:0 !important;width:100% !important;max-width:none !important;min-width:0 !important;
+  height:100% !important;max-height:none !important;min-height:0 !important;margin:0 !important;padding:0 !important;
+  border:0 !important;border-radius:12px !important;background:transparent !important;box-shadow:none !important;
+  opacity:0 !important;cursor:pointer !important;transform:none !important;}
+/* 刪除：純文字，放在股票欄位右上側 */
+body .stApp.stApp [class*="st-key-wc_"] [class*="st-key-wcdel_"]{position:absolute !important;top:10px;right:12px;width:auto !important;margin:0 !important;z-index:6;}
+body .stApp.stApp [class*="st-key-wc_"] [class*="st-key-wcdel_"] [data-testid="stButton"]{position:static !important;width:auto !important;height:auto !important;display:block !important;}
+body .stApp.stApp [class*="st-key-wc_"] [class*="st-key-wcdel_"] button,
+body .stApp.stApp [class*="st-key-wc_"] [class*="st-key-wcdel_"] [data-testid="stButton"] > button[kind]{
+  width:auto !important;min-width:0 !important;max-width:none !important;height:auto !important;min-height:0 !important;
+  padding:2px 4px !important;margin:0 !important;border:0 !important;border-radius:4px !important;
+  background:transparent !important;box-shadow:none !important;transform:none !important;cursor:pointer !important;}
+body .stApp.stApp [class*="st-key-wc_"] [class*="st-key-wcdel_"] button p{
+  margin:0 !important;font-size:12.5px !important;font-weight:700 !important;letter-spacing:.08em !important;line-height:1.2 !important;
+  color:#b3121a !important;text-decoration:none;transform:none !important;font-family:"Noto Serif TC","Microsoft JhengHei",serif !important;}
+body .stApp.stApp [class*="st-key-wc_"] [class*="st-key-wcdel_"] button:hover p{text-decoration:underline;color:#8e0f15 !important;}
+body .stApp.stApp [class*="st-key-wc_"]:has(.wc-info.limit-up) [class*="st-key-wcdel_"] button p,
+body .stApp.stApp [class*="st-key-wc_"]:has(.wc-info.limit-down) [class*="st-key-wcdel_"] button p{color:#fff !important;}
+.wc-info.wc-has-del .wc-name{padding-right:46px;}
+.stApp [class*="st-key-wc_"]:has(.wc-selected){border:2px solid #8e2b2f;background:#fff5f4;box-shadow:0 4px 14px rgba(142,43,47,.20);}
+.stApp [class*="st-key-wc_"]:has(.wc-info.limit-up.wc-selected){background:#7f1d1d;}
+.stApp [class*="st-key-wc_"]:has(.wc-info.limit-down.wc-selected){background:#14532d;}
+
+/* 置頂分析標的（淺色、精簡） */
+.stApp [data-testid="stSidebar"] .st-key-side_pinned{position:sticky;top:0;z-index:50;background:#fbf1f1;padding:2px 0 8px;margin:0 0 4px;box-shadow:0 6px 8px -6px rgba(142,43,47,.25);}
+.pin-card{background:#fff;border:1px solid #e6d3d3;border-left:4px solid #8e2b2f;border-radius:10px;padding:8px 12px;font-family:Arial,"Microsoft JhengHei",sans-serif;}
+.pin-tag{font-size:11px;font-weight:800;color:#8e2b2f;letter-spacing:1px;}
+.pin-name{font-size:16px;font-weight:900;color:#1f2937;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pin-name span{font-size:12.5px;font-weight:700;color:#64748b;margin-left:2px;}
+.pin-vals{display:flex;align-items:baseline;gap:10px;font-variant-numeric:tabular-nums;font-weight:800;font-size:13px;}
+.pin-vals b{font-size:21px;font-weight:900;}
+.pin-meta{font-size:11.5px;color:#7a6a6a;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pin-ix{display:flex;align-items:baseline;gap:8px;margin-top:5px;padding-top:5px;border-top:1px dashed #e6d3d3;font-size:12px;font-variant-numeric:tabular-nums;}
+.pin-ix b{font-size:13px;color:#1f2937;}.pin-ix-label{color:#7a6a6a;font-weight:700;}
+
+/* 側欄收放：貼在畫面左緣／側欄右緣的把手（網站主題紅＋明體，一眼可見） */
+#sb-toggle{position:fixed;top:150px;left:0;z-index:1000002;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  width:36px;padding:14px 0;border:0;cursor:pointer;
+  font-family:"Noto Serif TC","Source Han Serif TC","Songti TC","PMingLiU","MingLiU",serif;
+  transition:left .2s ease,width .15s ease,background .15s ease;}
+#sb-toggle .sbt-arrow{font-size:20px;font-weight:900;line-height:1;}
+#sb-toggle .sbt-label{writing-mode:vertical-rl;letter-spacing:.35em;font-size:14px;font-weight:900;line-height:1;}
+#sb-toggle[data-open="0"]{background:#8e2b2f;color:#fff;border-radius:0 14px 14px 0;box-shadow:3px 4px 14px rgba(142,43,47,.35);animation:sbtPulse 1.8s ease-in-out 3;}
+#sb-toggle[data-open="0"]:hover{width:44px;background:#a3343a;}
+#sb-toggle[data-open="1"]{background:#fff;color:#8e2b2f;border:1px solid #d9b9b9;border-left:0;border-radius:0 14px 14px 0;box-shadow:3px 3px 10px rgba(142,43,47,.15);padding:12px 0;}
+#sb-toggle[data-open="1"]:hover{background:#f6e3e3;}
+@keyframes sbtPulse{0%,100%{box-shadow:3px 4px 14px rgba(142,43,47,.35);}50%{box-shadow:3px 4px 22px rgba(142,43,47,.75);}}
+@media(max-width:600px){#sb-toggle{top:120px;width:32px;}#sb-toggle .sbt-label{font-size:13px;}}
+
 /* 不翻譯用的零高度元件：不要佔版面 */
 [data-testid="stElementContainer"]:has(iframe[height="0"]),
 .element-container:has(iframe[height="0"]){height:0 !important;min-height:0 !important;margin:0 !important;overflow:hidden !important;}
@@ -6616,36 +6732,85 @@ def render_account_review_action() -> None:
 
 
 def sync_sidebar_visibility(section: str) -> None:
-    """操作策略固定顯示自選股側欄；其他頁面僅在登入／申請面板開啟時展開。"""
-    should_open = (section == "strategy") or bool(st.session_state.get("auth_panel_open", False))
+    """側欄可自由收放。
+    - 只有「頁面／登入面板狀態改變」時才自動展開或收起一次；自動刷新與一般互動不會再把使用者收起的側欄強制打開。
+    - 頁首（含原生展開鈕）被網站樣式隱藏，因此另外放一顆固定的「收放」按鈕，點一下即可拉出／收回。
+    """
+    auth_open = bool(st.session_state.get("auth_panel_open", False))
+    should_open = (section == "strategy") or auth_open
+    state_key = (section, auth_open)
+    apply_auto = st.session_state.get("_sb_last_state") != state_key
+    st.session_state["_sb_last_state"] = state_key
     js_open = "true" if should_open else "false"
+    js_apply = "true" if apply_auto else "false"
     _components.html(
         f"""
         <script>
         (function() {{
           const shouldOpen = {js_open};
-          function setSidebarState() {{
-            try {{
-              const d = window.parent.document;
-              const sidebar = d.querySelector('[data-testid="stSidebar"]');
-              if (!sidebar) return;
-              const expanded = sidebar.getAttribute('aria-expanded') === 'true';
-              if (shouldOpen && !expanded) {{
-                // 新版 Streamlit 使用 stSidebarCollapseButton；舊版保留 CollapsedControl 作為備援。
-                const node = d.querySelector('[data-testid="stSidebarCollapseButton"]')
-                  || d.querySelector('[data-testid="stSidebarCollapsedControl"]');
-                const button = node && (node.tagName === 'BUTTON' ? node : node.querySelector('button'));
-                if (button) button.click();
-              }} else if (!shouldOpen && expanded) {{
-                const node = d.querySelector('[data-testid="stSidebarCollapseButton"]');
-                const button = node && (node.tagName === 'BUTTON' ? node : node.querySelector('button'));
-                if (button) button.click();
+          const applyAuto = {js_apply};
+          let d;
+          try {{ d = window.parent.document; }} catch (e) {{ return; }}
+          function sidebar() {{ return d.querySelector('[data-testid="stSidebar"]'); }}
+          function isExpanded() {{
+            const sb = sidebar();
+            return !!sb && sb.getAttribute('aria-expanded') === 'true';
+          }}
+          function nativeButton() {{
+            const sels = isExpanded()
+              ? ['[data-testid="stSidebarCollapseButton"]']
+              : ['[data-testid="stExpandSidebarButton"]', '[data-testid="stSidebarCollapsedControl"]', '[data-testid="stSidebarCollapseButton"]'];
+            for (const sel of sels) {{
+              const node = d.querySelector(sel);
+              if (!node) continue;
+              return node.tagName === 'BUTTON' ? node : (node.querySelector('button') || node);
+            }}
+            return null;
+          }}
+          function toggle() {{ const b = nativeButton(); if (b) b.click(); }}
+
+          // 固定的收放按鈕（只安裝一次，之後由計時器更新位置與顯示）
+          const w = window.parent;
+          if (!w.__sbToggleInstalled) {{
+            w.__sbToggleInstalled = true;
+            const btn = d.createElement('button');
+            btn.id = 'sb-toggle';
+            btn.type = 'button';
+            btn.addEventListener('click', function() {{ w.__sbToggleFn && w.__sbToggleFn(); }});
+            d.body.appendChild(btn);
+            w.__sbRefresh = function() {{
+              const sb = d.querySelector('[data-testid="stSidebar"]');
+              const b = d.getElementById('sb-toggle');
+              if (!b) return;
+              if (!sb) {{ b.style.display = 'none'; return; }}
+              const open = sb.getAttribute('aria-expanded') === 'true';
+              b.style.display = 'flex';
+              const flag = open ? '1' : '0';
+              if (b.getAttribute('data-open') !== flag) {{
+                b.setAttribute('data-open', flag);
+                b.innerHTML = open
+                  ? '<span class="sbt-arrow">\u2039</span><span class="sbt-label">收合</span>'
+                  : '<span class="sbt-arrow">\u203a</span><span class="sbt-label">自選股</span>';
+                b.title = open ? '收回自選股側欄' : '拉出自選股側欄';
               }}
+              b.style.left = open ? Math.round(sb.getBoundingClientRect().right) + 'px' : '0px';
+            }};
+            setInterval(function() {{ w.__sbRefresh && w.__sbRefresh(); }}, 300);
+          }}
+          w.__sbToggleFn = toggle;
+
+          function setState() {{
+            try {{
+              const expanded = isExpanded();
+              if (shouldOpen !== expanded) toggle();
             }} catch (e) {{}}
           }}
-          setSidebarState();
-          setTimeout(setSidebarState, 140);
-          setTimeout(setSidebarState, 360);
+          if (applyAuto) {{
+            setState();
+            setTimeout(setState, 160);
+            setTimeout(setState, 420);
+          }}
+          w.__sbRefresh && w.__sbRefresh();
         }})();
         </script>
         """,
