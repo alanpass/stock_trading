@@ -27,6 +27,9 @@ from stock_api import FugleClient, clean_symbol
 TAIPEI = ZoneInfo("Asia/Taipei")
 GITHUB_REPO_DEFAULT = "alanpass/stock_trading"
 PUBLIC_REPO_PATH = "output/research_reports/trend_patterns_public.json"
+BACKTEST_REPO_PATH = "output/research_reports/trend_pattern_backtest.json"
+BACKTEST_HORIZON = 40          # 回到 40 個交易日前判讀型態，再看之後 40 個交易日的報酬
+BACKTEST_MIN_SAMPLES = 5       # 檔數少於此數的分組只列出、不參與「最賺錢」排名
 USER_AGENT = "Mozilla/5.0 TaiwanStockTrendPatterns/1.0"
 
 CATEGORY_ORDER = [
@@ -508,12 +511,12 @@ def _fetch_remote_public_snapshot() -> tuple[dict[str, Any] | None, str]:
         return None, f"GitHub snapshot read failed: {type(exc).__name__}: {exc}"
 
 
-def _publish_to_github(payload: dict[str, Any]) -> dict[str, Any]:
+def _publish_to_github(payload: dict[str, Any], repo_path: str = PUBLIC_REPO_PATH, message: str = "") -> dict[str, Any]:
     token = _get_github_token()
     if not token:
         raise RuntimeError("找不到 GITHUB_TOKEN。請設定具有 Repository Contents 讀寫權限的 Token。")
     repo = os.getenv("GITHUB_REPO", GITHUB_REPO_DEFAULT)
-    api_url = f"https://api.github.com/repos/{repo}/contents/{PUBLIC_REPO_PATH}"
+    api_url = f"https://api.github.com/repos/{repo}/contents/{repo_path}"
     session = requests.Session()
     session.headers.update({
         "Accept": "application/vnd.github+json", "Authorization": f"Bearer {token}",
@@ -530,21 +533,119 @@ def _publish_to_github(payload: dict[str, Any]) -> dict[str, Any]:
             try:
                 old_text = base64.b64decode(str(detail.get("content") or "").encode("ascii")).decode("utf-8", errors="replace")
                 if old_text.strip() == body_text.strip():
-                    return {"ok": True, "no_change": True, "path": PUBLIC_REPO_PATH, "repo": repo}
+                    return {"ok": True, "no_change": True, "path": repo_path, "repo": repo}
             except Exception:
                 pass
         elif existing.status_code != 404:
             raise RuntimeError(f"GitHub 讀取趨勢型態快照失敗 HTTP {existing.status_code}: {existing.text[:500]}")
-        put_body = {"message": f"Update trend pattern analysis {payload.get('updated_at', '')}", "content": encoded, "branch": "main"}
+        put_body = {"message": message or f"Update trend pattern analysis {payload.get('updated_at', '')}", "content": encoded, "branch": "main"}
         if sha:
             put_body["sha"] = sha
         pushed = session.put(api_url, json=put_body, timeout=45)
         if pushed.status_code in (200, 201):
-            return {"ok": True, "repo": repo, "path": PUBLIC_REPO_PATH, "commit_sha": pushed.json().get("commit", {}).get("sha")}
+            return {"ok": True, "repo": repo, "path": repo_path, "commit_sha": pushed.json().get("commit", {}).get("sha")}
         if pushed.status_code == 409 and attempt == 0:
             continue
         raise RuntimeError(f"GitHub 發布趨勢型態快照失敗 HTTP {pushed.status_code}: {pushed.text[:800]}")
     raise RuntimeError("GitHub 發布趨勢型態快照失敗：重試後仍有版本衝突。")
+
+
+def backtest_patterns(histories: dict[str, pd.DataFrame], names: dict[str, str] | None = None,
+                      horizon: int = BACKTEST_HORIZON) -> dict[str, Any]:
+    """回到 horizon 個交易日前，用當時「最近 40 個交易日」判讀每檔股票的趨勢狀態與型態，
+    再計算之後 horizon 個交易日的報酬，依趨勢狀態／型態平均，看哪一類後來最賺錢。
+
+    只用當時已知的 K 棒判讀（不偷看未來）；報酬用還原收盤價，含除權息。這是單一期間的歷史統計，不代表未來。
+    """
+    names = names or {}
+    rows: list[dict[str, Any]] = []
+    for symbol, history in histories.items():
+        data = _normalise_history(history)
+        if len(data) < 45 + horizon:
+            continue
+        past = data.iloc[:-horizon]
+        try:
+            signal = detect_pattern(past)
+        except Exception:
+            continue
+        code = clean_symbol(symbol)
+        path = data["close"].iloc[-horizon - 1:].to_numpy(dtype=float)
+        rows.append({
+            "symbol": code, "name": names.get(code, code),
+            "classification": signal["classification"], "pattern_name": signal["pattern_name"],
+            "assessed_on": pd.Timestamp(past["date"].iloc[-1]).strftime("%Y-%m-%d"),
+            "ended_on": pd.Timestamp(data["date"].iloc[-1]).strftime("%Y-%m-%d"),
+            "forward_return_pct": round((path[-1] / path[0] - 1) * 100, 2),
+            "max_drawdown_pct": round(float(np.min(path / np.maximum.accumulate(path)) - 1) * 100, 2),
+        })
+    if not rows:
+        return {}
+    frame = pd.DataFrame(rows)
+    overall = float(frame["forward_return_pct"].mean())
+
+    def summarise(column: str) -> list[dict[str, Any]]:
+        out = []
+        for key, group in frame.groupby(column):
+            ret = group["forward_return_pct"]
+            ranked = group.sort_values("forward_return_pct", ascending=False).to_dict("records")
+            label = lambda r: f"{r['name']}（{r['symbol']}）{r['forward_return_pct']:+.1f}%"
+            out.append({
+                column: key, "count": int(len(group)),
+                "avg_return_pct": round(float(ret.mean()), 2), "median_return_pct": round(float(ret.median()), 2),
+                "win_rate_pct": round(float((ret > 0).mean() * 100), 1),
+                "excess_vs_all_pct": round(float(ret.mean()) - overall, 2),
+                "avg_max_drawdown_pct": round(float(group["max_drawdown_pct"].mean()), 2),
+                "enough_samples": bool(len(group) >= BACKTEST_MIN_SAMPLES),
+                "best": [label(r) for r in ranked[:3]],
+                "worst": [label(r) for r in ranked[::-1][:3]],
+            })
+        return sorted(out, key=lambda r: (not r["enough_samples"], -r["avg_return_pct"]))
+
+    by_class, by_pattern = summarise("classification"), summarise("pattern_name")
+    ranked_class = [r for r in by_class if r["enough_samples"]]
+    ranked_pattern = [r for r in by_pattern if r["enough_samples"]]
+    return {
+        "schema_version": 1, "report_type": "trend_pattern_backtest",
+        "generated_at": _now().isoformat(timespec="seconds"),
+        "horizon_trading_days": horizon, "window_trading_days": 40,
+        "assessed_on": str(frame["assessed_on"].mode().iloc[0]), "ended_on": str(frame["ended_on"].max()),
+        "symbols": int(len(frame)), "all_avg_return_pct": round(overall, 2),
+        "all_median_return_pct": round(float(frame["forward_return_pct"].median()), 2),
+        "all_win_rate_pct": round(float((frame["forward_return_pct"] > 0).mean() * 100), 1),
+        "min_samples": BACKTEST_MIN_SAMPLES,
+        "best_classification": ranked_class[0]["classification"] if ranked_class else None,
+        "best_pattern": ranked_pattern[0]["pattern_name"] if ranked_pattern else None,
+        "by_classification": by_class, "by_pattern": by_pattern,
+        "stocks": sorted(rows, key=lambda r: -r["forward_return_pct"]),
+        "note": (f"回到 {horizon} 個交易日前，以當時最近 40 個交易日判讀型態（不使用之後的資料），"
+                 f"再計算之後 {horizon} 個交易日的還原股價報酬。單一期間、等權平均的歷史統計，不代表未來，也不構成投資建議。"),
+    }
+
+
+def update_trend_backtest(base: Path, histories: dict[str, pd.DataFrame], publish: bool) -> dict[str, Any]:
+    """產生並發布回測結果（獨立檔案，不影響型態快照「只在重大變化時更新」的規則）。"""
+    report = backtest_patterns(histories, NAME_FALLBACKS)
+    if not report:
+        return {"ok": False, "reason": "沒有足夠的歷史資料可回測"}
+    path = base / BACKTEST_REPO_PATH
+    try:
+        old = json.loads(path.read_text(encoding="utf-8"))
+        if old.get("ended_on") == report["ended_on"] and old.get("stocks") == report["stocks"]:
+            return {"ok": True, "no_change": True, "ended_on": report["ended_on"]}
+    except Exception:
+        pass
+    github = _publish_to_github(report, BACKTEST_REPO_PATH, f"Update trend pattern backtest {report['ended_on']}") if publish else None
+    _atomic_write(path, json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False) + "\n")
+    return {"ok": True, "assessed_on": report["assessed_on"], "ended_on": report["ended_on"],
+            "best_classification": report["best_classification"], "github": github}
+
+
+def load_trend_backtest(base_dir: str | Path) -> dict[str, Any]:
+    try:
+        payload = json.loads((Path(base_dir).resolve() / BACKTEST_REPO_PATH).read_text(encoding="utf-8"))
+        return payload if isinstance(payload, dict) else {}
+    except Exception:
+        return {}
 
 
 def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bool = True) -> dict[str, Any]:
@@ -593,6 +694,7 @@ def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bo
     changes: list[dict[str, Any]] = []
     errors: list[str] = []
     latest_dates: list[str] = []
+    histories: dict[str, pd.DataFrame] = {}
     checked_at = now.isoformat(timespec="seconds")
     log_path = base / "output" / "scheduler_logs" / f"trend_patterns_{now.date().isoformat()}.log"
     log_path.parent.mkdir(parents=True, exist_ok=True)
@@ -606,6 +708,7 @@ def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bo
                     errors.append(f"{symbol}: usable history bars < 45 ({len(history)})")
                     continue
                 latest_dates.append(pd.Timestamp(history["date"].iloc[-1]).strftime("%Y-%m-%d"))
+                histories[symbol] = history
                 signals = detect_pattern(history)
                 old = prior.get(symbol)
                 row, changed = _build_symbol_record(symbol, NAME_FALLBACKS.get(symbol, symbol), signals, old, checked_at)
@@ -622,6 +725,13 @@ def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bo
             except Exception as exc:
                 errors.append(f"{symbol}: {type(exc).__name__}: {exc}")
 
+    try:
+        backtest = update_trend_backtest(base, histories, publish)
+    except Exception as exc:
+        backtest = {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+    with log_path.open("a", encoding="utf-8") as log:
+        log.write(f"[{_now().isoformat(timespec='seconds')}] BACKTEST {json.dumps(backtest, ensure_ascii=False, default=str)}\n")
+
     if not prior and updated_rows:
         changes = [{
             "symbol": row["symbol"], "name": row["name"], "themes": row.get("themes", []),
@@ -634,7 +744,7 @@ def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bo
             "ok": True, "skipped": True,
             "reason": "沒有偵測到重大型態／趨勢狀態變化，保留既有公開快照，不建立 GitHub commit。",
             "checked_at": checked_at, "tracked_symbols": len(symbols), "usable_symbols": len(updated_rows),
-            "errors_count": len(errors), "errors": errors[:20],
+            "errors_count": len(errors), "errors": errors[:20], "backtest": backtest,
         }
         with log_path.open("a", encoding="utf-8") as log:
             log.write(f"[{_now().isoformat(timespec='seconds')}] NO_SIGNIFICANT_CHANGE {json.dumps(result, ensure_ascii=False)}\n")
@@ -670,6 +780,7 @@ def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bo
         "ok": True, "skipped": False, "updated_at": checked_at, "data_asof": data_asof,
         "tracked_symbols": len(symbols), "usable_symbols": len(updated_rows), "changed_count": len(changes),
         "public_file": str(public_path), "github": github, "errors_count": len(errors), "errors": errors[:20],
+        "backtest": backtest,
     }
 
 

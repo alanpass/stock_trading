@@ -2055,12 +2055,12 @@ def _get_nav_section() -> str:
 
 
 def _set_nav_section(section: str) -> None:
+    # 按鈕的 on_click 在重跑之前執行：同一次重跑就直接畫新頁面，不必再 st.rerun() 多跑一整輪。
     st.session_state["nav_section"] = section
     try:
         st.query_params["section"] = section
     except Exception:
         pass
-    st.rerun()
 
 
 def render_site_navigation() -> str:
@@ -2078,8 +2078,7 @@ def render_site_navigation() -> str:
     )
     with st.container(key="site_nav_control"):
         for section, label in nav:
-            if st.button(label, key=f"nav_section_{section}"):
-                _set_nav_section(section)
+            st.button(label, key=f"nav_section_{section}", on_click=_set_nav_section, args=(section,))
     st.markdown('<div class="site-rule"></div>', unsafe_allow_html=True)
     return current
 
@@ -2106,39 +2105,38 @@ def render_strategy_workspace() -> None:
     st.markdown(f'<div class="page-image-banner">{_site_image_html(7, wide=True)}</div>', unsafe_allow_html=True)
     render_strategy_search()
 
+    sections = [
+        ("strategy-03-trend", "01｜股價趨勢", render_trend),
+        ("strategy-04-kline", "02｜技術 K 線", render_kline),
+        ("strategy-05-volume", "03｜成交量", render_volume_snapshot),
+        ("strategy-06-entry", "04｜進場建議分析系統", render_entry_prediction),
+        ("strategy-07-tdcc", "05｜大戶 VS 散戶持有股比率", render_tdcc),
+        ("strategy-08-trades", "06｜交易明細（台灣時間）", render_trades),
+        ("strategy-09-institutions", "07｜三大法人 10 交易日買賣超", render_institutions),
+    ]
+    # 兩段式：剛切換到這頁或換股票時，先送出全部區塊標題與「載入中」，舊頁面會立刻被替換；
+    # 接著才依序抓資料、畫圖，填回各自的位置。盤中自動刷新不顯示「載入中」，避免圖表閃爍。
+    selected = st.session_state.get("selected")
+    fresh = st.session_state.get("_strategy_view") != selected
+    st.session_state["_strategy_view"] = selected
+    slots = []
+    for key, title, render in sections:
+        box = st.container(key=key)
+        box.markdown(f'<div class="feature-section-title">{title}</div>', unsafe_allow_html=True)
+        body = box.empty()
+        if fresh:
+            body.caption("資料載入中…")
+        slots.append((body, render))
+
     # 自選股固定在左側欄（Streamlit 側邊欄本身固定、可獨立捲動），不會蓋到右側的分析圖表。
     with st.sidebar:
         render_pinned_selected()
         st.markdown('<div class="feature-section-title side-watch-title">自選股即時行情</div>', unsafe_allow_html=True)
         render_watchlist(compact=True)
 
-    with st.container(key="strategy-03-trend"):
-        st.markdown('<div class="feature-section-title">01｜股價趨勢</div>', unsafe_allow_html=True)
-        render_trend()
-
-    with st.container(key="strategy-04-kline"):
-        st.markdown('<div class="feature-section-title">02｜技術 K 線</div>', unsafe_allow_html=True)
-        render_kline()
-
-    with st.container(key="strategy-05-volume"):
-        st.markdown('<div class="feature-section-title">03｜成交量</div>', unsafe_allow_html=True)
-        render_volume_snapshot()
-
-    with st.container(key="strategy-06-entry"):
-        st.markdown('<div class="feature-section-title">04｜進場建議分析系統</div>', unsafe_allow_html=True)
-        render_entry_prediction()
-
-    with st.container(key="strategy-07-tdcc"):
-        st.markdown('<div class="feature-section-title">05｜大戶 VS 散戶持有股比率</div>', unsafe_allow_html=True)
-        render_tdcc()
-
-    with st.container(key="strategy-08-trades"):
-        st.markdown('<div class="feature-section-title">06｜交易明細（台灣時間）</div>', unsafe_allow_html=True)
-        render_trades()
-
-    with st.container(key="strategy-09-institutions"):
-        st.markdown('<div class="feature-section-title">07｜三大法人 10 交易日買賣超</div>', unsafe_allow_html=True)
-        render_institutions()
+    for body, render in slots:
+        with body.container():
+            render()
 
 def render_future_workspace() -> None:
     st.markdown(f'<div class="page-image-banner">{_site_image_html(8, wide=True)}</div>', unsafe_allow_html=True)
@@ -5870,7 +5868,7 @@ a[data-testid^="stBaseLinkButton"]{
    V17 操作策略：自選股固定在左側欄
    ============================================================ */
 [data-testid="stSidebar"]{background:#fbf1f1 !important;border-right:1px solid #e6d3d3 !important;}
-[data-testid="stSidebar"][aria-expanded="true"]{min-width:360px !important;max-width:360px !important;width:360px !important;}
+[data-testid="stSidebar"]:is([aria-expanded="true"],[data-collapsed="false"]){min-width:360px !important;max-width:360px !important;width:360px !important;}
 [data-testid="stSidebar"] [data-testid="stSidebarHeader"]{padding:10px 14px 0 !important;min-height:0 !important;}
 [data-testid="stSidebar"] [data-testid="stSidebarContent"]{padding-bottom:24px;}
 [data-testid="stSidebar"] [data-testid="stSidebarUserContent"]{padding:4px 14px 20px !important;}
@@ -6143,7 +6141,7 @@ st.markdown(r'''<style>
 .home-link:hover,.contact-link:hover{background-size:100% 1.5px;}
 
 /* ---------- 4) 頁尾：自選股側欄展開時，頁尾改成縮在主內容區（不再橫跨到側欄底下被蓋住） ---------- */
-body:has([data-testid="stSidebar"][aria-expanded="true"] .side-watch-title) .site-footer{
+body:has([data-testid="stSidebar"]:is([aria-expanded="true"],[data-collapsed="false"]) .side-watch-title) .site-footer{
   width:100% !important;margin-left:0 !important;margin-right:0 !important;border-radius:14px 14px 0 0;
 }
 
@@ -6637,15 +6635,16 @@ def sync_sidebar_visibility(section: str) -> None:
         (function() {{
           let w, d;
           try {{ w = window.parent; d = w.document; }} catch (e) {{ return; }}
-          if (!w.__sbToggleV2) {{
+          if (!w.__sbToggleV3) {{
             const s = d.createElement('script');
             s.id = 'sb-toggle-runtime';
             s.textContent = `
               (function() {{
-                window.__sbToggleV2 = true;
+                window.__sbToggleV3 = true;
                 const d = document;
                 const sidebar = () => d.querySelector('[data-testid="stSidebar"]');
-                const isOpen = () => {{ const sb = sidebar(); return !!sb && sb.getAttribute('aria-expanded') === 'true'; }};
+                // 舊版 Streamlit 用 aria-expanded，新版（1.5x 以後）改用 data-collapsed
+                const isOpen = () => {{ const sb = sidebar(); return !!sb && (sb.getAttribute('aria-expanded') === 'true' || sb.getAttribute('data-collapsed') === 'false'); }};
                 function nativeButton() {{
                   const sels = isOpen()
                     ? ['[data-testid="stSidebarCollapseButton"]']
@@ -6761,6 +6760,8 @@ current_section = render_site_navigation()
 render_auth_panel()
 sync_sidebar_visibility(current_section)
 
+if current_section != "strategy":
+    st.session_state["_strategy_view"] = None  # 回到操作策略時重新以兩段式顯示
 if current_section == "home":
     render_home_workspace()
 elif current_section == "strategy":

@@ -15,7 +15,7 @@ import streamlit as st
 from plotly.subplots import make_subplots
 
 from stock_api import FugleClient, clean_symbol
-from trend_pattern_engine import CATEGORY_ORDER, load_published_trend_patterns
+from trend_pattern_engine import CATEGORY_ORDER, load_published_trend_patterns, load_trend_backtest
 
 PATTERN_GUIDES: dict[str, dict[str, Any]] = {
     "頭肩頂": {"values": [0.18, 0.42, 0.24, 0.85, 0.25, 0.47, 0.16], "note": "三個波峰，中間頭部較高；跌破頸線才確認轉弱。"},
@@ -317,6 +317,58 @@ def _render_live_chart(symbol: str) -> None:
     )
 
 
+def _render_backtest(base: Path) -> None:
+    """40 個交易日前的型態，之後 40 個交易日的平均報酬（排程每天產生的 trend_pattern_backtest.json）。"""
+    bt = load_trend_backtest(base)
+    st.markdown('<div class="feature-section-title">型態回測｜40 日前的型態，之後 40 日誰最賺錢</div>', unsafe_allow_html=True)
+    if not bt.get("by_classification"):
+        st.info("尚未產生回測結果；下一次趨勢型態排程執行後會出現。")
+        return
+    horizon = int(bt.get("horizon_trading_days", 40))
+    best_c, best_p = bt.get("best_classification"), bt.get("best_pattern")
+    rows_c = {r["classification"]: r for r in bt["by_classification"]}
+    rows_p = {r["pattern_name"]: r for r in bt["by_pattern"]}
+    st.caption(
+        f"判讀日 {bt.get('assessed_on')}（用當時最近 40 個交易日判讀型態）→ 之後 {horizon} 個交易日到 {bt.get('ended_on')}｜"
+        f"{bt.get('symbols')} 檔概念股｜檔數少於 {bt.get('min_samples', 5)} 的分組不參與排名"
+    )
+    cols = st.columns(4)
+    cols[0].metric("全部概念股平均", f"{bt['all_avg_return_pct']:+.2f}%", f"中位數 {bt['all_median_return_pct']:+.2f}%", delta_color="off")
+    if best_c:
+        r = rows_c[best_c]
+        cols[1].metric("最賺錢的趨勢狀態", best_c, f"平均 {r['avg_return_pct']:+.2f}%（{r['count']} 檔）", delta_color="off")
+    if best_p:
+        r = rows_p[best_p]
+        cols[2].metric("最賺錢的型態", best_p, f"平均 {r['avg_return_pct']:+.2f}%（{r['count']} 檔）", delta_color="off")
+    cols[3].metric("全部上漲比例", f"{bt.get('all_win_rate_pct', 0):.0f}%")
+
+    def table(items: list[dict], key: str, label: str) -> pd.DataFrame:
+        return pd.DataFrame([{
+            label: r[key], "檔數": r["count"], "平均報酬%": r["avg_return_pct"], "中位數報酬%": r["median_return_pct"],
+            "上漲比例%": r["win_rate_pct"], "相對全體%": r["excess_vs_all_pct"], "期間最大回檔%": r["avg_max_drawdown_pct"],
+            "樣本": "足夠" if r["enough_samples"] else "不足", "表現最好": "、".join(r["best"]), "表現最差": "、".join(r["worst"]),
+        } for r in items])
+
+    fmt = {c: "{:+.2f}" for c in ("平均報酬%", "中位數報酬%", "相對全體%", "期間最大回檔%")} | {"上漲比例%": "{:.0f}"}
+    st.dataframe(table(bt["by_classification"], "classification", "40 日前趨勢狀態").style.format(fmt),
+                 use_container_width=True, hide_index=True)
+    with st.expander("依型態細分（頭肩、雙底、楔形…）", expanded=False):
+        st.dataframe(table(bt["by_pattern"], "pattern_name", "40 日前型態").style.format(fmt),
+                     use_container_width=True, hide_index=True)
+    with st.expander(f"個股明細（{len(bt.get('stocks', []))} 檔）", expanded=False):
+        stocks = pd.DataFrame(bt.get("stocks", []))
+        if not stocks.empty:
+            stocks = stocks.rename(columns={"symbol": "代號", "name": "名稱", "classification": "40 日前趨勢狀態",
+                                            "pattern_name": "40 日前型態", "forward_return_pct": "之後報酬%",
+                                            "max_drawdown_pct": "期間最大回檔%"})
+            st.dataframe(stocks[["代號", "名稱", "40 日前趨勢狀態", "40 日前型態", "之後報酬%", "期間最大回檔%"]],
+                         use_container_width=True, hide_index=True)
+    st.caption(
+        "讀法：平均報酬容易被少數大漲股拉高，請同時看中位數與上漲比例。這只是單一期間的歷史統計，"
+        "市場整體漲跌會影響所有分組，不代表未來會重複，也不構成投資建議。"
+    )
+
+
 def render_trend_patterns_workspace(base_dir: str | Path) -> None:
     """呈現按型態分類的概念股；個股詳細 K 線採使用者要求後再載入。"""
     base = Path(base_dir)
@@ -357,6 +409,7 @@ def render_trend_patterns_workspace(base_dir: str | Path) -> None:
         metric_cols = st.columns(min(4, len(CATEGORY_ORDER) - start_index))
         for col, label in zip(metric_cols, CATEGORY_ORDER[start_index:start_index + 4]):
             col.metric(label, int(counts.get(label, 0)))
+    _render_backtest(base)
     st.divider()
 
     all_themes = sorted({theme for items in frame["themes"].tolist() if isinstance(items, list) for theme in items})
