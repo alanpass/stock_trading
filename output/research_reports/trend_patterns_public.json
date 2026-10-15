@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
   "report_type": "trend_patterns_public",
-  "updated_at": "2026-10-14T08:46:29+08:00",
-  "data_asof": "2026-10-13",
+  "updated_at": "2026-10-15T22:47:51+08:00",
+  "data_asof": "2026-10-15",
   "check_mode": "daily_check_publish_on_material_change",
   "publication_status": "published",
   "tracked_symbols": 175,
-  "usable_symbols": 162,
-  "changed_count": 162,
+  "usable_symbols": 175,
+  "changed_count": 81,
   "category_order": [
     "資料調整檢查",
     "底部反轉候選",
@@ -21,70 +21,15 @@
   "pattern_guide_url": "https://www.ig.com/cn/trading-strategies/10-chart-patterns-every-trader-needs-to-know-220907",
   "changes": [
     {
-      "symbol": "1303",
-      "name": "南亞",
-      "themes": [
-        "CCL／銅箔基板"
-      ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
       "symbol": "1503",
       "name": "士電",
       "themes": [
         "重電／電網"
       ],
-      "pattern_name": "頭肩頂",
-      "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "1504",
-      "name": "東元",
-      "themes": [
-        "重電／電網"
-      ],
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "1513",
-      "name": "中興電",
-      "themes": [
-        "重電／電網"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "1514",
-      "name": "亞力",
-      "themes": [
-        "重電／電網"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "1519",
-      "name": "華城",
-      "themes": [
-        "重電／電網"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "趨勢狀態改變：高檔轉弱／反轉警示 → 底部反轉候選",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "1590",
@@ -92,21 +37,10 @@
       "themes": [
         "機器人／自動化"
       ],
-      "pattern_name": "空頭旗形",
-      "classification": "下降趨勢／弱勢整理",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "1597",
-      "name": "直得",
-      "themes": [
-        "機器人／自動化"
-      ],
       "pattern_name": "雙頂",
       "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "趨勢狀態改變：下降趨勢／弱勢整理 → 高檔轉弱／反轉警示",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "1609",
@@ -114,10 +48,10 @@
       "themes": [
         "重電／電網"
       ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "雙頂",
+      "classification": "高檔轉弱／反轉警示",
+      "event": "趨勢狀態改變：底部反轉候選 → 高檔轉弱／反轉警示",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "1802",
@@ -125,21 +59,10 @@
       "themes": [
         "玻纖布／銅箔"
       ],
-      "pattern_name": "雙底",
+      "pattern_name": "雙底突破",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "1815",
-      "name": "富喬",
-      "themes": [
-        "玻纖布／銅箔"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "型態改變：雙底 → 雙底突破",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "2049",
@@ -149,19 +72,8 @@
       ],
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2059",
-      "name": "川湖",
-      "themes": [
-        "滑軌"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "2301",
@@ -171,19 +83,8 @@
       ],
       "pattern_name": "雙頂跌破",
       "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2308",
-      "name": "台達電",
-      "themes": [
-        "電源／BBU"
-      ],
-      "pattern_name": "箱型整理",
-      "classification": "整理待突破",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "2313",
@@ -192,43 +93,10 @@
         "PCB／伺服器板／HDI",
         "低軌衛星"
       ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2317",
-      "name": "鴻海",
-      "themes": [
-        "組裝代工／ODM"
-      ],
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2324",
-      "name": "仁寶",
-      "themes": [
-        "組裝代工／ODM"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2327",
-      "name": "國巨",
-      "themes": [
-        "被動元件"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "型態改變：雙底突破 → 雙底",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "2330",
@@ -236,21 +104,10 @@
       "themes": [
         "晶圓代工"
       ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2337",
-      "name": "旺宏",
-      "themes": [
-        "記憶體／儲存"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "雙頂",
+      "classification": "高檔轉弱／反轉警示",
+      "event": "趨勢狀態改變：底部反轉候選 → 高檔轉弱／反轉警示",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "2344",
@@ -260,8 +117,8 @@
       ],
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "2345",
@@ -269,10 +126,10 @@
       "themes": [
         "網通／交換器"
       ],
-      "pattern_name": "下降三角形",
-      "classification": "下降趨勢／弱勢整理",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "event": "上漲轉弱（3日）",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "2356",
@@ -280,10 +137,10 @@
       "themes": [
         "組裝代工／ODM"
       ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "空頭旗形",
+      "classification": "下降趨勢／弱勢整理",
+      "event": "趨勢狀態改變：底部反轉候選 → 下降趨勢／弱勢整理",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "2359",
@@ -293,108 +150,8 @@
       ],
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2360",
-      "name": "致茂",
-      "themes": [
-        "測試介面／設備"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2367",
-      "name": "燿華",
-      "themes": [
-        "PCB／伺服器板／HDI",
-        "低軌衛星"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2368",
-      "name": "金像電",
-      "themes": [
-        "PCB／伺服器板／HDI"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2375",
-      "name": "凱美",
-      "themes": [
-        "被動元件"
-      ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2376",
-      "name": "技嘉",
-      "themes": [
-        "組裝代工／ODM"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2382",
-      "name": "廣達",
-      "themes": [
-        "組裝代工／ODM"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2383",
-      "name": "台光電",
-      "themes": [
-        "CCL／銅箔基板"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2392",
-      "name": "正崴",
-      "themes": [
-        "高速連接器／線材"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2395",
-      "name": "研華",
-      "themes": [
-        "機器人／自動化"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "2404",
@@ -402,10 +159,10 @@
       "themes": [
         "廠務工程"
       ],
-      "pattern_name": "雙底突破",
+      "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "型態改變：雙底突破 → 雙底",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "2408",
@@ -415,19 +172,8 @@
       ],
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2421",
-      "name": "建準",
-      "themes": [
-        "散熱／液冷"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "2449",
@@ -435,21 +181,10 @@
       "themes": [
         "封裝測試"
       ],
-      "pattern_name": "多頭旗形",
-      "classification": "多頭延續／持續創高",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2451",
-      "name": "創見",
-      "themes": [
-        "記憶體／儲存"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "箱型整理",
+      "classification": "整理待突破",
+      "event": "趨勢狀態改變：多頭延續／持續創高 → 整理待突破",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "2454",
@@ -457,10 +192,10 @@
       "themes": [
         "ASIC／矽智財"
       ],
-      "pattern_name": "頭肩頂",
+      "pattern_name": "頭肩頂跌破",
       "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "2455",
@@ -470,8 +205,8 @@
       ],
       "pattern_name": "雙頂跌破",
       "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "2467",
@@ -481,52 +216,8 @@
       ],
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2472",
-      "name": "立隆電",
-      "themes": [
-        "被動元件"
-      ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2478",
-      "name": "大毅",
-      "themes": [
-        "被動元件"
-      ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "2492",
-      "name": "華新科",
-      "themes": [
-        "被動元件"
-      ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3006",
-      "name": "晶豪科",
-      "themes": [
-        "記憶體／儲存"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "3013",
@@ -534,109 +225,10 @@
       "themes": [
         "機殼／機櫃"
       ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3015",
-      "name": "全漢",
-      "themes": [
-        "電源／BBU"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3016",
-      "name": "嘉晶",
-      "themes": [
-        "磊晶／化合物半導體"
-      ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3017",
-      "name": "奇鋐",
-      "themes": [
-        "散熱／液冷"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3023",
-      "name": "信邦",
-      "themes": [
-        "高速連接器／線材"
-      ],
-      "pattern_name": "頭肩頂",
-      "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3026",
-      "name": "禾伸堂",
-      "themes": [
-        "被動元件"
-      ],
-      "pattern_name": "雙頂",
-      "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3035",
-      "name": "智原",
-      "themes": [
-        "ASIC／矽智財"
-      ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3037",
-      "name": "欣興",
-      "themes": [
-        "ABF／IC 載板"
-      ],
-      "pattern_name": "雙頂",
-      "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3044",
-      "name": "健鼎",
-      "themes": [
-        "PCB／伺服器板／HDI"
-      ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3081",
-      "name": "聯亞",
-      "themes": [
-        "矽光子／光通訊"
-      ],
-      "pattern_name": "下降三角形",
-      "classification": "下降趨勢／弱勢整理",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "上升趨勢",
+      "classification": "多頭延續／持續創高",
+      "event": "趨勢狀態改變：底部反轉候選 → 多頭延續／持續創高",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "3090",
@@ -644,10 +236,10 @@
       "themes": [
         "被動元件"
       ],
-      "pattern_name": "雙底",
+      "pattern_name": "雙底突破",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "型態改變：雙底 → 雙底突破",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "3105",
@@ -655,10 +247,10 @@
       "themes": [
         "磊晶／化合物半導體"
       ],
-      "pattern_name": "上升趨勢",
-      "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "箱型整理",
+      "classification": "整理待突破",
+      "event": "趨勢狀態改變：高檔轉弱／反轉警示 → 整理待突破",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "3131",
@@ -668,8 +260,8 @@
       ],
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "3163",
@@ -679,8 +271,85 @@
       ],
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
+    },
+    {
+      "symbol": "3189",
+      "name": "景碩",
+      "themes": [
+        "ABF／IC 載板"
+      ],
+      "pattern_name": "雙底突破",
+      "classification": "底部反轉候選",
       "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "last_bar_date": "2026-10-15"
+    },
+    {
+      "symbol": "3211",
+      "name": "順達",
+      "themes": [
+        "電源／BBU"
+      ],
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "event": "初始型態建檔",
+      "last_bar_date": "2026-10-15"
+    },
+    {
+      "symbol": "3217",
+      "name": "優群",
+      "themes": [
+        "高速連接器／線材"
+      ],
+      "pattern_name": "下降三角形",
+      "classification": "下降趨勢／弱勢整理",
+      "event": "初始型態建檔",
+      "last_bar_date": "2026-10-15"
+    },
+    {
+      "symbol": "3231",
+      "name": "緯創",
+      "themes": [
+        "組裝代工／ODM"
+      ],
+      "pattern_name": "頭肩頂",
+      "classification": "高檔轉弱／反轉警示",
+      "event": "初始型態建檔",
+      "last_bar_date": "2026-10-15"
+    },
+    {
+      "symbol": "3234",
+      "name": "光環",
+      "themes": [
+        "矽光子／光通訊"
+      ],
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "event": "初始型態建檔",
+      "last_bar_date": "2026-10-15"
+    },
+    {
+      "symbol": "3260",
+      "name": "威剛",
+      "themes": [
+        "記憶體／儲存"
+      ],
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "event": "初始型態建檔",
+      "last_bar_date": "2026-10-15"
+    },
+    {
+      "symbol": "3264",
+      "name": "欣銓",
+      "themes": [
+        "封裝測試"
+      ],
+      "pattern_name": "上升三角形",
+      "classification": "高檔轉弱／反轉警示",
+      "event": "初始型態建檔",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "3289",
@@ -688,43 +357,10 @@
       "themes": [
         "檢測分析"
       ],
-      "pattern_name": "倒頭肩",
+      "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3323",
-      "name": "加百裕",
-      "themes": [
-        "電源／BBU"
-      ],
-      "pattern_name": "雙頂",
-      "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3324",
-      "name": "雙鴻",
-      "themes": [
-        "散熱／液冷"
-      ],
-      "pattern_name": "箱型整理",
-      "classification": "整理待突破",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3338",
-      "name": "泰碩",
-      "themes": [
-        "散熱／液冷"
-      ],
-      "pattern_name": "雙頂",
-      "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "型態改變：倒頭肩 → 雙底",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "3357",
@@ -732,32 +368,10 @@
       "themes": [
         "被動元件"
       ],
-      "pattern_name": "倒頭肩",
+      "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3363",
-      "name": "上詮",
-      "themes": [
-        "矽光子／光通訊"
-      ],
-      "pattern_name": "雙頂跌破",
-      "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3374",
-      "name": "精材",
-      "themes": [
-        "封裝測試"
-      ],
-      "pattern_name": "箱型整理",
-      "classification": "整理待突破",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "型態改變：倒頭肩 → 雙底",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "3380",
@@ -765,10 +379,10 @@
       "themes": [
         "網通／交換器"
       ],
-      "pattern_name": "箱型整理",
-      "classification": "整理待突破",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "event": "趨勢狀態改變：整理待突破 → 底部反轉候選",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "3443",
@@ -776,32 +390,10 @@
       "themes": [
         "ASIC／矽智財"
       ],
-      "pattern_name": "多頭旗形",
-      "classification": "多頭延續／持續創高",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3450",
-      "name": "聯鈞",
-      "themes": [
-        "矽光子／光通訊"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3483",
-      "name": "力致",
-      "themes": [
-        "散熱／液冷"
-      ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "箱型整理",
+      "classification": "整理待突破",
+      "event": "趨勢狀態改變：多頭延續／持續創高 → 整理待突破",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "3491",
@@ -811,41 +403,8 @@
       ],
       "pattern_name": "雙頂",
       "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3526",
-      "name": "凡甲",
-      "themes": [
-        "高速連接器／線材"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3529",
-      "name": "力旺",
-      "themes": [
-        "ASIC／矽智財"
-      ],
-      "pattern_name": "箱型整理",
-      "classification": "整理待突破",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3533",
-      "name": "嘉澤",
-      "themes": [
-        "高速連接器／線材"
-      ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "3583",
@@ -855,8 +414,8 @@
       ],
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "3587",
@@ -864,32 +423,10 @@
       "themes": [
         "檢測分析"
       ],
-      "pattern_name": "頭肩頂",
+      "pattern_name": "頭肩頂跌破",
       "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3596",
-      "name": "智易",
-      "themes": [
-        "網通／交換器"
-      ],
-      "pattern_name": "雙頂",
-      "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3605",
-      "name": "宏致",
-      "themes": [
-        "高速連接器／線材"
-      ],
-      "pattern_name": "上升趨勢",
-      "classification": "多頭延續／持續創高",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "3624",
@@ -898,20 +435,9 @@
         "被動元件"
       ],
       "pattern_name": "上升趨勢",
-      "classification": "多頭延續／持續創高",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3653",
-      "name": "健策",
-      "themes": [
-        "散熱／液冷"
-      ],
-      "pattern_name": "雙頂",
       "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "上漲轉弱（3日）",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "3661",
@@ -919,32 +445,10 @@
       "themes": [
         "ASIC／矽智財"
       ],
-      "pattern_name": "箱型整理",
-      "classification": "整理待突破",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3665",
-      "name": "貿聯-KY",
-      "themes": [
-        "高速連接器／線材"
-      ],
-      "pattern_name": "箱型整理",
-      "classification": "整理待突破",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3693",
-      "name": "營邦",
-      "themes": [
-        "機殼／機櫃"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "雙頂",
+      "classification": "高檔轉弱／反轉警示",
+      "event": "趨勢狀態改變：整理待突破 → 高檔轉弱／反轉警示",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "3706",
@@ -952,21 +456,10 @@
       "themes": [
         "組裝代工／ODM"
       ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3707",
-      "name": "漢磊",
-      "themes": [
-        "磊晶／化合物半導體"
-      ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "雙頂",
+      "classification": "高檔轉弱／反轉警示",
+      "event": "趨勢狀態改變：底部反轉候選 → 高檔轉弱／反轉警示",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "3711",
@@ -974,43 +467,10 @@
       "themes": [
         "封裝測試"
       ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "3715",
-      "name": "定穎投控",
-      "themes": [
-        "PCB／伺服器板／HDI"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "4540",
-      "name": "全球傳動",
-      "themes": [
-        "機器人／自動化"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "4562",
-      "name": "穎漢",
-      "themes": [
-        "機器人／自動化"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "雙頂",
+      "classification": "高檔轉弱／反轉警示",
+      "event": "趨勢狀態改變：底部反轉候選 → 高檔轉弱／反轉警示",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "4576",
@@ -1018,21 +478,10 @@
       "themes": [
         "機器人／自動化"
       ],
-      "pattern_name": "雙頂",
+      "pattern_name": "雙頂跌破",
       "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "4583",
-      "name": "台灣精銳",
-      "themes": [
-        "機器人／自動化"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "4585",
@@ -1042,30 +491,8 @@
       ],
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "4906",
-      "name": "正文",
-      "themes": [
-        "網通／交換器"
-      ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "4908",
-      "name": "前鼎",
-      "themes": [
-        "矽光子／光通訊"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "4931",
@@ -1075,19 +502,8 @@
       ],
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "4938",
-      "name": "和碩",
-      "themes": [
-        "組裝代工／ODM"
-      ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "4958",
@@ -1095,32 +511,10 @@
       "themes": [
         "PCB／伺服器板／HDI"
       ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "4966",
-      "name": "譜瑞-KY",
-      "themes": [
-        "高速傳輸 IC"
-      ],
-      "pattern_name": "雙頂",
-      "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "4967",
-      "name": "十銓",
-      "themes": [
-        "記憶體／儲存"
-      ],
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "型態改變：雙底突破 → 雙底",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "4971",
@@ -1130,8 +524,8 @@
       ],
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "4977",
@@ -1139,10 +533,10 @@
       "themes": [
         "矽光子／光通訊"
       ],
-      "pattern_name": "下降楔形",
+      "pattern_name": "雙底突破",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "型態改變：下降楔形 → 雙底突破",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "4979",
@@ -1150,21 +544,10 @@
       "themes": [
         "矽光子／光通訊"
       ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "4991",
-      "name": "環宇-KY",
-      "themes": [
-        "磊晶／化合物半導體"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "雙頂",
+      "classification": "高檔轉弱／反轉警示",
+      "event": "趨勢狀態改變：底部反轉候選 → 高檔轉弱／反轉警示",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "5269",
@@ -1172,10 +555,10 @@
       "themes": [
         "高速傳輸 IC"
       ],
-      "pattern_name": "倒頭肩突破",
+      "pattern_name": "倒頭肩",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "型態改變：倒頭肩突破 → 倒頭肩",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "5274",
@@ -1183,10 +566,10 @@
       "themes": [
         "BMC／伺服器管理晶片"
       ],
-      "pattern_name": "頭肩頂",
+      "pattern_name": "頭肩頂跌破",
       "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "型態改變：頭肩頂 → 頭肩頂跌破",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "5309",
@@ -1196,8 +579,8 @@
       ],
       "pattern_name": "雙底突破",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "上漲轉弱（3日）",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "5340",
@@ -1207,41 +590,8 @@
       ],
       "pattern_name": "雙底突破",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "5351",
-      "name": "鈺創",
-      "themes": [
-        "記憶體／儲存"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "5388",
-      "name": "中磊",
-      "themes": [
-        "網通／交換器"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "5443",
-      "name": "均豪",
-      "themes": [
-        "先進封裝設備"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "上漲轉弱（3日）",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "5475",
@@ -1249,43 +599,10 @@
       "themes": [
         "玻纖布／銅箔"
       ],
-      "pattern_name": "上升三角形",
-      "classification": "整理待突破",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "5536",
-      "name": "聖暉*",
-      "themes": [
-        "廠務工程"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "6117",
-      "name": "迎廣",
-      "themes": [
-        "機殼／機櫃"
-      ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "6121",
-      "name": "新普",
-      "themes": [
-        "電源／BBU"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "雙頂",
+      "classification": "高檔轉弱／反轉警示",
+      "event": "上漲轉弱（3日）",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "6139",
@@ -1295,19 +612,8 @@
       ],
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "6173",
-      "name": "信昌電",
-      "themes": [
-        "被動元件"
-      ],
-      "pattern_name": "箱型整理",
-      "classification": "整理待突破",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-06"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "6187",
@@ -1315,10 +621,10 @@
       "themes": [
         "先進封裝設備"
       ],
-      "pattern_name": "雙底突破",
+      "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "上漲轉弱（3日）",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "6191",
@@ -1328,8 +634,8 @@
       ],
       "pattern_name": "雙底突破",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "上漲轉弱（3日）",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "6196",
@@ -1338,9 +644,9 @@
         "廠務工程"
       ],
       "pattern_name": "上升趨勢",
-      "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "classification": "多頭延續／持續創高",
+      "event": "趨勢狀態改變：高檔轉弱／反轉警示 → 多頭延續／持續創高",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "6197",
@@ -1350,53 +656,74 @@
       ],
       "pattern_name": "雙底突破",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "上漲轉弱（3日）",
+      "last_bar_date": "2026-10-15"
     },
     {
-      "symbol": "6257",
-      "name": "矽格",
+      "symbol": "6205",
+      "name": "詮欣",
       "themes": [
-        "封裝測試"
+        "高速連接器／線材"
       ],
-      "pattern_name": "上升趨勢",
-      "classification": "多頭延續／持續創高",
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
       "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "last_bar_date": "2026-10-15"
     },
     {
-      "symbol": "6274",
-      "name": "台燿",
+      "symbol": "6213",
+      "name": "聯茂",
       "themes": [
         "CCL／銅箔基板"
       ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
+      "pattern_name": "上升趨勢",
+      "classification": "高檔轉弱／反轉警示",
       "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "last_bar_date": "2026-10-15"
     },
     {
-      "symbol": "6282",
-      "name": "康舒",
+      "symbol": "6215",
+      "name": "和椿",
       "themes": [
-        "電源／BBU"
+        "機器人／自動化"
       ],
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
       "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "last_bar_date": "2026-10-15"
     },
     {
-      "symbol": "6285",
-      "name": "啟碁",
+      "symbol": "6223",
+      "name": "旺矽",
       "themes": [
-        "低軌衛星",
-        "網通／交換器"
+        "測試介面／設備"
+      ],
+      "pattern_name": "上升楔形",
+      "classification": "高檔轉弱／反轉警示",
+      "event": "初始型態建檔",
+      "last_bar_date": "2026-10-15"
+    },
+    {
+      "symbol": "6230",
+      "name": "尼得科超眾",
+      "themes": [
+        "散熱／液冷"
       ],
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
       "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "last_bar_date": "2026-10-15"
+    },
+    {
+      "symbol": "6239",
+      "name": "力成",
+      "themes": [
+        "封裝測試"
+      ],
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "event": "初始型態建檔",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "6290",
@@ -1404,76 +731,10 @@
       "themes": [
         "高速連接器／線材"
       ],
-      "pattern_name": "雙頂跌破",
+      "pattern_name": "雙頂",
       "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "6409",
-      "name": "旭隼",
-      "themes": [
-        "電源／BBU"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "6412",
-      "name": "群電",
-      "themes": [
-        "電源／BBU"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "6426",
-      "name": "統新",
-      "themes": [
-        "矽光子／光通訊"
-      ],
-      "pattern_name": "箱型整理",
-      "classification": "整理待突破",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "6442",
-      "name": "光聖",
-      "themes": [
-        "矽光子／光通訊"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "6449",
-      "name": "鈺邦",
-      "themes": [
-        "被動元件"
-      ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "6451",
-      "name": "訊芯-KY",
-      "themes": [
-        "矽光子／光通訊"
-      ],
-      "pattern_name": "頭肩頂跌破",
-      "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "型態改變：雙頂跌破 → 雙頂",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "6510",
@@ -1481,10 +742,10 @@
       "themes": [
         "測試介面／設備"
       ],
-      "pattern_name": "對稱三角形",
-      "classification": "整理待突破",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "下降三角形",
+      "classification": "下降趨勢／弱勢整理",
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "6515",
@@ -1492,10 +753,10 @@
       "themes": [
         "測試介面／設備"
       ],
-      "pattern_name": "下降楔形",
+      "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "6531",
@@ -1503,76 +764,10 @@
       "themes": [
         "ASIC／矽智財"
       ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "6533",
-      "name": "晶心科",
-      "themes": [
-        "ASIC／矽智財"
-      ],
-      "pattern_name": "倒頭肩突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "6584",
-      "name": "南俊國際",
-      "themes": [
-        "滑軌"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "6588",
-      "name": "東典光電",
-      "themes": [
-        "矽光子／光通訊"
-      ],
       "pattern_name": "頭肩頂跌破",
       "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "6613",
-      "name": "朋億*",
-      "themes": [
-        "廠務工程"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "6640",
-      "name": "均華",
-      "themes": [
-        "先進封裝設備"
-      ],
-      "pattern_name": "雙頂",
-      "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "6643",
-      "name": "M31",
-      "themes": [
-        "ASIC／矽智財"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "6669",
@@ -1582,8 +777,8 @@
       ],
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "6683",
@@ -1591,21 +786,10 @@
       "themes": [
         "測試介面／設備"
       ],
-      "pattern_name": "上升三角形",
-      "classification": "整理待突破",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "6691",
-      "name": "洋基工程",
-      "themes": [
-        "廠務工程"
-      ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "下降三角形",
+      "classification": "下降趨勢／弱勢整理",
+      "event": "趨勢狀態改變：整理待突破 → 下降趨勢／弱勢整理",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "6770",
@@ -1613,21 +797,10 @@
       "themes": [
         "記憶體／儲存"
       ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "6805",
-      "name": "富世達",
-      "themes": [
-        "散熱／液冷"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "雙頂跌破",
+      "classification": "高檔轉弱／反轉警示",
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "6830",
@@ -1637,19 +810,8 @@
       ],
       "pattern_name": "雙頂跌破",
       "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "7717",
-      "name": "萊德光電-KY",
-      "themes": [
-        "低軌衛星"
-      ],
-      "pattern_name": "箱型整理",
-      "classification": "整理待突破",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "7734",
@@ -1657,10 +819,10 @@
       "themes": [
         "先進封裝設備"
       ],
-      "pattern_name": "對稱三角形",
-      "classification": "整理待突破",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "event": "趨勢狀態改變：整理待突破 → 底部反轉候選",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "7769",
@@ -1668,10 +830,10 @@
       "themes": [
         "測試介面／設備"
       ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "頭肩頂跌破",
+      "classification": "高檔轉弱／反轉警示",
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "8027",
@@ -1679,32 +841,10 @@
       "themes": [
         "先進封裝設備"
       ],
-      "pattern_name": "倒頭肩突破",
+      "pattern_name": "倒頭肩",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "8042",
-      "name": "金山電",
-      "themes": [
-        "被動元件"
-      ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "8046",
-      "name": "南電",
-      "themes": [
-        "ABF／IC 載板"
-      ],
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "型態改變：倒頭肩突破 → 倒頭肩",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "8086",
@@ -1714,30 +854,8 @@
       ],
       "pattern_name": "倒頭肩突破",
       "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "8131",
-      "name": "福懋科",
-      "themes": [
-        "記憶體／儲存"
-      ],
-      "pattern_name": "倒頭肩",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "8155",
-      "name": "博智",
-      "themes": [
-        "PCB／伺服器板／HDI"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "上漲轉弱（3日）",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "8210",
@@ -1745,21 +863,10 @@
       "themes": [
         "機殼／機櫃"
       ],
-      "pattern_name": "下降楔形",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
-    },
-    {
-      "symbol": "8271",
-      "name": "宇瞻",
-      "themes": [
-        "記憶體／儲存"
-      ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "空頭旗形",
+      "classification": "下降趨勢／弱勢整理",
+      "event": "趨勢狀態改變：底部反轉候選 → 下降趨勢／弱勢整理",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "8299",
@@ -1767,10 +874,10 @@
       "themes": [
         "記憶體／儲存"
       ],
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "pattern_name": "雙頂跌破",
+      "classification": "高檔轉弱／反轉警示",
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
     },
     {
       "symbol": "8358",
@@ -1778,172 +885,93 @@
       "themes": [
         "玻纖布／銅箔"
       ],
-      "pattern_name": "雙頂",
+      "pattern_name": "雙頂跌破",
       "classification": "高檔轉弱／反轉警示",
-      "event": "初始型態建檔",
-      "last_bar_date": "2026-10-13"
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
+    },
+    {
+      "symbol": "8374",
+      "name": "羅昇",
+      "themes": [
+        "機器人／自動化"
+      ],
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "event": "向下跌破支撐",
+      "last_bar_date": "2026-10-15"
+    },
+    {
+      "symbol": "8996",
+      "name": "高力",
+      "themes": [
+        "散熱／液冷"
+      ],
+      "pattern_name": "箱型整理",
+      "classification": "整理待突破",
+      "event": "趨勢狀態改變：多頭延續／持續創高 → 整理待突破",
+      "last_bar_date": "2026-10-15"
     }
   ],
-  "errors_count": 13,
-  "errors": [
-    "3189: RuntimeError: 3189 還原股價歷史資料取得失敗：APIError: 429 Rate Limit: {\"statusCode\":429,\"message\":\"Rate limit exceeded\"}",
-    "3211: RuntimeError: 3211 還原股價歷史資料取得失敗：APIError: 429 Rate Limit: {\"statusCode\":429,\"message\":\"Rate limit exceeded\"}",
-    "3217: RuntimeError: 3217 還原股價歷史資料取得失敗：APIError: 429 Rate Limit: {\"statusCode\":429,\"message\":\"Rate limit exceeded\"}",
-    "3231: RuntimeError: 3231 還原股價歷史資料取得失敗：APIError: 429 Rate Limit: {\"statusCode\":429,\"message\":\"Rate limit exceeded\"}",
-    "3234: RuntimeError: 3234 還原股價歷史資料取得失敗：APIError: 429 Rate Limit: {\"statusCode\":429,\"message\":\"Rate limit exceeded\"}",
-    "3260: RuntimeError: 3260 還原股價歷史資料取得失敗：APIError: 429 Rate Limit: {\"statusCode\":429,\"message\":\"Rate limit exceeded\"}",
-    "3264: RuntimeError: 3264 還原股價歷史資料取得失敗：APIError: 429 Rate Limit: {\"statusCode\":429,\"message\":\"Rate limit exceeded\"}",
-    "6205: RuntimeError: 6205 還原股價歷史資料取得失敗：APIError: 429 Rate Limit: {\"statusCode\":429,\"message\":\"Rate limit exceeded\"}",
-    "6213: RuntimeError: 6213 還原股價歷史資料取得失敗：APIError: 429 Rate Limit: {\"statusCode\":429,\"message\":\"Rate limit exceeded\"}",
-    "6215: RuntimeError: 6215 還原股價歷史資料取得失敗：APIError: 429 Rate Limit: {\"statusCode\":429,\"message\":\"Rate limit exceeded\"}",
-    "6223: RuntimeError: 6223 還原股價歷史資料取得失敗：APIError: 429 Rate Limit: {\"statusCode\":429,\"message\":\"Rate limit exceeded\"}",
-    "6230: RuntimeError: 6230 還原股價歷史資料取得失敗：APIError: 429 Rate Limit: {\"statusCode\":429,\"message\":\"Rate limit exceeded\"}",
-    "6239: RuntimeError: 6239 還原股價歷史資料取得失敗：APIError: 429 Rate Limit: {\"statusCode\":429,\"message\":\"Rate limit exceeded\"}"
-  ],
+  "errors_count": 0,
+  "errors": [],
   "stocks": [
     {
-      "symbol": "4977",
-      "name": "眾達-KY",
+      "symbol": "5269",
+      "name": "祥碩",
       "themes": [
-        "矽光子／光通訊"
+        "高速傳輸 IC"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "下降楔形",
+      "pattern_name": "倒頭肩",
       "classification": "底部反轉候選",
       "trend_40d": "上升",
       "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -0.57,
-      "return_10d_pct": 3.26,
-      "return_20d_pct": 0.58,
-      "return_40d_pct": 20.83,
-      "return_6m_pct": -12.86,
-      "close_at_assessment": 174.0,
-      "support": 160.5,
-      "resistance": 184.5,
-      "confidence": 0.63,
+      "return_3d_pct": -2.92,
+      "return_10d_pct": 2.4,
+      "return_20d_pct": 9.52,
+      "return_40d_pct": 9.93,
+      "return_6m_pct": 31.29,
+      "close_at_assessment": 1495.0,
+      "support": 1345.0,
+      "resistance": 1505.0,
+      "confidence": 0.68,
       "event": "",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "高低點同步下移但上方壓力下降更快，留意向上突破。 近 40 個交易日報酬 +20.8%，近 3 日 -0.6%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "倒頭肩可能成形，仍需觀察頸線突破。 近 40 個交易日報酬 +9.9%，近 3 日 -2.9%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "型態改變：倒頭肩突破 → 倒頭肩",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "6515",
-      "name": "穎崴",
+      "symbol": "8027",
+      "name": "鈦昇",
       "themes": [
-        "測試介面／設備"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "下降楔形",
-      "classification": "底部反轉候選",
-      "trend_40d": "下降",
-      "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": 3.26,
-      "return_10d_pct": -2.56,
-      "return_20d_pct": -20.78,
-      "return_40d_pct": -15.56,
-      "return_6m_pct": -32.92,
-      "close_at_assessment": 5700.0,
-      "support": 5445.0,
-      "resistance": 6285.0,
-      "confidence": 0.63,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "高低點同步下移但上方壓力下降更快，留意向上突破。 近 40 個交易日報酬 -15.6%，近 3 日 +3.3%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
-      "symbol": "8210",
-      "name": "勤誠",
-      "themes": [
-        "機殼／機櫃"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "下降楔形",
-      "classification": "底部反轉候選",
-      "trend_40d": "下降",
-      "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": -3.9,
-      "return_10d_pct": -6.58,
-      "return_20d_pct": -7.91,
-      "return_40d_pct": -16.2,
-      "return_6m_pct": -5.89,
-      "close_at_assessment": 838.0,
-      "support": 822.0,
-      "resistance": 907.0,
-      "confidence": 0.63,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "高低點同步下移但上方壓力下降更快，留意向上突破。 近 40 個交易日報酬 -16.2%，近 3 日 -3.9%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
-      "symbol": "3289",
-      "name": "宜特",
-      "themes": [
-        "檢測分析"
+        "先進封裝設備"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "倒頭肩",
       "classification": "底部反轉候選",
       "trend_40d": "區間／整理",
-      "market_direction_6m": "半年區間偏低",
-      "return_3d_pct": -2.81,
-      "return_10d_pct": -1.07,
-      "return_20d_pct": 0.36,
-      "return_40d_pct": 1.09,
-      "return_6m_pct": -18.33,
-      "close_at_assessment": 138.5,
-      "support": 129.5,
-      "resistance": 143.0,
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -6.8,
+      "return_10d_pct": -16.67,
+      "return_20d_pct": 11.45,
+      "return_40d_pct": 9.14,
+      "return_6m_pct": 18.59,
+      "close_at_assessment": 185.0,
+      "support": 164.0,
+      "resistance": 189.0,
       "confidence": 0.68,
       "event": "",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "倒頭肩可能成形，仍需觀察頸線突破。 近 40 個交易日報酬 +1.1%，近 3 日 -2.8%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
-      "symbol": "3357",
-      "name": "臺慶科",
-      "themes": [
-        "被動元件"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "倒頭肩",
-      "classification": "底部反轉候選",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": -4.44,
-      "return_10d_pct": 4.37,
-      "return_20d_pct": 3.86,
-      "return_40d_pct": -5.91,
-      "return_6m_pct": 33.96,
-      "close_at_assessment": 215.0,
-      "support": 194.5,
-      "resistance": 221.0,
-      "confidence": 0.68,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "倒頭肩可能成形，仍需觀察頸線突破。 近 40 個交易日報酬 -5.9%，近 3 日 -4.4%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "倒頭肩可能成形，仍需觀察頸線突破。 近 40 個交易日報酬 +9.1%，近 3 日 -6.8%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "型態改變：倒頭肩突破 → 倒頭肩",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -1970,35 +998,6 @@
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
       "reason": "倒頭肩可能成形，仍需觀察頸線突破。 近 40 個交易日報酬 -0.2%，近 3 日 -4.5%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
-      "symbol": "5269",
-      "name": "祥碩",
-      "themes": [
-        "高速傳輸 IC"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "倒頭肩突破",
-      "classification": "底部反轉候選",
-      "trend_40d": "上升",
-      "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": 5.84,
-      "return_10d_pct": 4.05,
-      "return_20d_pct": 13.24,
-      "return_40d_pct": 11.59,
-      "return_6m_pct": 41.25,
-      "close_at_assessment": 1540.0,
-      "support": 1300.0,
-      "resistance": 1505.0,
-      "confidence": 0.84,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "倒頭肩結構已收盤突破頸線。 近 40 個交易日報酬 +11.6%，近 3 日 +5.8%。",
       "last_bar_date": "2026-10-13",
       "last_major_change_at": "2026-10-14T08:46:29+08:00",
       "major_change": "初始型態建檔",
@@ -2034,35 +1033,6 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "8027",
-      "name": "鈦昇",
-      "themes": [
-        "先進封裝設備"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "倒頭肩突破",
-      "classification": "底部反轉候選",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -7.91,
-      "return_10d_pct": 4.35,
-      "return_20d_pct": 10.34,
-      "return_40d_pct": 2.95,
-      "return_6m_pct": 32.41,
-      "close_at_assessment": 192.0,
-      "support": 161.0,
-      "resistance": 189.0,
-      "confidence": 0.84,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "倒頭肩結構已收盤突破頸線。 近 40 個交易日報酬 +2.9%，近 3 日 -7.9%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
       "symbol": "8086",
       "name": "宏捷科",
       "themes": [
@@ -2073,22 +1043,51 @@
       "classification": "底部反轉候選",
       "trend_40d": "上升",
       "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": 0.0,
-      "return_10d_pct": 26.7,
-      "return_20d_pct": 27.85,
-      "return_40d_pct": 24.58,
-      "return_6m_pct": 2.54,
-      "close_at_assessment": 140.0,
-      "support": 103.5,
+      "return_3d_pct": -12.46,
+      "return_10d_pct": 13.54,
+      "return_20d_pct": 23.22,
+      "return_40d_pct": 14.68,
+      "return_6m_pct": -1.58,
+      "close_at_assessment": 130.0,
+      "support": 105.5,
       "resistance": 126.0,
       "confidence": 0.84,
+      "event": "上漲轉弱（3日）",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "倒頭肩結構已收盤突破頸線。 近 40 個交易日報酬 +14.7%，近 3 日 -12.5%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "上漲轉弱（3日）",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "1503",
+      "name": "士電",
+      "themes": [
+        "重電／電網"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "半年區間偏低",
+      "return_3d_pct": -3.43,
+      "return_10d_pct": -0.25,
+      "return_20d_pct": 0.0,
+      "return_40d_pct": -1.25,
+      "return_6m_pct": 4.01,
+      "close_at_assessment": 197.0,
+      "support": 194.0,
+      "resistance": 215.0,
+      "confidence": 0.68,
       "event": "",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "倒頭肩結構已收盤突破頸線。 近 40 個交易日報酬 +24.6%，近 3 日 +0.0%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -1.3%，近 3 日 -3.4%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：高檔轉弱／反轉警示 → 底部反轉候選",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -2208,64 +1207,6 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "1609",
-      "name": "大亞",
-      "themes": [
-        "重電／電網"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "半年區間中段",
-      "return_3d_pct": -0.9,
-      "return_10d_pct": 2.11,
-      "return_20d_pct": 2.38,
-      "return_40d_pct": 1.31,
-      "return_6m_pct": 16.98,
-      "close_at_assessment": 38.65,
-      "support": 37.15,
-      "resistance": 38.75,
-      "confidence": 0.68,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +1.3%，近 3 日 -0.9%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
-      "symbol": "1802",
-      "name": "台玻",
-      "themes": [
-        "玻纖布／銅箔"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "trend_40d": "上升",
-      "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -5.94,
-      "return_10d_pct": 5.82,
-      "return_20d_pct": 3.69,
-      "return_40d_pct": 6.74,
-      "return_6m_pct": -2.52,
-      "close_at_assessment": 61.8,
-      "support": 56.0,
-      "resistance": 61.7,
-      "confidence": 0.68,
-      "event": "上漲轉弱（3日）",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +6.7%，近 3 日 -5.9%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
       "symbol": "1815",
       "name": "富喬",
       "themes": [
@@ -2305,22 +1246,22 @@
       "classification": "底部反轉候選",
       "trend_40d": "下降",
       "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": -4.53,
-      "return_10d_pct": 0.46,
-      "return_20d_pct": -9.92,
-      "return_40d_pct": -12.45,
-      "return_6m_pct": 31.56,
-      "close_at_assessment": 327.0,
-      "support": 313.5,
+      "return_3d_pct": -7.99,
+      "return_10d_pct": -7.16,
+      "return_20d_pct": -3.86,
+      "return_40d_pct": -15.49,
+      "return_6m_pct": 10.93,
+      "close_at_assessment": 311.0,
+      "support": 311.0,
       "resistance": 381.5,
       "confidence": 0.68,
-      "event": "",
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -12.4%，近 3 日 -4.5%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -15.5%，近 3 日 -8.0%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -2350,6 +1291,36 @@
       "last_bar_date": "2026-10-13",
       "last_major_change_at": "2026-10-14T08:46:29+08:00",
       "major_change": "初始型態建檔",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "2313",
+      "name": "華通",
+      "themes": [
+        "PCB／伺服器板／HDI",
+        "低軌衛星"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -9.52,
+      "return_10d_pct": 0.66,
+      "return_20d_pct": 3.17,
+      "return_40d_pct": 8.06,
+      "return_6m_pct": -12.44,
+      "close_at_assessment": 228.0,
+      "support": 216.0,
+      "resistance": 235.0,
+      "confidence": 0.68,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +8.1%，近 3 日 -9.5%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "型態改變：雙底突破 → 雙底",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -2440,35 +1411,6 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "2330",
-      "name": "台積電",
-      "themes": [
-        "晶圓代工"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -3.68,
-      "return_10d_pct": 0.61,
-      "return_20d_pct": 1.93,
-      "return_40d_pct": 4.27,
-      "return_6m_pct": 25.83,
-      "close_at_assessment": 2490.0,
-      "support": 2373.01,
-      "resistance": 2497.65,
-      "confidence": 0.68,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +4.3%，近 3 日 -3.7%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
       "symbol": "2337",
       "name": "旺宏",
       "themes": [
@@ -2508,51 +1450,51 @@
       "classification": "底部反轉候選",
       "trend_40d": "下降",
       "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": -10.03,
-      "return_10d_pct": -5.83,
-      "return_20d_pct": -10.03,
-      "return_40d_pct": -11.99,
-      "return_6m_pct": 71.08,
-      "close_at_assessment": 161.5,
-      "support": 158.5,
+      "return_3d_pct": -10.92,
+      "return_10d_pct": -13.65,
+      "return_20d_pct": -3.12,
+      "return_40d_pct": -12.18,
+      "return_6m_pct": 71.84,
+      "close_at_assessment": 155.0,
+      "support": 153.0,
       "resistance": 192.0,
       "confidence": 0.68,
-      "event": "",
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -12.0%，近 3 日 -10.0%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -12.2%，近 3 日 -10.9%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "2356",
-      "name": "英業達",
+      "symbol": "2345",
+      "name": "智邦",
       "themes": [
-        "組裝代工／ODM"
+        "網通／交換器"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "trend_40d": "下降",
+      "trend_40d": "區間／整理",
       "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": -1.38,
-      "return_10d_pct": -4.34,
-      "return_20d_pct": -8.47,
-      "return_40d_pct": -18.03,
-      "return_6m_pct": 32.79,
-      "close_at_assessment": 57.3,
-      "support": 56.7,
-      "resistance": 67.7,
+      "return_3d_pct": -8.45,
+      "return_10d_pct": 9.86,
+      "return_20d_pct": 4.0,
+      "return_40d_pct": -12.36,
+      "return_6m_pct": -0.23,
+      "close_at_assessment": 1950.0,
+      "support": 1770.0,
+      "resistance": 2235.0,
       "confidence": 0.68,
-      "event": "",
+      "event": "上漲轉弱（3日）",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -18.0%，近 3 日 -1.4%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -12.4%，近 3 日 -8.5%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "上漲轉弱（3日）",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -2566,22 +1508,22 @@
       "classification": "底部反轉候選",
       "trend_40d": "下降",
       "market_direction_6m": "半年區間偏低",
-      "return_3d_pct": -1.18,
-      "return_10d_pct": -1.18,
-      "return_20d_pct": -3.08,
-      "return_40d_pct": -21.0,
-      "return_6m_pct": 15.6,
-      "close_at_assessment": 126.0,
-      "support": 122.5,
+      "return_3d_pct": -5.88,
+      "return_10d_pct": -6.61,
+      "return_20d_pct": -5.14,
+      "return_40d_pct": -32.39,
+      "return_6m_pct": 3.9,
+      "close_at_assessment": 120.0,
+      "support": 120.0,
       "resistance": 135.0,
       "confidence": 0.68,
-      "event": "",
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -21.0%，近 3 日 -1.2%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -32.4%，近 3 日 -5.9%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -2818,6 +1760,35 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
+      "symbol": "2404",
+      "name": "漢唐",
+      "themes": [
+        "廠務工程"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "半年區間中段",
+      "return_3d_pct": -10.53,
+      "return_10d_pct": -14.34,
+      "return_20d_pct": 8.87,
+      "return_40d_pct": -0.9,
+      "return_6m_pct": 25.33,
+      "close_at_assessment": 1105.0,
+      "support": 1015.0,
+      "resistance": 1105.0,
+      "confidence": 0.68,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -0.9%，近 3 日 -10.5%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "型態改變：雙底突破 → 雙底",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
       "symbol": "2408",
       "name": "南亞科",
       "themes": [
@@ -2826,24 +1797,24 @@
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "半年區間偏高",
-      "return_3d_pct": -5.06,
-      "return_10d_pct": -2.98,
-      "return_20d_pct": -5.24,
-      "return_40d_pct": -4.69,
-      "return_6m_pct": 117.1,
-      "close_at_assessment": 488.0,
-      "support": 465.5,
+      "trend_40d": "下降",
+      "market_direction_6m": "半年區間中段",
+      "return_3d_pct": -16.6,
+      "return_10d_pct": -15.32,
+      "return_20d_pct": -7.08,
+      "return_40d_pct": -14.66,
+      "return_6m_pct": 108.47,
+      "close_at_assessment": 439.5,
+      "support": 432.5,
       "resistance": 540.0,
       "confidence": 0.68,
-      "event": "",
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -4.7%，近 3 日 -5.1%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -14.7%，近 3 日 -16.6%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -2913,24 +1884,24 @@
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -2.28,
-      "return_10d_pct": 5.1,
-      "return_20d_pct": -3.3,
-      "return_40d_pct": 3.93,
-      "return_6m_pct": 2.24,
-      "close_at_assessment": 556.0,
-      "support": 515.0,
-      "resistance": 643.0,
+      "trend_40d": "下降",
+      "market_direction_6m": "近半年由高點回落",
+      "return_3d_pct": -14.24,
+      "return_10d_pct": -6.12,
+      "return_20d_pct": -5.77,
+      "return_40d_pct": -10.28,
+      "return_6m_pct": 0.16,
+      "close_at_assessment": 506.0,
+      "support": 504.0,
+      "resistance": 637.0,
       "confidence": 0.68,
-      "event": "",
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +3.9%，近 3 日 -2.3%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -10.3%，近 3 日 -14.2%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -2957,35 +1928,6 @@
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
       "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -11.5%，近 3 日 -10.5%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
-      "symbol": "3013",
-      "name": "晟銘電",
-      "themes": [
-        "機殼／機櫃"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "trend_40d": "上升",
-      "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -5.19,
-      "return_10d_pct": 8.05,
-      "return_20d_pct": 4.46,
-      "return_40d_pct": 11.31,
-      "return_6m_pct": -7.44,
-      "close_at_assessment": 91.3,
-      "support": 81.5,
-      "resistance": 91.9,
-      "confidence": 0.68,
-      "event": "上漲轉弱（3日）",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +11.3%，近 3 日 -5.2%。",
       "last_bar_date": "2026-10-13",
       "last_major_change_at": "2026-10-14T08:46:29+08:00",
       "major_change": "初始型態建檔",
@@ -3050,35 +1992,6 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "3090",
-      "name": "日電貿",
-      "themes": [
-        "被動元件"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": -4.02,
-      "return_10d_pct": 1.21,
-      "return_20d_pct": -2.34,
-      "return_40d_pct": -4.3,
-      "return_6m_pct": 63.84,
-      "close_at_assessment": 167.0,
-      "support": 157.0,
-      "resistance": 170.5,
-      "confidence": 0.68,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -4.3%，近 3 日 -4.0%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
       "symbol": "3131",
       "name": "弘塑",
       "themes": [
@@ -3089,22 +2002,22 @@
       "classification": "底部反轉候選",
       "trend_40d": "下降",
       "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": -3.67,
-      "return_10d_pct": -2.07,
-      "return_20d_pct": -4.07,
-      "return_40d_pct": -6.9,
-      "return_6m_pct": -31.03,
-      "close_at_assessment": 2360.0,
-      "support": 2250.0,
+      "return_3d_pct": -15.25,
+      "return_10d_pct": -15.25,
+      "return_20d_pct": -7.36,
+      "return_40d_pct": -13.18,
+      "return_6m_pct": -32.32,
+      "close_at_assessment": 2140.0,
+      "support": 2130.0,
       "resistance": 2525.0,
       "confidence": 0.68,
-      "event": "",
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -6.9%，近 3 日 -3.7%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -13.2%，近 3 日 -15.2%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -3118,22 +2031,196 @@
       "classification": "底部反轉候選",
       "trend_40d": "下降",
       "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": -8.12,
-      "return_10d_pct": -1.23,
-      "return_20d_pct": -8.77,
-      "return_40d_pct": -8.12,
-      "return_6m_pct": -36.69,
-      "close_at_assessment": 645.0,
-      "support": 630.0,
+      "return_3d_pct": -12.34,
+      "return_10d_pct": -6.07,
+      "return_20d_pct": -7.93,
+      "return_40d_pct": -15.05,
+      "return_6m_pct": -41.21,
+      "close_at_assessment": 604.0,
+      "support": 593.0,
       "resistance": 689.0,
+      "confidence": 0.68,
+      "event": "向下跌破支撐",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -15.0%，近 3 日 -12.3%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "3211",
+      "name": "順達",
+      "themes": [
+        "電源／BBU"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "trend_40d": "下降",
+      "market_direction_6m": "近半年由高點回落",
+      "return_3d_pct": -8.76,
+      "return_10d_pct": -12.42,
+      "return_20d_pct": -3.72,
+      "return_40d_pct": -8.76,
+      "return_6m_pct": 3.19,
+      "close_at_assessment": 349.0,
+      "support": 342.5,
+      "resistance": 406.5,
       "confidence": 0.68,
       "event": "",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -8.1%，近 3 日 -8.1%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -8.8%，近 3 日 -8.8%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
       "major_change": "初始型態建檔",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "3234",
+      "name": "光環",
+      "themes": [
+        "矽光子／光通訊"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -8.45,
+      "return_10d_pct": -2.89,
+      "return_20d_pct": -3.45,
+      "return_40d_pct": 15.07,
+      "return_6m_pct": 48.67,
+      "close_at_assessment": 168.0,
+      "support": 162.0,
+      "resistance": 220.0,
+      "confidence": 0.68,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +15.1%，近 3 日 -8.4%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "初始型態建檔",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "3260",
+      "name": "威剛",
+      "themes": [
+        "記憶體／儲存"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由高點回落",
+      "return_3d_pct": -4.76,
+      "return_10d_pct": -7.28,
+      "return_20d_pct": -7.88,
+      "return_40d_pct": -5.26,
+      "return_6m_pct": -0.5,
+      "close_at_assessment": 350.0,
+      "support": 350.0,
+      "resistance": 408.56,
+      "confidence": 0.68,
+      "event": "向下跌破支撐",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -5.3%，近 3 日 -4.8%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "初始型態建檔",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "3289",
+      "name": "宜特",
+      "themes": [
+        "檢測分析"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "半年區間偏低",
+      "return_3d_pct": -3.93,
+      "return_10d_pct": -3.58,
+      "return_20d_pct": 1.13,
+      "return_40d_pct": 0.37,
+      "return_6m_pct": -26.09,
+      "close_at_assessment": 134.5,
+      "support": 129.5,
+      "resistance": 143.0,
+      "confidence": 0.68,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +0.4%，近 3 日 -3.9%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "型態改變：倒頭肩 → 雙底",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "3357",
+      "name": "臺慶科",
+      "themes": [
+        "被動元件"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "半年區間偏低",
+      "return_3d_pct": -5.39,
+      "return_10d_pct": 2.93,
+      "return_20d_pct": 5.78,
+      "return_40d_pct": -1.17,
+      "return_6m_pct": 24.93,
+      "close_at_assessment": 210.5,
+      "support": 198.0,
+      "resistance": 217.5,
+      "confidence": 0.68,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -1.2%，近 3 日 -5.4%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "型態改變：倒頭肩 → 雙底",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "3380",
+      "name": "明泰",
+      "themes": [
+        "網通／交換器"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "trend_40d": "上升",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": 2.45,
+      "return_10d_pct": -2.33,
+      "return_20d_pct": 4.84,
+      "return_40d_pct": 16.73,
+      "return_6m_pct": -18.04,
+      "close_at_assessment": 31.4,
+      "support": 29.5,
+      "resistance": 33.7,
+      "confidence": 0.68,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +16.7%，近 3 日 +2.4%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：整理待突破 → 底部反轉候選",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -3203,24 +2290,24 @@
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "半年區間中段",
-      "return_3d_pct": -4.44,
-      "return_10d_pct": 1.72,
-      "return_20d_pct": -0.42,
-      "return_40d_pct": -0.14,
-      "return_6m_pct": 2.08,
-      "close_at_assessment": 710.0,
-      "support": 664.0,
+      "trend_40d": "下降",
+      "market_direction_6m": "近半年由高點回落",
+      "return_3d_pct": -13.51,
+      "return_10d_pct": -7.64,
+      "return_20d_pct": -4.39,
+      "return_40d_pct": -6.98,
+      "return_6m_pct": -5.85,
+      "close_at_assessment": 653.0,
+      "support": 647.0,
       "resistance": 773.0,
       "confidence": 0.68,
-      "event": "",
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -0.1%，近 3 日 -4.4%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -7.0%，近 3 日 -13.5%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -3247,35 +2334,6 @@
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
       "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +32.5%，近 3 日 -2.5%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
-      "symbol": "3706",
-      "name": "神達",
-      "themes": [
-        "組裝代工／ODM"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "半年區間中段",
-      "return_3d_pct": 2.6,
-      "return_10d_pct": 5.73,
-      "return_20d_pct": 1.22,
-      "return_40d_pct": 1.84,
-      "return_6m_pct": 14.56,
-      "close_at_assessment": 83.0,
-      "support": 77.6,
-      "resistance": 84.23,
-      "confidence": 0.68,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +1.8%，近 3 日 +2.6%。",
       "last_bar_date": "2026-10-13",
       "last_major_change_at": "2026-10-14T08:46:29+08:00",
       "major_change": "初始型態建檔",
@@ -3406,24 +2464,24 @@
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "trend_40d": "區間／整理",
+      "trend_40d": "下降",
       "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": -0.86,
-      "return_10d_pct": -1.71,
-      "return_20d_pct": -0.86,
-      "return_40d_pct": -5.73,
-      "return_6m_pct": -3.08,
-      "close_at_assessment": 288.0,
-      "support": 286.0,
+      "return_3d_pct": -3.27,
+      "return_10d_pct": -3.77,
+      "return_20d_pct": -5.7,
+      "return_40d_pct": -6.02,
+      "return_6m_pct": -10.54,
+      "close_at_assessment": 281.0,
+      "support": 280.0,
       "resistance": 307.0,
       "confidence": 0.68,
-      "event": "",
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -5.7%，近 3 日 -0.9%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -6.0%，近 3 日 -3.3%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -3466,22 +2524,51 @@
       "classification": "底部反轉候選",
       "trend_40d": "下降",
       "market_direction_6m": "半年區間中段",
-      "return_3d_pct": -9.5,
-      "return_10d_pct": -5.38,
-      "return_20d_pct": -6.35,
-      "return_40d_pct": -13.12,
-      "return_6m_pct": 64.38,
-      "close_at_assessment": 228.5,
-      "support": 223.0,
+      "return_3d_pct": -11.8,
+      "return_10d_pct": -15.48,
+      "return_20d_pct": -7.99,
+      "return_40d_pct": -17.92,
+      "return_6m_pct": 56.0,
+      "close_at_assessment": 213.0,
+      "support": 210.5,
       "resistance": 264.0,
+      "confidence": 0.68,
+      "event": "向下跌破支撐",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -17.9%，近 3 日 -11.8%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "4958",
+      "name": "臻鼎-KY",
+      "themes": [
+        "PCB／伺服器板／HDI"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -10.67,
+      "return_10d_pct": 2.37,
+      "return_20d_pct": 6.03,
+      "return_40d_pct": 9.49,
+      "return_6m_pct": 107.77,
+      "close_at_assessment": 519.0,
+      "support": 463.5,
+      "resistance": 524.0,
       "confidence": 0.68,
       "event": "",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -13.1%，近 3 日 -9.5%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +9.5%，近 3 日 -10.7%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "型態改變：雙底突破 → 雙底",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -3522,53 +2609,24 @@
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -11.26,
-      "return_10d_pct": -2.9,
-      "return_20d_pct": -10.67,
-      "return_40d_pct": 11.67,
-      "return_6m_pct": -20.78,
-      "close_at_assessment": 536.0,
-      "support": 520.0,
+      "trend_40d": "下降",
+      "market_direction_6m": "近半年由高點回落",
+      "return_3d_pct": -14.07,
+      "return_10d_pct": -5.94,
+      "return_20d_pct": -4.52,
+      "return_40d_pct": -8.81,
+      "return_6m_pct": -25.28,
+      "close_at_assessment": 507.0,
+      "support": 502.0,
       "resistance": 606.0,
       "confidence": 0.68,
-      "event": "",
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +11.7%，近 3 日 -11.3%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
-      "symbol": "4979",
-      "name": "華星光",
-      "themes": [
-        "矽光子／光通訊"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -7.6,
-      "return_10d_pct": -4.97,
-      "return_20d_pct": -6.3,
-      "return_40d_pct": 2.49,
-      "return_6m_pct": 15.65,
-      "close_at_assessment": 535.0,
-      "support": 501.0,
-      "resistance": 658.0,
-      "confidence": 0.68,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +2.5%，近 3 日 -7.6%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -8.8%，近 3 日 -14.1%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -3756,21 +2814,166 @@
       "classification": "底部反轉候選",
       "trend_40d": "下降",
       "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": -8.77,
-      "return_10d_pct": -4.65,
-      "return_20d_pct": -4.65,
-      "return_40d_pct": -7.26,
-      "return_6m_pct": 21.33,
-      "close_at_assessment": 718.0,
-      "support": 695.0,
+      "return_3d_pct": -8.0,
+      "return_10d_pct": -8.73,
+      "return_20d_pct": -1.85,
+      "return_40d_pct": -9.05,
+      "return_6m_pct": 13.08,
+      "close_at_assessment": 690.0,
+      "support": 681.0,
       "resistance": 789.69,
+      "confidence": 0.68,
+      "event": "向下跌破支撐",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -9.0%，近 3 日 -8.0%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "6187",
+      "name": "萬潤",
+      "themes": [
+        "先進封裝設備"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "trend_40d": "上升",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -17.01,
+      "return_10d_pct": 6.11,
+      "return_20d_pct": 13.47,
+      "return_40d_pct": 10.32,
+      "return_6m_pct": 24.02,
+      "close_at_assessment": 1390.0,
+      "support": 1180.0,
+      "resistance": 1455.0,
+      "confidence": 0.68,
+      "event": "上漲轉弱（3日）",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +10.3%，近 3 日 -17.0%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "上漲轉弱（3日）",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "6205",
+      "name": "詮欣",
+      "themes": [
+        "高速連接器／線材"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -6.23,
+      "return_10d_pct": -7.15,
+      "return_20d_pct": 8.88,
+      "return_40d_pct": 6.95,
+      "return_6m_pct": -2.24,
+      "close_at_assessment": 66.2,
+      "support": 60.0,
+      "resistance": 71.2,
       "confidence": 0.68,
       "event": "",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -7.3%，近 3 日 -8.8%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +6.9%，近 3 日 -6.2%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "初始型態建檔",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "6215",
+      "name": "和椿",
+      "themes": [
+        "機器人／自動化"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "trend_40d": "下降",
+      "market_direction_6m": "近半年由高點回落",
+      "return_3d_pct": -3.83,
+      "return_10d_pct": -7.37,
+      "return_20d_pct": -5.93,
+      "return_40d_pct": -10.84,
+      "return_6m_pct": -12.98,
+      "close_at_assessment": 90.5,
+      "support": 89.8,
+      "resistance": 105.5,
+      "confidence": 0.68,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -10.8%，近 3 日 -3.8%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "初始型態建檔",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "6230",
+      "name": "尼得科超眾",
+      "themes": [
+        "散熱／液冷"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "半年區間偏低",
+      "return_3d_pct": -1.76,
+      "return_10d_pct": -1.33,
+      "return_20d_pct": -4.29,
+      "return_40d_pct": 3.24,
+      "return_6m_pct": -30.75,
+      "close_at_assessment": 111.5,
+      "support": 108.0,
+      "resistance": 119.0,
+      "confidence": 0.68,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +3.2%，近 3 日 -1.8%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "初始型態建檔",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "6239",
+      "name": "力成",
+      "themes": [
+        "封裝測試"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙底",
+      "classification": "底部反轉候選",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "半年區間中段",
+      "return_3d_pct": -11.17,
+      "return_10d_pct": -6.56,
+      "return_20d_pct": -0.37,
+      "return_40d_pct": 1.88,
+      "return_6m_pct": 31.35,
+      "close_at_assessment": 270.5,
+      "support": 268.0,
+      "resistance": 302.0,
+      "confidence": 0.68,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +1.9%，近 3 日 -11.2%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
       "major_change": "初始型態建檔",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
@@ -3921,32 +3124,32 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "6531",
-      "name": "愛普*",
+      "symbol": "6515",
+      "name": "穎崴",
       "themes": [
-        "ASIC／矽智財"
+        "測試介面／設備"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "半年區間中段",
-      "return_3d_pct": -7.4,
-      "return_10d_pct": -6.75,
-      "return_20d_pct": -10.1,
-      "return_40d_pct": -0.64,
-      "return_6m_pct": 64.44,
-      "close_at_assessment": 926.0,
-      "support": 887.0,
-      "resistance": 1005.0,
+      "trend_40d": "下降",
+      "market_direction_6m": "近半年由高點回落",
+      "return_3d_pct": -16.1,
+      "return_10d_pct": -14.76,
+      "return_20d_pct": -23.41,
+      "return_40d_pct": -19.95,
+      "return_6m_pct": -43.82,
+      "close_at_assessment": 5055.0,
+      "support": 5055.0,
+      "resistance": 6285.0,
       "confidence": 0.68,
-      "event": "",
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -0.6%，近 3 日 -7.4%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -20.0%，近 3 日 -16.1%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -4045,53 +3248,24 @@
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "trend_40d": "區間／整理",
+      "trend_40d": "下降",
       "market_direction_6m": "半年區間中段",
-      "return_3d_pct": -2.01,
-      "return_10d_pct": 3.78,
-      "return_20d_pct": -6.4,
-      "return_40d_pct": 1.74,
-      "return_6m_pct": 84.82,
-      "close_at_assessment": 2195.0,
-      "support": 2075.0,
+      "return_3d_pct": -16.26,
+      "return_10d_pct": -8.85,
+      "return_20d_pct": -16.08,
+      "return_40d_pct": -11.21,
+      "return_6m_pct": 57.17,
+      "close_at_assessment": 1905.0,
+      "support": 1905.0,
       "resistance": 2875.0,
       "confidence": 0.68,
-      "event": "",
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 +1.7%，近 3 日 -2.0%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
-      "symbol": "6770",
-      "name": "力積電",
-      "themes": [
-        "記憶體／儲存"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "trend_40d": "下降",
-      "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": -7.02,
-      "return_10d_pct": -6.25,
-      "return_20d_pct": -8.16,
-      "return_40d_pct": -13.62,
-      "return_6m_pct": 24.26,
-      "close_at_assessment": 67.5,
-      "support": 66.7,
-      "resistance": 75.3,
-      "confidence": 0.68,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -13.6%，近 3 日 -7.0%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -11.2%，近 3 日 -16.3%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -4124,32 +3298,32 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "7769",
-      "name": "鴻勁",
+      "symbol": "7734",
+      "name": "印能科技",
       "themes": [
-        "測試介面／設備"
+        "先進封裝設備"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "雙底",
       "classification": "底部反轉候選",
-      "trend_40d": "區間／整理",
+      "trend_40d": "下降",
       "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": 3.14,
-      "return_10d_pct": 7.05,
-      "return_20d_pct": -6.25,
-      "return_40d_pct": -7.89,
-      "return_6m_pct": 49.93,
-      "close_at_assessment": 6070.0,
-      "support": 5380.0,
-      "resistance": 7160.0,
+      "return_3d_pct": -16.64,
+      "return_10d_pct": -8.82,
+      "return_20d_pct": -2.21,
+      "return_40d_pct": -17.49,
+      "return_6m_pct": 0.63,
+      "close_at_assessment": 2430.0,
+      "support": 2405.0,
+      "resistance": 3130.0,
       "confidence": 0.68,
       "event": "",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -7.9%，近 3 日 +3.1%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -17.5%，近 3 日 -16.6%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：整理待突破 → 底部反轉候選",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -4211,35 +3385,6 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "8299",
-      "name": "群聯",
-      "themes": [
-        "記憶體／儲存"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "雙底",
-      "classification": "底部反轉候選",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": -4.61,
-      "return_10d_pct": -7.53,
-      "return_20d_pct": -4.84,
-      "return_40d_pct": -5.53,
-      "return_6m_pct": 15.08,
-      "close_at_assessment": 1965.0,
-      "support": 1900.0,
-      "resistance": 2215.0,
-      "confidence": 0.68,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -5.5%，近 3 日 -4.6%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
       "symbol": "8374",
       "name": "羅昇",
       "themes": [
@@ -4250,22 +3395,22 @@
       "classification": "底部反轉候選",
       "trend_40d": "下降",
       "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": -3.17,
-      "return_10d_pct": -2.79,
-      "return_20d_pct": -7.92,
-      "return_40d_pct": -14.59,
-      "return_6m_pct": 2.77,
-      "close_at_assessment": 73.2,
-      "support": 72.5,
+      "return_3d_pct": -4.69,
+      "return_10d_pct": -8.38,
+      "return_20d_pct": -7.9,
+      "return_40d_pct": -15.66,
+      "return_6m_pct": -17.42,
+      "close_at_assessment": 71.1,
+      "support": 71.0,
       "resistance": 88.8,
       "confidence": 0.68,
-      "event": "",
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -14.6%，近 3 日 -3.2%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。 近 40 個交易日報酬 -15.7%，近 3 日 -4.7%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -4298,33 +3443,32 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "2313",
-      "name": "華通",
+      "symbol": "1802",
+      "name": "台玻",
       "themes": [
-        "PCB／伺服器板／HDI",
-        "低軌衛星"
+        "玻纖布／銅箔"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "雙底突破",
       "classification": "底部反轉候選",
       "trend_40d": "上升",
       "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -1.02,
-      "return_10d_pct": 9.44,
-      "return_20d_pct": 7.98,
-      "return_40d_pct": 12.99,
-      "return_6m_pct": -11.85,
-      "close_at_assessment": 243.5,
-      "support": 213.0,
-      "resistance": 235.0,
+      "return_3d_pct": -1.26,
+      "return_10d_pct": 4.67,
+      "return_20d_pct": 8.48,
+      "return_40d_pct": 10.97,
+      "return_6m_pct": -9.39,
+      "close_at_assessment": 62.7,
+      "support": 56.0,
+      "resistance": 61.7,
       "confidence": 0.82,
       "event": "",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "雙底已站上中間反彈高點。 近 40 個交易日報酬 +13.0%，近 3 日 -1.0%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "雙底已站上中間反彈高點。 近 40 個交易日報酬 +11.0%，近 3 日 -1.3%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "型態改變：雙底 → 雙底突破",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -4351,35 +3495,6 @@
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
       "reason": "雙底已站上中間反彈高點。 近 40 個交易日報酬 -4.6%，近 3 日 -3.9%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
-      "symbol": "2404",
-      "name": "漢唐",
-      "themes": [
-        "廠務工程"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "半年區間中段",
-      "return_3d_pct": -14.29,
-      "return_10d_pct": -11.28,
-      "return_20d_pct": 7.55,
-      "return_40d_pct": 1.33,
-      "return_6m_pct": 26.25,
-      "close_at_assessment": 1140.0,
-      "support": 992.0,
-      "resistance": 1105.0,
-      "confidence": 0.82,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "雙底已站上中間反彈高點。 近 40 個交易日報酬 +1.3%，近 3 日 -14.3%。",
       "last_bar_date": "2026-10-13",
       "last_major_change_at": "2026-10-14T08:46:29+08:00",
       "major_change": "初始型態建檔",
@@ -4560,6 +3675,64 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
+      "symbol": "3090",
+      "name": "日電貿",
+      "themes": [
+        "被動元件"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙底突破",
+      "classification": "底部反轉候選",
+      "trend_40d": "上升",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": 0.0,
+      "return_10d_pct": 6.52,
+      "return_20d_pct": 4.89,
+      "return_40d_pct": 6.19,
+      "return_6m_pct": 62.76,
+      "close_at_assessment": 171.5,
+      "support": 159.0,
+      "resistance": 170.5,
+      "confidence": 0.82,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "雙底已站上中間反彈高點。 近 40 個交易日報酬 +6.2%，近 3 日 +0.0%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "型態改變：雙底 → 雙底突破",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "3189",
+      "name": "景碩",
+      "themes": [
+        "ABF／IC 載板"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙底突破",
+      "classification": "底部反轉候選",
+      "trend_40d": "上升",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -7.64,
+      "return_10d_pct": 0.93,
+      "return_20d_pct": 22.68,
+      "return_40d_pct": 13.18,
+      "return_6m_pct": 155.72,
+      "close_at_assessment": 979.0,
+      "support": 785.0,
+      "resistance": 960.0,
+      "confidence": 0.82,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "雙底已站上中間反彈高點。 近 40 個交易日報酬 +13.2%，近 3 日 -7.6%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "初始型態建檔",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
       "symbol": "3483",
       "name": "力致",
       "themes": [
@@ -4647,35 +3820,6 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "3711",
-      "name": "日月光投控",
-      "themes": [
-        "封裝測試"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "trend_40d": "上升",
-      "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": 1.09,
-      "return_10d_pct": 5.87,
-      "return_20d_pct": 13.85,
-      "return_40d_pct": 20.13,
-      "return_6m_pct": 78.86,
-      "close_at_assessment": 740.0,
-      "support": 592.0,
-      "resistance": 630.0,
-      "confidence": 0.82,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "雙底已站上中間反彈高點。 近 40 個交易日報酬 +20.1%，近 3 日 +1.1%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
       "symbol": "4906",
       "name": "正文",
       "themes": [
@@ -4734,32 +3878,32 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "4958",
-      "name": "臻鼎-KY",
+      "symbol": "4977",
+      "name": "眾達-KY",
       "themes": [
-        "PCB／伺服器板／HDI"
+        "矽光子／光通訊"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "雙底突破",
       "classification": "底部反轉候選",
       "trend_40d": "上升",
       "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -7.23,
-      "return_10d_pct": 16.09,
-      "return_20d_pct": 11.63,
-      "return_40d_pct": 12.77,
-      "return_6m_pct": 115.84,
-      "close_at_assessment": 552.0,
-      "support": 463.5,
-      "resistance": 524.0,
+      "return_3d_pct": 2.17,
+      "return_10d_pct": 11.24,
+      "return_20d_pct": 12.57,
+      "return_40d_pct": 24.5,
+      "return_6m_pct": 1.39,
+      "close_at_assessment": 188.0,
+      "support": 160.5,
+      "resistance": 184.5,
       "confidence": 0.82,
-      "event": "上漲轉弱（3日）",
+      "event": "",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "雙底已站上中間反彈高點。 近 40 個交易日報酬 +12.8%，近 3 日 -7.2%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "雙底已站上中間反彈高點。 近 40 個交易日報酬 +24.5%，近 3 日 +2.2%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "型態改變：下降楔形 → 雙底突破",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -4773,22 +3917,22 @@
       "classification": "底部反轉候選",
       "trend_40d": "上升",
       "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": 5.36,
-      "return_10d_pct": 31.6,
-      "return_20d_pct": 41.32,
-      "return_40d_pct": 29.67,
-      "return_6m_pct": 26.79,
-      "close_at_assessment": 70.8,
-      "support": 48.05,
+      "return_3d_pct": -7.39,
+      "return_10d_pct": 7.97,
+      "return_20d_pct": 37.6,
+      "return_40d_pct": 29.69,
+      "return_6m_pct": 16.87,
+      "close_at_assessment": 67.7,
+      "support": 49.1,
       "resistance": 56.1,
       "confidence": 0.82,
-      "event": "",
+      "event": "上漲轉弱（3日）",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "雙底已站上中間反彈高點。 近 40 個交易日報酬 +29.7%，近 3 日 +5.4%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "雙底已站上中間反彈高點。 近 40 個交易日報酬 +29.7%，近 3 日 -7.4%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "上漲轉弱（3日）",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -4802,22 +3946,22 @@
       "classification": "底部反轉候選",
       "trend_40d": "上升",
       "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": 2.89,
-      "return_10d_pct": 13.9,
-      "return_20d_pct": 8.05,
-      "return_40d_pct": 20.42,
-      "return_6m_pct": -18.24,
-      "close_at_assessment": 92.6,
+      "return_3d_pct": -4.53,
+      "return_10d_pct": 11.98,
+      "return_20d_pct": 7.59,
+      "return_40d_pct": 17.18,
+      "return_6m_pct": -19.92,
+      "close_at_assessment": 90.7,
       "support": 80.3,
       "resistance": 86.2,
       "confidence": 0.82,
-      "event": "",
+      "event": "上漲轉弱（3日）",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "雙底已站上中間反彈高點。 近 40 個交易日報酬 +20.4%，近 3 日 +2.9%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "雙底已站上中間反彈高點。 近 40 個交易日報酬 +17.2%，近 3 日 -4.5%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "上漲轉弱（3日）",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -4850,35 +3994,6 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "6187",
-      "name": "萬潤",
-      "themes": [
-        "先進封裝設備"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "雙底突破",
-      "classification": "底部反轉候選",
-      "trend_40d": "上升",
-      "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": 4.23,
-      "return_10d_pct": 33.89,
-      "return_20d_pct": 25.0,
-      "return_40d_pct": 25.49,
-      "return_6m_pct": 55.8,
-      "close_at_assessment": 1600.0,
-      "support": 1180.0,
-      "resistance": 1455.0,
-      "confidence": 0.82,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "雙底已站上中間反彈高點。 近 40 個交易日報酬 +25.5%，近 3 日 +4.2%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
       "symbol": "6191",
       "name": "精成科",
       "themes": [
@@ -4887,24 +4002,24 @@
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "雙底突破",
       "classification": "底部反轉候選",
-      "trend_40d": "上升",
+      "trend_40d": "區間／整理",
       "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": 10.17,
-      "return_10d_pct": 17.13,
-      "return_20d_pct": 17.56,
-      "return_40d_pct": 12.35,
-      "return_6m_pct": 3.6,
-      "close_at_assessment": 96.4,
-      "support": 80.5,
+      "return_3d_pct": -3.74,
+      "return_10d_pct": 7.14,
+      "return_20d_pct": 9.76,
+      "return_40d_pct": 5.39,
+      "return_6m_pct": -9.54,
+      "close_at_assessment": 90.0,
+      "support": 81.0,
       "resistance": 85.8,
       "confidence": 0.82,
-      "event": "近20日壓力突破",
+      "event": "上漲轉弱（3日）",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "雙底已站上中間反彈高點。 近 40 個交易日報酬 +12.4%，近 3 日 +10.2%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "雙底已站上中間反彈高點。 近 40 個交易日報酬 +5.4%，近 3 日 -3.7%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "上漲轉弱（3日）",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -4918,22 +4033,22 @@
       "classification": "底部反轉候選",
       "trend_40d": "上升",
       "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -2.83,
-      "return_10d_pct": 12.66,
-      "return_20d_pct": 19.77,
-      "return_40d_pct": 17.43,
-      "return_6m_pct": 104.91,
-      "close_at_assessment": 360.5,
+      "return_3d_pct": -9.09,
+      "return_10d_pct": 8.9,
+      "return_20d_pct": 19.53,
+      "return_40d_pct": 20.75,
+      "return_6m_pct": 101.22,
+      "close_at_assessment": 355.0,
       "support": 292.0,
       "resistance": 333.5,
       "confidence": 0.82,
-      "event": "",
+      "event": "上漲轉弱（3日）",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "雙底已站上中間反彈高點。 近 40 個交易日報酬 +17.4%，近 3 日 -2.8%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "雙底已站上中間反彈高點。 近 40 個交易日報酬 +20.7%，近 3 日 -9.1%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "上漲轉弱（3日）",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -5082,6 +4197,35 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
+      "symbol": "3013",
+      "name": "晟銘電",
+      "themes": [
+        "機殼／機櫃"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "上升趨勢",
+      "classification": "多頭延續／持續創高",
+      "trend_40d": "上升",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -0.53,
+      "return_10d_pct": 9.1,
+      "return_20d_pct": 14.37,
+      "return_40d_pct": 18.52,
+      "return_6m_pct": -4.92,
+      "close_at_assessment": 94.7,
+      "support": 81.5,
+      "resistance": 99.3,
+      "confidence": 0.68,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "收盤高於上行的中短期均線，近期趨勢偏多。 近 40 個交易日報酬 +18.5%，近 3 日 -0.5%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：底部反轉候選 → 多頭延續／持續創高",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
       "symbol": "3605",
       "name": "宏致",
       "themes": [
@@ -5111,32 +4255,32 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "3624",
-      "name": "光頡",
+      "symbol": "6196",
+      "name": "帆宣",
       "themes": [
-        "被動元件"
+        "廠務工程"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "上升趨勢",
       "classification": "多頭延續／持續創高",
       "trend_40d": "上升",
       "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": 4.39,
-      "return_10d_pct": 18.93,
-      "return_20d_pct": 46.7,
-      "return_40d_pct": 86.03,
-      "return_6m_pct": 222.24,
-      "close_at_assessment": 166.5,
-      "support": 107.0,
-      "resistance": 180.5,
+      "return_3d_pct": -6.7,
+      "return_10d_pct": 4.79,
+      "return_20d_pct": 17.88,
+      "return_40d_pct": 21.87,
+      "return_6m_pct": 75.75,
+      "close_at_assessment": 613.0,
+      "support": 516.0,
+      "resistance": 684.0,
       "confidence": 0.68,
       "event": "",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "收盤高於上行的中短期均線，近期趨勢偏多。 近 40 個交易日報酬 +86.0%，近 3 日 +4.4%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "收盤高於上行的中短期均線，近期趨勢偏多。 近 40 個交易日報酬 +21.9%，近 3 日 -6.7%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：高檔轉弱／反轉警示 → 多頭延續／持續創高",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -5169,209 +4313,6 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "8996",
-      "name": "高力",
-      "themes": [
-        "散熱／液冷"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "上升趨勢",
-      "classification": "多頭延續／持續創高",
-      "trend_40d": "上升",
-      "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": 4.26,
-      "return_10d_pct": 12.09,
-      "return_20d_pct": 31.92,
-      "return_40d_pct": 33.98,
-      "return_6m_pct": 56.62,
-      "close_at_assessment": 1715.0,
-      "support": 1200.0,
-      "resistance": 1800.0,
-      "confidence": 0.68,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "收盤高於上行的中短期均線，近期趨勢偏多。 近 40 個交易日報酬 +34.0%，近 3 日 +4.3%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
-      "symbol": "2449",
-      "name": "京元電子",
-      "themes": [
-        "封裝測試"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "多頭旗形",
-      "classification": "多頭延續／持續創高",
-      "trend_40d": "上升",
-      "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": 1.84,
-      "return_10d_pct": -1.93,
-      "return_20d_pct": 12.34,
-      "return_40d_pct": 23.48,
-      "return_6m_pct": 8.96,
-      "close_at_assessment": 305.0,
-      "support": 253.0,
-      "resistance": 310.0,
-      "confidence": 0.62,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "先有明顯上漲，近期以較小區間整理；向上突破才確認延續。 近 40 個交易日報酬 +23.5%，近 3 日 +1.8%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
-      "symbol": "3443",
-      "name": "創意",
-      "themes": [
-        "ASIC／矽智財"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "多頭旗形",
-      "classification": "多頭延續／持續創高",
-      "trend_40d": "上升",
-      "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -4.31,
-      "return_10d_pct": -5.04,
-      "return_20d_pct": 30.04,
-      "return_40d_pct": 48.12,
-      "return_6m_pct": 193.04,
-      "close_at_assessment": 8095.0,
-      "support": 5850.0,
-      "resistance": 8750.0,
-      "confidence": 0.62,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "先有明顯上漲，近期以較小區間整理；向上突破才確認延續。 近 40 個交易日報酬 +48.1%，近 3 日 -4.3%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
-      "symbol": "5475",
-      "name": "德宏",
-      "themes": [
-        "玻纖布／銅箔"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "上升三角形",
-      "classification": "整理待突破",
-      "trend_40d": "上升",
-      "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": 6.74,
-      "return_10d_pct": 13.81,
-      "return_20d_pct": 11.65,
-      "return_40d_pct": 20.82,
-      "return_6m_pct": -28.35,
-      "close_at_assessment": 206.0,
-      "support": 168.0,
-      "resistance": 215.0,
-      "confidence": 0.66,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "高點大致水平、低點逐步墊高；收盤突破壓力可確認。 近 40 個交易日報酬 +20.8%，近 3 日 +6.7%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
-      "symbol": "6683",
-      "name": "雍智科技",
-      "themes": [
-        "測試介面／設備"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "上升三角形",
-      "classification": "整理待突破",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "半年區間中段",
-      "return_3d_pct": -5.19,
-      "return_10d_pct": -9.87,
-      "return_20d_pct": 6.2,
-      "return_40d_pct": 0.0,
-      "return_6m_pct": -25.57,
-      "close_at_assessment": 1370.0,
-      "support": 1235.0,
-      "resistance": 1717.5,
-      "confidence": 0.66,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "高點大致水平、低點逐步墊高；收盤突破壓力可確認。 近 40 個交易日報酬 +0.0%，近 3 日 -5.2%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
-      "symbol": "6510",
-      "name": "精測",
-      "themes": [
-        "測試介面／設備"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "對稱三角形",
-      "classification": "整理待突破",
-      "trend_40d": "上升",
-      "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": 8.44,
-      "return_10d_pct": -1.06,
-      "return_20d_pct": -10.76,
-      "return_40d_pct": 9.53,
-      "return_6m_pct": -3.72,
-      "close_at_assessment": 3275.0,
-      "support": 2960.0,
-      "resistance": 3775.0,
-      "confidence": 0.63,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "高點下移、低點上移，波動收斂；方向需等有效突破。 近 40 個交易日報酬 +9.5%，近 3 日 +8.4%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
-      "symbol": "7734",
-      "name": "印能科技",
-      "themes": [
-        "先進封裝設備"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "對稱三角形",
-      "classification": "整理待突破",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": -0.37,
-      "return_10d_pct": -1.82,
-      "return_20d_pct": -3.91,
-      "return_40d_pct": -12.62,
-      "return_6m_pct": 2.72,
-      "close_at_assessment": 2700.0,
-      "support": 2405.0,
-      "resistance": 2980.0,
-      "confidence": 0.63,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "高點下移、低點上移，波動收斂；方向需等有效突破。 近 40 個交易日報酬 -12.6%，近 3 日 -0.4%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
       "symbol": "2308",
       "name": "台達電",
       "themes": [
@@ -5398,6 +4339,64 @@
       "last_bar_date": "2026-10-13",
       "last_major_change_at": "2026-10-14T08:46:29+08:00",
       "major_change": "初始型態建檔",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "2449",
+      "name": "京元電子",
+      "themes": [
+        "封裝測試"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "箱型整理",
+      "classification": "整理待突破",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -9.33,
+      "return_10d_pct": -7.64,
+      "return_20d_pct": 4.02,
+      "return_40d_pct": 15.25,
+      "return_6m_pct": -1.5,
+      "close_at_assessment": 272.0,
+      "support": 256.5,
+      "resistance": 330.0,
+      "confidence": 0.48,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "最近 40 個交易日價格在區間內反覆震盪，尚未符合更明確的典型形態。 近 40 個交易日報酬 +15.3%，近 3 日 -9.3%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：多頭延續／持續創高 → 整理待突破",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "3105",
+      "name": "穩懋",
+      "themes": [
+        "磊晶／化合物半導體"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "箱型整理",
+      "classification": "整理待突破",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -13.45,
+      "return_10d_pct": -7.38,
+      "return_20d_pct": 13.06,
+      "return_40d_pct": 34.05,
+      "return_6m_pct": 12.9,
+      "close_at_assessment": 502.0,
+      "support": 445.5,
+      "resistance": 630.0,
+      "confidence": 0.48,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "最近 40 個交易日價格在區間內反覆震盪，尚未符合更明確的典型形態。 近 40 個交易日報酬 +34.0%，近 3 日 -13.4%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：高檔轉弱／反轉警示 → 整理待突破",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -5459,32 +4458,32 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "3380",
-      "name": "明泰",
+      "symbol": "3443",
+      "name": "創意",
       "themes": [
-        "網通／交換器"
+        "ASIC／矽智財"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "箱型整理",
       "classification": "整理待突破",
-      "trend_40d": "上升",
+      "trend_40d": "區間／整理",
       "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": 1.29,
-      "return_10d_pct": -0.95,
-      "return_20d_pct": 2.12,
-      "return_40d_pct": 12.59,
-      "return_6m_pct": -18.72,
-      "close_at_assessment": 31.3,
-      "support": 29.5,
-      "resistance": 33.7,
+      "return_3d_pct": -5.31,
+      "return_10d_pct": -4.6,
+      "return_20d_pct": 19.84,
+      "return_40d_pct": 38.57,
+      "return_6m_pct": 150.98,
+      "close_at_assessment": 7670.0,
+      "support": 6035.0,
+      "resistance": 8750.0,
       "confidence": 0.48,
       "event": "",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "最近 40 個交易日價格在區間內反覆震盪，尚未符合更明確的典型形態。 近 40 個交易日報酬 +12.6%，近 3 日 +1.3%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "最近 40 個交易日價格在區間內反覆震盪，尚未符合更明確的典型形態。 近 40 個交易日報酬 +38.6%，近 3 日 -5.3%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：多頭延續／持續創高 → 整理待突破",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -5511,35 +4510,6 @@
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
       "reason": "最近 40 個交易日價格在區間內反覆震盪，尚未符合更明確的典型形態。 近 40 個交易日報酬 +5.8%，近 3 日 -6.8%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
-      "symbol": "3661",
-      "name": "世芯-KY",
-      "themes": [
-        "ASIC／矽智財"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "箱型整理",
-      "classification": "整理待突破",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": -3.22,
-      "return_10d_pct": 7.56,
-      "return_20d_pct": 0.0,
-      "return_40d_pct": -2.93,
-      "return_6m_pct": 32.25,
-      "close_at_assessment": 4055.0,
-      "support": 3260.0,
-      "resistance": 4490.0,
-      "confidence": 0.48,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "最近 40 個交易日價格在區間內反覆震盪，尚未符合更明確的典型形態。 近 40 個交易日報酬 -2.9%，近 3 日 -3.2%。",
       "last_bar_date": "2026-10-13",
       "last_major_change_at": "2026-10-14T08:46:29+08:00",
       "major_change": "初始型態建檔",
@@ -5662,61 +4632,177 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "3105",
-      "name": "穩懋",
+      "symbol": "8996",
+      "name": "高力",
       "themes": [
-        "磊晶／化合物半導體"
+        "散熱／液冷"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "上升趨勢",
+      "pattern_name": "箱型整理",
+      "classification": "整理待突破",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -11.63,
+      "return_10d_pct": -5.3,
+      "return_20d_pct": 23.08,
+      "return_40d_pct": 29.36,
+      "return_6m_pct": 38.18,
+      "close_at_assessment": 1520.0,
+      "support": 1200.0,
+      "resistance": 1800.0,
+      "confidence": 0.48,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "最近 40 個交易日價格在區間內反覆震盪，尚未符合更明確的典型形態。 近 40 個交易日報酬 +29.4%，近 3 日 -11.6%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：多頭延續／持續創高 → 整理待突破",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "3264",
+      "name": "欣銓",
+      "themes": [
+        "封裝測試"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "上升三角形",
       "classification": "高檔轉弱／反轉警示",
       "trend_40d": "上升",
       "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -5.44,
-      "return_10d_pct": 10.76,
-      "return_20d_pct": 20.48,
-      "return_40d_pct": 47.09,
-      "return_6m_pct": 21.91,
-      "close_at_assessment": 556.0,
-      "support": 420.0,
-      "resistance": 630.0,
-      "confidence": 0.68,
+      "return_3d_pct": -1.65,
+      "return_10d_pct": 10.06,
+      "return_20d_pct": 17.8,
+      "return_40d_pct": 27.32,
+      "return_6m_pct": 46.16,
+      "close_at_assessment": 268.0,
+      "support": 220.0,
+      "resistance": 287.75,
+      "confidence": 0.66,
       "event": "上漲轉弱（3日）",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "收盤高於上行的中短期均線，近期趨勢偏多。 近 40 個交易日報酬 +47.1%，近 3 日 -5.4%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
+      "reason": "高點大致水平、低點逐步墊高；收盤突破壓力可確認。 近 40 個交易日報酬 +27.3%，近 3 日 -1.7%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
       "major_change": "初始型態建檔",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "6196",
-      "name": "帆宣",
+      "symbol": "6223",
+      "name": "旺矽",
       "themes": [
-        "廠務工程"
+        "測試介面／設備"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "上升楔形",
+      "classification": "高檔轉弱／反轉警示",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "半年區間偏低",
+      "return_3d_pct": -13.54,
+      "return_10d_pct": 3.41,
+      "return_20d_pct": -5.27,
+      "return_40d_pct": 0.57,
+      "return_6m_pct": 15.49,
+      "close_at_assessment": 5300.0,
+      "support": 4995.0,
+      "resistance": 4995.0,
+      "confidence": 0.63,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "高低點同步上移但下方支撐斜率更陡，留意上漲動能收斂。 近 40 個交易日報酬 +0.6%，近 3 日 -13.5%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "初始型態建檔",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "3624",
+      "name": "光頡",
+      "themes": [
+        "被動元件"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "上升趨勢",
       "classification": "高檔轉弱／反轉警示",
       "trend_40d": "上升",
       "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -4.33,
-      "return_10d_pct": 13.45,
-      "return_20d_pct": 19.81,
-      "return_40d_pct": 25.69,
-      "return_6m_pct": 102.41,
-      "close_at_assessment": 641.0,
-      "support": 505.0,
-      "resistance": 684.0,
+      "return_3d_pct": -9.01,
+      "return_10d_pct": 10.18,
+      "return_20d_pct": 22.18,
+      "return_40d_pct": 78.66,
+      "return_6m_pct": 177.73,
+      "close_at_assessment": 151.5,
+      "support": 115.0,
+      "resistance": 180.5,
       "confidence": 0.68,
       "event": "上漲轉弱（3日）",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "收盤高於上行的中短期均線，近期趨勢偏多。 近 40 個交易日報酬 +25.7%，近 3 日 -4.3%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
+      "reason": "收盤高於上行的中短期均線，近期趨勢偏多。 近 40 個交易日報酬 +78.7%，近 3 日 -9.0%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "上漲轉弱（3日）",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "6213",
+      "name": "聯茂",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "上升趨勢",
+      "classification": "高檔轉弱／反轉警示",
+      "trend_40d": "上升",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -1.6,
+      "return_10d_pct": 28.25,
+      "return_20d_pct": 55.15,
+      "return_40d_pct": 63.73,
+      "return_6m_pct": 251.07,
+      "close_at_assessment": 799.0,
+      "support": 495.0,
+      "resistance": 858.0,
+      "confidence": 0.68,
+      "event": "上漲轉弱（3日）",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "收盤高於上行的中短期均線，近期趨勢偏多。 近 40 個交易日報酬 +63.7%，近 3 日 -1.6%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
       "major_change": "初始型態建檔",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "1590",
+      "name": "亞德客-KY",
+      "themes": [
+        "機器人／自動化"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙頂",
+      "classification": "高檔轉弱／反轉警示",
+      "trend_40d": "下降",
+      "market_direction_6m": "半年區間偏低",
+      "return_3d_pct": -4.55,
+      "return_10d_pct": -3.75,
+      "return_20d_pct": -9.06,
+      "return_40d_pct": -21.96,
+      "return_6m_pct": -0.51,
+      "close_at_assessment": 1155.0,
+      "support": 1135.0,
+      "resistance": 1135.0,
+      "confidence": 0.67,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近高點顯示壓力可能存在，仍需觀察支撐是否跌破。 近 40 個交易日報酬 -22.0%，近 3 日 -4.5%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：下降趨勢／弱勢整理 → 高檔轉弱／反轉警示",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -5746,6 +4832,64 @@
       "last_bar_date": "2026-10-13",
       "last_major_change_at": "2026-10-14T08:46:29+08:00",
       "major_change": "初始型態建檔",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "1609",
+      "name": "大亞",
+      "themes": [
+        "重電／電網"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙頂",
+      "classification": "高檔轉弱／反轉警示",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -0.51,
+      "return_10d_pct": 0.9,
+      "return_20d_pct": 4.83,
+      "return_40d_pct": 5.82,
+      "return_6m_pct": 17.14,
+      "close_at_assessment": 39.1,
+      "support": 37.15,
+      "resistance": 36.7,
+      "confidence": 0.67,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近高點顯示壓力可能存在，仍需觀察支撐是否跌破。 近 40 個交易日報酬 +5.8%，近 3 日 -0.5%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：底部反轉候選 → 高檔轉弱／反轉警示",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "2330",
+      "name": "台積電",
+      "themes": [
+        "晶圓代工"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙頂",
+      "classification": "高檔轉弱／反轉警示",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -3.94,
+      "return_10d_pct": -1.61,
+      "return_20d_pct": 2.82,
+      "return_40d_pct": 2.82,
+      "return_6m_pct": 17.97,
+      "close_at_assessment": 2440.0,
+      "support": 2373.01,
+      "resistance": 2373.01,
+      "confidence": 0.67,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近高點顯示壓力可能存在，仍需觀察支撐是否跌破。 近 40 個交易日報酬 +2.8%，近 3 日 -3.9%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：底部反轉候選 → 高檔轉弱／反轉警示",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -5875,22 +5019,22 @@
       "classification": "高檔轉弱／反轉警示",
       "trend_40d": "區間／整理",
       "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -14.96,
-      "return_10d_pct": -6.75,
-      "return_20d_pct": 7.01,
-      "return_40d_pct": 5.45,
-      "return_6m_pct": -19.69,
-      "close_at_assessment": 1450.0,
-      "support": 1310.0,
+      "return_3d_pct": -13.11,
+      "return_10d_pct": -11.67,
+      "return_20d_pct": -4.68,
+      "return_40d_pct": 6.0,
+      "return_6m_pct": -23.01,
+      "close_at_assessment": 1325.0,
+      "support": 1320.0,
       "resistance": 1310.0,
       "confidence": 0.67,
-      "event": "",
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近高點顯示壓力可能存在，仍需觀察支撐是否跌破。 近 40 個交易日報酬 +5.5%，近 3 日 -15.0%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "兩個相近高點顯示壓力可能存在，仍需觀察支撐是否跌破。 近 40 個交易日報酬 +6.0%，近 3 日 -13.1%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -5952,32 +5096,90 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "4576",
-      "name": "大銀微系統",
+      "symbol": "3661",
+      "name": "世芯-KY",
       "themes": [
-        "機器人／自動化"
+        "ASIC／矽智財"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "雙頂",
       "classification": "高檔轉弱／反轉警示",
       "trend_40d": "區間／整理",
       "market_direction_6m": "半年區間中段",
-      "return_3d_pct": -3.02,
-      "return_10d_pct": 0.0,
-      "return_20d_pct": -5.46,
-      "return_40d_pct": 1.81,
-      "return_6m_pct": 24.41,
-      "close_at_assessment": 225.0,
-      "support": 218.5,
-      "resistance": 219.0,
+      "return_3d_pct": -15.7,
+      "return_10d_pct": -0.94,
+      "return_20d_pct": 3.2,
+      "return_40d_pct": 0.51,
+      "return_6m_pct": 16.32,
+      "close_at_assessment": 3705.0,
+      "support": 3260.0,
+      "resistance": 3260.0,
       "confidence": 0.67,
       "event": "",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近高點顯示壓力可能存在，仍需觀察支撐是否跌破。 近 40 個交易日報酬 +1.8%，近 3 日 -3.0%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "兩個相近高點顯示壓力可能存在，仍需觀察支撐是否跌破。 近 40 個交易日報酬 +0.5%，近 3 日 -15.7%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：整理待突破 → 高檔轉弱／反轉警示",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "3706",
+      "name": "神達",
+      "themes": [
+        "組裝代工／ODM"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙頂",
+      "classification": "高檔轉弱／反轉警示",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -0.97,
+      "return_10d_pct": 2.77,
+      "return_20d_pct": 3.56,
+      "return_40d_pct": 2.31,
+      "return_6m_pct": 13.04,
+      "close_at_assessment": 81.5,
+      "support": 77.6,
+      "resistance": 78.1,
+      "confidence": 0.67,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近高點顯示壓力可能存在，仍需觀察支撐是否跌破。 近 40 個交易日報酬 +2.3%，近 3 日 -1.0%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：底部反轉候選 → 高檔轉弱／反轉警示",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "3711",
+      "name": "日月光投控",
+      "themes": [
+        "封裝測試"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙頂",
+      "classification": "高檔轉弱／反轉警示",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -11.68,
+      "return_10d_pct": -4.27,
+      "return_20d_pct": 9.97,
+      "return_40d_pct": 12.35,
+      "return_6m_pct": 52.1,
+      "close_at_assessment": 673.0,
+      "support": 592.0,
+      "resistance": 565.0,
+      "confidence": 0.67,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近高點顯示壓力可能存在，仍需觀察支撐是否跌破。 近 40 個交易日報酬 +12.4%，近 3 日 -11.7%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：底部反轉候選 → 高檔轉弱／反轉警示",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -6010,6 +5212,93 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
+      "symbol": "4979",
+      "name": "華星光",
+      "themes": [
+        "矽光子／光通訊"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙頂",
+      "classification": "高檔轉弱／反轉警示",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -6.87,
+      "return_10d_pct": -4.75,
+      "return_20d_pct": -0.91,
+      "return_40d_pct": 2.65,
+      "return_6m_pct": 2.21,
+      "close_at_assessment": 542.0,
+      "support": 501.0,
+      "resistance": 501.0,
+      "confidence": 0.67,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近高點顯示壓力可能存在，仍需觀察支撐是否跌破。 近 40 個交易日報酬 +2.7%，近 3 日 -6.9%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：底部反轉候選 → 高檔轉弱／反轉警示",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "5475",
+      "name": "德宏",
+      "themes": [
+        "玻纖布／銅箔"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙頂",
+      "classification": "高檔轉弱／反轉警示",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -6.76,
+      "return_10d_pct": 7.52,
+      "return_20d_pct": 9.66,
+      "return_40d_pct": 5.75,
+      "return_6m_pct": -40.25,
+      "close_at_assessment": 193.0,
+      "support": 168.0,
+      "resistance": 168.0,
+      "confidence": 0.67,
+      "event": "上漲轉弱（3日）",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近高點顯示壓力可能存在，仍需觀察支撐是否跌破。 近 40 個交易日報酬 +5.8%，近 3 日 -6.8%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "上漲轉弱（3日）",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "6290",
+      "name": "良維",
+      "themes": [
+        "高速連接器／線材"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙頂",
+      "classification": "高檔轉弱／反轉警示",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": 0.0,
+      "return_10d_pct": -1.61,
+      "return_20d_pct": 5.96,
+      "return_40d_pct": 31.5,
+      "return_6m_pct": 26.96,
+      "close_at_assessment": 275.5,
+      "support": 253.0,
+      "resistance": 267.0,
+      "confidence": 0.67,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "兩個相近高點顯示壓力可能存在，仍需觀察支撐是否跌破。 近 40 個交易日報酬 +31.5%，近 3 日 +0.0%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "型態改變：雙頂跌破 → 雙頂",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
       "symbol": "6640",
       "name": "均華",
       "themes": [
@@ -6039,35 +5328,6 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "8358",
-      "name": "金居",
-      "themes": [
-        "玻纖布／銅箔"
-      ],
-      "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "雙頂",
-      "classification": "高檔轉弱／反轉警示",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -10.2,
-      "return_10d_pct": -3.52,
-      "return_20d_pct": -5.37,
-      "return_40d_pct": 15.05,
-      "return_6m_pct": 72.56,
-      "close_at_assessment": 493.0,
-      "support": 477.0,
-      "resistance": 469.5,
-      "confidence": 0.67,
-      "event": "",
-      "corporate_action_review": false,
-      "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "兩個相近高點顯示壓力可能存在，仍需觀察支撐是否跌破。 近 40 個交易日報酬 +15.1%，近 3 日 -10.2%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
-      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
-    },
-    {
       "symbol": "2301",
       "name": "光寶科",
       "themes": [
@@ -6077,23 +5337,23 @@
       "pattern_name": "雙頂跌破",
       "classification": "高檔轉弱／反轉警示",
       "trend_40d": "區間／整理",
-      "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -8.0,
-      "return_10d_pct": -3.83,
-      "return_20d_pct": -5.15,
-      "return_40d_pct": 4.32,
-      "return_6m_pct": 81.46,
-      "close_at_assessment": 276.0,
-      "support": 271.0,
+      "market_direction_6m": "半年區間中段",
+      "return_3d_pct": -6.94,
+      "return_10d_pct": -4.11,
+      "return_20d_pct": -3.42,
+      "return_40d_pct": -1.11,
+      "return_6m_pct": 70.1,
+      "close_at_assessment": 268.0,
+      "support": 266.5,
       "resistance": 278.0,
       "confidence": 0.82,
-      "event": "",
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "雙頂已跌破中間回檔低點。 近 40 個交易日報酬 +4.3%，近 3 日 -8.0%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "雙頂已跌破中間回檔低點。 近 40 個交易日報酬 -1.1%，近 3 日 -6.9%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -6107,22 +5367,22 @@
       "classification": "高檔轉弱／反轉警示",
       "trend_40d": "區間／整理",
       "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -9.12,
-      "return_10d_pct": -8.3,
-      "return_20d_pct": -4.51,
-      "return_40d_pct": 33.86,
-      "return_6m_pct": 74.56,
-      "close_at_assessment": 508.0,
-      "support": 493.0,
+      "return_3d_pct": -14.27,
+      "return_10d_pct": -12.41,
+      "return_20d_pct": -9.63,
+      "return_40d_pct": 15.81,
+      "return_6m_pct": 77.01,
+      "close_at_assessment": 483.5,
+      "support": 480.0,
       "resistance": 530.0,
       "confidence": 0.82,
-      "event": "",
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "雙頂已跌破中間回檔低點。 近 40 個交易日報酬 +33.9%，近 3 日 -9.1%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "雙頂已跌破中間回檔低點。 近 40 個交易日報酬 +15.8%，近 3 日 -14.3%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -6155,32 +5415,61 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "6290",
-      "name": "良維",
+      "symbol": "4576",
+      "name": "大銀微系統",
       "themes": [
-        "高速連接器／線材"
+        "機器人／自動化"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "雙頂跌破",
       "classification": "高檔轉弱／反轉警示",
       "trend_40d": "區間／整理",
-      "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -6.68,
-      "return_10d_pct": -3.1,
-      "return_20d_pct": -3.45,
-      "return_40d_pct": 21.51,
-      "return_6m_pct": 28.11,
-      "close_at_assessment": 265.5,
-      "support": 252.0,
-      "resistance": 267.0,
+      "market_direction_6m": "近半年由高點回落",
+      "return_3d_pct": -11.99,
+      "return_10d_pct": -12.92,
+      "return_20d_pct": -9.87,
+      "return_40d_pct": -2.38,
+      "return_6m_pct": 6.58,
+      "close_at_assessment": 205.5,
+      "support": 205.0,
+      "resistance": 219.0,
       "confidence": 0.82,
-      "event": "",
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "雙頂已跌破中間回檔低點。 近 40 個交易日報酬 +21.5%，近 3 日 -6.7%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "雙頂已跌破中間回檔低點。 近 40 個交易日報酬 -2.4%，近 3 日 -12.0%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "6770",
+      "name": "力積電",
+      "themes": [
+        "記憶體／儲存"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "雙頂跌破",
+      "classification": "高檔轉弱／反轉警示",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由高點回落",
+      "return_3d_pct": -7.28,
+      "return_10d_pct": -12.08,
+      "return_20d_pct": -6.36,
+      "return_40d_pct": -4.71,
+      "return_6m_pct": 24.83,
+      "close_at_assessment": 66.2,
+      "support": 66.0,
+      "resistance": 66.7,
+      "confidence": 0.82,
+      "event": "向下跌破支撐",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "雙頂已跌破中間回檔低點。 近 40 個交易日報酬 -4.7%，近 3 日 -7.3%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -6194,80 +5483,80 @@
       "classification": "高檔轉弱／反轉警示",
       "trend_40d": "區間／整理",
       "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -1.89,
-      "return_10d_pct": -3.7,
-      "return_20d_pct": -12.01,
-      "return_40d_pct": 27.76,
-      "return_6m_pct": -32.47,
-      "close_at_assessment": 520.0,
-      "support": 506.0,
+      "return_3d_pct": -9.63,
+      "return_10d_pct": -8.44,
+      "return_20d_pct": -12.23,
+      "return_40d_pct": 13.09,
+      "return_6m_pct": -38.46,
+      "close_at_assessment": 488.0,
+      "support": 480.0,
       "resistance": 530.0,
       "confidence": 0.82,
-      "event": "",
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "雙頂已跌破中間回檔低點。 近 40 個交易日報酬 +27.8%，近 3 日 -1.9%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "雙頂已跌破中間回檔低點。 近 40 個交易日報酬 +13.1%，近 3 日 -9.6%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "1503",
-      "name": "士電",
+      "symbol": "8299",
+      "name": "群聯",
       "themes": [
-        "重電／電網"
+        "記憶體／儲存"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "頭肩頂",
+      "pattern_name": "雙頂跌破",
       "classification": "高檔轉弱／反轉警示",
-      "trend_40d": "區間／整理",
-      "market_direction_6m": "半年區間偏低",
-      "return_3d_pct": -0.5,
-      "return_10d_pct": 1.28,
-      "return_20d_pct": -3.17,
-      "return_40d_pct": 0.0,
-      "return_6m_pct": 5.61,
-      "close_at_assessment": 198.5,
-      "support": 194.0,
-      "resistance": 195.0,
-      "confidence": 0.68,
-      "event": "",
+      "trend_40d": "下降",
+      "market_direction_6m": "近半年由高點回落",
+      "return_3d_pct": -10.95,
+      "return_10d_pct": -14.88,
+      "return_20d_pct": -5.43,
+      "return_40d_pct": -8.5,
+      "return_6m_pct": 13.09,
+      "close_at_assessment": 1830.0,
+      "support": 1800.0,
+      "resistance": 1970.0,
+      "confidence": 0.82,
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "左肩、頭部與右肩近似成形；頸線尚未確認跌破。 近 40 個交易日報酬 +0.0%，近 3 日 -0.5%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "雙頂已跌破中間回檔低點。 近 40 個交易日報酬 -8.5%，近 3 日 -10.9%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "2454",
-      "name": "聯發科",
+      "symbol": "8358",
+      "name": "金居",
       "themes": [
-        "ASIC／矽智財"
+        "玻纖布／銅箔"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "頭肩頂",
+      "pattern_name": "雙頂跌破",
       "classification": "高檔轉弱／反轉警示",
       "trend_40d": "區間／整理",
       "market_direction_6m": "近半年由低點回升",
-      "return_3d_pct": -6.41,
-      "return_10d_pct": -14.38,
-      "return_20d_pct": -4.13,
-      "return_40d_pct": 7.48,
-      "return_6m_pct": 180.99,
-      "close_at_assessment": 4525.0,
-      "support": 4430.0,
-      "resistance": 4430.0,
-      "confidence": 0.68,
-      "event": "",
+      "return_3d_pct": -11.59,
+      "return_10d_pct": -6.77,
+      "return_20d_pct": -10.91,
+      "return_40d_pct": 10.94,
+      "return_6m_pct": 39.01,
+      "close_at_assessment": 461.5,
+      "support": 453.0,
+      "resistance": 469.5,
+      "confidence": 0.82,
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "左肩、頭部與右肩近似成形；頸線尚未確認跌破。 近 40 個交易日報酬 +7.5%，近 3 日 -6.4%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "雙頂已跌破中間回檔低點。 近 40 個交易日報酬 +10.9%，近 3 日 -11.6%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -6300,32 +5589,90 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
+      "symbol": "3231",
+      "name": "緯創",
+      "themes": [
+        "組裝代工／ODM"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "頭肩頂",
+      "classification": "高檔轉弱／反轉警示",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "半年區間中段",
+      "return_3d_pct": -7.12,
+      "return_10d_pct": -4.61,
+      "return_20d_pct": -2.76,
+      "return_40d_pct": -2.76,
+      "return_6m_pct": 37.18,
+      "close_at_assessment": 176.0,
+      "support": 173.5,
+      "resistance": 174.0,
+      "confidence": 0.68,
+      "event": "向下跌破支撐",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "左肩、頭部與右肩近似成形；頸線尚未確認跌破。 近 40 個交易日報酬 -2.8%，近 3 日 -7.1%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "初始型態建檔",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "2454",
+      "name": "聯發科",
+      "themes": [
+        "ASIC／矽智財"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "頭肩頂跌破",
+      "classification": "高檔轉弱／反轉警示",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -9.95,
+      "return_10d_pct": -15.35,
+      "return_20d_pct": -8.66,
+      "return_40d_pct": 7.21,
+      "return_6m_pct": 134.07,
+      "close_at_assessment": 4165.0,
+      "support": 4145.0,
+      "resistance": 4430.0,
+      "confidence": 0.84,
+      "event": "向下跌破支撐",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "左肩、較高頭部與右肩成形，且已跌破頸線。 近 40 個交易日報酬 +7.2%，近 3 日 -9.9%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
       "symbol": "3587",
       "name": "閎康",
       "themes": [
         "檢測分析"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "頭肩頂",
+      "pattern_name": "頭肩頂跌破",
       "classification": "高檔轉弱／反轉警示",
-      "trend_40d": "區間／整理",
+      "trend_40d": "下降",
       "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": -4.47,
-      "return_10d_pct": -1.47,
-      "return_20d_pct": -4.08,
-      "return_40d_pct": -4.47,
-      "return_6m_pct": -17.34,
-      "close_at_assessment": 235.0,
-      "support": 229.0,
+      "return_3d_pct": -6.61,
+      "return_10d_pct": -5.24,
+      "return_20d_pct": -3.0,
+      "return_40d_pct": -6.61,
+      "return_6m_pct": -25.41,
+      "close_at_assessment": 226.0,
+      "support": 226.0,
       "resistance": 229.0,
-      "confidence": 0.68,
-      "event": "",
+      "confidence": 0.84,
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "左肩、頭部與右肩近似成形；頸線尚未確認跌破。 近 40 個交易日報酬 -4.5%，近 3 日 -4.5%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "左肩、較高頭部與右肩成形，且已跌破頸線。 近 40 個交易日報酬 -6.6%，近 3 日 -6.6%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -6335,26 +5682,26 @@
         "BMC／伺服器管理晶片"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "頭肩頂",
+      "pattern_name": "頭肩頂跌破",
       "classification": "高檔轉弱／反轉警示",
-      "trend_40d": "區間／整理",
+      "trend_40d": "下降",
       "market_direction_6m": "半年區間中段",
-      "return_3d_pct": -2.25,
-      "return_10d_pct": -12.53,
-      "return_20d_pct": -7.22,
-      "return_40d_pct": -1.92,
-      "return_6m_pct": 57.41,
-      "close_at_assessment": 17350.0,
-      "support": 15975.0,
+      "return_3d_pct": -9.89,
+      "return_10d_pct": -14.96,
+      "return_20d_pct": -11.32,
+      "return_40d_pct": -6.51,
+      "return_6m_pct": 26.99,
+      "close_at_assessment": 15945.0,
+      "support": 15750.0,
       "resistance": 17170.0,
-      "confidence": 0.68,
+      "confidence": 0.84,
       "event": "",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "左肩、頭部與右肩近似成形；頸線尚未確認跌破。 近 40 個交易日報酬 -1.9%，近 3 日 -2.3%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "左肩、較高頭部與右肩成形，且已跌破頸線。 近 40 個交易日報酬 -6.5%，近 3 日 -9.9%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "型態改變：頭肩頂 → 頭肩頂跌破",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -6387,6 +5734,35 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
+      "symbol": "6531",
+      "name": "愛普*",
+      "themes": [
+        "ASIC／矽智財"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "頭肩頂跌破",
+      "classification": "高檔轉弱／反轉警示",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由高點回落",
+      "return_3d_pct": -12.25,
+      "return_10d_pct": -10.36,
+      "return_20d_pct": -13.62,
+      "return_40d_pct": -3.71,
+      "return_6m_pct": 41.57,
+      "close_at_assessment": 831.0,
+      "support": 831.0,
+      "resistance": 887.0,
+      "confidence": 0.84,
+      "event": "向下跌破支撐",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "左肩、較高頭部與右肩成形，且已跌破頸線。 近 40 個交易日報酬 -3.7%，近 3 日 -12.2%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
       "symbol": "6588",
       "name": "東典光電",
       "themes": [
@@ -6416,32 +5792,32 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "2345",
-      "name": "智邦",
+      "symbol": "7769",
+      "name": "鴻勁",
       "themes": [
-        "網通／交換器"
+        "測試介面／設備"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
-      "pattern_name": "下降三角形",
-      "classification": "下降趨勢／弱勢整理",
-      "trend_40d": "區間／整理",
+      "pattern_name": "頭肩頂跌破",
+      "classification": "高檔轉弱／反轉警示",
+      "trend_40d": "下降",
       "market_direction_6m": "近半年由高點回落",
-      "return_3d_pct": 1.24,
-      "return_10d_pct": 7.65,
-      "return_20d_pct": 3.82,
-      "return_40d_pct": -11.3,
-      "return_6m_pct": 12.97,
-      "close_at_assessment": 2040.0,
-      "support": 1770.0,
-      "resistance": 1770.0,
-      "confidence": 0.65,
-      "event": "",
+      "return_3d_pct": -19.49,
+      "return_10d_pct": -5.09,
+      "return_20d_pct": -17.13,
+      "return_40d_pct": -19.92,
+      "return_6m_pct": 24.21,
+      "close_at_assessment": 5225.0,
+      "support": 5205.0,
+      "resistance": 5620.0,
+      "confidence": 0.84,
+      "event": "向下跌破支撐",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "低點大致水平、反彈高點逐步降低；跌破支撐偏弱。 近 40 個交易日報酬 -11.3%，近 3 日 +1.2%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "左肩、較高頭部與右肩成形，且已跌破頸線。 近 40 個交易日報酬 -19.9%，近 3 日 -19.5%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
@@ -6474,32 +5850,148 @@
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     },
     {
-      "symbol": "1590",
-      "name": "亞德客-KY",
+      "symbol": "3217",
+      "name": "優群",
       "themes": [
-        "機器人／自動化"
+        "高速連接器／線材"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "下降三角形",
+      "classification": "下降趨勢／弱勢整理",
+      "trend_40d": "下降",
+      "market_direction_6m": "近半年由高點回落",
+      "return_3d_pct": 0.0,
+      "return_10d_pct": -2.31,
+      "return_20d_pct": 0.0,
+      "return_40d_pct": -6.27,
+      "return_6m_pct": -16.81,
+      "close_at_assessment": 127.0,
+      "support": 125.0,
+      "resistance": 125.0,
+      "confidence": 0.65,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "低點大致水平、反彈高點逐步降低；跌破支撐偏弱。 近 40 個交易日報酬 -6.3%，近 3 日 +0.0%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "初始型態建檔",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "6510",
+      "name": "精測",
+      "themes": [
+        "測試介面／設備"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "下降三角形",
+      "classification": "下降趨勢／弱勢整理",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -15.06,
+      "return_10d_pct": -5.22,
+      "return_20d_pct": -13.93,
+      "return_40d_pct": 5.06,
+      "return_6m_pct": -18.98,
+      "close_at_assessment": 2905.0,
+      "support": 2905.0,
+      "resistance": 2905.0,
+      "confidence": 0.65,
+      "event": "向下跌破支撐",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "低點大致水平、反彈高點逐步降低；跌破支撐偏弱。 近 40 個交易日報酬 +5.1%，近 3 日 -15.1%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "向下跌破支撐",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "6683",
+      "name": "雍智科技",
+      "themes": [
+        "測試介面／設備"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "下降三角形",
+      "classification": "下降趨勢／弱勢整理",
+      "trend_40d": "區間／整理",
+      "market_direction_6m": "近半年由低點回升",
+      "return_3d_pct": -10.07,
+      "return_10d_pct": -18.55,
+      "return_20d_pct": -3.0,
+      "return_40d_pct": 2.78,
+      "return_6m_pct": -31.85,
+      "close_at_assessment": 1295.0,
+      "support": 1270.0,
+      "resistance": 1270.0,
+      "confidence": 0.65,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "低點大致水平、反彈高點逐步降低；跌破支撐偏弱。 近 40 個交易日報酬 +2.8%，近 3 日 -10.1%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：整理待突破 → 下降趨勢／弱勢整理",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "2356",
+      "name": "英業達",
+      "themes": [
+        "組裝代工／ODM"
       ],
       "analysis_version": "pattern_window_40_trading_days_v1",
       "pattern_name": "空頭旗形",
       "classification": "下降趨勢／弱勢整理",
       "trend_40d": "下降",
-      "market_direction_6m": "半年區間偏低",
-      "return_3d_pct": -4.88,
-      "return_10d_pct": -3.31,
-      "return_20d_pct": -10.34,
-      "return_40d_pct": -19.86,
-      "return_6m_pct": 9.07,
-      "close_at_assessment": 1170.0,
-      "support": 1135.0,
-      "resistance": 1135.0,
+      "market_direction_6m": "近半年由高點回落",
+      "return_3d_pct": -0.86,
+      "return_10d_pct": -3.19,
+      "return_20d_pct": -6.65,
+      "return_40d_pct": -11.25,
+      "return_6m_pct": 33.8,
+      "close_at_assessment": 57.6,
+      "support": 56.3,
+      "resistance": 56.3,
       "confidence": 0.62,
       "event": "",
       "corporate_action_review": false,
       "adjustment_method": "Fugle 還原股價（adjusted=True）",
-      "reason": "先有明顯下跌，近期反彈有限；跌破整理區才確認延續。 近 40 個交易日報酬 -19.9%，近 3 日 -4.9%。",
-      "last_bar_date": "2026-10-13",
-      "last_major_change_at": "2026-10-14T08:46:29+08:00",
-      "major_change": "初始型態建檔",
+      "reason": "先有明顯下跌，近期反彈有限；跌破整理區才確認延續。 近 40 個交易日報酬 -11.2%，近 3 日 -0.9%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：底部反轉候選 → 下降趨勢／弱勢整理",
+      "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
+    },
+    {
+      "symbol": "8210",
+      "name": "勤誠",
+      "themes": [
+        "機殼／機櫃"
+      ],
+      "analysis_version": "pattern_window_40_trading_days_v1",
+      "pattern_name": "空頭旗形",
+      "classification": "下降趨勢／弱勢整理",
+      "trend_40d": "下降",
+      "market_direction_6m": "近半年由高點回落",
+      "return_3d_pct": -3.25,
+      "return_10d_pct": -0.36,
+      "return_20d_pct": -5.98,
+      "return_40d_pct": -18.73,
+      "return_6m_pct": -15.13,
+      "close_at_assessment": 833.0,
+      "support": 822.0,
+      "resistance": 822.0,
+      "confidence": 0.62,
+      "event": "",
+      "corporate_action_review": false,
+      "adjustment_method": "Fugle 還原股價（adjusted=True）",
+      "reason": "先有明顯下跌，近期反彈有限；跌破整理區才確認延續。 近 40 個交易日報酬 -18.7%，近 3 日 -3.3%。",
+      "last_bar_date": "2026-10-15",
+      "last_major_change_at": "2026-10-15T22:47:51+08:00",
+      "major_change": "趨勢狀態改變：底部反轉候選 → 下降趨勢／弱勢整理",
       "assessment_basis": "最近 40 個交易日日 K 型態 + 近 6 個月背景趨勢；規則式啟發判讀"
     }
   ]
