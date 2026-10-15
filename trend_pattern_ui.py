@@ -320,7 +320,7 @@ def _render_live_chart(symbol: str) -> None:
 def _render_backtest(base: Path) -> None:
     """40 個交易日前的型態，之後 40 個交易日的平均報酬（排程每天產生的 trend_pattern_backtest.json）。"""
     bt = load_trend_backtest(base)
-    st.markdown('<div class="feature-section-title">型態回測｜40 日前的型態，之後 40 日誰最賺錢</div>', unsafe_allow_html=True)
+    st.markdown('<div class="feature-section-title">型態回測｜80～41 個交易日前的型態，之後 40 日誰最賺錢</div>', unsafe_allow_html=True)
     if not bt.get("by_classification"):
         st.info("尚未產生回測結果；下一次趨勢型態排程執行後會出現。")
         return
@@ -328,9 +328,10 @@ def _render_backtest(base: Path) -> None:
     best_c, best_p = bt.get("best_classification"), bt.get("best_pattern")
     rows_c = {r["classification"]: r for r in bt["by_classification"]}
     rows_p = {r["pattern_name"]: r for r in bt["by_pattern"]}
-    st.caption(
-        f"判讀日 {bt.get('assessed_on')}（用當時最近 40 個交易日判讀型態）→ 之後 {horizon} 個交易日到 {bt.get('ended_on')}｜"
-        f"{bt.get('symbols')} 檔概念股｜檔數少於 {bt.get('min_samples', 5)} 的分組不參與排名"
+    st.markdown(
+        f"**型態判讀期間：** {bt.get('window_start', '—')} ～ {bt.get('assessed_on')}（第 {horizon + 40}～{horizon + 1} 個交易日前，共 40 根日 K）  \n"
+        f"**報酬計算期間：** {bt.get('assessed_on')} ～ {bt.get('ended_on')}（之後 {horizon} 個交易日）  \n"
+        f"{bt.get('symbols')} 檔概念股；檔數少於 {bt.get('min_samples', 5)} 的分組不參與排名。"
     )
     cols = st.columns(4)
     cols[0].metric("全部概念股平均", f"{bt['all_avg_return_pct']:+.2f}%", f"中位數 {bt['all_median_return_pct']:+.2f}%", delta_color="off")
@@ -345,23 +346,23 @@ def _render_backtest(base: Path) -> None:
     def table(items: list[dict], key: str, label: str) -> pd.DataFrame:
         return pd.DataFrame([{
             label: r[key], "檔數": r["count"], "平均報酬%": r["avg_return_pct"], "中位數報酬%": r["median_return_pct"],
-            "上漲比例%": r["win_rate_pct"], "相對全體%": r["excess_vs_all_pct"], "期間最大回檔%": r["avg_max_drawdown_pct"],
+            "上漲比例%": r["win_rate_pct"], "相對全體%": r["excess_vs_all_pct"], "期間最大回檔%": r["avg_max_drawdown_pct"], "判讀期間漲跌%": r.get("avg_window_return_pct"),
             "樣本": "足夠" if r["enough_samples"] else "不足", "表現最好": "、".join(r["best"]), "表現最差": "、".join(r["worst"]),
         } for r in items])
 
-    fmt = {c: "{:+.2f}" for c in ("平均報酬%", "中位數報酬%", "相對全體%", "期間最大回檔%")} | {"上漲比例%": "{:.0f}"}
-    st.dataframe(table(bt["by_classification"], "classification", "40 日前趨勢狀態").style.format(fmt),
+    fmt = {c: "{:+.2f}" for c in ("平均報酬%", "中位數報酬%", "相對全體%", "期間最大回檔%", "判讀期間漲跌%")} | {"上漲比例%": "{:.0f}"}
+    st.dataframe(table(bt["by_classification"], "classification", "判讀期間趨勢狀態").style.format(fmt),
                  use_container_width=True, hide_index=True)
     with st.expander("依型態細分（頭肩、雙底、楔形…）", expanded=False):
-        st.dataframe(table(bt["by_pattern"], "pattern_name", "40 日前型態").style.format(fmt),
+        st.dataframe(table(bt["by_pattern"], "pattern_name", "判讀期間型態").style.format(fmt),
                      use_container_width=True, hide_index=True)
     with st.expander(f"個股明細（{len(bt.get('stocks', []))} 檔）", expanded=False):
         stocks = pd.DataFrame(bt.get("stocks", []))
         if not stocks.empty:
-            stocks = stocks.rename(columns={"symbol": "代號", "name": "名稱", "classification": "40 日前趨勢狀態",
-                                            "pattern_name": "40 日前型態", "forward_return_pct": "之後報酬%",
-                                            "max_drawdown_pct": "期間最大回檔%"})
-            st.dataframe(stocks[["代號", "名稱", "40 日前趨勢狀態", "40 日前型態", "之後報酬%", "期間最大回檔%"]],
+            stocks = stocks.rename(columns={"symbol": "代號", "name": "名稱", "classification": "判讀期間趨勢狀態",
+                                            "pattern_name": "判讀期間型態", "forward_return_pct": "之後報酬%",
+                                            "max_drawdown_pct": "期間最大回檔%", "window_return_pct": "判讀期間漲跌%"})
+            st.dataframe(stocks[["代號", "名稱", "判讀期間趨勢狀態", "判讀期間型態", "判讀期間漲跌%", "之後報酬%", "期間最大回檔%"]],
                          use_container_width=True, hide_index=True)
     st.caption(
         "讀法：平均報酬容易被少數大漲股拉高，請同時看中位數與上漲比例。這只是單一期間的歷史統計，"

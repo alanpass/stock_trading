@@ -573,7 +573,9 @@ def backtest_patterns(histories: dict[str, pd.DataFrame], names: dict[str, str] 
         rows.append({
             "symbol": code, "name": names.get(code, code),
             "classification": signal["classification"], "pattern_name": signal["pattern_name"],
+            "window_start": pd.Timestamp(past["date"].iloc[-40]).strftime("%Y-%m-%d"),
             "assessed_on": pd.Timestamp(past["date"].iloc[-1]).strftime("%Y-%m-%d"),
+            "window_return_pct": round((float(past["close"].iloc[-1]) / float(past["close"].iloc[-40]) - 1) * 100, 2),
             "ended_on": pd.Timestamp(data["date"].iloc[-1]).strftime("%Y-%m-%d"),
             "forward_return_pct": round((path[-1] / path[0] - 1) * 100, 2),
             "max_drawdown_pct": round(float(np.min(path / np.maximum.accumulate(path)) - 1) * 100, 2),
@@ -595,6 +597,7 @@ def backtest_patterns(histories: dict[str, pd.DataFrame], names: dict[str, str] 
                 "win_rate_pct": round(float((ret > 0).mean() * 100), 1),
                 "excess_vs_all_pct": round(float(ret.mean()) - overall, 2),
                 "avg_max_drawdown_pct": round(float(group["max_drawdown_pct"].mean()), 2),
+                "avg_window_return_pct": round(float(group["window_return_pct"].mean()), 2),
                 "enough_samples": bool(len(group) >= BACKTEST_MIN_SAMPLES),
                 "best": [label(r) for r in ranked[:3]],
                 "worst": [label(r) for r in ranked[::-1][:3]],
@@ -608,6 +611,7 @@ def backtest_patterns(histories: dict[str, pd.DataFrame], names: dict[str, str] 
         "schema_version": 1, "report_type": "trend_pattern_backtest",
         "generated_at": _now().isoformat(timespec="seconds"),
         "horizon_trading_days": horizon, "window_trading_days": 40,
+        "window_start": str(frame["window_start"].mode().iloc[0]),
         "assessed_on": str(frame["assessed_on"].mode().iloc[0]), "ended_on": str(frame["ended_on"].max()),
         "symbols": int(len(frame)), "all_avg_return_pct": round(overall, 2),
         "all_median_return_pct": round(float(frame["forward_return_pct"].median()), 2),
@@ -617,7 +621,7 @@ def backtest_patterns(histories: dict[str, pd.DataFrame], names: dict[str, str] 
         "best_pattern": ranked_pattern[0]["pattern_name"] if ranked_pattern else None,
         "by_classification": by_class, "by_pattern": by_pattern,
         "stocks": sorted(rows, key=lambda r: -r["forward_return_pct"]),
-        "note": (f"回到 {horizon} 個交易日前，以當時最近 40 個交易日判讀型態（不使用之後的資料），"
+        "note": (f"以第 {horizon + 40}～{horizon + 1} 個交易日前的 40 根日 K 判讀型態（不使用之後的資料），"
                  f"再計算之後 {horizon} 個交易日的還原股價報酬。單一期間、等權平均的歷史統計，不代表未來，也不構成投資建議。"),
     }
 
