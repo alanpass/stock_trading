@@ -18,3 +18,5 @@ backup_*/
 *.backup_*
 stock_dashboard_before_*.py
 stock_dashboard.py.backup_*
+
+.claude/settings.local.json

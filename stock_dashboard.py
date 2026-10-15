@@ -160,7 +160,10 @@ st.set_page_config(page_title="台股即時互動式分析系統", page_icon=_si
 
 
 # ---- 所有 Plotly 圖表統一使用與網頁背景相配的淺色系 ----
-_plotly_chart_orig = st.plotly_chart
+# Streamlit 每次重跑都會重新執行本檔，但 st 模組在伺服器程序中只有一份：
+# 原始函式只能記一次，否則每次重跑多包一層，久了就 maximum recursion depth exceeded。
+_plotly_chart_orig = getattr(st, "_plotly_chart_orig", st.plotly_chart)
+st._plotly_chart_orig = _plotly_chart_orig
 def _light_plotly_chart(fig, *args, **kwargs):
     try:
         fig.update_layout(
