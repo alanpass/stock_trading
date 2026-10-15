@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-10-14T15:12:24+08:00",
+  "generated_at": "2026-10-15T08:23:12+08:00",
   "data_asof": "2026-10-14",
   "previous_data_asof": "2026-10-13",
   "previous_previous_data_asof": "2026-10-12",
@@ -15,13 +15,14 @@
   "method": "子產業代表股每日漲跌幅算術平均建立族群漲跌觀察值；RRG 以族群指數相對加權指數正規化，RS 使用 50 日均值，動能比較 10 個交易日前。",
   "turnover_method": "本頁已取消資金流向排名，改以族群代表股平均漲跌幅（%）比較；平均值為每檔有效代表股等權計算，不等同官方產業指數。",
   "tracked_unique_stocks": 175,
-  "fresh_stock_count": 160,
-  "up_group_count": 23,
-  "down_group_count": 3,
+  "fresh_stock_count": 174,
+  "up_group_count": 24,
+  "down_group_count": 2,
   "leaders": [
     "CCL／銅箔基板",
     "被動元件",
     "封裝測試",
+    "ABF／IC 載板",
     "玻纖布／銅箔",
     "PCB／伺服器板／HDI",
     "機殼／機櫃",
@@ -58,11 +59,6 @@
       "name": "測試介面／設備",
       "from": "落後",
       "to": "改善"
-    },
-    {
-      "name": "ABF／IC 載板",
-      "from": "領先",
-      "to": "轉弱"
     },
     {
       "name": "玻纖布／銅箔",
@@ -298,8 +294,8 @@
       "return_20d": -8.442,
       "return_60d": -54.221,
       "return_ytd": -52.843,
-      "volume": 7445742.0,
-      "traded_value": 15747744330.0,
+      "volume": 7479924.0,
+      "traded_value": 15820039260.0,
       "year_high": false,
       "fresh": true
     },
@@ -410,6 +406,459 @@
     }
   ],
   "groups": [
+    {
+      "name": "CCL／銅箔基板",
+      "members_total": 4,
+      "members_valid": 4,
+      "members_fresh": 4,
+      "data_coverage_pct": 100.0,
+      "today_return": 5.365,
+      "yesterday_return": -2.815,
+      "return_5d": 4.704,
+      "return_20d": 36.749,
+      "return_60d": 78.703,
+      "return_ytd": 405.174,
+      "rising": 3,
+      "falling": 1,
+      "flat": 0,
+      "year_high_count": 2,
+      "market_turnover_share_pct": null,
+      "market_turnover_share_delta_pp": null,
+      "yesterday_market_turnover_share_pct": null,
+      "yesterday_market_turnover_share_delta_pp": null,
+      "sample_turnover_share_pct": null,
+      "sample_turnover_share_delta_pp": null,
+      "yesterday_sample_turnover_share_pct": null,
+      "yesterday_sample_turnover_share_delta_pp": null,
+      "relative_strength": 125.803,
+      "relative_momentum": 115.268,
+      "quadrant": "領先",
+      "previous_quadrant": "領先",
+      "quadrant_changed": false,
+      "rrg": [
+        {
+          "date": "2025-09-16",
+          "rs": 98.146,
+          "momentum": 85.924
+        },
+        {
+          "date": "2025-09-23",
+          "rs": 99.663,
+          "momentum": 93.787
+        },
+        {
+          "date": "2025-10-01",
+          "rs": 95.418,
+          "momentum": 97.22
+        },
+        {
+          "date": "2025-10-09",
+          "rs": 94.365,
+          "momentum": 94.684
+        },
+        {
+          "date": "2025-10-17",
+          "rs": 88.865,
+          "momentum": 93.132
+        },
+        {
+          "date": "2025-10-27",
+          "rs": 92.013,
+          "momentum": 97.508
+        },
+        {
+          "date": "2025-11-03",
+          "rs": 101.574,
+          "momentum": 114.302
+        },
+        {
+          "date": "2025-11-10",
+          "rs": 100.825,
+          "momentum": 109.576
+        },
+        {
+          "date": "2025-11-17",
+          "rs": 114.583,
+          "momentum": 112.807
+        },
+        {
+          "date": "2025-11-24",
+          "rs": 111.171,
+          "momentum": 110.262
+        },
+        {
+          "date": "2025-12-01",
+          "rs": 116.51,
+          "momentum": 101.682
+        },
+        {
+          "date": "2025-12-08",
+          "rs": 113.175,
+          "momentum": 101.803
+        },
+        {
+          "date": "2025-12-15",
+          "rs": 114.742,
+          "momentum": 98.483
+        },
+        {
+          "date": "2025-12-22",
+          "rs": 112.299,
+          "momentum": 99.225
+        },
+        {
+          "date": "2025-12-30",
+          "rs": 108.497,
+          "momentum": 94.557
+        },
+        {
+          "date": "2026-01-07",
+          "rs": 101.415,
+          "momentum": 90.308
+        },
+        {
+          "date": "2026-01-14",
+          "rs": 101.129,
+          "momentum": 93.21
+        },
+        {
+          "date": "2026-01-21",
+          "rs": 99.774,
+          "momentum": 98.382
+        },
+        {
+          "date": "2026-01-28",
+          "rs": 105.623,
+          "momentum": 104.444
+        },
+        {
+          "date": "2026-02-04",
+          "rs": 107.483,
+          "momentum": 107.726
+        },
+        {
+          "date": "2026-02-11",
+          "rs": 105.384,
+          "momentum": 99.774
+        },
+        {
+          "date": "2026-03-02",
+          "rs": 107.849,
+          "momentum": 100.341
+        },
+        {
+          "date": "2026-03-09",
+          "rs": 101.086,
+          "momentum": 95.922
+        },
+        {
+          "date": "2026-03-16",
+          "rs": 113.638,
+          "momentum": 105.367
+        },
+        {
+          "date": "2026-03-23",
+          "rs": 112.125,
+          "momentum": 110.92
+        },
+        {
+          "date": "2026-03-30",
+          "rs": 119.477,
+          "momentum": 105.139
+        },
+        {
+          "date": "2026-04-08",
+          "rs": 126.648,
+          "momentum": 112.953
+        },
+        {
+          "date": "2026-04-15",
+          "rs": 134.956,
+          "momentum": 112.955
+        },
+        {
+          "date": "2026-04-22",
+          "rs": 136.342,
+          "momentum": 107.654
+        },
+        {
+          "date": "2026-04-29",
+          "rs": 124.219,
+          "momentum": 92.044
+        },
+        {
+          "date": "2026-05-07",
+          "rs": 131.014,
+          "momentum": 96.092
+        },
+        {
+          "date": "2026-05-14",
+          "rs": 120.528,
+          "momentum": 97.029
+        },
+        {
+          "date": "2026-05-21",
+          "rs": 111.626,
+          "momentum": 85.202
+        },
+        {
+          "date": "2026-05-28",
+          "rs": 110.302,
+          "momentum": 91.515
+        },
+        {
+          "date": "2026-06-04",
+          "rs": 108.783,
+          "momentum": 97.452
+        },
+        {
+          "date": "2026-06-11",
+          "rs": 104.688,
+          "momentum": 94.91
+        },
+        {
+          "date": "2026-06-18",
+          "rs": 115.693,
+          "momentum": 106.353
+        },
+        {
+          "date": "2026-06-26",
+          "rs": 119.273,
+          "momentum": 113.932
+        },
+        {
+          "date": "2026-07-03",
+          "rs": 131.206,
+          "momentum": 113.408
+        },
+        {
+          "date": "2026-07-13",
+          "rs": 119.144,
+          "momentum": 99.892
+        },
+        {
+          "date": "2026-07-20",
+          "rs": 106.504,
+          "momentum": 81.174
+        },
+        {
+          "date": "2026-07-27",
+          "rs": 103.993,
+          "momentum": 87.284
+        },
+        {
+          "date": "2026-08-03",
+          "rs": 100.663,
+          "momentum": 94.515
+        },
+        {
+          "date": "2026-08-10",
+          "rs": 114.745,
+          "momentum": 110.339
+        },
+        {
+          "date": "2026-08-17",
+          "rs": 122.32,
+          "momentum": 121.514
+        },
+        {
+          "date": "2026-08-24",
+          "rs": 110.708,
+          "momentum": 96.482
+        },
+        {
+          "date": "2026-08-31",
+          "rs": 115.901,
+          "momentum": 94.752
+        },
+        {
+          "date": "2026-09-07",
+          "rs": 106.54,
+          "momentum": 96.235
+        },
+        {
+          "date": "2026-09-14",
+          "rs": 109.317,
+          "momentum": 94.319
+        },
+        {
+          "date": "2026-09-21",
+          "rs": 104.539,
+          "momentum": 98.122
+        },
+        {
+          "date": "2026-09-30",
+          "rs": 109.698,
+          "momentum": 100.349
+        },
+        {
+          "date": "2026-10-07",
+          "rs": 124.005,
+          "momentum": 118.621
+        },
+        {
+          "date": "2026-10-14",
+          "rs": 125.803,
+          "momentum": 115.268
+        }
+      ],
+      "components": [
+        {
+          "symbol": "6213",
+          "name": "聯茂",
+          "data_date": "2026-10-14",
+          "close": 856.0,
+          "change_1d": 7.673,
+          "return_5d": 8.767,
+          "return_20d": 68.173,
+          "return_60d": 168.339,
+          "return_ytd": 654.185,
+          "volume": 4869572.0,
+          "traded_value": 4168353632.0,
+          "year_high": true,
+          "fresh": true
+        },
+        {
+          "symbol": "6274",
+          "name": "台燿",
+          "data_date": "2026-10-14",
+          "close": 1735.0,
+          "change_1d": 4.834,
+          "return_5d": -1.14,
+          "return_20d": 27.106,
+          "return_60d": 48.291,
+          "return_ytd": 251.215,
+          "volume": 9725598.0,
+          "traded_value": 16873912530.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "2383",
+          "name": "台光電",
+          "data_date": "2026-10-14",
+          "close": 5520.0,
+          "change_1d": -0.451,
+          "return_5d": -7.923,
+          "return_20d": 2.889,
+          "return_60d": 22.803,
+          "return_ytd": 235.562,
+          "volume": 2325865.0,
+          "traded_value": 12838774800.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "1303",
+          "name": "南亞",
+          "data_date": "2026-10-14",
+          "close": 349.0,
+          "change_1d": 9.404,
+          "return_5d": 19.113,
+          "return_20d": 48.827,
+          "return_60d": 75.377,
+          "return_ytd": 479.734,
+          "volume": 175417461.0,
+          "traded_value": 61220693889.0,
+          "year_high": true,
+          "fresh": true
+        }
+      ],
+      "leaders": [
+        {
+          "symbol": "1303",
+          "name": "南亞",
+          "data_date": "2026-10-14",
+          "close": 349.0,
+          "change_1d": 9.404,
+          "return_5d": 19.113,
+          "return_20d": 48.827,
+          "return_60d": 75.377,
+          "return_ytd": 479.734,
+          "volume": 175417461.0,
+          "traded_value": 61220693889.0,
+          "year_high": true,
+          "fresh": true
+        },
+        {
+          "symbol": "6213",
+          "name": "聯茂",
+          "data_date": "2026-10-14",
+          "close": 856.0,
+          "change_1d": 7.673,
+          "return_5d": 8.767,
+          "return_20d": 68.173,
+          "return_60d": 168.339,
+          "return_ytd": 654.185,
+          "volume": 4869572.0,
+          "traded_value": 4168353632.0,
+          "year_high": true,
+          "fresh": true
+        },
+        {
+          "symbol": "6274",
+          "name": "台燿",
+          "data_date": "2026-10-14",
+          "close": 1735.0,
+          "change_1d": 4.834,
+          "return_5d": -1.14,
+          "return_20d": 27.106,
+          "return_60d": 48.291,
+          "return_ytd": 251.215,
+          "volume": 9725598.0,
+          "traded_value": 16873912530.0,
+          "year_high": false,
+          "fresh": true
+        }
+      ],
+      "laggards": [
+        {
+          "symbol": "2383",
+          "name": "台光電",
+          "data_date": "2026-10-14",
+          "close": 5520.0,
+          "change_1d": -0.451,
+          "return_5d": -7.923,
+          "return_20d": 2.889,
+          "return_60d": 22.803,
+          "return_ytd": 235.562,
+          "volume": 2325865.0,
+          "traded_value": 12838774800.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "6274",
+          "name": "台燿",
+          "data_date": "2026-10-14",
+          "close": 1735.0,
+          "change_1d": 4.834,
+          "return_5d": -1.14,
+          "return_20d": 27.106,
+          "return_60d": 48.291,
+          "return_ytd": 251.215,
+          "volume": 9725598.0,
+          "traded_value": 16873912530.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "6213",
+          "name": "聯茂",
+          "data_date": "2026-10-14",
+          "close": 856.0,
+          "change_1d": 7.673,
+          "return_5d": 8.767,
+          "return_20d": 68.173,
+          "return_60d": 168.339,
+          "return_ytd": 654.185,
+          "volume": 4869572.0,
+          "traded_value": 4168353632.0,
+          "year_high": true,
+          "fresh": true
+        }
+      ]
+    },
     {
       "name": "磊晶／化合物半導體",
       "members_total": 6,
@@ -897,15 +1346,15 @@
       "name": "ABF／IC 載板",
       "members_total": 3,
       "members_valid": 3,
-      "members_fresh": 2,
-      "data_coverage_pct": 66.7,
-      "today_return": -0.135,
+      "members_fresh": 3,
+      "data_coverage_pct": 100.0,
+      "today_return": 0.231,
       "yesterday_return": -2.621,
-      "return_5d": -7.262,
-      "return_20d": 26.848,
-      "return_60d": 36.796,
-      "return_ytd": 465.999,
-      "rising": 1,
+      "return_5d": -5.465,
+      "return_20d": 27.145,
+      "return_60d": 41.702,
+      "return_ytd": 497.458,
+      "rising": 2,
       "falling": 1,
       "flat": 0,
       "year_high_count": 0,
@@ -917,11 +1366,11 @@
       "sample_turnover_share_delta_pp": null,
       "yesterday_sample_turnover_share_pct": null,
       "yesterday_sample_turnover_share_delta_pp": null,
-      "relative_strength": 111.35,
-      "relative_momentum": 99.767,
-      "quadrant": "轉弱",
+      "relative_strength": 111.748,
+      "relative_momentum": 100.124,
+      "quadrant": "領先",
       "previous_quadrant": "領先",
-      "quadrant_changed": true,
+      "quadrant_changed": false,
       "rrg": [
         {
           "date": "2025-09-16",
@@ -1185,8 +1634,8 @@
         },
         {
           "date": "2026-10-14",
-          "rs": 111.35,
-          "momentum": 99.767
+          "rs": 111.748,
+          "momentum": 100.124
         }
       ],
       "components": [
@@ -1200,25 +1649,25 @@
           "return_20d": 32.407,
           "return_60d": 24.348,
           "return_ytd": 493.361,
-          "volume": 7134101.0,
-          "traded_value": 10201764430.0,
+          "volume": 7147101.0,
+          "traded_value": 10220354430.0,
           "year_high": false,
           "fresh": true
         },
         {
           "symbol": "3189",
           "name": "景碩",
-          "data_date": "2026-10-13",
-          "close": null,
-          "change_1d": null,
-          "return_5d": null,
-          "return_20d": null,
-          "return_60d": null,
-          "return_ytd": null,
-          "volume": null,
-          "traded_value": null,
+          "data_date": "2026-10-14",
+          "close": 1050.0,
+          "change_1d": 0.962,
+          "return_5d": -1.869,
+          "return_20d": 27.737,
+          "return_60d": 51.515,
+          "return_ytd": 560.377,
+          "volume": 15445689.0,
+          "traded_value": 16217973450.0,
           "year_high": false,
-          "fresh": false
+          "fresh": true
         },
         {
           "symbol": "3037",
@@ -1237,6 +1686,21 @@
         }
       ],
       "leaders": [
+        {
+          "symbol": "3189",
+          "name": "景碩",
+          "data_date": "2026-10-14",
+          "close": 1050.0,
+          "change_1d": 0.962,
+          "return_5d": -1.869,
+          "return_20d": 27.737,
+          "return_60d": 51.515,
+          "return_ytd": 560.377,
+          "volume": 15445689.0,
+          "traded_value": 16217973450.0,
+          "year_high": false,
+          "fresh": true
+        },
         {
           "symbol": "3037",
           "name": "欣興",
@@ -1262,8 +1726,8 @@
           "return_20d": 32.407,
           "return_60d": 24.348,
           "return_ytd": 493.361,
-          "volume": 7134101.0,
-          "traded_value": 10201764430.0,
+          "volume": 7147101.0,
+          "traded_value": 10220354430.0,
           "year_high": false,
           "fresh": true
         }
@@ -1279,8 +1743,8 @@
           "return_20d": 32.407,
           "return_60d": 24.348,
           "return_ytd": 493.361,
-          "volume": 7134101.0,
-          "traded_value": 10201764430.0,
+          "volume": 7147101.0,
+          "traded_value": 10220354430.0,
           "year_high": false,
           "fresh": true
         },
@@ -1298,458 +1762,20 @@
           "traded_value": 20478325095.0,
           "year_high": false,
           "fresh": true
-        }
-      ]
-    },
-    {
-      "name": "CCL／銅箔基板",
-      "members_total": 4,
-      "members_valid": 4,
-      "members_fresh": 3,
-      "data_coverage_pct": 75.0,
-      "today_return": 4.596,
-      "yesterday_return": -2.815,
-      "return_5d": 3.35,
-      "return_20d": 26.274,
-      "return_60d": 48.824,
-      "return_ytd": 322.17,
-      "rising": 2,
-      "falling": 1,
-      "flat": 0,
-      "year_high_count": 1,
-      "market_turnover_share_pct": null,
-      "market_turnover_share_delta_pp": null,
-      "yesterday_market_turnover_share_pct": null,
-      "yesterday_market_turnover_share_delta_pp": null,
-      "sample_turnover_share_pct": null,
-      "sample_turnover_share_delta_pp": null,
-      "yesterday_sample_turnover_share_pct": null,
-      "yesterday_sample_turnover_share_delta_pp": null,
-      "relative_strength": 124.907,
-      "relative_momentum": 114.448,
-      "quadrant": "領先",
-      "previous_quadrant": "領先",
-      "quadrant_changed": false,
-      "rrg": [
-        {
-          "date": "2025-09-16",
-          "rs": 98.146,
-          "momentum": 85.924
         },
         {
-          "date": "2025-09-23",
-          "rs": 99.663,
-          "momentum": 93.787
-        },
-        {
-          "date": "2025-10-01",
-          "rs": 95.418,
-          "momentum": 97.22
-        },
-        {
-          "date": "2025-10-09",
-          "rs": 94.365,
-          "momentum": 94.684
-        },
-        {
-          "date": "2025-10-17",
-          "rs": 88.865,
-          "momentum": 93.132
-        },
-        {
-          "date": "2025-10-27",
-          "rs": 92.013,
-          "momentum": 97.508
-        },
-        {
-          "date": "2025-11-03",
-          "rs": 101.574,
-          "momentum": 114.302
-        },
-        {
-          "date": "2025-11-10",
-          "rs": 100.825,
-          "momentum": 109.576
-        },
-        {
-          "date": "2025-11-17",
-          "rs": 114.583,
-          "momentum": 112.807
-        },
-        {
-          "date": "2025-11-24",
-          "rs": 111.171,
-          "momentum": 110.262
-        },
-        {
-          "date": "2025-12-01",
-          "rs": 116.51,
-          "momentum": 101.682
-        },
-        {
-          "date": "2025-12-08",
-          "rs": 113.175,
-          "momentum": 101.803
-        },
-        {
-          "date": "2025-12-15",
-          "rs": 114.742,
-          "momentum": 98.483
-        },
-        {
-          "date": "2025-12-22",
-          "rs": 112.299,
-          "momentum": 99.225
-        },
-        {
-          "date": "2025-12-30",
-          "rs": 108.497,
-          "momentum": 94.557
-        },
-        {
-          "date": "2026-01-07",
-          "rs": 101.415,
-          "momentum": 90.308
-        },
-        {
-          "date": "2026-01-14",
-          "rs": 101.129,
-          "momentum": 93.21
-        },
-        {
-          "date": "2026-01-21",
-          "rs": 99.774,
-          "momentum": 98.382
-        },
-        {
-          "date": "2026-01-28",
-          "rs": 105.623,
-          "momentum": 104.444
-        },
-        {
-          "date": "2026-02-04",
-          "rs": 107.483,
-          "momentum": 107.726
-        },
-        {
-          "date": "2026-02-11",
-          "rs": 105.384,
-          "momentum": 99.774
-        },
-        {
-          "date": "2026-03-02",
-          "rs": 107.849,
-          "momentum": 100.341
-        },
-        {
-          "date": "2026-03-09",
-          "rs": 101.086,
-          "momentum": 95.922
-        },
-        {
-          "date": "2026-03-16",
-          "rs": 113.638,
-          "momentum": 105.367
-        },
-        {
-          "date": "2026-03-23",
-          "rs": 112.125,
-          "momentum": 110.92
-        },
-        {
-          "date": "2026-03-30",
-          "rs": 119.477,
-          "momentum": 105.139
-        },
-        {
-          "date": "2026-04-08",
-          "rs": 126.648,
-          "momentum": 112.953
-        },
-        {
-          "date": "2026-04-15",
-          "rs": 134.956,
-          "momentum": 112.955
-        },
-        {
-          "date": "2026-04-22",
-          "rs": 136.342,
-          "momentum": 107.654
-        },
-        {
-          "date": "2026-04-29",
-          "rs": 124.219,
-          "momentum": 92.044
-        },
-        {
-          "date": "2026-05-07",
-          "rs": 131.014,
-          "momentum": 96.092
-        },
-        {
-          "date": "2026-05-14",
-          "rs": 120.528,
-          "momentum": 97.029
-        },
-        {
-          "date": "2026-05-21",
-          "rs": 111.626,
-          "momentum": 85.202
-        },
-        {
-          "date": "2026-05-28",
-          "rs": 110.302,
-          "momentum": 91.515
-        },
-        {
-          "date": "2026-06-04",
-          "rs": 108.783,
-          "momentum": 97.452
-        },
-        {
-          "date": "2026-06-11",
-          "rs": 104.688,
-          "momentum": 94.91
-        },
-        {
-          "date": "2026-06-18",
-          "rs": 115.693,
-          "momentum": 106.353
-        },
-        {
-          "date": "2026-06-26",
-          "rs": 119.273,
-          "momentum": 113.932
-        },
-        {
-          "date": "2026-07-03",
-          "rs": 131.206,
-          "momentum": 113.408
-        },
-        {
-          "date": "2026-07-13",
-          "rs": 119.144,
-          "momentum": 99.892
-        },
-        {
-          "date": "2026-07-20",
-          "rs": 106.504,
-          "momentum": 81.174
-        },
-        {
-          "date": "2026-07-27",
-          "rs": 103.993,
-          "momentum": 87.284
-        },
-        {
-          "date": "2026-08-03",
-          "rs": 100.663,
-          "momentum": 94.515
-        },
-        {
-          "date": "2026-08-10",
-          "rs": 114.745,
-          "momentum": 110.339
-        },
-        {
-          "date": "2026-08-17",
-          "rs": 122.32,
-          "momentum": 121.514
-        },
-        {
-          "date": "2026-08-24",
-          "rs": 110.708,
-          "momentum": 96.482
-        },
-        {
-          "date": "2026-08-31",
-          "rs": 115.901,
-          "momentum": 94.752
-        },
-        {
-          "date": "2026-09-07",
-          "rs": 106.54,
-          "momentum": 96.235
-        },
-        {
-          "date": "2026-09-14",
-          "rs": 109.317,
-          "momentum": 94.319
-        },
-        {
-          "date": "2026-09-21",
-          "rs": 104.539,
-          "momentum": 98.122
-        },
-        {
-          "date": "2026-09-30",
-          "rs": 109.698,
-          "momentum": 100.349
-        },
-        {
-          "date": "2026-10-07",
-          "rs": 124.005,
-          "momentum": 118.621
-        },
-        {
-          "date": "2026-10-14",
-          "rs": 124.907,
-          "momentum": 114.448
-        }
-      ],
-      "components": [
-        {
-          "symbol": "6213",
-          "name": "聯茂",
-          "data_date": "2026-10-13",
-          "close": null,
-          "change_1d": null,
-          "return_5d": null,
-          "return_20d": null,
-          "return_60d": null,
-          "return_ytd": null,
-          "volume": null,
-          "traded_value": null,
+          "symbol": "3189",
+          "name": "景碩",
+          "data_date": "2026-10-14",
+          "close": 1050.0,
+          "change_1d": 0.962,
+          "return_5d": -1.869,
+          "return_20d": 27.737,
+          "return_60d": 51.515,
+          "return_ytd": 560.377,
+          "volume": 15445689.0,
+          "traded_value": 16217973450.0,
           "year_high": false,
-          "fresh": false
-        },
-        {
-          "symbol": "6274",
-          "name": "台燿",
-          "data_date": "2026-10-14",
-          "close": 1735.0,
-          "change_1d": 4.834,
-          "return_5d": -1.14,
-          "return_20d": 27.106,
-          "return_60d": 48.291,
-          "return_ytd": 251.215,
-          "volume": 9725598.0,
-          "traded_value": 16873912530.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "2383",
-          "name": "台光電",
-          "data_date": "2026-10-14",
-          "close": 5520.0,
-          "change_1d": -0.451,
-          "return_5d": -7.923,
-          "return_20d": 2.889,
-          "return_60d": 22.803,
-          "return_ytd": 235.562,
-          "volume": 2325865.0,
-          "traded_value": 12838774800.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "1303",
-          "name": "南亞",
-          "data_date": "2026-10-14",
-          "close": 349.0,
-          "change_1d": 9.404,
-          "return_5d": 19.113,
-          "return_20d": 48.827,
-          "return_60d": 75.377,
-          "return_ytd": 479.734,
-          "volume": 175417461.0,
-          "traded_value": 61220693889.0,
-          "year_high": true,
-          "fresh": true
-        }
-      ],
-      "leaders": [
-        {
-          "symbol": "1303",
-          "name": "南亞",
-          "data_date": "2026-10-14",
-          "close": 349.0,
-          "change_1d": 9.404,
-          "return_5d": 19.113,
-          "return_20d": 48.827,
-          "return_60d": 75.377,
-          "return_ytd": 479.734,
-          "volume": 175417461.0,
-          "traded_value": 61220693889.0,
-          "year_high": true,
-          "fresh": true
-        },
-        {
-          "symbol": "6274",
-          "name": "台燿",
-          "data_date": "2026-10-14",
-          "close": 1735.0,
-          "change_1d": 4.834,
-          "return_5d": -1.14,
-          "return_20d": 27.106,
-          "return_60d": 48.291,
-          "return_ytd": 251.215,
-          "volume": 9725598.0,
-          "traded_value": 16873912530.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "2383",
-          "name": "台光電",
-          "data_date": "2026-10-14",
-          "close": 5520.0,
-          "change_1d": -0.451,
-          "return_5d": -7.923,
-          "return_20d": 2.889,
-          "return_60d": 22.803,
-          "return_ytd": 235.562,
-          "volume": 2325865.0,
-          "traded_value": 12838774800.0,
-          "year_high": false,
-          "fresh": true
-        }
-      ],
-      "laggards": [
-        {
-          "symbol": "2383",
-          "name": "台光電",
-          "data_date": "2026-10-14",
-          "close": 5520.0,
-          "change_1d": -0.451,
-          "return_5d": -7.923,
-          "return_20d": 2.889,
-          "return_60d": 22.803,
-          "return_ytd": 235.562,
-          "volume": 2325865.0,
-          "traded_value": 12838774800.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "6274",
-          "name": "台燿",
-          "data_date": "2026-10-14",
-          "close": 1735.0,
-          "change_1d": 4.834,
-          "return_5d": -1.14,
-          "return_20d": 27.106,
-          "return_60d": 48.291,
-          "return_ytd": 251.215,
-          "volume": 9725598.0,
-          "traded_value": 16873912530.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "1303",
-          "name": "南亞",
-          "data_date": "2026-10-14",
-          "close": 349.0,
-          "change_1d": 9.404,
-          "return_5d": 19.113,
-          "return_20d": 48.827,
-          "return_60d": 75.377,
-          "return_ytd": 479.734,
-          "volume": 175417461.0,
-          "traded_value": 61220693889.0,
-          "year_high": true,
           "fresh": true
         }
       ]
@@ -2331,15 +2357,15 @@
       "name": "封裝測試",
       "members_total": 6,
       "members_valid": 6,
-      "members_fresh": 4,
-      "data_coverage_pct": 66.7,
-      "today_return": 1.16,
+      "members_fresh": 6,
+      "data_coverage_pct": 100.0,
+      "today_return": 1.504,
       "yesterday_return": -1.932,
-      "return_5d": -0.222,
-      "return_20d": 18.06,
-      "return_60d": 23.37,
-      "return_ytd": 153.691,
-      "rising": 2,
+      "return_5d": 1.376,
+      "return_20d": 17.031,
+      "return_60d": 21.172,
+      "return_ytd": 135.1,
+      "rising": 4,
       "falling": 2,
       "flat": 0,
       "year_high_count": 1,
@@ -2351,8 +2377,8 @@
       "sample_turnover_share_delta_pp": null,
       "yesterday_sample_turnover_share_pct": null,
       "yesterday_sample_turnover_share_delta_pp": null,
-      "relative_strength": 112.427,
-      "relative_momentum": 104.545,
+      "relative_strength": 112.801,
+      "relative_momentum": 104.892,
       "quadrant": "領先",
       "previous_quadrant": "領先",
       "quadrant_changed": false,
@@ -2619,25 +2645,25 @@
         },
         {
           "date": "2026-10-14",
-          "rs": 112.427,
-          "momentum": 104.545
+          "rs": 112.801,
+          "momentum": 104.892
         }
       ],
       "components": [
         {
           "symbol": "3264",
           "name": "欣銓",
-          "data_date": "2026-10-13",
-          "close": null,
-          "change_1d": null,
-          "return_5d": null,
-          "return_20d": null,
-          "return_60d": null,
-          "return_ytd": null,
-          "volume": null,
-          "traded_value": null,
+          "data_date": "2026-10-14",
+          "close": 278.0,
+          "change_1d": 3.538,
+          "return_5d": 13.008,
+          "return_20d": 20.607,
+          "return_60d": 29.907,
+          "return_ytd": 123.293,
+          "volume": 32959026.0,
+          "traded_value": 9162609228.0,
           "year_high": false,
-          "fresh": false
+          "fresh": true
         },
         {
           "symbol": "6257",
@@ -2679,25 +2705,25 @@
           "return_20d": 20.874,
           "return_60d": 21.661,
           "return_ytd": 198.204,
-          "volume": 12873923.0,
-          "traded_value": 9616820481.0,
+          "volume": 13529923.0,
+          "traded_value": 10106852481.0,
           "year_high": false,
           "fresh": true
         },
         {
           "symbol": "6239",
           "name": "力成",
-          "data_date": "2026-10-13",
-          "close": null,
-          "change_1d": null,
-          "return_5d": null,
-          "return_20d": null,
-          "return_60d": null,
-          "return_ytd": null,
-          "volume": null,
-          "traded_value": null,
+          "data_date": "2026-10-14",
+          "close": 298.5,
+          "change_1d": 0.845,
+          "return_5d": -3.865,
+          "return_20d": 9.341,
+          "return_60d": 3.646,
+          "return_ytd": 72.543,
+          "volume": 9145006.0,
+          "traded_value": 2729784291.0,
           "year_high": false,
-          "fresh": false
+          "fresh": true
         },
         {
           "symbol": "3374",
@@ -2732,6 +2758,21 @@
           "fresh": true
         },
         {
+          "symbol": "3264",
+          "name": "欣銓",
+          "data_date": "2026-10-14",
+          "close": 278.0,
+          "change_1d": 3.538,
+          "return_5d": 13.008,
+          "return_20d": 20.607,
+          "return_60d": 29.907,
+          "return_ytd": 123.293,
+          "volume": 32959026.0,
+          "traded_value": 9162609228.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
           "symbol": "3711",
           "name": "日月光投控",
           "data_date": "2026-10-14",
@@ -2741,23 +2782,8 @@
           "return_20d": 20.874,
           "return_60d": 21.661,
           "return_ytd": 198.204,
-          "volume": 12873923.0,
-          "traded_value": 9616820481.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "6257",
-          "name": "矽格",
-          "data_date": "2026-10-14",
-          "close": 277.0,
-          "change_1d": -0.717,
-          "return_5d": -3.147,
-          "return_20d": 30.969,
-          "return_60d": 29.138,
-          "return_ytd": 137.768,
-          "volume": 16331539.0,
-          "traded_value": 4523836303.0,
+          "volume": 13529923.0,
+          "traded_value": 10106852481.0,
           "year_high": false,
           "fresh": true
         }
@@ -2794,17 +2820,17 @@
           "fresh": true
         },
         {
-          "symbol": "3711",
-          "name": "日月光投控",
+          "symbol": "6239",
+          "name": "力成",
           "data_date": "2026-10-14",
-          "close": 747.0,
-          "change_1d": 0.946,
-          "return_5d": 0.403,
-          "return_20d": 20.874,
-          "return_60d": 21.661,
-          "return_ytd": 198.204,
-          "volume": 12873923.0,
-          "traded_value": 9616820481.0,
+          "close": 298.5,
+          "change_1d": 0.845,
+          "return_5d": -3.865,
+          "return_20d": 9.341,
+          "return_60d": 3.646,
+          "return_ytd": 72.543,
+          "volume": 9145006.0,
+          "traded_value": 2729784291.0,
           "year_high": false,
           "fresh": true
         }
@@ -3192,8 +3218,8 @@
           "return_20d": -2.399,
           "return_60d": 32.789,
           "return_ytd": 212.937,
-          "volume": 7771685.0,
-          "traded_value": 34778290375.0,
+          "volume": 7854685.0,
+          "traded_value": 35149715375.0,
           "year_high": false,
           "fresh": true
         },
@@ -3301,8 +3327,8 @@
           "return_20d": -2.399,
           "return_60d": 32.789,
           "return_ytd": 212.937,
-          "volume": 7771685.0,
-          "traded_value": 34778290375.0,
+          "volume": 7854685.0,
+          "traded_value": 35149715375.0,
           "year_high": false,
           "fresh": true
         },
@@ -3318,549 +3344,6 @@
           "return_ytd": 31.458,
           "volume": 3532780.0,
           "traded_value": 1114592090.0,
-          "year_high": false,
-          "fresh": true
-        }
-      ]
-    },
-    {
-      "name": "高速連接器／線材",
-      "members_total": 10,
-      "members_valid": 10,
-      "members_fresh": 7,
-      "data_coverage_pct": 70.0,
-      "today_return": 2.861,
-      "yesterday_return": -2.342,
-      "return_5d": 1.121,
-      "return_20d": 15.036,
-      "return_60d": 29.249,
-      "return_ytd": 63.943,
-      "rising": 6,
-      "falling": 1,
-      "flat": 0,
-      "year_high_count": 1,
-      "market_turnover_share_pct": null,
-      "market_turnover_share_delta_pp": null,
-      "yesterday_market_turnover_share_pct": null,
-      "yesterday_market_turnover_share_delta_pp": null,
-      "sample_turnover_share_pct": null,
-      "sample_turnover_share_delta_pp": null,
-      "yesterday_sample_turnover_share_pct": null,
-      "yesterday_sample_turnover_share_delta_pp": null,
-      "relative_strength": 104.297,
-      "relative_momentum": 100.816,
-      "quadrant": "領先",
-      "previous_quadrant": "領先",
-      "quadrant_changed": false,
-      "rrg": [
-        {
-          "date": "2025-09-16",
-          "rs": 97.994,
-          "momentum": 97.86
-        },
-        {
-          "date": "2025-09-23",
-          "rs": 96.57,
-          "momentum": 95.741
-        },
-        {
-          "date": "2025-10-01",
-          "rs": 96.301,
-          "momentum": 98.272
-        },
-        {
-          "date": "2025-10-09",
-          "rs": 93.203,
-          "momentum": 96.513
-        },
-        {
-          "date": "2025-10-17",
-          "rs": 94.437,
-          "momentum": 98.064
-        },
-        {
-          "date": "2025-10-27",
-          "rs": 96.074,
-          "momentum": 103.081
-        },
-        {
-          "date": "2025-11-03",
-          "rs": 98.342,
-          "momentum": 104.135
-        },
-        {
-          "date": "2025-11-10",
-          "rs": 97.377,
-          "momentum": 101.356
-        },
-        {
-          "date": "2025-11-17",
-          "rs": 94.544,
-          "momentum": 96.138
-        },
-        {
-          "date": "2025-11-24",
-          "rs": 97.127,
-          "momentum": 99.743
-        },
-        {
-          "date": "2025-12-01",
-          "rs": 96.552,
-          "momentum": 102.124
-        },
-        {
-          "date": "2025-12-08",
-          "rs": 92.889,
-          "momentum": 95.637
-        },
-        {
-          "date": "2025-12-15",
-          "rs": 96.021,
-          "momentum": 99.449
-        },
-        {
-          "date": "2025-12-22",
-          "rs": 95.95,
-          "momentum": 103.295
-        },
-        {
-          "date": "2025-12-30",
-          "rs": 97.119,
-          "momentum": 101.144
-        },
-        {
-          "date": "2026-01-07",
-          "rs": 93.583,
-          "momentum": 97.533
-        },
-        {
-          "date": "2026-01-14",
-          "rs": 96.051,
-          "momentum": 98.9
-        },
-        {
-          "date": "2026-01-21",
-          "rs": 92.352,
-          "momentum": 98.685
-        },
-        {
-          "date": "2026-01-28",
-          "rs": 94.212,
-          "momentum": 98.085
-        },
-        {
-          "date": "2026-02-04",
-          "rs": 96.339,
-          "momentum": 104.317
-        },
-        {
-          "date": "2026-02-11",
-          "rs": 93.765,
-          "momentum": 99.526
-        },
-        {
-          "date": "2026-03-02",
-          "rs": 95.554,
-          "momentum": 99.185
-        },
-        {
-          "date": "2026-03-09",
-          "rs": 99.884,
-          "momentum": 106.526
-        },
-        {
-          "date": "2026-03-16",
-          "rs": 103.556,
-          "momentum": 108.374
-        },
-        {
-          "date": "2026-03-23",
-          "rs": 109.384,
-          "momentum": 109.511
-        },
-        {
-          "date": "2026-03-30",
-          "rs": 107.628,
-          "momentum": 103.933
-        },
-        {
-          "date": "2026-04-08",
-          "rs": 105.199,
-          "momentum": 96.175
-        },
-        {
-          "date": "2026-04-15",
-          "rs": 104.455,
-          "momentum": 97.052
-        },
-        {
-          "date": "2026-04-22",
-          "rs": 110.627,
-          "momentum": 105.159
-        },
-        {
-          "date": "2026-04-29",
-          "rs": 110.789,
-          "momentum": 106.064
-        },
-        {
-          "date": "2026-05-07",
-          "rs": 108.207,
-          "momentum": 97.813
-        },
-        {
-          "date": "2026-05-14",
-          "rs": 99.217,
-          "momentum": 89.554
-        },
-        {
-          "date": "2026-05-21",
-          "rs": 101.317,
-          "momentum": 93.632
-        },
-        {
-          "date": "2026-05-28",
-          "rs": 97.832,
-          "momentum": 98.605
-        },
-        {
-          "date": "2026-06-04",
-          "rs": 97.997,
-          "momentum": 96.724
-        },
-        {
-          "date": "2026-06-11",
-          "rs": 94.821,
-          "momentum": 96.922
-        },
-        {
-          "date": "2026-06-18",
-          "rs": 92.826,
-          "momentum": 94.723
-        },
-        {
-          "date": "2026-06-26",
-          "rs": 92.355,
-          "momentum": 97.399
-        },
-        {
-          "date": "2026-07-03",
-          "rs": 95.01,
-          "momentum": 102.353
-        },
-        {
-          "date": "2026-07-13",
-          "rs": 91.8,
-          "momentum": 99.399
-        },
-        {
-          "date": "2026-07-20",
-          "rs": 91.596,
-          "momentum": 96.407
-        },
-        {
-          "date": "2026-07-27",
-          "rs": 94.888,
-          "momentum": 103.364
-        },
-        {
-          "date": "2026-08-03",
-          "rs": 93.567,
-          "momentum": 102.152
-        },
-        {
-          "date": "2026-08-10",
-          "rs": 96.504,
-          "momentum": 101.703
-        },
-        {
-          "date": "2026-08-17",
-          "rs": 96.168,
-          "momentum": 102.779
-        },
-        {
-          "date": "2026-08-24",
-          "rs": 97.858,
-          "momentum": 101.403
-        },
-        {
-          "date": "2026-08-31",
-          "rs": 101.8,
-          "momentum": 105.857
-        },
-        {
-          "date": "2026-09-07",
-          "rs": 98.317,
-          "momentum": 100.469
-        },
-        {
-          "date": "2026-09-14",
-          "rs": 97.631,
-          "momentum": 95.905
-        },
-        {
-          "date": "2026-09-21",
-          "rs": 102.969,
-          "momentum": 104.732
-        },
-        {
-          "date": "2026-09-30",
-          "rs": 103.886,
-          "momentum": 106.407
-        },
-        {
-          "date": "2026-10-07",
-          "rs": 100.783,
-          "momentum": 97.877
-        },
-        {
-          "date": "2026-10-14",
-          "rs": 104.297,
-          "momentum": 100.816
-        }
-      ],
-      "components": [
-        {
-          "symbol": "3533",
-          "name": "嘉澤",
-          "data_date": "2026-10-14",
-          "close": 1935.0,
-          "change_1d": 4.032,
-          "return_5d": 3.753,
-          "return_20d": 22.468,
-          "return_60d": 3.753,
-          "return_ytd": 49.421,
-          "volume": 4681529.0,
-          "traded_value": 9058758615.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "6197",
-          "name": "佳必琪",
-          "data_date": "2026-10-13",
-          "close": null,
-          "change_1d": null,
-          "return_5d": null,
-          "return_20d": null,
-          "return_60d": null,
-          "return_ytd": null,
-          "volume": null,
-          "traded_value": null,
-          "year_high": false,
-          "fresh": false
-        },
-        {
-          "symbol": "3665",
-          "name": "貿聯-KY",
-          "data_date": "2026-10-14",
-          "close": 2235.0,
-          "change_1d": -1.106,
-          "return_5d": -3.871,
-          "return_20d": 19.2,
-          "return_60d": 26.629,
-          "return_ytd": 47.039,
-          "volume": 1811123.0,
-          "traded_value": 4047859905.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "3023",
-          "name": "信邦",
-          "data_date": "2026-10-14",
-          "close": 318.5,
-          "change_1d": 0.315,
-          "return_5d": 0.473,
-          "return_20d": -1.087,
-          "return_60d": 5.116,
-          "return_ytd": 65.455,
-          "volume": 577400.0,
-          "traded_value": 183901900.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "3526",
-          "name": "凡甲",
-          "data_date": "2026-10-14",
-          "close": 273.0,
-          "change_1d": 1.866,
-          "return_5d": -1.799,
-          "return_20d": 1.676,
-          "return_60d": -7.77,
-          "return_ytd": 11.885,
-          "volume": 171380.0,
-          "traded_value": 46786740.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "3217",
-          "name": "優群",
-          "data_date": "2026-10-13",
-          "close": null,
-          "change_1d": null,
-          "return_5d": null,
-          "return_20d": null,
-          "return_60d": null,
-          "return_ytd": null,
-          "volume": null,
-          "traded_value": null,
-          "year_high": false,
-          "fresh": false
-        },
-        {
-          "symbol": "2392",
-          "name": "正崴",
-          "data_date": "2026-10-14",
-          "close": 41.1,
-          "change_1d": 2.75,
-          "return_5d": -0.122,
-          "return_20d": -2.837,
-          "return_60d": 15.612,
-          "return_ytd": 11.382,
-          "volume": 2124753.0,
-          "traded_value": 87327348.3,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "6290",
-          "name": "良維",
-          "data_date": "2026-10-14",
-          "close": 292.0,
-          "change_1d": 9.981,
-          "return_5d": 0.69,
-          "return_20d": 13.178,
-          "return_60d": 25.591,
-          "return_ytd": 61.773,
-          "volume": 13460663.0,
-          "traded_value": 3930513596.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "6205",
-          "name": "詮欣",
-          "data_date": "2026-10-13",
-          "close": null,
-          "change_1d": null,
-          "return_5d": null,
-          "return_20d": null,
-          "return_60d": null,
-          "return_ytd": null,
-          "volume": null,
-          "traded_value": null,
-          "year_high": false,
-          "fresh": false
-        },
-        {
-          "symbol": "3605",
-          "name": "宏致",
-          "data_date": "2026-10-14",
-          "close": 187.0,
-          "change_1d": 2.186,
-          "return_5d": 8.721,
-          "return_20d": 52.653,
-          "return_60d": 135.813,
-          "return_ytd": 200.643,
-          "volume": 31231298.0,
-          "traded_value": 5840252726.0,
-          "year_high": true,
-          "fresh": true
-        }
-      ],
-      "leaders": [
-        {
-          "symbol": "6290",
-          "name": "良維",
-          "data_date": "2026-10-14",
-          "close": 292.0,
-          "change_1d": 9.981,
-          "return_5d": 0.69,
-          "return_20d": 13.178,
-          "return_60d": 25.591,
-          "return_ytd": 61.773,
-          "volume": 13460663.0,
-          "traded_value": 3930513596.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "3533",
-          "name": "嘉澤",
-          "data_date": "2026-10-14",
-          "close": 1935.0,
-          "change_1d": 4.032,
-          "return_5d": 3.753,
-          "return_20d": 22.468,
-          "return_60d": 3.753,
-          "return_ytd": 49.421,
-          "volume": 4681529.0,
-          "traded_value": 9058758615.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "2392",
-          "name": "正崴",
-          "data_date": "2026-10-14",
-          "close": 41.1,
-          "change_1d": 2.75,
-          "return_5d": -0.122,
-          "return_20d": -2.837,
-          "return_60d": 15.612,
-          "return_ytd": 11.382,
-          "volume": 2124753.0,
-          "traded_value": 87327348.3,
-          "year_high": false,
-          "fresh": true
-        }
-      ],
-      "laggards": [
-        {
-          "symbol": "3665",
-          "name": "貿聯-KY",
-          "data_date": "2026-10-14",
-          "close": 2235.0,
-          "change_1d": -1.106,
-          "return_5d": -3.871,
-          "return_20d": 19.2,
-          "return_60d": 26.629,
-          "return_ytd": 47.039,
-          "volume": 1811123.0,
-          "traded_value": 4047859905.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "3023",
-          "name": "信邦",
-          "data_date": "2026-10-14",
-          "close": 318.5,
-          "change_1d": 0.315,
-          "return_5d": 0.473,
-          "return_20d": -1.087,
-          "return_60d": 5.116,
-          "return_ytd": 65.455,
-          "volume": 577400.0,
-          "traded_value": 183901900.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "3526",
-          "name": "凡甲",
-          "data_date": "2026-10-14",
-          "close": 273.0,
-          "change_1d": 1.866,
-          "return_5d": -1.799,
-          "return_20d": 1.676,
-          "return_60d": -7.77,
-          "return_ytd": 11.885,
-          "volume": 171380.0,
-          "traded_value": 46786740.0,
           "year_high": false,
           "fresh": true
         }
@@ -4374,6 +3857,549 @@
           "return_ytd": 90.774,
           "volume": 439610.0,
           "traded_value": 140895005.0,
+          "year_high": false,
+          "fresh": true
+        }
+      ]
+    },
+    {
+      "name": "高速連接器／線材",
+      "members_total": 10,
+      "members_valid": 10,
+      "members_fresh": 10,
+      "data_coverage_pct": 100.0,
+      "today_return": 2.59,
+      "yesterday_return": -2.342,
+      "return_5d": 0.422,
+      "return_20d": 14.188,
+      "return_60d": 22.527,
+      "return_ytd": 60.421,
+      "rising": 9,
+      "falling": 1,
+      "flat": 0,
+      "year_high_count": 1,
+      "market_turnover_share_pct": null,
+      "market_turnover_share_delta_pp": null,
+      "yesterday_market_turnover_share_pct": null,
+      "yesterday_market_turnover_share_delta_pp": null,
+      "sample_turnover_share_pct": null,
+      "sample_turnover_share_delta_pp": null,
+      "yesterday_sample_turnover_share_pct": null,
+      "yesterday_sample_turnover_share_delta_pp": null,
+      "relative_strength": 104.029,
+      "relative_momentum": 100.557,
+      "quadrant": "領先",
+      "previous_quadrant": "領先",
+      "quadrant_changed": false,
+      "rrg": [
+        {
+          "date": "2025-09-16",
+          "rs": 97.994,
+          "momentum": 97.86
+        },
+        {
+          "date": "2025-09-23",
+          "rs": 96.57,
+          "momentum": 95.741
+        },
+        {
+          "date": "2025-10-01",
+          "rs": 96.301,
+          "momentum": 98.272
+        },
+        {
+          "date": "2025-10-09",
+          "rs": 93.203,
+          "momentum": 96.513
+        },
+        {
+          "date": "2025-10-17",
+          "rs": 94.437,
+          "momentum": 98.064
+        },
+        {
+          "date": "2025-10-27",
+          "rs": 96.074,
+          "momentum": 103.081
+        },
+        {
+          "date": "2025-11-03",
+          "rs": 98.342,
+          "momentum": 104.135
+        },
+        {
+          "date": "2025-11-10",
+          "rs": 97.377,
+          "momentum": 101.356
+        },
+        {
+          "date": "2025-11-17",
+          "rs": 94.544,
+          "momentum": 96.138
+        },
+        {
+          "date": "2025-11-24",
+          "rs": 97.127,
+          "momentum": 99.743
+        },
+        {
+          "date": "2025-12-01",
+          "rs": 96.552,
+          "momentum": 102.124
+        },
+        {
+          "date": "2025-12-08",
+          "rs": 92.889,
+          "momentum": 95.637
+        },
+        {
+          "date": "2025-12-15",
+          "rs": 96.021,
+          "momentum": 99.449
+        },
+        {
+          "date": "2025-12-22",
+          "rs": 95.95,
+          "momentum": 103.295
+        },
+        {
+          "date": "2025-12-30",
+          "rs": 97.119,
+          "momentum": 101.144
+        },
+        {
+          "date": "2026-01-07",
+          "rs": 93.583,
+          "momentum": 97.533
+        },
+        {
+          "date": "2026-01-14",
+          "rs": 96.051,
+          "momentum": 98.9
+        },
+        {
+          "date": "2026-01-21",
+          "rs": 92.352,
+          "momentum": 98.685
+        },
+        {
+          "date": "2026-01-28",
+          "rs": 94.212,
+          "momentum": 98.085
+        },
+        {
+          "date": "2026-02-04",
+          "rs": 96.339,
+          "momentum": 104.317
+        },
+        {
+          "date": "2026-02-11",
+          "rs": 93.765,
+          "momentum": 99.526
+        },
+        {
+          "date": "2026-03-02",
+          "rs": 95.554,
+          "momentum": 99.185
+        },
+        {
+          "date": "2026-03-09",
+          "rs": 99.884,
+          "momentum": 106.526
+        },
+        {
+          "date": "2026-03-16",
+          "rs": 103.556,
+          "momentum": 108.374
+        },
+        {
+          "date": "2026-03-23",
+          "rs": 109.384,
+          "momentum": 109.511
+        },
+        {
+          "date": "2026-03-30",
+          "rs": 107.628,
+          "momentum": 103.933
+        },
+        {
+          "date": "2026-04-08",
+          "rs": 105.199,
+          "momentum": 96.175
+        },
+        {
+          "date": "2026-04-15",
+          "rs": 104.455,
+          "momentum": 97.052
+        },
+        {
+          "date": "2026-04-22",
+          "rs": 110.627,
+          "momentum": 105.159
+        },
+        {
+          "date": "2026-04-29",
+          "rs": 110.789,
+          "momentum": 106.064
+        },
+        {
+          "date": "2026-05-07",
+          "rs": 108.207,
+          "momentum": 97.813
+        },
+        {
+          "date": "2026-05-14",
+          "rs": 99.217,
+          "momentum": 89.554
+        },
+        {
+          "date": "2026-05-21",
+          "rs": 101.317,
+          "momentum": 93.632
+        },
+        {
+          "date": "2026-05-28",
+          "rs": 97.832,
+          "momentum": 98.605
+        },
+        {
+          "date": "2026-06-04",
+          "rs": 97.997,
+          "momentum": 96.724
+        },
+        {
+          "date": "2026-06-11",
+          "rs": 94.821,
+          "momentum": 96.922
+        },
+        {
+          "date": "2026-06-18",
+          "rs": 92.826,
+          "momentum": 94.723
+        },
+        {
+          "date": "2026-06-26",
+          "rs": 92.355,
+          "momentum": 97.399
+        },
+        {
+          "date": "2026-07-03",
+          "rs": 95.01,
+          "momentum": 102.353
+        },
+        {
+          "date": "2026-07-13",
+          "rs": 91.8,
+          "momentum": 99.399
+        },
+        {
+          "date": "2026-07-20",
+          "rs": 91.596,
+          "momentum": 96.407
+        },
+        {
+          "date": "2026-07-27",
+          "rs": 94.888,
+          "momentum": 103.364
+        },
+        {
+          "date": "2026-08-03",
+          "rs": 93.567,
+          "momentum": 102.152
+        },
+        {
+          "date": "2026-08-10",
+          "rs": 96.504,
+          "momentum": 101.703
+        },
+        {
+          "date": "2026-08-17",
+          "rs": 96.168,
+          "momentum": 102.779
+        },
+        {
+          "date": "2026-08-24",
+          "rs": 97.858,
+          "momentum": 101.403
+        },
+        {
+          "date": "2026-08-31",
+          "rs": 101.8,
+          "momentum": 105.857
+        },
+        {
+          "date": "2026-09-07",
+          "rs": 98.317,
+          "momentum": 100.469
+        },
+        {
+          "date": "2026-09-14",
+          "rs": 97.631,
+          "momentum": 95.905
+        },
+        {
+          "date": "2026-09-21",
+          "rs": 102.969,
+          "momentum": 104.732
+        },
+        {
+          "date": "2026-09-30",
+          "rs": 103.886,
+          "momentum": 106.407
+        },
+        {
+          "date": "2026-10-07",
+          "rs": 100.783,
+          "momentum": 97.877
+        },
+        {
+          "date": "2026-10-14",
+          "rs": 104.029,
+          "momentum": 100.557
+        }
+      ],
+      "components": [
+        {
+          "symbol": "3533",
+          "name": "嘉澤",
+          "data_date": "2026-10-14",
+          "close": 1935.0,
+          "change_1d": 4.032,
+          "return_5d": 3.753,
+          "return_20d": 22.468,
+          "return_60d": 3.753,
+          "return_ytd": 49.421,
+          "volume": 4681529.0,
+          "traded_value": 9058758615.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "6197",
+          "name": "佳必琪",
+          "data_date": "2026-10-14",
+          "close": 367.0,
+          "change_1d": 1.803,
+          "return_5d": 0.548,
+          "return_20d": 22.333,
+          "return_60d": 20.525,
+          "return_ytd": 164.029,
+          "volume": 2697811.0,
+          "traded_value": 990096637.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "3665",
+          "name": "貿聯-KY",
+          "data_date": "2026-10-14",
+          "close": 2235.0,
+          "change_1d": -1.106,
+          "return_5d": -3.871,
+          "return_20d": 19.2,
+          "return_60d": 26.629,
+          "return_ytd": 47.039,
+          "volume": 1821123.0,
+          "traded_value": 4070209905.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "3023",
+          "name": "信邦",
+          "data_date": "2026-10-14",
+          "close": 318.5,
+          "change_1d": 0.315,
+          "return_5d": 0.473,
+          "return_20d": -1.087,
+          "return_60d": 5.116,
+          "return_ytd": 65.455,
+          "volume": 577400.0,
+          "traded_value": 183901900.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "3526",
+          "name": "凡甲",
+          "data_date": "2026-10-14",
+          "close": 273.0,
+          "change_1d": 1.866,
+          "return_5d": -1.799,
+          "return_20d": 1.676,
+          "return_60d": -7.77,
+          "return_ytd": 11.885,
+          "volume": 171380.0,
+          "traded_value": 46786740.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "3217",
+          "name": "優群",
+          "data_date": "2026-10-14",
+          "close": 129.0,
+          "change_1d": 3.2,
+          "return_5d": 0.781,
+          "return_20d": 1.575,
+          "return_60d": -12.542,
+          "return_ytd": -18.868,
+          "volume": 201650.0,
+          "traded_value": 26012850.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "2392",
+          "name": "正崴",
+          "data_date": "2026-10-14",
+          "close": 41.1,
+          "change_1d": 2.75,
+          "return_5d": -0.122,
+          "return_20d": -2.837,
+          "return_60d": 15.612,
+          "return_ytd": 11.382,
+          "volume": 2124753.0,
+          "traded_value": 87327348.3,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "6290",
+          "name": "良維",
+          "data_date": "2026-10-14",
+          "close": 292.0,
+          "change_1d": 9.981,
+          "return_5d": 0.69,
+          "return_20d": 13.178,
+          "return_60d": 25.591,
+          "return_ytd": 61.773,
+          "volume": 13460663.0,
+          "traded_value": 3930513596.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "6205",
+          "name": "詮欣",
+          "data_date": "2026-10-14",
+          "close": 69.1,
+          "change_1d": 0.876,
+          "return_5d": -4.952,
+          "return_20d": 12.724,
+          "return_60d": 12.541,
+          "return_ytd": 11.452,
+          "volume": 313460.0,
+          "traded_value": 21660086.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "3605",
+          "name": "宏致",
+          "data_date": "2026-10-14",
+          "close": 187.0,
+          "change_1d": 2.186,
+          "return_5d": 8.721,
+          "return_20d": 52.653,
+          "return_60d": 135.813,
+          "return_ytd": 200.643,
+          "volume": 31231298.0,
+          "traded_value": 5840252726.0,
+          "year_high": true,
+          "fresh": true
+        }
+      ],
+      "leaders": [
+        {
+          "symbol": "6290",
+          "name": "良維",
+          "data_date": "2026-10-14",
+          "close": 292.0,
+          "change_1d": 9.981,
+          "return_5d": 0.69,
+          "return_20d": 13.178,
+          "return_60d": 25.591,
+          "return_ytd": 61.773,
+          "volume": 13460663.0,
+          "traded_value": 3930513596.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "3533",
+          "name": "嘉澤",
+          "data_date": "2026-10-14",
+          "close": 1935.0,
+          "change_1d": 4.032,
+          "return_5d": 3.753,
+          "return_20d": 22.468,
+          "return_60d": 3.753,
+          "return_ytd": 49.421,
+          "volume": 4681529.0,
+          "traded_value": 9058758615.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "3217",
+          "name": "優群",
+          "data_date": "2026-10-14",
+          "close": 129.0,
+          "change_1d": 3.2,
+          "return_5d": 0.781,
+          "return_20d": 1.575,
+          "return_60d": -12.542,
+          "return_ytd": -18.868,
+          "volume": 201650.0,
+          "traded_value": 26012850.0,
+          "year_high": false,
+          "fresh": true
+        }
+      ],
+      "laggards": [
+        {
+          "symbol": "3665",
+          "name": "貿聯-KY",
+          "data_date": "2026-10-14",
+          "close": 2235.0,
+          "change_1d": -1.106,
+          "return_5d": -3.871,
+          "return_20d": 19.2,
+          "return_60d": 26.629,
+          "return_ytd": 47.039,
+          "volume": 1821123.0,
+          "traded_value": 4070209905.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "3023",
+          "name": "信邦",
+          "data_date": "2026-10-14",
+          "close": 318.5,
+          "change_1d": 0.315,
+          "return_5d": 0.473,
+          "return_20d": -1.087,
+          "return_60d": 5.116,
+          "return_ytd": 65.455,
+          "volume": 577400.0,
+          "traded_value": 183901900.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "6205",
+          "name": "詮欣",
+          "data_date": "2026-10-14",
+          "close": 69.1,
+          "change_1d": 0.876,
+          "return_5d": -4.952,
+          "return_20d": 12.724,
+          "return_60d": 12.541,
+          "return_ytd": 11.452,
+          "volume": 313460.0,
+          "traded_value": 21660086.0,
           "year_high": false,
           "fresh": true
         }
@@ -6180,15 +6206,15 @@
       "name": "散熱／液冷",
       "members_total": 9,
       "members_valid": 9,
-      "members_fresh": 8,
-      "data_coverage_pct": 88.9,
-      "today_return": 0.754,
+      "members_fresh": 9,
+      "data_coverage_pct": 100.0,
+      "today_return": 0.871,
       "yesterday_return": -0.965,
-      "return_5d": -1.449,
-      "return_20d": 10.322,
-      "return_60d": 52.573,
-      "return_ytd": 73.796,
-      "rising": 5,
+      "return_5d": -1.434,
+      "return_20d": 9.856,
+      "return_60d": 46.683,
+      "return_ytd": 65.355,
+      "rising": 6,
       "falling": 3,
       "flat": 0,
       "year_high_count": 0,
@@ -6200,8 +6226,8 @@
       "sample_turnover_share_delta_pp": null,
       "yesterday_sample_turnover_share_pct": null,
       "yesterday_sample_turnover_share_delta_pp": null,
-      "relative_strength": 107.934,
-      "relative_momentum": 93.923,
+      "relative_strength": 108.057,
+      "relative_momentum": 94.03,
       "quadrant": "轉弱",
       "previous_quadrant": "轉弱",
       "quadrant_changed": false,
@@ -6468,8 +6494,8 @@
         },
         {
           "date": "2026-10-14",
-          "rs": 107.934,
-          "momentum": 93.923
+          "rs": 108.057,
+          "momentum": 94.03
         }
       ],
       "components": [
@@ -6483,8 +6509,8 @@
           "return_20d": 22.637,
           "return_60d": 120.249,
           "return_ytd": 157.559,
-          "volume": 1170984.0,
-          "traded_value": 8278856880.0,
+          "volume": 1178984.0,
+          "traded_value": 8335416880.0,
           "year_high": false,
           "fresh": true
         },
@@ -6521,17 +6547,17 @@
         {
           "symbol": "6230",
           "name": "尼得科超眾",
-          "data_date": "2026-10-13",
-          "close": null,
-          "change_1d": null,
-          "return_5d": null,
-          "return_20d": null,
-          "return_60d": null,
-          "return_ytd": null,
-          "volume": null,
-          "traded_value": null,
+          "data_date": "2026-10-14",
+          "close": 112.5,
+          "change_1d": 1.81,
+          "return_5d": -1.316,
+          "return_20d": 6.132,
+          "return_60d": -0.442,
+          "return_ytd": -2.174,
+          "volume": 26859.0,
+          "traded_value": 3021637.5,
           "year_high": false,
-          "fresh": false
+          "fresh": true
         },
         {
           "symbol": "3324",
@@ -6626,6 +6652,21 @@
           "fresh": true
         },
         {
+          "symbol": "6230",
+          "name": "尼得科超眾",
+          "data_date": "2026-10-14",
+          "close": 112.5,
+          "change_1d": 1.81,
+          "return_5d": -1.316,
+          "return_20d": 6.132,
+          "return_60d": -0.442,
+          "return_ytd": -2.174,
+          "volume": 26859.0,
+          "traded_value": 3021637.5,
+          "year_high": false,
+          "fresh": true
+        },
+        {
           "symbol": "2421",
           "name": "建準",
           "data_date": "2026-10-14",
@@ -6637,21 +6678,6 @@
           "return_ytd": 6.542,
           "volume": 1583602.0,
           "traded_value": 270795942.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "3653",
-          "name": "健策",
-          "data_date": "2026-10-14",
-          "close": 7070.0,
-          "change_1d": 1.144,
-          "return_5d": -0.141,
-          "return_20d": 22.637,
-          "return_60d": 120.249,
-          "return_ytd": 157.559,
-          "volume": 1170984.0,
-          "traded_value": 8278856880.0,
           "year_high": false,
           "fresh": true
         }
@@ -7011,8 +7037,8 @@
           "return_20d": 8.753,
           "return_60d": -1.914,
           "return_ytd": 72.996,
-          "volume": 4435228.0,
-          "traded_value": 9092217400.0,
+          "volume": 4565228.0,
+          "traded_value": 9358717400.0,
           "year_high": false,
           "fresh": true
         },
@@ -7150,8 +7176,8 @@
           "return_20d": 8.753,
           "return_60d": -1.914,
           "return_ytd": 72.996,
-          "volume": 4435228.0,
-          "traded_value": 9092217400.0,
+          "volume": 4565228.0,
+          "traded_value": 9358717400.0,
           "year_high": false,
           "fresh": true
         },
@@ -7659,17 +7685,17 @@
       "name": "電源／BBU",
       "members_total": 11,
       "members_valid": 11,
-      "members_fresh": 10,
-      "data_coverage_pct": 90.9,
-      "today_return": 2.095,
+      "members_fresh": 11,
+      "data_coverage_pct": 100.0,
+      "today_return": 1.905,
       "yesterday_return": -3.31,
-      "return_5d": -2.18,
-      "return_20d": 7.705,
-      "return_60d": 6.714,
-      "return_ytd": 14.959,
+      "return_5d": -2.765,
+      "return_20d": 6.979,
+      "return_60d": 5.526,
+      "return_ytd": 14.246,
       "rising": 10,
       "falling": 0,
-      "flat": 0,
+      "flat": 1,
       "year_high_count": 0,
       "market_turnover_share_pct": null,
       "market_turnover_share_delta_pp": null,
@@ -7679,8 +7705,8 @@
       "sample_turnover_share_delta_pp": null,
       "yesterday_sample_turnover_share_pct": null,
       "yesterday_sample_turnover_share_delta_pp": null,
-      "relative_strength": 96.779,
-      "relative_momentum": 99.881,
+      "relative_strength": 96.602,
+      "relative_momentum": 99.698,
       "quadrant": "落後",
       "previous_quadrant": "改善",
       "quadrant_changed": true,
@@ -7947,8 +7973,8 @@
         },
         {
           "date": "2026-10-14",
-          "rs": 96.779,
-          "momentum": 99.881
+          "rs": 96.602,
+          "momentum": 99.698
         }
       ],
       "components": [
@@ -7985,17 +8011,17 @@
         {
           "symbol": "3211",
           "name": "順達",
-          "data_date": "2026-10-13",
-          "close": null,
-          "change_1d": null,
-          "return_5d": null,
-          "return_20d": null,
-          "return_60d": null,
-          "return_ytd": null,
-          "volume": null,
-          "traded_value": null,
+          "data_date": "2026-10-14",
+          "close": 361.0,
+          "change_1d": 0.0,
+          "return_5d": -8.608,
+          "return_20d": -0.276,
+          "return_60d": -6.355,
+          "return_ytd": 7.122,
+          "volume": 2136734.0,
+          "traded_value": 771360974.0,
           "year_high": false,
-          "fresh": false
+          "fresh": true
         },
         {
           "symbol": "2301",
@@ -8007,8 +8033,8 @@
           "return_20d": 2.166,
           "return_60d": 44.02,
           "return_ytd": 73.089,
-          "volume": 8479695.0,
-          "traded_value": 2399753685.0,
+          "volume": 8788695.0,
+          "traded_value": 2487200685.0,
           "year_high": false,
           "fresh": true
         },
@@ -8159,13 +8185,28 @@
           "return_20d": 2.166,
           "return_60d": 44.02,
           "return_ytd": 73.089,
-          "volume": 8479695.0,
-          "traded_value": 2399753685.0,
+          "volume": 8788695.0,
+          "traded_value": 2487200685.0,
           "year_high": false,
           "fresh": true
         }
       ],
       "laggards": [
+        {
+          "symbol": "3211",
+          "name": "順達",
+          "data_date": "2026-10-14",
+          "close": 361.0,
+          "change_1d": 0.0,
+          "return_5d": -8.608,
+          "return_20d": -0.276,
+          "return_60d": -6.355,
+          "return_ytd": 7.122,
+          "volume": 2136734.0,
+          "traded_value": 771360974.0,
+          "year_high": false,
+          "fresh": true
+        },
         {
           "symbol": "5309",
           "name": "系統電",
@@ -8193,21 +8234,6 @@
           "return_ytd": 85.358,
           "volume": 9705664.0,
           "traded_value": 17324610240.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "3323",
-          "name": "加百裕",
-          "data_date": "2026-10-14",
-          "close": 29.85,
-          "change_1d": 0.675,
-          "return_5d": -0.831,
-          "return_20d": 11.589,
-          "return_60d": -3.554,
-          "return_ytd": -25.561,
-          "volume": 358627.0,
-          "traded_value": 10705015.950000001,
           "year_high": false,
           "fresh": true
         }
@@ -9033,8 +9059,8 @@
           "return_20d": 3.32,
           "return_60d": 8.734,
           "return_ytd": 60.645,
-          "volume": 24880940.0,
-          "traded_value": 61953540600.0,
+          "volume": 28111940.0,
+          "traded_value": 69998730600.0,
           "year_high": false,
           "fresh": true
         }
@@ -9050,8 +9076,8 @@
           "return_20d": 3.32,
           "return_60d": 8.734,
           "return_ytd": 60.645,
-          "volume": 24880940.0,
-          "traded_value": 61953540600.0,
+          "volume": 28111940.0,
+          "traded_value": 69998730600.0,
           "year_high": false,
           "fresh": true
         }
@@ -9067,8 +9093,8 @@
           "return_20d": 3.32,
           "return_60d": 8.734,
           "return_ytd": 60.645,
-          "volume": 24880940.0,
-          "traded_value": 61953540600.0,
+          "volume": 28111940.0,
+          "traded_value": 69998730600.0,
           "year_high": false,
           "fresh": true
         }
@@ -9996,608 +10022,20 @@
       ]
     },
     {
-      "name": "矽光子／光通訊",
-      "members_total": 13,
-      "members_valid": 13,
-      "members_fresh": 12,
-      "data_coverage_pct": 92.3,
-      "today_return": 3.992,
-      "yesterday_return": -7.178,
-      "return_5d": -3.479,
-      "return_20d": -0.624,
-      "return_60d": 42.871,
-      "return_ytd": 119.127,
-      "rising": 12,
-      "falling": 0,
-      "flat": 0,
-      "year_high_count": 0,
-      "market_turnover_share_pct": null,
-      "market_turnover_share_delta_pp": null,
-      "yesterday_market_turnover_share_pct": null,
-      "yesterday_market_turnover_share_delta_pp": null,
-      "sample_turnover_share_pct": null,
-      "sample_turnover_share_delta_pp": null,
-      "yesterday_sample_turnover_share_pct": null,
-      "yesterday_sample_turnover_share_delta_pp": null,
-      "relative_strength": 98.455,
-      "relative_momentum": 94.462,
-      "quadrant": "落後",
-      "previous_quadrant": "轉弱",
-      "quadrant_changed": true,
-      "rrg": [
-        {
-          "date": "2025-09-16",
-          "rs": 98.75,
-          "momentum": 89.336
-        },
-        {
-          "date": "2025-09-23",
-          "rs": 101.237,
-          "momentum": 95.299
-        },
-        {
-          "date": "2025-10-01",
-          "rs": 97.88,
-          "momentum": 99.119
-        },
-        {
-          "date": "2025-10-09",
-          "rs": 92.598,
-          "momentum": 91.466
-        },
-        {
-          "date": "2025-10-17",
-          "rs": 87.377,
-          "momentum": 89.269
-        },
-        {
-          "date": "2025-10-27",
-          "rs": 89.636,
-          "momentum": 96.802
-        },
-        {
-          "date": "2025-11-03",
-          "rs": 94.036,
-          "momentum": 107.621
-        },
-        {
-          "date": "2025-11-10",
-          "rs": 93.273,
-          "momentum": 104.057
-        },
-        {
-          "date": "2025-11-17",
-          "rs": 98.608,
-          "momentum": 104.862
-        },
-        {
-          "date": "2025-11-24",
-          "rs": 100.305,
-          "momentum": 107.539
-        },
-        {
-          "date": "2025-12-01",
-          "rs": 115.21,
-          "momentum": 116.837
-        },
-        {
-          "date": "2025-12-08",
-          "rs": 115.565,
-          "momentum": 115.214
-        },
-        {
-          "date": "2025-12-15",
-          "rs": 128.771,
-          "momentum": 111.771
-        },
-        {
-          "date": "2025-12-22",
-          "rs": 120.711,
-          "momentum": 104.452
-        },
-        {
-          "date": "2025-12-30",
-          "rs": 119.67,
-          "momentum": 92.932
-        },
-        {
-          "date": "2026-01-07",
-          "rs": 105.572,
-          "momentum": 87.459
-        },
-        {
-          "date": "2026-01-14",
-          "rs": 100.745,
-          "momentum": 84.186
-        },
-        {
-          "date": "2026-01-21",
-          "rs": 102.788,
-          "momentum": 97.364
-        },
-        {
-          "date": "2026-01-28",
-          "rs": 107.648,
-          "momentum": 106.852
-        },
-        {
-          "date": "2026-02-04",
-          "rs": 116.836,
-          "momentum": 113.666
-        },
-        {
-          "date": "2026-02-11",
-          "rs": 114.663,
-          "momentum": 106.516
-        },
-        {
-          "date": "2026-03-02",
-          "rs": 137.165,
-          "momentum": 117.4
-        },
-        {
-          "date": "2026-03-09",
-          "rs": 115.804,
-          "momentum": 100.995
-        },
-        {
-          "date": "2026-03-16",
-          "rs": 130.258,
-          "momentum": 94.964
-        },
-        {
-          "date": "2026-03-23",
-          "rs": 129.416,
-          "momentum": 111.755
-        },
-        {
-          "date": "2026-03-30",
-          "rs": 134.312,
-          "momentum": 103.112
-        },
-        {
-          "date": "2026-04-08",
-          "rs": 130.095,
-          "momentum": 100.525
-        },
-        {
-          "date": "2026-04-15",
-          "rs": 132.735,
-          "momentum": 98.826
-        },
-        {
-          "date": "2026-04-22",
-          "rs": 137.592,
-          "momentum": 105.763
-        },
-        {
-          "date": "2026-04-29",
-          "rs": 111.092,
-          "momentum": 83.694
-        },
-        {
-          "date": "2026-05-07",
-          "rs": 110.887,
-          "momentum": 80.591
-        },
-        {
-          "date": "2026-05-14",
-          "rs": 109.313,
-          "momentum": 98.399
-        },
-        {
-          "date": "2026-05-21",
-          "rs": 103.53,
-          "momentum": 93.365
-        },
-        {
-          "date": "2026-05-28",
-          "rs": 97.533,
-          "momentum": 89.224
-        },
-        {
-          "date": "2026-06-04",
-          "rs": 95.448,
-          "momentum": 92.194
-        },
-        {
-          "date": "2026-06-11",
-          "rs": 83.559,
-          "momentum": 85.672
-        },
-        {
-          "date": "2026-06-18",
-          "rs": 87.492,
-          "momentum": 91.664
-        },
-        {
-          "date": "2026-06-26",
-          "rs": 81.169,
-          "momentum": 97.14
-        },
-        {
-          "date": "2026-07-03",
-          "rs": 81.458,
-          "momentum": 93.104
-        },
-        {
-          "date": "2026-07-13",
-          "rs": 79.059,
-          "momentum": 97.4
-        },
-        {
-          "date": "2026-07-20",
-          "rs": 72.693,
-          "momentum": 89.24
-        },
-        {
-          "date": "2026-07-27",
-          "rs": 85.146,
-          "momentum": 107.699
-        },
-        {
-          "date": "2026-08-03",
-          "rs": 82.538,
-          "momentum": 113.542
-        },
-        {
-          "date": "2026-08-10",
-          "rs": 100.987,
-          "momentum": 118.605
-        },
-        {
-          "date": "2026-08-17",
-          "rs": 108.211,
-          "momentum": 131.106
-        },
-        {
-          "date": "2026-08-24",
-          "rs": 108.799,
-          "momentum": 107.736
-        },
-        {
-          "date": "2026-08-31",
-          "rs": 123.171,
-          "momentum": 113.824
-        },
-        {
-          "date": "2026-09-07",
-          "rs": 119.926,
-          "momentum": 110.227
-        },
-        {
-          "date": "2026-09-14",
-          "rs": 112.16,
-          "momentum": 91.06
-        },
-        {
-          "date": "2026-09-21",
-          "rs": 111.29,
-          "momentum": 92.799
-        },
-        {
-          "date": "2026-09-30",
-          "rs": 102.944,
-          "momentum": 91.784
-        },
-        {
-          "date": "2026-10-07",
-          "rs": 104.898,
-          "momentum": 94.256
-        },
-        {
-          "date": "2026-10-14",
-          "rs": 98.455,
-          "momentum": 94.462
-        }
-      ],
-      "components": [
-        {
-          "symbol": "4971",
-          "name": "IET-KY",
-          "data_date": "2026-10-14",
-          "close": 557.0,
-          "change_1d": 3.918,
-          "return_5d": -4.786,
-          "return_20d": 1.273,
-          "return_60d": 48.533,
-          "return_ytd": 79.677,
-          "volume": 933220.0,
-          "traded_value": 519803540.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "6588",
-          "name": "東典光電",
-          "data_date": "2026-10-14",
-          "close": 100.0,
-          "change_1d": 1.523,
-          "return_5d": -8.676,
-          "return_20d": -6.977,
-          "return_60d": 39.665,
-          "return_ytd": 112.766,
-          "volume": 356677.0,
-          "traded_value": 35667700.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "6451",
-          "name": "訊芯-KY",
-          "data_date": "2026-10-14",
-          "close": 389.5,
-          "change_1d": 2.77,
-          "return_5d": -7.262,
-          "return_20d": -4.884,
-          "return_60d": -9.313,
-          "return_ytd": 134.639,
-          "volume": 1516580.0,
-          "traded_value": 590707910.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "4977",
-          "name": "眾達-KY",
-          "data_date": "2026-10-14",
-          "close": 191.0,
-          "change_1d": 9.77,
-          "return_5d": 10.086,
-          "return_20d": 9.143,
-          "return_60d": 46.923,
-          "return_ytd": 34.507,
-          "volume": 10821003.0,
-          "traded_value": 2066811573.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "6442",
-          "name": "光聖",
-          "data_date": "2026-10-14",
-          "close": 1640.0,
-          "change_1d": 0.613,
-          "return_5d": -0.606,
-          "return_20d": -1.796,
-          "return_60d": 26.154,
-          "return_ytd": 20.588,
-          "volume": 1328170.0,
-          "traded_value": 2178198800.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "3363",
-          "name": "上詮",
-          "data_date": "2026-10-14",
-          "close": 559.0,
-          "change_1d": 2.194,
-          "return_5d": -14.0,
-          "return_20d": -17.915,
-          "return_60d": 10.913,
-          "return_ytd": 22.186,
-          "volume": 2597450.0,
-          "traded_value": 1451974550.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "3163",
-          "name": "波若威",
-          "data_date": "2026-10-14",
-          "close": 653.0,
-          "change_1d": 1.24,
-          "return_5d": -5.225,
-          "return_20d": -2.537,
-          "return_60d": 0.153,
-          "return_ytd": 63.864,
-          "volume": 1714791.0,
-          "traded_value": 1119758523.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "6426",
-          "name": "統新",
-          "data_date": "2026-10-14",
-          "close": 336.5,
-          "change_1d": 2.748,
-          "return_5d": -4.131,
-          "return_20d": 11.424,
-          "return_60d": 114.331,
-          "return_ytd": 243.718,
-          "volume": 2177850.0,
-          "traded_value": 732846525.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "4979",
-          "name": "華星光",
-          "data_date": "2026-10-14",
-          "close": 588.0,
-          "change_1d": 9.907,
-          "return_5d": 3.521,
-          "return_20d": 10.734,
-          "return_60d": 65.169,
-          "return_ytd": 80.645,
-          "volume": 10294374.0,
-          "traded_value": 6053091912.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "3450",
-          "name": "聯鈞",
-          "data_date": "2026-10-14",
-          "close": 500.0,
-          "change_1d": 5.708,
-          "return_5d": -5.838,
-          "return_20d": -2.344,
-          "return_60d": 15.741,
-          "return_ytd": 85.185,
-          "volume": 9191429.0,
-          "traded_value": 4595714500.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "4908",
-          "name": "前鼎",
-          "data_date": "2026-10-14",
-          "close": 223.0,
-          "change_1d": 1.826,
-          "return_5d": -3.463,
-          "return_20d": -6.105,
-          "return_60d": 61.594,
-          "return_ytd": 181.922,
-          "volume": 3306779.0,
-          "traded_value": 737411717.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "3234",
-          "name": "光環",
-          "data_date": "2026-10-13",
-          "close": null,
-          "change_1d": null,
-          "return_5d": null,
-          "return_20d": null,
-          "return_60d": null,
-          "return_ytd": null,
-          "volume": null,
-          "traded_value": null,
-          "year_high": false,
-          "fresh": false
-        },
-        {
-          "symbol": "3081",
-          "name": "聯亞",
-          "data_date": "2026-10-14",
-          "close": 2880.0,
-          "change_1d": 5.688,
-          "return_5d": -1.37,
-          "return_20d": 2.491,
-          "return_60d": 94.595,
-          "return_ytd": 369.821,
-          "volume": 3434134.0,
-          "traded_value": 9890305920.0,
-          "year_high": false,
-          "fresh": true
-        }
-      ],
-      "leaders": [
-        {
-          "symbol": "4979",
-          "name": "華星光",
-          "data_date": "2026-10-14",
-          "close": 588.0,
-          "change_1d": 9.907,
-          "return_5d": 3.521,
-          "return_20d": 10.734,
-          "return_60d": 65.169,
-          "return_ytd": 80.645,
-          "volume": 10294374.0,
-          "traded_value": 6053091912.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "4977",
-          "name": "眾達-KY",
-          "data_date": "2026-10-14",
-          "close": 191.0,
-          "change_1d": 9.77,
-          "return_5d": 10.086,
-          "return_20d": 9.143,
-          "return_60d": 46.923,
-          "return_ytd": 34.507,
-          "volume": 10821003.0,
-          "traded_value": 2066811573.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "3450",
-          "name": "聯鈞",
-          "data_date": "2026-10-14",
-          "close": 500.0,
-          "change_1d": 5.708,
-          "return_5d": -5.838,
-          "return_20d": -2.344,
-          "return_60d": 15.741,
-          "return_ytd": 85.185,
-          "volume": 9191429.0,
-          "traded_value": 4595714500.0,
-          "year_high": false,
-          "fresh": true
-        }
-      ],
-      "laggards": [
-        {
-          "symbol": "6442",
-          "name": "光聖",
-          "data_date": "2026-10-14",
-          "close": 1640.0,
-          "change_1d": 0.613,
-          "return_5d": -0.606,
-          "return_20d": -1.796,
-          "return_60d": 26.154,
-          "return_ytd": 20.588,
-          "volume": 1328170.0,
-          "traded_value": 2178198800.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "3163",
-          "name": "波若威",
-          "data_date": "2026-10-14",
-          "close": 653.0,
-          "change_1d": 1.24,
-          "return_5d": -5.225,
-          "return_20d": -2.537,
-          "return_60d": 0.153,
-          "return_ytd": 63.864,
-          "volume": 1714791.0,
-          "traded_value": 1119758523.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "6588",
-          "name": "東典光電",
-          "data_date": "2026-10-14",
-          "close": 100.0,
-          "change_1d": 1.523,
-          "return_5d": -8.676,
-          "return_20d": -6.977,
-          "return_60d": 39.665,
-          "return_ytd": 112.766,
-          "volume": 356677.0,
-          "traded_value": 35667700.0,
-          "year_high": false,
-          "fresh": true
-        }
-      ]
-    },
-    {
       "name": "組裝代工／ODM",
       "members_total": 9,
       "members_valid": 9,
-      "members_fresh": 8,
-      "data_coverage_pct": 88.9,
-      "today_return": 0.231,
+      "members_fresh": 9,
+      "data_coverage_pct": 100.0,
+      "today_return": 0.206,
       "yesterday_return": -0.585,
-      "return_5d": -0.458,
-      "return_20d": -0.692,
-      "return_60d": -2.77,
-      "return_ytd": 14.356,
+      "return_5d": -0.554,
+      "return_20d": -0.526,
+      "return_60d": 1.375,
+      "return_ytd": 15.456,
       "rising": 5,
       "falling": 2,
-      "flat": 1,
+      "flat": 2,
       "year_high_count": 0,
       "market_turnover_share_pct": null,
       "market_turnover_share_delta_pp": null,
@@ -10607,8 +10045,8 @@
       "sample_turnover_share_delta_pp": null,
       "yesterday_sample_turnover_share_pct": null,
       "yesterday_sample_turnover_share_delta_pp": null,
-      "relative_strength": 91.285,
-      "relative_momentum": 102.175,
+      "relative_strength": 91.262,
+      "relative_momentum": 102.149,
       "quadrant": "改善",
       "previous_quadrant": "落後",
       "quadrant_changed": true,
@@ -10875,25 +10313,25 @@
         },
         {
           "date": "2026-10-14",
-          "rs": 91.285,
-          "momentum": 102.175
+          "rs": 91.262,
+          "momentum": 102.149
         }
       ],
       "components": [
         {
           "symbol": "3231",
           "name": "緯創",
-          "data_date": "2026-10-13",
-          "close": null,
-          "change_1d": null,
-          "return_5d": null,
-          "return_20d": null,
-          "return_60d": null,
-          "return_ytd": null,
-          "volume": null,
-          "traded_value": null,
+          "data_date": "2026-10-14",
+          "close": 187.0,
+          "change_1d": 0.0,
+          "return_5d": -1.319,
+          "return_20d": 0.809,
+          "return_60d": 34.532,
+          "return_ytd": 24.252,
+          "volume": 24460238.0,
+          "traded_value": 4574064506.0,
           "year_high": false,
-          "fresh": false
+          "fresh": true
         },
         {
           "symbol": "6669",
@@ -10905,8 +10343,8 @@
           "return_20d": -8.442,
           "return_60d": -54.221,
           "return_ytd": -52.843,
-          "volume": 7445742.0,
-          "traded_value": 15747744330.0,
+          "volume": 7479924.0,
+          "traded_value": 15820039260.0,
           "year_high": false,
           "fresh": true
         },
@@ -10950,8 +10388,8 @@
           "return_20d": 2.006,
           "return_60d": 9.538,
           "return_ytd": 42.685,
-          "volume": 2960934.0,
-          "traded_value": 1054092504.0,
+          "volume": 3040934.0,
+          "traded_value": 1082572504.0,
           "year_high": false,
           "fresh": true
         },
@@ -10980,8 +10418,8 @@
           "return_20d": -2.016,
           "return_60d": 3.846,
           "return_ytd": 5.423,
-          "volume": 34013643.0,
-          "traded_value": 8265315249.0,
+          "volume": 34513643.0,
+          "traded_value": 8386815249.0,
           "year_high": false,
           "fresh": true
         },
@@ -11074,8 +10512,8 @@
           "return_20d": -8.442,
           "return_60d": -54.221,
           "return_ytd": -52.843,
-          "volume": 7445742.0,
-          "traded_value": 15747744330.0,
+          "volume": 7479924.0,
+          "traded_value": 15820039260.0,
           "year_high": false,
           "fresh": true
         },
@@ -11095,17 +10533,605 @@
           "fresh": true
         },
         {
-          "symbol": "2382",
-          "name": "廣達",
+          "symbol": "3231",
+          "name": "緯創",
           "data_date": "2026-10-14",
-          "close": 323.0,
+          "close": 187.0,
           "change_1d": 0.0,
-          "return_5d": -3.148,
-          "return_20d": -4.012,
-          "return_60d": -0.768,
-          "return_ytd": 18.75,
-          "volume": 12026972.0,
-          "traded_value": 3884711956.0,
+          "return_5d": -1.319,
+          "return_20d": 0.809,
+          "return_60d": 34.532,
+          "return_ytd": 24.252,
+          "volume": 24460238.0,
+          "traded_value": 4574064506.0,
+          "year_high": false,
+          "fresh": true
+        }
+      ]
+    },
+    {
+      "name": "矽光子／光通訊",
+      "members_total": 13,
+      "members_valid": 13,
+      "members_fresh": 13,
+      "data_coverage_pct": 100.0,
+      "today_return": 3.91,
+      "yesterday_return": -7.178,
+      "return_5d": -3.212,
+      "return_20d": -1.048,
+      "return_60d": 45.352,
+      "return_ytd": 130.623,
+      "rising": 13,
+      "falling": 0,
+      "flat": 0,
+      "year_high_count": 0,
+      "market_turnover_share_pct": null,
+      "market_turnover_share_delta_pp": null,
+      "yesterday_market_turnover_share_pct": null,
+      "yesterday_market_turnover_share_delta_pp": null,
+      "sample_turnover_share_pct": null,
+      "sample_turnover_share_delta_pp": null,
+      "yesterday_sample_turnover_share_pct": null,
+      "yesterday_sample_turnover_share_delta_pp": null,
+      "relative_strength": 98.379,
+      "relative_momentum": 94.389,
+      "quadrant": "落後",
+      "previous_quadrant": "轉弱",
+      "quadrant_changed": true,
+      "rrg": [
+        {
+          "date": "2025-09-16",
+          "rs": 98.75,
+          "momentum": 89.336
+        },
+        {
+          "date": "2025-09-23",
+          "rs": 101.237,
+          "momentum": 95.299
+        },
+        {
+          "date": "2025-10-01",
+          "rs": 97.88,
+          "momentum": 99.119
+        },
+        {
+          "date": "2025-10-09",
+          "rs": 92.598,
+          "momentum": 91.466
+        },
+        {
+          "date": "2025-10-17",
+          "rs": 87.377,
+          "momentum": 89.269
+        },
+        {
+          "date": "2025-10-27",
+          "rs": 89.636,
+          "momentum": 96.802
+        },
+        {
+          "date": "2025-11-03",
+          "rs": 94.036,
+          "momentum": 107.621
+        },
+        {
+          "date": "2025-11-10",
+          "rs": 93.273,
+          "momentum": 104.057
+        },
+        {
+          "date": "2025-11-17",
+          "rs": 98.608,
+          "momentum": 104.862
+        },
+        {
+          "date": "2025-11-24",
+          "rs": 100.305,
+          "momentum": 107.539
+        },
+        {
+          "date": "2025-12-01",
+          "rs": 115.21,
+          "momentum": 116.837
+        },
+        {
+          "date": "2025-12-08",
+          "rs": 115.565,
+          "momentum": 115.214
+        },
+        {
+          "date": "2025-12-15",
+          "rs": 128.771,
+          "momentum": 111.771
+        },
+        {
+          "date": "2025-12-22",
+          "rs": 120.711,
+          "momentum": 104.452
+        },
+        {
+          "date": "2025-12-30",
+          "rs": 119.67,
+          "momentum": 92.932
+        },
+        {
+          "date": "2026-01-07",
+          "rs": 105.572,
+          "momentum": 87.459
+        },
+        {
+          "date": "2026-01-14",
+          "rs": 100.745,
+          "momentum": 84.186
+        },
+        {
+          "date": "2026-01-21",
+          "rs": 102.788,
+          "momentum": 97.364
+        },
+        {
+          "date": "2026-01-28",
+          "rs": 107.648,
+          "momentum": 106.852
+        },
+        {
+          "date": "2026-02-04",
+          "rs": 116.836,
+          "momentum": 113.666
+        },
+        {
+          "date": "2026-02-11",
+          "rs": 114.663,
+          "momentum": 106.516
+        },
+        {
+          "date": "2026-03-02",
+          "rs": 137.165,
+          "momentum": 117.4
+        },
+        {
+          "date": "2026-03-09",
+          "rs": 115.804,
+          "momentum": 100.995
+        },
+        {
+          "date": "2026-03-16",
+          "rs": 130.258,
+          "momentum": 94.964
+        },
+        {
+          "date": "2026-03-23",
+          "rs": 129.416,
+          "momentum": 111.755
+        },
+        {
+          "date": "2026-03-30",
+          "rs": 134.312,
+          "momentum": 103.112
+        },
+        {
+          "date": "2026-04-08",
+          "rs": 130.095,
+          "momentum": 100.525
+        },
+        {
+          "date": "2026-04-15",
+          "rs": 132.735,
+          "momentum": 98.826
+        },
+        {
+          "date": "2026-04-22",
+          "rs": 137.592,
+          "momentum": 105.763
+        },
+        {
+          "date": "2026-04-29",
+          "rs": 111.092,
+          "momentum": 83.694
+        },
+        {
+          "date": "2026-05-07",
+          "rs": 110.887,
+          "momentum": 80.591
+        },
+        {
+          "date": "2026-05-14",
+          "rs": 109.313,
+          "momentum": 98.399
+        },
+        {
+          "date": "2026-05-21",
+          "rs": 103.53,
+          "momentum": 93.365
+        },
+        {
+          "date": "2026-05-28",
+          "rs": 97.533,
+          "momentum": 89.224
+        },
+        {
+          "date": "2026-06-04",
+          "rs": 95.448,
+          "momentum": 92.194
+        },
+        {
+          "date": "2026-06-11",
+          "rs": 83.559,
+          "momentum": 85.672
+        },
+        {
+          "date": "2026-06-18",
+          "rs": 87.492,
+          "momentum": 91.664
+        },
+        {
+          "date": "2026-06-26",
+          "rs": 81.169,
+          "momentum": 97.14
+        },
+        {
+          "date": "2026-07-03",
+          "rs": 81.458,
+          "momentum": 93.104
+        },
+        {
+          "date": "2026-07-13",
+          "rs": 79.059,
+          "momentum": 97.4
+        },
+        {
+          "date": "2026-07-20",
+          "rs": 72.693,
+          "momentum": 89.24
+        },
+        {
+          "date": "2026-07-27",
+          "rs": 85.146,
+          "momentum": 107.699
+        },
+        {
+          "date": "2026-08-03",
+          "rs": 82.538,
+          "momentum": 113.542
+        },
+        {
+          "date": "2026-08-10",
+          "rs": 100.987,
+          "momentum": 118.605
+        },
+        {
+          "date": "2026-08-17",
+          "rs": 108.211,
+          "momentum": 131.106
+        },
+        {
+          "date": "2026-08-24",
+          "rs": 108.799,
+          "momentum": 107.736
+        },
+        {
+          "date": "2026-08-31",
+          "rs": 123.171,
+          "momentum": 113.824
+        },
+        {
+          "date": "2026-09-07",
+          "rs": 119.926,
+          "momentum": 110.227
+        },
+        {
+          "date": "2026-09-14",
+          "rs": 112.16,
+          "momentum": 91.06
+        },
+        {
+          "date": "2026-09-21",
+          "rs": 111.29,
+          "momentum": 92.799
+        },
+        {
+          "date": "2026-09-30",
+          "rs": 102.944,
+          "momentum": 91.784
+        },
+        {
+          "date": "2026-10-07",
+          "rs": 104.898,
+          "momentum": 94.256
+        },
+        {
+          "date": "2026-10-14",
+          "rs": 98.379,
+          "momentum": 94.389
+        }
+      ],
+      "components": [
+        {
+          "symbol": "4971",
+          "name": "IET-KY",
+          "data_date": "2026-10-14",
+          "close": 557.0,
+          "change_1d": 3.918,
+          "return_5d": -4.786,
+          "return_20d": 1.273,
+          "return_60d": 48.533,
+          "return_ytd": 79.677,
+          "volume": 933220.0,
+          "traded_value": 519803540.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "6588",
+          "name": "東典光電",
+          "data_date": "2026-10-14",
+          "close": 100.0,
+          "change_1d": 1.523,
+          "return_5d": -8.676,
+          "return_20d": -6.977,
+          "return_60d": 39.665,
+          "return_ytd": 112.766,
+          "volume": 356677.0,
+          "traded_value": 35667700.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "6451",
+          "name": "訊芯-KY",
+          "data_date": "2026-10-14",
+          "close": 389.5,
+          "change_1d": 2.77,
+          "return_5d": -7.262,
+          "return_20d": -4.884,
+          "return_60d": -9.313,
+          "return_ytd": 134.639,
+          "volume": 1516580.0,
+          "traded_value": 590707910.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "4977",
+          "name": "眾達-KY",
+          "data_date": "2026-10-14",
+          "close": 191.0,
+          "change_1d": 9.77,
+          "return_5d": 10.086,
+          "return_20d": 9.143,
+          "return_60d": 46.923,
+          "return_ytd": 34.507,
+          "volume": 10821003.0,
+          "traded_value": 2066811573.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "6442",
+          "name": "光聖",
+          "data_date": "2026-10-14",
+          "close": 1640.0,
+          "change_1d": 0.613,
+          "return_5d": -0.606,
+          "return_20d": -1.796,
+          "return_60d": 26.154,
+          "return_ytd": 20.588,
+          "volume": 1328170.0,
+          "traded_value": 2178198800.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "3363",
+          "name": "上詮",
+          "data_date": "2026-10-14",
+          "close": 559.0,
+          "change_1d": 2.194,
+          "return_5d": -14.0,
+          "return_20d": -17.915,
+          "return_60d": 10.913,
+          "return_ytd": 22.186,
+          "volume": 2597450.0,
+          "traded_value": 1451974550.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "3163",
+          "name": "波若威",
+          "data_date": "2026-10-14",
+          "close": 653.0,
+          "change_1d": 1.24,
+          "return_5d": -5.225,
+          "return_20d": -2.537,
+          "return_60d": 0.153,
+          "return_ytd": 63.864,
+          "volume": 1714791.0,
+          "traded_value": 1119758523.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "6426",
+          "name": "統新",
+          "data_date": "2026-10-14",
+          "close": 336.5,
+          "change_1d": 2.748,
+          "return_5d": -4.131,
+          "return_20d": 11.424,
+          "return_60d": 114.331,
+          "return_ytd": 243.718,
+          "volume": 2177850.0,
+          "traded_value": 732846525.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "4979",
+          "name": "華星光",
+          "data_date": "2026-10-14",
+          "close": 588.0,
+          "change_1d": 9.907,
+          "return_5d": 3.521,
+          "return_20d": 10.734,
+          "return_60d": 65.169,
+          "return_ytd": 80.645,
+          "volume": 10294374.0,
+          "traded_value": 6053091912.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "3450",
+          "name": "聯鈞",
+          "data_date": "2026-10-14",
+          "close": 500.0,
+          "change_1d": 5.708,
+          "return_5d": -5.838,
+          "return_20d": -2.344,
+          "return_60d": 15.741,
+          "return_ytd": 85.185,
+          "volume": 9191429.0,
+          "traded_value": 4595714500.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "4908",
+          "name": "前鼎",
+          "data_date": "2026-10-14",
+          "close": 223.0,
+          "change_1d": 1.826,
+          "return_5d": -3.463,
+          "return_20d": -6.105,
+          "return_60d": 61.594,
+          "return_ytd": 181.922,
+          "volume": 3306779.0,
+          "traded_value": 737411717.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "3234",
+          "name": "光環",
+          "data_date": "2026-10-14",
+          "close": 176.0,
+          "change_1d": 2.924,
+          "return_5d": 0.0,
+          "return_20d": -6.133,
+          "return_60d": 75.124,
+          "return_ytd": 268.586,
+          "volume": 1592607.0,
+          "traded_value": 280298832.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "3081",
+          "name": "聯亞",
+          "data_date": "2026-10-14",
+          "close": 2880.0,
+          "change_1d": 5.688,
+          "return_5d": -1.37,
+          "return_20d": 2.491,
+          "return_60d": 94.595,
+          "return_ytd": 369.821,
+          "volume": 3434134.0,
+          "traded_value": 9890305920.0,
+          "year_high": false,
+          "fresh": true
+        }
+      ],
+      "leaders": [
+        {
+          "symbol": "4979",
+          "name": "華星光",
+          "data_date": "2026-10-14",
+          "close": 588.0,
+          "change_1d": 9.907,
+          "return_5d": 3.521,
+          "return_20d": 10.734,
+          "return_60d": 65.169,
+          "return_ytd": 80.645,
+          "volume": 10294374.0,
+          "traded_value": 6053091912.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "4977",
+          "name": "眾達-KY",
+          "data_date": "2026-10-14",
+          "close": 191.0,
+          "change_1d": 9.77,
+          "return_5d": 10.086,
+          "return_20d": 9.143,
+          "return_60d": 46.923,
+          "return_ytd": 34.507,
+          "volume": 10821003.0,
+          "traded_value": 2066811573.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "3450",
+          "name": "聯鈞",
+          "data_date": "2026-10-14",
+          "close": 500.0,
+          "change_1d": 5.708,
+          "return_5d": -5.838,
+          "return_20d": -2.344,
+          "return_60d": 15.741,
+          "return_ytd": 85.185,
+          "volume": 9191429.0,
+          "traded_value": 4595714500.0,
+          "year_high": false,
+          "fresh": true
+        }
+      ],
+      "laggards": [
+        {
+          "symbol": "6442",
+          "name": "光聖",
+          "data_date": "2026-10-14",
+          "close": 1640.0,
+          "change_1d": 0.613,
+          "return_5d": -0.606,
+          "return_20d": -1.796,
+          "return_60d": 26.154,
+          "return_ytd": 20.588,
+          "volume": 1328170.0,
+          "traded_value": 2178198800.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "3163",
+          "name": "波若威",
+          "data_date": "2026-10-14",
+          "close": 653.0,
+          "change_1d": 1.24,
+          "return_5d": -5.225,
+          "return_20d": -2.537,
+          "return_60d": 0.153,
+          "return_ytd": 63.864,
+          "volume": 1714791.0,
+          "traded_value": 1119758523.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "6588",
+          "name": "東典光電",
+          "data_date": "2026-10-14",
+          "close": 100.0,
+          "change_1d": 1.523,
+          "return_5d": -8.676,
+          "return_20d": -6.977,
+          "return_60d": 39.665,
+          "return_ytd": 112.766,
+          "volume": 356677.0,
+          "traded_value": 35667700.0,
           "year_high": false,
           "fresh": true
         }
@@ -11115,15 +11141,15 @@
       "name": "機器人／自動化",
       "members_total": 12,
       "members_valid": 12,
-      "members_fresh": 11,
-      "data_coverage_pct": 91.7,
-      "today_return": 1.893,
+      "members_fresh": 12,
+      "data_coverage_pct": 100.0,
+      "today_return": 1.962,
       "yesterday_return": -2.153,
-      "return_5d": 0.225,
-      "return_20d": -1.193,
-      "return_60d": 4.617,
-      "return_ytd": 45.026,
-      "rising": 7,
+      "return_5d": -0.116,
+      "return_20d": -1.424,
+      "return_60d": 3.765,
+      "return_ytd": 40.683,
+      "rising": 8,
       "falling": 3,
       "flat": 1,
       "year_high_count": 0,
@@ -11135,8 +11161,8 @@
       "sample_turnover_share_delta_pp": null,
       "yesterday_sample_turnover_share_pct": null,
       "yesterday_sample_turnover_share_delta_pp": null,
-      "relative_strength": 93.444,
-      "relative_momentum": 98.174,
+      "relative_strength": 93.507,
+      "relative_momentum": 98.239,
       "quadrant": "落後",
       "previous_quadrant": "落後",
       "quadrant_changed": false,
@@ -11403,8 +11429,8 @@
         },
         {
           "date": "2026-10-14",
-          "rs": 93.444,
-          "momentum": 98.174
+          "rs": 93.507,
+          "momentum": 98.239
         }
       ],
       "components": [
@@ -11478,8 +11504,8 @@
           "return_20d": 5.935,
           "return_60d": 39.181,
           "return_ytd": 147.917,
-          "volume": 2056198.0,
-          "traded_value": 1468125372.0,
+          "volume": 2237198.0,
+          "traded_value": 1597359372.0,
           "year_high": false,
           "fresh": true
         },
@@ -11538,8 +11564,8 @@
           "return_20d": -7.782,
           "return_60d": -6.324,
           "return_ytd": 27.419,
-          "volume": 1052240.0,
-          "traded_value": 1246904400.0,
+          "volume": 1455240.0,
+          "traded_value": 1724459400.0,
           "year_high": false,
           "fresh": true
         },
@@ -11576,17 +11602,17 @@
         {
           "symbol": "6215",
           "name": "和椿",
-          "data_date": "2026-10-13",
-          "close": null,
-          "change_1d": null,
-          "return_5d": null,
-          "return_20d": null,
-          "return_60d": null,
-          "return_ytd": null,
-          "volume": null,
-          "traded_value": null,
+          "data_date": "2026-10-14",
+          "close": 94.3,
+          "change_1d": 2.723,
+          "return_5d": -3.874,
+          "return_20d": -3.971,
+          "return_60d": -5.606,
+          "return_ytd": -7.094,
+          "volume": 351258.0,
+          "traded_value": 33123629.4,
           "year_high": false,
-          "fresh": false
+          "fresh": true
         }
       ],
       "leaders": [
@@ -11621,17 +11647,17 @@
           "fresh": true
         },
         {
-          "symbol": "2049",
-          "name": "上銀",
+          "symbol": "6215",
+          "name": "和椿",
           "data_date": "2026-10-14",
-          "close": 333.0,
-          "change_1d": 1.835,
-          "return_5d": -1.915,
-          "return_20d": -7.242,
-          "return_60d": 8.824,
-          "return_ytd": 71.649,
-          "volume": 909625.0,
-          "traded_value": 302905125.0,
+          "close": 94.3,
+          "change_1d": 2.723,
+          "return_5d": -3.874,
+          "return_20d": -3.971,
+          "return_60d": -5.606,
+          "return_ytd": -7.094,
+          "volume": 351258.0,
+          "traded_value": 33123629.4,
           "year_high": false,
           "fresh": true
         }
@@ -11662,8 +11688,8 @@
           "return_20d": 5.935,
           "return_60d": 39.181,
           "return_ytd": 147.917,
-          "volume": 2056198.0,
-          "traded_value": 1468125372.0,
+          "volume": 2237198.0,
+          "traded_value": 1597359372.0,
           "year_high": false,
           "fresh": true
         },
@@ -12033,592 +12059,19 @@
       ]
     },
     {
-      "name": "記憶體／儲存",
-      "members_total": 12,
-      "members_valid": 12,
-      "members_fresh": 11,
-      "data_coverage_pct": 91.7,
-      "today_return": 1.725,
-      "yesterday_return": -4.986,
-      "return_5d": -4.185,
-      "return_20d": -2.655,
-      "return_60d": 11.314,
-      "return_ytd": 83.966,
-      "rising": 9,
-      "falling": 1,
-      "flat": 1,
-      "year_high_count": 0,
-      "market_turnover_share_pct": null,
-      "market_turnover_share_delta_pp": null,
-      "yesterday_market_turnover_share_pct": null,
-      "yesterday_market_turnover_share_delta_pp": null,
-      "sample_turnover_share_pct": null,
-      "sample_turnover_share_delta_pp": null,
-      "yesterday_sample_turnover_share_pct": null,
-      "yesterday_sample_turnover_share_delta_pp": null,
-      "relative_strength": 91.735,
-      "relative_momentum": 93.935,
-      "quadrant": "落後",
-      "previous_quadrant": "落後",
-      "quadrant_changed": false,
-      "rrg": [
-        {
-          "date": "2025-09-16",
-          "rs": 116.441,
-          "momentum": 116.037
-        },
-        {
-          "date": "2025-09-23",
-          "rs": 123.468,
-          "momentum": 116.544
-        },
-        {
-          "date": "2025-10-01",
-          "rs": 121.294,
-          "momentum": 104.167
-        },
-        {
-          "date": "2025-10-09",
-          "rs": 130.024,
-          "momentum": 105.31
-        },
-        {
-          "date": "2025-10-17",
-          "rs": 131.188,
-          "momentum": 108.158
-        },
-        {
-          "date": "2025-10-27",
-          "rs": 132.871,
-          "momentum": 102.19
-        },
-        {
-          "date": "2025-11-03",
-          "rs": 126.564,
-          "momentum": 96.475
-        },
-        {
-          "date": "2025-11-10",
-          "rs": 137.746,
-          "momentum": 103.668
-        },
-        {
-          "date": "2025-11-17",
-          "rs": 136.267,
-          "momentum": 107.667
-        },
-        {
-          "date": "2025-11-24",
-          "rs": 115.824,
-          "momentum": 84.085
-        },
-        {
-          "date": "2025-12-01",
-          "rs": 109.707,
-          "momentum": 80.508
-        },
-        {
-          "date": "2025-12-08",
-          "rs": 110.587,
-          "momentum": 95.479
-        },
-        {
-          "date": "2025-12-15",
-          "rs": 108.261,
-          "momentum": 98.682
-        },
-        {
-          "date": "2025-12-22",
-          "rs": 111.881,
-          "momentum": 101.17
-        },
-        {
-          "date": "2025-12-30",
-          "rs": 119.727,
-          "momentum": 110.591
-        },
-        {
-          "date": "2026-01-07",
-          "rs": 133.691,
-          "momentum": 119.493
-        },
-        {
-          "date": "2026-01-14",
-          "rs": 125.777,
-          "momentum": 105.054
-        },
-        {
-          "date": "2026-01-21",
-          "rs": 124.253,
-          "momentum": 92.941
-        },
-        {
-          "date": "2026-01-28",
-          "rs": 132.837,
-          "momentum": 105.613
-        },
-        {
-          "date": "2026-02-04",
-          "rs": 121.017,
-          "momentum": 97.396
-        },
-        {
-          "date": "2026-02-11",
-          "rs": 108.052,
-          "momentum": 81.341
-        },
-        {
-          "date": "2026-03-02",
-          "rs": 106.577,
-          "momentum": 88.067
-        },
-        {
-          "date": "2026-03-09",
-          "rs": 98.87,
-          "momentum": 91.502
-        },
-        {
-          "date": "2026-03-16",
-          "rs": 115.069,
-          "momentum": 107.968
-        },
-        {
-          "date": "2026-03-23",
-          "rs": 114.246,
-          "momentum": 115.552
-        },
-        {
-          "date": "2026-03-30",
-          "rs": 101.739,
-          "momentum": 88.415
-        },
-        {
-          "date": "2026-04-08",
-          "rs": 98.646,
-          "momentum": 86.345
-        },
-        {
-          "date": "2026-04-15",
-          "rs": 90.549,
-          "momentum": 89.002
-        },
-        {
-          "date": "2026-04-22",
-          "rs": 97.29,
-          "momentum": 98.626
-        },
-        {
-          "date": "2026-04-29",
-          "rs": 99.438,
-          "momentum": 109.817
-        },
-        {
-          "date": "2026-05-07",
-          "rs": 103.917,
-          "momentum": 106.811
-        },
-        {
-          "date": "2026-05-14",
-          "rs": 111.77,
-          "momentum": 112.402
-        },
-        {
-          "date": "2026-05-21",
-          "rs": 98.617,
-          "momentum": 94.9
-        },
-        {
-          "date": "2026-05-28",
-          "rs": 103.365,
-          "momentum": 92.479
-        },
-        {
-          "date": "2026-06-04",
-          "rs": 108.042,
-          "momentum": 109.557
-        },
-        {
-          "date": "2026-06-11",
-          "rs": 99.57,
-          "momentum": 96.329
-        },
-        {
-          "date": "2026-06-18",
-          "rs": 105.829,
-          "momentum": 97.951
-        },
-        {
-          "date": "2026-06-26",
-          "rs": 103.551,
-          "momentum": 103.998
-        },
-        {
-          "date": "2026-07-03",
-          "rs": 93.865,
-          "momentum": 88.695
-        },
-        {
-          "date": "2026-07-13",
-          "rs": 95.404,
-          "momentum": 92.132
-        },
-        {
-          "date": "2026-07-20",
-          "rs": 89.825,
-          "momentum": 95.696
-        },
-        {
-          "date": "2026-07-27",
-          "rs": 95.996,
-          "momentum": 100.62
-        },
-        {
-          "date": "2026-08-03",
-          "rs": 93.471,
-          "momentum": 104.06
-        },
-        {
-          "date": "2026-08-10",
-          "rs": 107.623,
-          "momentum": 112.113
-        },
-        {
-          "date": "2026-08-17",
-          "rs": 107.198,
-          "momentum": 114.685
-        },
-        {
-          "date": "2026-08-24",
-          "rs": 109.323,
-          "momentum": 101.579
-        },
-        {
-          "date": "2026-08-31",
-          "rs": 106.367,
-          "momentum": 99.225
-        },
-        {
-          "date": "2026-09-07",
-          "rs": 102.68,
-          "momentum": 93.924
-        },
-        {
-          "date": "2026-09-14",
-          "rs": 98.438,
-          "momentum": 92.545
-        },
-        {
-          "date": "2026-09-21",
-          "rs": 98.511,
-          "momentum": 95.94
-        },
-        {
-          "date": "2026-09-30",
-          "rs": 98.596,
-          "momentum": 100.161
-        },
-        {
-          "date": "2026-10-07",
-          "rs": 93.683,
-          "momentum": 95.099
-        },
-        {
-          "date": "2026-10-14",
-          "rs": 91.735,
-          "momentum": 93.935
-        }
-      ],
-      "components": [
-        {
-          "symbol": "2408",
-          "name": "南亞科",
-          "data_date": "2026-10-14",
-          "close": 480.5,
-          "change_1d": -1.537,
-          "return_5d": -8.476,
-          "return_20d": -2.535,
-          "return_60d": 21.492,
-          "return_ytd": 148.964,
-          "volume": 54728887.0,
-          "traded_value": 26297230203.5,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "4967",
-          "name": "十銓",
-          "data_date": "2026-10-14",
-          "close": 265.0,
-          "change_1d": 0.76,
-          "return_5d": -0.749,
-          "return_20d": -5.526,
-          "return_60d": 26.794,
-          "return_ytd": 40.212,
-          "volume": 1015828.0,
-          "traded_value": 269194420.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "5351",
-          "name": "鈺創",
-          "data_date": "2026-10-14",
-          "close": 110.0,
-          "change_1d": 2.326,
-          "return_5d": -2.655,
-          "return_20d": 1.382,
-          "return_60d": 25.0,
-          "return_ytd": 116.535,
-          "volume": 5825965.0,
-          "traded_value": 640856150.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "8299",
-          "name": "群聯",
-          "data_date": "2026-10-14",
-          "close": 1965.0,
-          "change_1d": 0.0,
-          "return_5d": -5.981,
-          "return_20d": -1.256,
-          "return_60d": 10.084,
-          "return_ytd": 35.517,
-          "volume": 1752594.0,
-          "traded_value": 3443847210.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "8131",
-          "name": "福懋科",
-          "data_date": "2026-10-14",
-          "close": 66.9,
-          "change_1d": 2.765,
-          "return_5d": 5.854,
-          "return_20d": 10.945,
-          "return_60d": -3.043,
-          "return_ytd": 3.4,
-          "volume": 4480470.0,
-          "traded_value": 299743443.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "6770",
-          "name": "力積電",
-          "data_date": "2026-10-14",
-          "close": 71.0,
-          "change_1d": 5.185,
-          "return_5d": -4.441,
-          "return_20d": 0.424,
-          "return_60d": 3.048,
-          "return_ytd": 79.52,
-          "volume": 106437316.0,
-          "traded_value": 7557049436.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "3260",
-          "name": "威剛",
-          "data_date": "2026-10-13",
-          "close": null,
-          "change_1d": null,
-          "return_5d": null,
-          "return_20d": null,
-          "return_60d": null,
-          "return_ytd": null,
-          "volume": null,
-          "traded_value": null,
-          "year_high": false,
-          "fresh": false
-        },
-        {
-          "symbol": "2451",
-          "name": "創見",
-          "data_date": "2026-10-14",
-          "close": 278.5,
-          "change_1d": 0.906,
-          "return_5d": -0.179,
-          "return_20d": 0.723,
-          "return_60d": 21.087,
-          "return_ytd": 42.092,
-          "volume": 1661944.0,
-          "traded_value": 462851404.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "8271",
-          "name": "宇瞻",
-          "data_date": "2026-10-14",
-          "close": 191.5,
-          "change_1d": 1.055,
-          "return_5d": -4.726,
-          "return_20d": -7.039,
-          "return_60d": 0.789,
-          "return_ytd": 69.469,
-          "volume": 773410.0,
-          "traded_value": 148108015.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "3006",
-          "name": "晶豪科",
-          "data_date": "2026-10-14",
-          "close": 247.0,
-          "change_1d": 2.066,
-          "return_5d": -9.689,
-          "return_20d": -14.974,
-          "return_60d": 24.747,
-          "return_ytd": 109.322,
-          "volume": 5963625.0,
-          "traded_value": 1473015375.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "2344",
-          "name": "華邦電",
-          "data_date": "2026-10-14",
-          "close": 165.0,
-          "change_1d": 2.167,
-          "return_5d": -7.042,
-          "return_20d": -3.79,
-          "return_60d": 6.452,
-          "return_ytd": 99.758,
-          "volume": 56696285.0,
-          "traded_value": 9354887025.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "2337",
-          "name": "旺宏",
-          "data_date": "2026-10-14",
-          "close": 110.0,
-          "change_1d": 3.286,
-          "return_5d": -7.95,
-          "return_20d": -7.563,
-          "return_60d": -12.0,
-          "return_ytd": 178.834,
-          "volume": 32547486.0,
-          "traded_value": 3580223460.0,
-          "year_high": false,
-          "fresh": true
-        }
-      ],
-      "leaders": [
-        {
-          "symbol": "6770",
-          "name": "力積電",
-          "data_date": "2026-10-14",
-          "close": 71.0,
-          "change_1d": 5.185,
-          "return_5d": -4.441,
-          "return_20d": 0.424,
-          "return_60d": 3.048,
-          "return_ytd": 79.52,
-          "volume": 106437316.0,
-          "traded_value": 7557049436.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "2337",
-          "name": "旺宏",
-          "data_date": "2026-10-14",
-          "close": 110.0,
-          "change_1d": 3.286,
-          "return_5d": -7.95,
-          "return_20d": -7.563,
-          "return_60d": -12.0,
-          "return_ytd": 178.834,
-          "volume": 32547486.0,
-          "traded_value": 3580223460.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "8131",
-          "name": "福懋科",
-          "data_date": "2026-10-14",
-          "close": 66.9,
-          "change_1d": 2.765,
-          "return_5d": 5.854,
-          "return_20d": 10.945,
-          "return_60d": -3.043,
-          "return_ytd": 3.4,
-          "volume": 4480470.0,
-          "traded_value": 299743443.0,
-          "year_high": false,
-          "fresh": true
-        }
-      ],
-      "laggards": [
-        {
-          "symbol": "2408",
-          "name": "南亞科",
-          "data_date": "2026-10-14",
-          "close": 480.5,
-          "change_1d": -1.537,
-          "return_5d": -8.476,
-          "return_20d": -2.535,
-          "return_60d": 21.492,
-          "return_ytd": 148.964,
-          "volume": 54728887.0,
-          "traded_value": 26297230203.5,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "8299",
-          "name": "群聯",
-          "data_date": "2026-10-14",
-          "close": 1965.0,
-          "change_1d": 0.0,
-          "return_5d": -5.981,
-          "return_20d": -1.256,
-          "return_60d": 10.084,
-          "return_ytd": 35.517,
-          "volume": 1752594.0,
-          "traded_value": 3443847210.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "4967",
-          "name": "十銓",
-          "data_date": "2026-10-14",
-          "close": 265.0,
-          "change_1d": 0.76,
-          "return_5d": -0.749,
-          "return_20d": -5.526,
-          "return_60d": 26.794,
-          "return_ytd": 40.212,
-          "volume": 1015828.0,
-          "traded_value": 269194420.0,
-          "year_high": false,
-          "fresh": true
-        }
-      ]
-    },
-    {
       "name": "測試介面／設備",
       "members_total": 6,
       "members_valid": 6,
-      "members_fresh": 5,
-      "data_coverage_pct": 83.3,
-      "today_return": -0.521,
+      "members_fresh": 6,
+      "data_coverage_pct": 100.0,
+      "today_return": -0.588,
       "yesterday_return": -5.174,
-      "return_5d": -3.104,
-      "return_20d": -4.153,
-      "return_60d": 10.077,
-      "return_ytd": 127.456,
+      "return_5d": -1.955,
+      "return_20d": -2.675,
+      "return_60d": 9.245,
+      "return_ytd": 133.139,
       "rising": 2,
-      "falling": 3,
+      "falling": 4,
       "flat": 0,
       "year_high_count": 0,
       "market_turnover_share_pct": null,
@@ -12629,8 +12082,8 @@
       "sample_turnover_share_delta_pp": null,
       "yesterday_sample_turnover_share_pct": null,
       "yesterday_sample_turnover_share_delta_pp": null,
-      "relative_strength": 96.79,
-      "relative_momentum": 101.357,
+      "relative_strength": 96.725,
+      "relative_momentum": 101.29,
       "quadrant": "改善",
       "previous_quadrant": "落後",
       "quadrant_changed": true,
@@ -12897,8 +12350,8 @@
         },
         {
           "date": "2026-10-14",
-          "rs": 96.79,
-          "momentum": 101.357
+          "rs": 96.725,
+          "momentum": 101.29
         }
       ],
       "components": [
@@ -12935,17 +12388,17 @@
         {
           "symbol": "6223",
           "name": "旺矽",
-          "data_date": "2026-10-13",
-          "close": null,
-          "change_1d": null,
-          "return_5d": null,
-          "return_20d": null,
-          "return_60d": null,
-          "return_ytd": null,
-          "volume": null,
-          "traded_value": null,
+          "data_date": "2026-10-14",
+          "close": 5885.0,
+          "change_1d": -0.926,
+          "return_5d": 3.792,
+          "return_20d": 4.715,
+          "return_60d": 5.089,
+          "return_ytd": 161.556,
+          "volume": 989372.0,
+          "traded_value": 5822454220.0,
           "year_high": false,
-          "fresh": false
+          "fresh": true
         },
         {
           "symbol": "7769",
@@ -12987,8 +12440,8 @@
           "return_20d": 4.167,
           "return_60d": 21.622,
           "return_ytd": 190.323,
-          "volume": 2512700.0,
-          "traded_value": 5653575000.0,
+          "volume": 2625700.0,
+          "traded_value": 5907825000.0,
           "year_high": false,
           "fresh": true
         }
@@ -13019,23 +12472,23 @@
           "return_20d": 4.167,
           "return_60d": 21.622,
           "return_ytd": 190.323,
-          "volume": 2512700.0,
-          "traded_value": 5653575000.0,
+          "volume": 2625700.0,
+          "traded_value": 5907825000.0,
           "year_high": false,
           "fresh": true
         },
         {
-          "symbol": "6515",
-          "name": "穎崴",
+          "symbol": "6223",
+          "name": "旺矽",
           "data_date": "2026-10-14",
-          "close": 5615.0,
-          "change_1d": -1.491,
-          "return_5d": -8.401,
-          "return_20d": -18.505,
-          "return_60d": -7.267,
-          "return_ytd": 97.711,
-          "volume": 459848.0,
-          "traded_value": 2582046520.0,
+          "close": 5885.0,
+          "change_1d": -0.926,
+          "return_5d": 3.792,
+          "return_20d": 4.715,
+          "return_60d": 5.089,
+          "return_ytd": 161.556,
+          "volume": 989372.0,
+          "traded_value": 5822454220.0,
           "year_high": false,
           "fresh": true
         }
@@ -13083,6 +12536,579 @@
           "return_ytd": 97.711,
           "volume": 459848.0,
           "traded_value": 2582046520.0,
+          "year_high": false,
+          "fresh": true
+        }
+      ]
+    },
+    {
+      "name": "記憶體／儲存",
+      "members_total": 12,
+      "members_valid": 12,
+      "members_fresh": 12,
+      "data_coverage_pct": 100.0,
+      "today_return": 1.685,
+      "yesterday_return": -4.986,
+      "return_5d": -3.893,
+      "return_20d": -3.159,
+      "return_60d": 10.394,
+      "return_ytd": 79.592,
+      "rising": 10,
+      "falling": 1,
+      "flat": 1,
+      "year_high_count": 0,
+      "market_turnover_share_pct": null,
+      "market_turnover_share_delta_pp": null,
+      "yesterday_market_turnover_share_pct": null,
+      "yesterday_market_turnover_share_delta_pp": null,
+      "sample_turnover_share_pct": null,
+      "sample_turnover_share_delta_pp": null,
+      "yesterday_sample_turnover_share_pct": null,
+      "yesterday_sample_turnover_share_delta_pp": null,
+      "relative_strength": 91.7,
+      "relative_momentum": 93.898,
+      "quadrant": "落後",
+      "previous_quadrant": "落後",
+      "quadrant_changed": false,
+      "rrg": [
+        {
+          "date": "2025-09-16",
+          "rs": 116.441,
+          "momentum": 116.037
+        },
+        {
+          "date": "2025-09-23",
+          "rs": 123.468,
+          "momentum": 116.544
+        },
+        {
+          "date": "2025-10-01",
+          "rs": 121.294,
+          "momentum": 104.167
+        },
+        {
+          "date": "2025-10-09",
+          "rs": 130.024,
+          "momentum": 105.31
+        },
+        {
+          "date": "2025-10-17",
+          "rs": 131.188,
+          "momentum": 108.158
+        },
+        {
+          "date": "2025-10-27",
+          "rs": 132.871,
+          "momentum": 102.19
+        },
+        {
+          "date": "2025-11-03",
+          "rs": 126.564,
+          "momentum": 96.475
+        },
+        {
+          "date": "2025-11-10",
+          "rs": 137.746,
+          "momentum": 103.668
+        },
+        {
+          "date": "2025-11-17",
+          "rs": 136.267,
+          "momentum": 107.667
+        },
+        {
+          "date": "2025-11-24",
+          "rs": 115.824,
+          "momentum": 84.085
+        },
+        {
+          "date": "2025-12-01",
+          "rs": 109.707,
+          "momentum": 80.508
+        },
+        {
+          "date": "2025-12-08",
+          "rs": 110.587,
+          "momentum": 95.479
+        },
+        {
+          "date": "2025-12-15",
+          "rs": 108.261,
+          "momentum": 98.682
+        },
+        {
+          "date": "2025-12-22",
+          "rs": 111.881,
+          "momentum": 101.17
+        },
+        {
+          "date": "2025-12-30",
+          "rs": 119.727,
+          "momentum": 110.591
+        },
+        {
+          "date": "2026-01-07",
+          "rs": 133.691,
+          "momentum": 119.493
+        },
+        {
+          "date": "2026-01-14",
+          "rs": 125.777,
+          "momentum": 105.054
+        },
+        {
+          "date": "2026-01-21",
+          "rs": 124.253,
+          "momentum": 92.941
+        },
+        {
+          "date": "2026-01-28",
+          "rs": 132.837,
+          "momentum": 105.613
+        },
+        {
+          "date": "2026-02-04",
+          "rs": 121.017,
+          "momentum": 97.396
+        },
+        {
+          "date": "2026-02-11",
+          "rs": 108.052,
+          "momentum": 81.341
+        },
+        {
+          "date": "2026-03-02",
+          "rs": 106.577,
+          "momentum": 88.067
+        },
+        {
+          "date": "2026-03-09",
+          "rs": 98.87,
+          "momentum": 91.502
+        },
+        {
+          "date": "2026-03-16",
+          "rs": 115.069,
+          "momentum": 107.968
+        },
+        {
+          "date": "2026-03-23",
+          "rs": 114.246,
+          "momentum": 115.552
+        },
+        {
+          "date": "2026-03-30",
+          "rs": 101.739,
+          "momentum": 88.415
+        },
+        {
+          "date": "2026-04-08",
+          "rs": 98.646,
+          "momentum": 86.345
+        },
+        {
+          "date": "2026-04-15",
+          "rs": 90.549,
+          "momentum": 89.002
+        },
+        {
+          "date": "2026-04-22",
+          "rs": 97.29,
+          "momentum": 98.626
+        },
+        {
+          "date": "2026-04-29",
+          "rs": 99.438,
+          "momentum": 109.817
+        },
+        {
+          "date": "2026-05-07",
+          "rs": 103.917,
+          "momentum": 106.811
+        },
+        {
+          "date": "2026-05-14",
+          "rs": 111.77,
+          "momentum": 112.402
+        },
+        {
+          "date": "2026-05-21",
+          "rs": 98.617,
+          "momentum": 94.9
+        },
+        {
+          "date": "2026-05-28",
+          "rs": 103.365,
+          "momentum": 92.479
+        },
+        {
+          "date": "2026-06-04",
+          "rs": 108.042,
+          "momentum": 109.557
+        },
+        {
+          "date": "2026-06-11",
+          "rs": 99.57,
+          "momentum": 96.329
+        },
+        {
+          "date": "2026-06-18",
+          "rs": 105.829,
+          "momentum": 97.951
+        },
+        {
+          "date": "2026-06-26",
+          "rs": 103.551,
+          "momentum": 103.998
+        },
+        {
+          "date": "2026-07-03",
+          "rs": 93.865,
+          "momentum": 88.695
+        },
+        {
+          "date": "2026-07-13",
+          "rs": 95.404,
+          "momentum": 92.132
+        },
+        {
+          "date": "2026-07-20",
+          "rs": 89.825,
+          "momentum": 95.696
+        },
+        {
+          "date": "2026-07-27",
+          "rs": 95.996,
+          "momentum": 100.62
+        },
+        {
+          "date": "2026-08-03",
+          "rs": 93.471,
+          "momentum": 104.06
+        },
+        {
+          "date": "2026-08-10",
+          "rs": 107.623,
+          "momentum": 112.113
+        },
+        {
+          "date": "2026-08-17",
+          "rs": 107.198,
+          "momentum": 114.685
+        },
+        {
+          "date": "2026-08-24",
+          "rs": 109.323,
+          "momentum": 101.579
+        },
+        {
+          "date": "2026-08-31",
+          "rs": 106.367,
+          "momentum": 99.225
+        },
+        {
+          "date": "2026-09-07",
+          "rs": 102.68,
+          "momentum": 93.924
+        },
+        {
+          "date": "2026-09-14",
+          "rs": 98.438,
+          "momentum": 92.545
+        },
+        {
+          "date": "2026-09-21",
+          "rs": 98.511,
+          "momentum": 95.94
+        },
+        {
+          "date": "2026-09-30",
+          "rs": 98.596,
+          "momentum": 100.161
+        },
+        {
+          "date": "2026-10-07",
+          "rs": 93.683,
+          "momentum": 95.099
+        },
+        {
+          "date": "2026-10-14",
+          "rs": 91.7,
+          "momentum": 93.898
+        }
+      ],
+      "components": [
+        {
+          "symbol": "2408",
+          "name": "南亞科",
+          "data_date": "2026-10-14",
+          "close": 480.5,
+          "change_1d": -1.537,
+          "return_5d": -8.476,
+          "return_20d": -2.535,
+          "return_60d": 21.492,
+          "return_ytd": 148.964,
+          "volume": 54728887.0,
+          "traded_value": 26297230203.5,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "4967",
+          "name": "十銓",
+          "data_date": "2026-10-14",
+          "close": 265.0,
+          "change_1d": 0.76,
+          "return_5d": -0.749,
+          "return_20d": -5.526,
+          "return_60d": 26.794,
+          "return_ytd": 40.212,
+          "volume": 1015828.0,
+          "traded_value": 269194420.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "5351",
+          "name": "鈺創",
+          "data_date": "2026-10-14",
+          "close": 110.0,
+          "change_1d": 2.326,
+          "return_5d": -2.655,
+          "return_20d": 1.382,
+          "return_60d": 25.0,
+          "return_ytd": 116.535,
+          "volume": 5825965.0,
+          "traded_value": 640856150.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "8299",
+          "name": "群聯",
+          "data_date": "2026-10-14",
+          "close": 1965.0,
+          "change_1d": 0.0,
+          "return_5d": -5.981,
+          "return_20d": -1.256,
+          "return_60d": 10.084,
+          "return_ytd": 35.517,
+          "volume": 1752594.0,
+          "traded_value": 3443847210.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "8131",
+          "name": "福懋科",
+          "data_date": "2026-10-14",
+          "close": 66.9,
+          "change_1d": 2.765,
+          "return_5d": 5.854,
+          "return_20d": 10.945,
+          "return_60d": -3.043,
+          "return_ytd": 3.4,
+          "volume": 4480470.0,
+          "traded_value": 299743443.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "6770",
+          "name": "力積電",
+          "data_date": "2026-10-14",
+          "close": 71.0,
+          "change_1d": 5.185,
+          "return_5d": -4.441,
+          "return_20d": 0.424,
+          "return_60d": 3.048,
+          "return_ytd": 79.52,
+          "volume": 106437316.0,
+          "traded_value": 7557049436.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "3260",
+          "name": "威剛",
+          "data_date": "2026-10-14",
+          "close": 367.5,
+          "change_1d": 1.24,
+          "return_5d": -0.676,
+          "return_20d": -8.696,
+          "return_60d": 0.273,
+          "return_ytd": 31.485,
+          "volume": 2050270.0,
+          "traded_value": 753474225.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "2451",
+          "name": "創見",
+          "data_date": "2026-10-14",
+          "close": 278.5,
+          "change_1d": 0.906,
+          "return_5d": -0.179,
+          "return_20d": 0.723,
+          "return_60d": 21.087,
+          "return_ytd": 42.092,
+          "volume": 1661944.0,
+          "traded_value": 462851404.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "8271",
+          "name": "宇瞻",
+          "data_date": "2026-10-14",
+          "close": 191.5,
+          "change_1d": 1.055,
+          "return_5d": -4.726,
+          "return_20d": -7.039,
+          "return_60d": 0.789,
+          "return_ytd": 69.469,
+          "volume": 773410.0,
+          "traded_value": 148108015.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "3006",
+          "name": "晶豪科",
+          "data_date": "2026-10-14",
+          "close": 247.0,
+          "change_1d": 2.066,
+          "return_5d": -9.689,
+          "return_20d": -14.974,
+          "return_60d": 24.747,
+          "return_ytd": 109.322,
+          "volume": 5963625.0,
+          "traded_value": 1473015375.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "2344",
+          "name": "華邦電",
+          "data_date": "2026-10-14",
+          "close": 165.0,
+          "change_1d": 2.167,
+          "return_5d": -7.042,
+          "return_20d": -3.79,
+          "return_60d": 6.452,
+          "return_ytd": 99.758,
+          "volume": 56696285.0,
+          "traded_value": 9354887025.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "2337",
+          "name": "旺宏",
+          "data_date": "2026-10-14",
+          "close": 110.0,
+          "change_1d": 3.286,
+          "return_5d": -7.95,
+          "return_20d": -7.563,
+          "return_60d": -12.0,
+          "return_ytd": 178.834,
+          "volume": 32547486.0,
+          "traded_value": 3580223460.0,
+          "year_high": false,
+          "fresh": true
+        }
+      ],
+      "leaders": [
+        {
+          "symbol": "6770",
+          "name": "力積電",
+          "data_date": "2026-10-14",
+          "close": 71.0,
+          "change_1d": 5.185,
+          "return_5d": -4.441,
+          "return_20d": 0.424,
+          "return_60d": 3.048,
+          "return_ytd": 79.52,
+          "volume": 106437316.0,
+          "traded_value": 7557049436.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "2337",
+          "name": "旺宏",
+          "data_date": "2026-10-14",
+          "close": 110.0,
+          "change_1d": 3.286,
+          "return_5d": -7.95,
+          "return_20d": -7.563,
+          "return_60d": -12.0,
+          "return_ytd": 178.834,
+          "volume": 32547486.0,
+          "traded_value": 3580223460.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "8131",
+          "name": "福懋科",
+          "data_date": "2026-10-14",
+          "close": 66.9,
+          "change_1d": 2.765,
+          "return_5d": 5.854,
+          "return_20d": 10.945,
+          "return_60d": -3.043,
+          "return_ytd": 3.4,
+          "volume": 4480470.0,
+          "traded_value": 299743443.0,
+          "year_high": false,
+          "fresh": true
+        }
+      ],
+      "laggards": [
+        {
+          "symbol": "2408",
+          "name": "南亞科",
+          "data_date": "2026-10-14",
+          "close": 480.5,
+          "change_1d": -1.537,
+          "return_5d": -8.476,
+          "return_20d": -2.535,
+          "return_60d": 21.492,
+          "return_ytd": 148.964,
+          "volume": 54728887.0,
+          "traded_value": 26297230203.5,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "8299",
+          "name": "群聯",
+          "data_date": "2026-10-14",
+          "close": 1965.0,
+          "change_1d": 0.0,
+          "return_5d": -5.981,
+          "return_20d": -1.256,
+          "return_60d": 10.084,
+          "return_ytd": 35.517,
+          "volume": 1752594.0,
+          "traded_value": 3443847210.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "4967",
+          "name": "十銓",
+          "data_date": "2026-10-14",
+          "close": 265.0,
+          "change_1d": 0.76,
+          "return_5d": -0.749,
+          "return_20d": -5.526,
+          "return_60d": 26.794,
+          "return_ytd": 40.212,
+          "volume": 1015828.0,
+          "traded_value": 269194420.0,
           "year_high": false,
           "fresh": true
         }
@@ -13410,8 +13436,8 @@
           "return_20d": -17.177,
           "return_60d": 26.806,
           "return_ytd": 166.8,
-          "volume": 672599.0,
-          "traded_value": 6729352995.0,
+          "volume": 680599.0,
+          "traded_value": 6809392995.0,
           "year_high": false,
           "fresh": true
         }
@@ -13442,8 +13468,8 @@
           "return_20d": -17.177,
           "return_60d": 26.806,
           "return_ytd": 166.8,
-          "volume": 672599.0,
-          "traded_value": 6729352995.0,
+          "volume": 680599.0,
+          "traded_value": 6809392995.0,
           "year_high": false,
           "fresh": true
         }
@@ -13459,8 +13485,8 @@
           "return_20d": -17.177,
           "return_60d": 26.806,
           "return_ytd": 166.8,
-          "volume": 672599.0,
-          "traded_value": 6729352995.0,
+          "volume": 680599.0,
+          "traded_value": 6809392995.0,
           "year_high": false,
           "fresh": true
         },
