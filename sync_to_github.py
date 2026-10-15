@@ -7,6 +7,8 @@
 做法：在旁邊的 clone（../stock_trading_git）對齊 origin/main，複製本機 git 追蹤的檔案，
 刪除 main 上本機已移除的程式檔。以下內容不會被刪除：output/（排程發布的資料）、.github/、.devcontainer/。
 推送前會檢查沒有 .env、secrets.toml、備份檔或寫死的金鑰。
+也會檢查上次同步之後，GitHub 上有沒有人直接修改程式檔（例如在網頁上改 README）；
+有的話會停下來列出檔案，請先把那些修改帶回本機，避免被覆蓋（確定要覆蓋時加 --overwrite-remote-edits）。
 """
 from __future__ import annotations
 
@@ -21,6 +23,7 @@ LOCAL = Path(__file__).resolve().parent
 CLONE = LOCAL.parent / "stock_trading_git"
 KEEP_ON_MAIN = ("output/", ".github/", ".devcontainer/")
 FORBIDDEN = re.compile(r"(^|/)\.env$|secrets\.toml$|\.bak|backup_|(^|/)__pycache__/")
+LAST_SYNC = LOCAL / ".git" / "github_last_sync"
 KEY_PATTERN = re.compile(r'FUGLE_API_KEY\s*=\s*["\']?[A-Za-z0-9+/=]{40,}')
 
 
@@ -41,6 +44,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="同步程式碼到 GitHub main")
     ap.add_argument("--push", action="store_true", help="提交並推送（沒有這個參數只預覽）")
     ap.add_argument("-m", "--message", default="Sync code from local project")
+    ap.add_argument("--overwrite-remote-edits", action="store_true", help="GitHub 上的直接修改也要覆蓋")
     ns = ap.parse_args()
 
     if not (CLONE / ".git").exists():
@@ -53,6 +57,15 @@ def main() -> int:
     git("fetch", "-q", "origin")
     git("checkout", "-q", "main")
     git("reset", "-q", "--hard", "origin/main")
+
+    # 上次同步之後，GitHub 上被直接修改的程式檔（output/ 由排程發布，不算）
+    if LAST_SYNC.exists() and not ns.overwrite_remote_edits:
+        since = LAST_SYNC.read_text(encoding="utf-8").strip()
+        edited = [f for f in git("diff", "--name-only", f"{since}..origin/main", check=False).splitlines()
+                  if f and not f.startswith(KEEP_ON_MAIN)]
+        if edited:
+            raise SystemExit("停止：上次同步後 GitHub 上有人直接修改了這些檔案，請先帶回本機再同步"
+                             "（或加 --overwrite-remote-edits 覆蓋）：\n  " + "\n  ".join(edited))
 
     local = tracked(LOCAL)
     local_set = set(local)
@@ -68,6 +81,7 @@ def main() -> int:
     changes = [line.split("\t") for line in git("diff", "--cached", "--name-status").splitlines() if line]
     if not changes:
         print("main 已經是最新，沒有需要同步的變更。")
+        LAST_SYNC.write_text(git("rev-parse", "origin/main").strip(), encoding="utf-8")
         return 0
     bad = [c[-1] for c in changes if c[0] != "D" and FORBIDDEN.search(c[-1])]
     leaked = [c[-1] for c in changes if c[0] != "D" and (CLONE / c[-1]).is_file()
@@ -91,6 +105,7 @@ def main() -> int:
     for attempt in range(2):
         out = subprocess.run(["git", "-C", str(CLONE), "push", "origin", "main"], capture_output=True, text=True)
         if out.returncode == 0:
+            LAST_SYNC.write_text(git("rev-parse", "HEAD").strip(), encoding="utf-8")
             print(f"已推送：{git('log', '--oneline', '-1').strip()}")
             return 0
         # 排程在這段時間發布了資料到 main：rebase 後再推一次

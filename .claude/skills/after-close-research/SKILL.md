@@ -25,6 +25,7 @@ description: 台股盤後研究。交易日收盤後建立研究包、閱讀證�
 | 題材 | `research_theme_evidence` | `... call get_theme_evidence "{\"theme\":\"...\"}"` |
 | 上一期筆記 | `research_previous_notes` | `... call get_previous_notes "{}"` |
 | 三大法人／即時行情 | `get_institutional_flow`、`get_quote`、`get_price_history` | —（研究包已有當日行情） |
+| 技術面型態（選用） | `analyze_entry(symbol)`：5 分 K／日 K 型態與日線趨勢 | `python entry_analysis.py analyze <代號>` |
 | 研究包外補查 | `research_search_live_news` | `... call search_live_news "{\"query\":\"...\"}"` |
 | **品質檢查** | `validate_afterclose_notes` | `python -c "import json,quality_checks as q;print(json.dumps(q.validate_afterclose('<DATE>'),ensure_ascii=False,indent=1))"` |
 

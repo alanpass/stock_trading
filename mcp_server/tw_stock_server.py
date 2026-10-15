@@ -3,6 +3,7 @@
 
 給 Claude（排程任務、互動對話）使用的結構化工具，分四組：
   1. 市場資料    get_quote / get_price_history / get_institutional_flow / get_holder_structure / get_market_status
+                 analyze_entry（5 分 K＋日 K 進場分析）／ audit_entry_model（進場模型樣本外稽核）
   2. 研究包查證  research_* （盤後、早報研究包；與 claude_tools.py 相同的工具實作）
   3. 流程維運    pipeline_status / get_job_brief / get_stock_note
   4. 品質把關    validate_afterclose_notes / validate_morning_notes / validate_finance_digest / validate_earnings_memo
@@ -28,6 +29,7 @@ os.chdir(ROOT)
 
 from mcp.server.mcpserver import MCPServer  # noqa: E402
 
+import entry_analysis  # noqa: E402
 import pipeline_status as ps  # noqa: E402
 import quality_checks as qc  # noqa: E402
 from agent_research_assistant import ResearchToolbox  # noqa: E402
@@ -132,6 +134,20 @@ def get_market_status() -> dict:
     now = datetime.now(TAIPEI)
     return {"now": now.isoformat(timespec="seconds"), "is_trading_day": bool(is_twse_trading_day(now, ROOT)),
             "status": market_status_text(now, ROOT)}
+
+
+@mcp.tool()
+def analyze_entry(symbol: str) -> dict:
+    """單一股票的進場分析：5 分 K／日 K 型態（-1 偏空～+1 偏多）、日內＋日線趨勢、進場評分與區間，
+    以及模型的樣本外表現（prob_has_skill=false 時回檔機率是歷史頻率）。技術面參考，不是買賣建議。"""
+    return _jsonable(entry_analysis.analyze(symbol))
+
+
+@mcp.tool()
+def audit_entry_model(symbols: list[str] | None = None) -> dict:
+    """重新訓練並以前推驗證稽核進場模型（不給 symbols＝全部自選股，約 5 秒／檔），
+    回報哪些股票的回檔機率模型比歷史頻率準、與上次稽核相比失去或恢復預測力的股票。"""
+    return _jsonable(entry_analysis.audit(symbols))
 
 
 # ---------------------------------------------------------------------------

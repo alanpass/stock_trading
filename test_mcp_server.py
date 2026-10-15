@@ -15,7 +15,7 @@ from mcp.client.stdio import stdio_client
 
 ROOT = Path(__file__).resolve().parent
 EXPECTED = {
-    "get_quote", "get_price_history", "get_institutional_flow", "get_holder_structure", "get_market_status",
+    "get_quote", "get_price_history", "analyze_entry", "audit_entry_model", "get_institutional_flow", "get_holder_structure", "get_market_status",
     "research_market_overview", "research_company_financial", "research_company_profile", "research_earnings_events",
     "research_read_fugle_memo", "research_news_batch", "research_search_news", "research_search_live_news",
     "research_theme_evidence", "research_previous_notes", "pipeline_status", "get_job_brief", "get_stock_note",
@@ -47,6 +47,7 @@ async def main(report_date: str) -> int:
             calls = [
                 ("get_market_status", {}),
                 ("get_quote", {"symbol": "2330"}),
+                ("analyze_entry", {"symbol": "2330"}),
                 ("research_market_overview", {"report_date": report_date}),
                 ("research_search_news", {"query": "台積電 法說", "limit": 2, "report_date": report_date}),
                 ("pipeline_status", {"report_date": report_date}),

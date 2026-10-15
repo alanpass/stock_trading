@@ -646,8 +646,27 @@ def _get_quote(code: str, _bucket: int) -> dict:
     fallback = previous_day_daily_quote(code)
     return fallback if fallback else {}
 
-@st.cache_data(ttl=2, show_spinner=False)
+class _NoData(Exception):
+    """取不到資料時丟出，讓 st.cache_data 不快取失敗結果（例如 Fugle 429）。"""
+
+
 def get_intraday(code: str, timeframe: str) -> pd.DataFrame:
+    try:
+        return _get_intraday_cached(clean_symbol(code), str(timeframe), _quote_bucket(LIVE_REFRESH_SECONDS))
+    except _NoData:
+        return pd.DataFrame()
+
+
+@st.cache_data(ttl=600, show_spinner=False, max_entries=256)
+def _get_intraday_cached(code: str, timeframe: str, _bucket: int) -> pd.DataFrame:
+    """盤中依 LIVE_REFRESH_SECONDS 更新；盤外分 K 不會變，快取 5 分鐘。失敗不快取。"""
+    k = _fetch_intraday(code, timeframe)
+    if k is None or k.empty:
+        raise _NoData(code)
+    return k
+
+
+def _fetch_intraday(code: str, timeframe: str) -> pd.DataFrame:
     """取得盤中或最近一個有效交易日的分 K。
 
     盤中：今日 intraday。
@@ -695,9 +714,19 @@ def get_intraday(code: str, timeframe: str) -> pd.DataFrame:
             pass
     return pd.DataFrame()
 
-@st.cache_data(ttl=2, show_spinner=False)
 def get_trades(code: str) -> pd.DataFrame:
-    payload = client._get(f"intraday/trades/{clean_symbol(code)}")
+    try:
+        return _get_trades_cached(clean_symbol(code), _quote_bucket(LIVE_REFRESH_SECONDS))
+    except _NoData:
+        return pd.DataFrame()
+
+
+@st.cache_data(ttl=600, show_spinner=False, max_entries=128)
+def _get_trades_cached(code: str, _bucket: int) -> pd.DataFrame:
+    try:
+        payload = client._get(f"intraday/trades/{code}")
+    except Exception as exc:
+        raise _NoData(code) from exc
     return pd.DataFrame(payload.get("data", []) or [])
 
 @st.cache_data(ttl=5, show_spinner=False)
@@ -4065,19 +4094,24 @@ def render_volume_snapshot():
 @st.cache_resource(show_spinner=False)
 def get_entry_model(selected: str, training_end_key: str):
     """優先載入模型；若舊模型損壞則自動重訓。"""
-    from entry_model import load_training_intraday, fit_model, load_saved_model, save_saved_model
+    from entry_model import fit_model, load_latest_saved_model, load_saved_model, load_training_intraday, save_saved_model
     try:
         saved = load_saved_model(selected, training_end_key)
         if saved is not None and hasattr(saved, "reg") and hasattr(saved, "clf"):
             return saved
     except Exception:
         pass
-    hist = load_training_intraday(client, selected, days=140)
-    if hist is None or hist.empty:
-        raise RuntimeError("無法取得最近交易日 5 分鐘歷史 K 線")
-    model = fit_model(hist, horizon_bars=6)
-    save_saved_model(selected, training_end_key, model)
-    return model
+    try:
+        # 訓練一天只做一次：Fugle 每分鐘額度滿時等待空檔，而不是直接放棄
+        hist = load_training_intraday(FugleClient(wait_on_limit=True), selected, days=140)
+        model = fit_model(hist, horizon_bars=6)
+        save_saved_model(selected, training_end_key, model)
+        return model
+    except Exception as exc:
+        fallback = load_latest_saved_model(selected)
+        if fallback is not None:
+            return fallback
+        raise RuntimeError(f"無法建立 5 分 K 模型：{exc}") from exc
 
 
 def render_entry_prediction():
@@ -4109,7 +4143,11 @@ def render_entry_prediction():
         if pd.isna(live_price):
             live_price = float(k5.close.iloc[-1])
         from entry_model import predict_entry
-        result = predict_entry(model, k5, float(live_price))
+        try:
+            daily_k = get_history(selected, 150)
+        except Exception:
+            daily_k = None
+        result = predict_entry(model, k5, float(live_price), daily=daily_k, market_open=is_market_open_now())
         result["reference_price"] = float(live_price)
     except Exception as e:
         st.error(f"進場建議分析失敗：{e}")
@@ -4152,15 +4190,18 @@ def render_entry_prediction():
 
     c5, c6, c7, c8 = st.columns(4)
     c5.metric("趨勢強度", f"{trend_score:.1f} / 100")
-    c6.metric("K線型態", result["pattern_name"])
-    c7.metric("未來30分進場機率", f"{result['opportunity_probability']*100:.1f}%")
+    c6.metric("K線型態（5分／日）", f"{result['pattern_name']}／{result['daily_pattern_name']}")
+    c7.metric("未來30分回檔機率" + ("" if result["model_has_skill"] else "（歷史頻率）"), f"{result['opportunity_probability']*100:.1f}%")
     c8.metric("VWAP", f"{result['vwap']:.2f}")
 
     st.markdown("#### K 線型態與趨勢分析")
-    a1, a2, a3 = st.columns(3)
-    a1.markdown(f"**目前趨勢**  \n### {result['trend_state']}")
-    a2.markdown(f"**目前 K 線**  \n### {result['pattern_name']}")
-    a3.markdown(f"**型態偏多分數**  \n### {result['pattern_score']:+.2f}")
+    if not result.get("market_open", True):
+        st.caption("目前非盤中：以下依最近一個交易日的收盤結構判斷，作為下一個交易日開盤的參考。")
+    a1, a2, a3, a4 = st.columns(4)
+    a1.markdown(f"**目前趨勢**  \n### {result['trend_state']}  \n日線：{result['daily_trend_state']}")
+    a2.markdown(f"**5 分 K 型態**  \n### {result['pattern_name']}  \n{result['pattern_desc']}")
+    a3.markdown(f"**日 K 型態**  \n### {result['daily_pattern_name']}  \n{result['daily_pattern_desc']}")
+    a4.markdown(f"**型態偏多分數（5分／日）**  \n### {result['pattern_score']:+.1f}／{result['daily_pattern_score']:+.1f}  \n-1 偏空 ～ +1 偏多")
 
     st.progress(float(np.clip(trend_score / 100, 0, 1)), text=f"趨勢強度 {trend_score:.1f} / 100")
     st.progress(float(np.clip(entry_score / 100, 0, 1)), text=f"進場評分 {entry_score:.1f} / 100")
@@ -4187,13 +4228,16 @@ def render_entry_prediction():
     reason_text = "\n".join(f"- {str(reason).strip()}" for reason in reasons if str(reason).strip())
     st.markdown(reason_text or "- 等待價格結構進一步確認")
 
+    bss = getattr(model, "brier_skill", float("nan"))
     st.markdown(
-        f"模型：**Random Forest + 5 分鐘 K 線型態/趨勢進場模型 v2**｜"
-        f"訓練樣本：**{model.train_samples:,}**｜交易日：**{model.train_days}**｜"
-        f"OOF 最低價 MAE：**{model.oof_mae*100:.3f}%**｜"
-        f"OOF 回檔方向準確率：**{model.oof_direction_accuracy*100:.1f}%**｜"
-        f"OOF 進場機會準確率：**{model.oof_opportunity_accuracy*100:.1f}%**"
+        f"模型：**Random Forest 5 分 K 回檔模型 v3**｜訓練樣本 **{model.train_samples:,}**（{model.train_days} 個交易日）｜"
+        f"前推驗證（最後 {getattr(model, 'oof_days', 0)} 個交易日，樣本外）：回檔機率 Brier skill **{bss:+.3f}**"
+        f"（> 0 代表比歷史頻率準）、準確率 **{model.oof_opportunity_accuracy*100:.1f}%**（基準 {model.baseline_accuracy*100:.1f}%）、"
+        f"最低價誤差 **{model.oof_mae*100:.2f}%**（基準 {model.naive_mae*100:.2f}%）｜"
+        f"評分採用：{'模型機率' if result['model_has_skill'] else '歷史回檔頻率'}、"
+        f"{'模型預測最低價' if result['low_model_has_skill'] else '現價 − 0.5 ATR'}"
     )
+    st.caption("技術面量化參考，不構成投資建議。")
 
     # ---------------- AI Agent 協作分析 ----------------
     try:

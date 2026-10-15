@@ -16,6 +16,7 @@ description: 單一台股的深度研究。使用者指定股票代號或名稱�
 3. `get_price_history(symbol, days=120)`：近 5／20／60 日報酬、是否創高、波動。
 4. `get_institutional_flow(symbol)`：近 10 日外資／投信／自營商買賣超與連續性。
 5. `get_holder_structure(symbol)`：大戶／散戶持股變化。
+5b. `analyze_entry(symbol)`：5 分 K／日 K 型態、日內＋日線趨勢、進場評分。引用時看 `model.prob_has_skill`：false 代表回檔機率只是歷史頻率，要在筆記中說明；這是技術面參考，不可寫成買賣建議。
 6. `get_stock_note(symbol)`：網站上現有的筆記（當作上一版，比對有什麼變化）。
 7. 新聞與基本面：今天有研究包時用 `research_search_news`、`research_company_financial`、`research_company_profile`（job="afterclose" 或 "morning"）；沒有時用 `research_search_live_news("<名稱> <代號>")`。
 8. 有近期法說會時：`research_earnings_events(symbol)`，必要時 `research_read_fugle_memo(url)`。

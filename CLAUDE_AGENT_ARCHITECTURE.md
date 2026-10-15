@@ -7,7 +7,7 @@ Python 只負責「抓資料、計算、寄信、發布」，Claude 負責「閱
 
 | 組成 | 是什麼 | 在專案裡的位置 |
 |---|---|---|
-| **MCP server** `tw-stock-research` | 22 個結構化工具：即時市場資料、研究包查證、流程維運、品質檢查 | `mcp_server/tw_stock_server.py`，註冊在 `.mcp.json`（`.claude/settings.json` 啟用） |
+| **MCP server** `tw-stock-research` | 24 個結構化工具：即時市場資料、研究包查證、流程維運、品質檢查 | `mcp_server/tw_stock_server.py`，註冊在 `.mcp.json`（`.claude/settings.json` 啟用） |
 | **Agent Skills** | 每個流程的操作手冊：步驟、該用的工具、輸出 JSON 格式、規則、自我檢查 | `.claude/skills/<流程>/SKILL.md` |
 | **品質把關** | 檢查 Claude 寫的結果：漏寫自選股、漲跌幅與行情不符、連結不在研究包、投資建議用語… | `quality_checks.py`；MCP `validate_*` 與 finalize／apply 共用 |
 | **排程任務** | Claude 桌面版 Scheduled tasks，到時間開一個 Claude session 執行對應 Skill | 使用者資料夾 `.claude/scheduled-tasks/tw-stock-*/SKILL.md` |
@@ -18,6 +18,7 @@ Python 只負責「抓資料、計算、寄信、發布」，Claude 負責「閱
 | 組別 | 工具 |
 |---|---|
 | 市場資料 | `get_quote`、`get_price_history`、`get_institutional_flow`、`get_holder_structure`、`get_market_status` |
+| 進場分析 | `analyze_entry`（5 分 K／日 K 型態、趨勢、評分、模型樣本外表現）、`audit_entry_model`（前推驗證稽核） |
 | 研究包查證 | `research_market_overview`、`research_company_financial`、`research_company_profile`、`research_earnings_events`、`research_read_fugle_memo`、`research_news_batch`、`research_search_news`、`research_search_live_news`、`research_theme_evidence`、`research_previous_notes` |
 | 流程維運 | `pipeline_status`、`get_job_brief`、`get_stock_note` |
 | 品質把關 | `validate_afterclose_notes`、`validate_morning_notes`、`validate_finance_digest`、`validate_earnings_memo` |
@@ -69,6 +70,7 @@ Windows 工作排程器（資料）                Claude 排程任務（研究�
 | 法說會 | `earnings-call-memo` | `earnings_memo.py export / apply` | `memo_notes.json` |
 | 流程維運 | `pipeline-health` | `pipeline_status.py` | 回報（自動修復安全步驟） |
 | 個股深度研究（隨時） | `stock-deep-research` | `stock_notes.py upsert` | `output/claude_jobs/deep/<代號>_<日期>.json` |
+| 進場模型稽核（每週六） | `entry-model-audit` | `entry_analysis.py audit` | `output/research_reports/entry_model_audit.json` |
 
 共用設定在 `ai_backend.py`（狀態標籤：`claude_agent`＝完成、`pending_claude`＝等待 Claude）。
 
@@ -95,3 +97,11 @@ Fugle 金鑰只放在 `.env`（本機）與 Streamlit Cloud 的 App Settings →
 - 第一次請對每個任務按一次 Run now 並允許需要的指令與 MCP 工具，之後就不會再停下來詢問。
 - Email 寄送失敗時 Skill 會回報原因，不會重複寄信。
 - 要新增 AI 流程：照同樣模式寫一個 prepare／apply 腳本、在 `quality_checks.py` 加檢查、寫 `.claude/skills/<名稱>/SKILL.md`，再建立排程任務。
+
+## 七、進場建議模型（entry_model.py v3）
+
+- K 線型態：略過收盤集合競價等零波動 K 棒，在 5 分 K 與日 K 上辨識 紅三兵／黑三兵、晨星／夜星、多空吞噬、長紅／長黑、錘子／上吊、倒錘／流星、十字等型態，分數 -1～+1。
+- 趨勢：日內（當日 VWAP、均線、動能）55%＋日線（MA20／MA60 位置與 MA20 斜率）45%。
+- 模型：預測同一交易日接下來 6 根 5 分 K 的最低價與「0.2%～2% 回檔」機率；以最後 40% 交易日做前推驗證。
+  回檔機率的 Brier skill < 0.02 時改用歷史回檔頻率；最低價誤差沒有比歷史中位數小 2% 時，最佳進場價改用「現價 − 0.5 ATR」。網站會標示目前採用哪一種。
+- 稽核：`entry-model-audit` 每週重新驗證，記錄預測力的變化。
