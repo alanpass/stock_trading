@@ -28,7 +28,7 @@ TAIPEI = ZoneInfo("Asia/Taipei")
 GITHUB_REPO_DEFAULT = "alanpass/stock_trading"
 PUBLIC_REPO_PATH = "output/research_reports/trend_patterns_public.json"
 BACKTEST_REPO_PATH = "output/research_reports/trend_pattern_backtest.json"
-BACKTEST_HORIZON = 40          # 回到 40 個交易日前判讀型態，再看之後 40 個交易日的報酬
+BACKTEST_HORIZON = 40          # 統計第 80～41 個交易日前那 40 根日 K（型態與期間內漲跌）
 BACKTEST_MIN_SAMPLES = 5       # 檔數少於此數的分組只列出、不參與「最賺錢」排名
 USER_AGENT = "Mozilla/5.0 TaiwanStockTrendPatterns/1.0"
 
@@ -551,78 +551,72 @@ def _publish_to_github(payload: dict[str, Any], repo_path: str = PUBLIC_REPO_PAT
 
 
 def backtest_patterns(histories: dict[str, pd.DataFrame], names: dict[str, str] | None = None,
-                      horizon: int = BACKTEST_HORIZON) -> dict[str, Any]:
-    """回到 horizon 個交易日前，用當時「最近 40 個交易日」判讀每檔股票的趨勢狀態與型態，
-    再計算之後 horizon 個交易日的報酬，依趨勢狀態／型態平均，看哪一類後來最賺錢。
-
-    只用當時已知的 K 棒判讀（不偷看未來）；報酬用還原收盤價，含除權息。這是單一期間的歷史統計，不代表未來。
+                      offset: int = BACKTEST_HORIZON) -> dict[str, Any]:
+    """取第 offset+40～offset+1 個交易日前（預設第 80～41 個交易日前）這 40 根日 K：
+    用這段 K 棒判讀每檔股票的趨勢狀態與型態，並計算同一段期間內的漲跌
+    （期間前一日收盤 → 期間最後一日收盤，還原股價），依分類統計平均漲跌、上漲股平均漲幅、下跌股平均跌幅。
     """
     names = names or {}
     rows: list[dict[str, Any]] = []
     for symbol, history in histories.items():
         data = _normalise_history(history)
-        if len(data) < 45 + horizon:
+        if len(data) < 45 + offset:
             continue
-        past = data.iloc[:-horizon]
+        past = data.iloc[:-offset] if offset else data
         try:
             signal = detect_pattern(past)
         except Exception:
             continue
         code = clean_symbol(symbol)
-        path = data["close"].iloc[-horizon - 1:].to_numpy(dtype=float)
+        window = past["close"].iloc[-41:].to_numpy(dtype=float)  # 期間前一日收盤 + 40 根
         rows.append({
             "symbol": code, "name": names.get(code, code),
             "classification": signal["classification"], "pattern_name": signal["pattern_name"],
             "window_start": pd.Timestamp(past["date"].iloc[-40]).strftime("%Y-%m-%d"),
-            "assessed_on": pd.Timestamp(past["date"].iloc[-1]).strftime("%Y-%m-%d"),
-            "window_return_pct": round((float(past["close"].iloc[-1]) / float(past["close"].iloc[-40]) - 1) * 100, 2),
-            "ended_on": pd.Timestamp(data["date"].iloc[-1]).strftime("%Y-%m-%d"),
-            "forward_return_pct": round((path[-1] / path[0] - 1) * 100, 2),
-            "max_drawdown_pct": round(float(np.min(path / np.maximum.accumulate(path)) - 1) * 100, 2),
+            "window_end": pd.Timestamp(past["date"].iloc[-1]).strftime("%Y-%m-%d"),
+            "window_return_pct": round((window[-1] / window[0] - 1) * 100, 2),
+            "max_drawdown_pct": round(float(np.min(window / np.maximum.accumulate(window)) - 1) * 100, 2),
         })
     if not rows:
         return {}
     frame = pd.DataFrame(rows)
-    overall = float(frame["forward_return_pct"].mean())
+
+    def stats(ret: pd.Series) -> dict[str, Any]:
+        up, down = ret[ret > 0], ret[ret <= 0]
+        return {
+            "count": int(len(ret)),
+            "avg_return_pct": round(float(ret.mean()), 2), "median_return_pct": round(float(ret.median()), 2),
+            "up_count": int(len(up)), "up_avg_pct": round(float(up.mean()), 2) if len(up) else None,
+            "down_count": int(len(down)), "down_avg_pct": round(float(down.mean()), 2) if len(down) else None,
+        }
 
     def summarise(column: str) -> list[dict[str, Any]]:
         out = []
         for key, group in frame.groupby(column):
-            ret = group["forward_return_pct"]
-            ranked = group.sort_values("forward_return_pct", ascending=False).to_dict("records")
-            label = lambda r: f"{r['name']}（{r['symbol']}）{r['forward_return_pct']:+.1f}%"
-            out.append({
-                column: key, "count": int(len(group)),
-                "avg_return_pct": round(float(ret.mean()), 2), "median_return_pct": round(float(ret.median()), 2),
-                "win_rate_pct": round(float((ret > 0).mean() * 100), 1),
-                "excess_vs_all_pct": round(float(ret.mean()) - overall, 2),
-                "avg_max_drawdown_pct": round(float(group["max_drawdown_pct"].mean()), 2),
-                "avg_window_return_pct": round(float(group["window_return_pct"].mean()), 2),
-                "enough_samples": bool(len(group) >= BACKTEST_MIN_SAMPLES),
-                "best": [label(r) for r in ranked[:3]],
-                "worst": [label(r) for r in ranked[::-1][:3]],
-            })
-        return sorted(out, key=lambda r: (not r["enough_samples"], -r["avg_return_pct"]))
+            ranked = group.sort_values("window_return_pct", ascending=False).to_dict("records")
+            label = lambda r: f"{r['name']}（{r['symbol']}）{r['window_return_pct']:+.1f}%"
+            out.append({column: key, **stats(group["window_return_pct"]),
+                        "avg_max_drawdown_pct": round(float(group["max_drawdown_pct"].mean()), 2),
+                        "enough_samples": bool(len(group) >= BACKTEST_MIN_SAMPLES),
+                        "best": [label(r) for r in ranked[:3]], "worst": [label(r) for r in ranked[::-1][:3]]})
+        return sorted(out, key=lambda r: -r["avg_return_pct"])
 
     by_class, by_pattern = summarise("classification"), summarise("pattern_name")
     ranked_class = [r for r in by_class if r["enough_samples"]]
     ranked_pattern = [r for r in by_pattern if r["enough_samples"]]
     return {
-        "schema_version": 1, "report_type": "trend_pattern_backtest",
+        "schema_version": 2, "report_type": "trend_pattern_window_stats",
         "generated_at": _now().isoformat(timespec="seconds"),
-        "horizon_trading_days": horizon, "window_trading_days": 40,
-        "window_start": str(frame["window_start"].mode().iloc[0]),
-        "assessed_on": str(frame["assessed_on"].mode().iloc[0]), "ended_on": str(frame["ended_on"].max()),
-        "symbols": int(len(frame)), "all_avg_return_pct": round(overall, 2),
-        "all_median_return_pct": round(float(frame["forward_return_pct"].median()), 2),
-        "all_win_rate_pct": round(float((frame["forward_return_pct"] > 0).mean() * 100), 1),
+        "offset_trading_days": offset, "window_trading_days": 40,
+        "window_start": str(frame["window_start"].mode().iloc[0]), "window_end": str(frame["window_end"].mode().iloc[0]),
+        "symbols": int(len(frame)), "all": stats(frame["window_return_pct"]),
         "min_samples": BACKTEST_MIN_SAMPLES,
         "best_classification": ranked_class[0]["classification"] if ranked_class else None,
         "best_pattern": ranked_pattern[0]["pattern_name"] if ranked_pattern else None,
         "by_classification": by_class, "by_pattern": by_pattern,
-        "stocks": sorted(rows, key=lambda r: -r["forward_return_pct"]),
-        "note": (f"以第 {horizon + 40}～{horizon + 1} 個交易日前的 40 根日 K 判讀型態（不使用之後的資料），"
-                 f"再計算之後 {horizon} 個交易日的還原股價報酬。單一期間、等權平均的歷史統計，不代表未來，也不構成投資建議。"),
+        "stocks": sorted(rows, key=lambda r: -r["window_return_pct"]),
+        "note": (f"取第 {offset + 40}～{offset + 1} 個交易日前的 40 根日 K 判讀趨勢型態，並計算同一期間內的漲跌"
+                 "（期間前一日收盤到期間最後一日收盤，還原股價）。歷史統計，不構成投資建議。"),
     }
 
 
@@ -634,13 +628,13 @@ def update_trend_backtest(base: Path, histories: dict[str, pd.DataFrame], publis
     path = base / BACKTEST_REPO_PATH
     try:
         old = json.loads(path.read_text(encoding="utf-8"))
-        if old.get("ended_on") == report["ended_on"] and old.get("stocks") == report["stocks"]:
-            return {"ok": True, "no_change": True, "ended_on": report["ended_on"]}
+        if old.get("stocks") == report["stocks"]:
+            return {"ok": True, "no_change": True, "window_end": report["window_end"]}
     except Exception:
         pass
-    github = _publish_to_github(report, BACKTEST_REPO_PATH, f"Update trend pattern backtest {report['ended_on']}") if publish else None
+    github = _publish_to_github(report, BACKTEST_REPO_PATH, f"Update trend pattern window stats {report['window_end']}") if publish else None
     _atomic_write(path, json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False) + "\n")
-    return {"ok": True, "assessed_on": report["assessed_on"], "ended_on": report["ended_on"],
+    return {"ok": True, "window_start": report["window_start"], "window_end": report["window_end"],
             "best_classification": report["best_classification"], "github": github}
 
 

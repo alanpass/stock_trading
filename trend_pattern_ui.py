@@ -318,56 +318,55 @@ def _render_live_chart(symbol: str) -> None:
 
 
 def _render_backtest(base: Path) -> None:
-    """40 個交易日前的型態，之後 40 個交易日的平均報酬（排程每天產生的 trend_pattern_backtest.json）。"""
+    """第 80～41 個交易日前那 40 根日 K：各趨勢分類的股票在期間內平均漲跌（排程每天產生 trend_pattern_backtest.json）。"""
     bt = load_trend_backtest(base)
-    st.markdown('<div class="feature-section-title">型態回測｜80～41 個交易日前的型態，之後 40 日誰最賺錢</div>', unsafe_allow_html=True)
-    if not bt.get("by_classification"):
-        st.info("尚未產生回測結果；下一次趨勢型態排程執行後會出現。")
+    st.markdown('<div class="feature-section-title">期間統計｜第 80～41 個交易日前，各趨勢型態的平均漲跌</div>', unsafe_allow_html=True)
+    if bt.get("report_type") != "trend_pattern_window_stats" or not bt.get("by_classification"):
+        st.info("尚未產生期間統計；下一次趨勢型態排程執行後會出現。")
         return
-    horizon = int(bt.get("horizon_trading_days", 40))
-    best_c, best_p = bt.get("best_classification"), bt.get("best_pattern")
-    rows_c = {r["classification"]: r for r in bt["by_classification"]}
-    rows_p = {r["pattern_name"]: r for r in bt["by_pattern"]}
+    offset = int(bt.get("offset_trading_days", 40))
     st.markdown(
-        f"**型態判讀期間：** {bt.get('window_start', '—')} ～ {bt.get('assessed_on')}（第 {horizon + 40}～{horizon + 1} 個交易日前，共 40 根日 K）  \n"
-        f"**報酬計算期間：** {bt.get('assessed_on')} ～ {bt.get('ended_on')}（之後 {horizon} 個交易日）  \n"
-        f"{bt.get('symbols')} 檔概念股；檔數少於 {bt.get('min_samples', 5)} 的分組不參與排名。"
+        f"**統計期間：** {bt.get('window_start')} ～ {bt.get('window_end')}"
+        f"（第 {offset + 40}～{offset + 1} 個交易日前，共 40 根日 K）  \n"
+        f"用這 40 根日 K 判讀趨勢型態，漲跌＝期間前一日收盤到 {bt.get('window_end')} 收盤（還原股價）。"
+        f"{bt.get('symbols')} 檔概念股。"
     )
+    pct = lambda v: "—" if v is None else f"{v:+.2f}%"
+    a = bt["all"]
     cols = st.columns(4)
-    cols[0].metric("全部概念股平均", f"{bt['all_avg_return_pct']:+.2f}%", f"中位數 {bt['all_median_return_pct']:+.2f}%", delta_color="off")
-    if best_c:
-        r = rows_c[best_c]
-        cols[1].metric("平均最賺錢的趨勢狀態", best_c, f"平均 {r['avg_return_pct']:+.2f}%｜中位數 {r['median_return_pct']:+.2f}%（{r['count']} 檔）", delta_color="off")
-    if best_p:
-        r = rows_p[best_p]
-        cols[2].metric("平均最賺錢的型態", best_p, f"平均 {r['avg_return_pct']:+.2f}%｜中位數 {r['median_return_pct']:+.2f}%（{r['count']} 檔）", delta_color="off")
-    cols[3].metric("全部上漲比例", f"{bt.get('all_win_rate_pct', 0):.0f}%")
+    cols[0].metric("全部平均漲跌", pct(a["avg_return_pct"]), f"中位數 {pct(a['median_return_pct'])}", delta_color="off")
+    cols[1].metric("上漲股平均漲幅", pct(a["up_avg_pct"]), f"{a['up_count']} 檔上漲", delta_color="off")
+    cols[2].metric("下跌股平均跌幅", pct(a["down_avg_pct"]), f"{a['down_count']} 檔下跌", delta_color="off")
+    best = bt.get("best_classification")
+    if best:
+        r = next(x for x in bt["by_classification"] if x["classification"] == best)
+        cols[3].metric(f"平均最賺錢（≥{bt.get('min_samples', 5)} 檔）", best, f"平均 {pct(r['avg_return_pct'])}（{r['count']} 檔）", delta_color="off")
 
     def table(items: list[dict], key: str, label: str) -> pd.DataFrame:
         return pd.DataFrame([{
-            label: r[key], "檔數": r["count"], "平均報酬%": r["avg_return_pct"], "中位數報酬%": r["median_return_pct"],
-            "上漲比例%": r["win_rate_pct"], "相對全體%": r["excess_vs_all_pct"], "期間最大回檔%": r["avg_max_drawdown_pct"], "判讀期間漲跌%": r.get("avg_window_return_pct"),
-            "樣本": "足夠" if r["enough_samples"] else "不足", "表現最好": "、".join(r["best"]), "表現最差": "、".join(r["worst"]),
+            label: r[key], "檔數": r["count"], "平均漲跌%": r["avg_return_pct"], "中位數%": r["median_return_pct"],
+            "上漲檔數": r["up_count"], "上漲股平均漲幅%": r["up_avg_pct"],
+            "下跌檔數": r["down_count"], "下跌股平均跌幅%": r["down_avg_pct"],
+            "期間最大回檔%": r["avg_max_drawdown_pct"],
+            "漲最多": "、".join(r["best"]), "跌最多": "、".join(r["worst"]),
         } for r in items])
 
-    fmt = {c: "{:+.2f}" for c in ("平均報酬%", "中位數報酬%", "相對全體%", "期間最大回檔%", "判讀期間漲跌%")} | {"上漲比例%": "{:.0f}"}
-    st.dataframe(table(bt["by_classification"], "classification", "判讀期間趨勢狀態").style.format(fmt),
+    fmt = {c: "{:+.2f}" for c in ("平均漲跌%", "中位數%", "上漲股平均漲幅%", "下跌股平均跌幅%", "期間最大回檔%")}
+    st.dataframe(table(bt["by_classification"], "classification", "趨勢狀態").style.format(fmt, na_rep="—"),
                  use_container_width=True, hide_index=True)
     with st.expander("依型態細分（頭肩、雙底、楔形…）", expanded=False):
-        st.dataframe(table(bt["by_pattern"], "pattern_name", "判讀期間型態").style.format(fmt),
+        st.dataframe(table(bt["by_pattern"], "pattern_name", "型態").style.format(fmt, na_rep="—"),
                      use_container_width=True, hide_index=True)
     with st.expander(f"個股明細（{len(bt.get('stocks', []))} 檔）", expanded=False):
         stocks = pd.DataFrame(bt.get("stocks", []))
         if not stocks.empty:
-            stocks = stocks.rename(columns={"symbol": "代號", "name": "名稱", "classification": "判讀期間趨勢狀態",
-                                            "pattern_name": "判讀期間型態", "forward_return_pct": "之後報酬%",
-                                            "max_drawdown_pct": "期間最大回檔%", "window_return_pct": "判讀期間漲跌%"})
-            st.dataframe(stocks[["代號", "名稱", "判讀期間趨勢狀態", "判讀期間型態", "判讀期間漲跌%", "之後報酬%", "期間最大回檔%"]],
+            stocks = stocks.rename(columns={"symbol": "代號", "name": "名稱", "classification": "趨勢狀態",
+                                            "pattern_name": "型態", "window_return_pct": "期間漲跌%",
+                                            "max_drawdown_pct": "期間最大回檔%"})
+            st.dataframe(stocks[["代號", "名稱", "趨勢狀態", "型態", "期間漲跌%", "期間最大回檔%"]],
                          use_container_width=True, hide_index=True)
-    st.caption(
-        "讀法：平均報酬容易被少數大漲股拉高，請同時看中位數與上漲比例。這只是單一期間的歷史統計，"
-        "市場整體漲跌會影響所有分組，不代表未來會重複，也不構成投資建議。"
-    )
+    st.caption("型態是用同一段 K 棒判讀的，這裡描述的是「各型態在形成期間的漲跌」，不是之後的報酬；"
+               "檔數少的分組容易被單一個股左右。歷史統計，不構成投資建議。")
 
 
 def render_trend_patterns_workspace(base_dir: str | Path) -> None:
