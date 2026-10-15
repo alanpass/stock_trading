@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-10-15",
-  "updated_at": "2026-10-15T08:03:49+08:00",
-  "finished_at": "2026-10-15T08:04:37+08:00",
-  "published_at": "2026-10-15T08:04:37+08:00",
+  "updated_at": "2026-10-15T08:10:02+08:00",
+  "finished_at": "2026-10-15T08:10:24+08:00",
+  "published_at": "2026-10-15T08:10:24+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -15,15 +15,15 @@
     "23:00"
   ],
   "stale": false,
-  "news_count": 340,
+  "news_count": 342,
   "earnings_count": 3,
   "news_digest": {
-    "generated_at": "2026-10-15T08:03:49+08:00",
-    "headline": "最近 2 天共整理 340 則財經新聞：利多 155、利空 108、中性 46、混合 31；討論度最高的產業：AI／伺服器、半導體、國際股市。",
+    "generated_at": "2026-10-15T08:10:02+08:00",
+    "headline": "最近 2 天共整理 342 則財經新聞：利多 156、利空 109、中性 46、混合 31；討論度最高的產業：AI／伺服器、半導體、國際股市。",
     "stats": {
-      "total": 340,
-      "利多": 155,
-      "利空": 108,
+      "total": 342,
+      "利多": 156,
+      "利空": 109,
       "中性": 46,
       "混合": 31
     },
@@ -228,16 +228,16 @@
     "sector_heat": [
       {
         "sector": "AI／伺服器",
-        "count": 190,
-        "利多": 95,
-        "利空": 51,
+        "count": 192,
+        "利多": 96,
+        "利空": 52,
         "tone": "偏多"
       },
       {
         "sector": "半導體",
-        "count": 123,
+        "count": 124,
         "利多": 54,
-        "利空": 45,
+        "利空": 46,
         "tone": "偏多"
       },
       {
@@ -249,9 +249,9 @@
       },
       {
         "sector": "總體經濟",
-        "count": 73,
+        "count": 74,
         "利多": 22,
-        "利空": 42,
+        "利空": 43,
         "tone": "偏空"
       },
       {
@@ -327,7 +327,7 @@
     "agent_generated_at": "2026-10-14T23:24:57+08:00"
   },
   "earnings_digest": {
-    "generated_at": "2026-10-15T08:03:49+08:00",
+    "generated_at": "2026-10-15T08:10:02+08:00",
     "days": 5,
     "total": 3,
     "利多": 2,
@@ -465,24 +465,24 @@
   },
   "crawl": {
     "ok": true,
-    "article_count": 340,
+    "article_count": 342,
     "per_category_count": {
       "headline": 216,
       "tw_stock": 102,
-      "wd_stock": 222,
+      "wd_stock": 224,
       "forex": 5,
       "future": 44
     },
     "source_method": "api",
-    "reused_from_previous_run": 28,
+    "reused_from_previous_run": 60,
     "window_start": "2026-10-14T00:00:00+08:00",
-    "window_end": "2026-10-15T08:04:36.505153+08:00"
+    "window_end": "2026-10-15T08:10:23.519599+08:00"
   },
   "agent_stats": {
-    "input": 340,
-    "after_dedupe": 340,
+    "input": 342,
+    "after_dedupe": 342,
     "ai_cached": 0,
-    "seconds": 0.7,
+    "seconds": 0.6,
     "earnings": {
       "total": 3,
       "ai_cached": 3,
@@ -3446,9 +3446,9 @@
     },
     {
       "article_id": "6630553",
-      "title": "鉅亨速報 - Factset 最新調查：卡夫亨氏KHC-US的目標價調降至23元，幅度約4.17% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：卡夫亨氏KHC-US的目標價調降至23元，幅度約4.17%",
       "url": "https://news.cnyes.com/news/id/6630553",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-14 22:15:34",
       "published_ts": "2026-10-14T22:15:34+08:00",
       "ai_points": [
@@ -3481,9 +3481,9 @@
     },
     {
       "article_id": "6630608",
-      "title": "鉅亨速報 - Factset 最新調查：Halozyme治療HALO-US的目標價調升至110元，幅度約4.76% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：Halozyme治療HALO-US的目標價調升至110元，幅度約4.76%",
       "url": "https://news.cnyes.com/news/id/6630608",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-15 00:15:25",
       "published_ts": "2026-10-15T00:15:25+08:00",
       "ai_points": [
@@ -3514,9 +3514,9 @@
     },
     {
       "article_id": "6630609",
-      "title": "鉅亨速報 - Factset 最新調查：那提拉NTRA-US的目標價調升至410元，幅度約7.19% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：那提拉NTRA-US的目標價調升至410元，幅度約7.19%",
       "url": "https://news.cnyes.com/news/id/6630609",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-15 00:15:33",
       "published_ts": "2026-10-15T00:15:33+08:00",
       "ai_points": [
@@ -3573,6 +3573,43 @@
         "輝達",
         "AI",
         "晶片"
+      ],
+      "why": "",
+      "importance": 7.0,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6630311",
+      "title": "美股重點新聞摘要2026年10月15日",
+      "url": "https://news.cnyes.com/news/id/6630311",
+      "category": "美股雷達",
+      "published": "2026-10-15 08:10:05",
+      "published_ts": "2026-10-15T08:10:05+08:00",
+      "ai_points": [
+        "今日操盤前瞻 台積電財報 美國上周初領失業金人數 美國9月PPI 輝達、台積電ADR跌逾3% 通膨數據加深晶片股賣壓 晶片股賣壓週三(14日)進一步加劇。",
+        "由於通膨數據高於預期，市場擔憂聯準會(Fed)可能進一步升息，推高資金成本，進而打亂AI交易行情。",
+        "台積電ADR下跌3.4%，超微( AMD-US )重挫5.7%。"
+      ],
+      "summary": "今日操盤前瞻 台積電財報 美國上周初領失業金人數 美國9月PPI 輝達、台積電ADR跌逾3% 通膨數據加深晶片股賣壓 晶片股賣壓週三(14日)進一步加劇。；由於通膨數據高於預期，市場擔憂聯準會(Fed)可能進一步升息，推高資金成本，進而打亂AI交易行情。；台積電ADR下跌3.4%，超微( AMD-US )重挫5.7%。",
+      "sentiment": "利空",
+      "sectors": [
+        "AI／伺服器",
+        "總體經濟",
+        "半導體"
+      ],
+      "stocks": [],
+      "highlights": [
+        "3.4%",
+        "5.7%",
+        "Fed",
+        "聯準會",
+        "台積電",
+        "3%",
+        "財報",
+        "升息",
+        "輝達",
+        "下跌"
       ],
       "why": "",
       "importance": 7.0,
@@ -4263,9 +4300,9 @@
     },
     {
       "article_id": "6630552",
-      "title": "鉅亨速報 - Factset 最新調查：Atlassian Corporation - Class ATEAM-US的目標價調升至197元，幅度約6.49% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：Atlassian Corporation - Class ATEAM-US的目標價調升至197元，幅度約6.49%",
       "url": "https://news.cnyes.com/news/id/6630552",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-14 22:15:33",
       "published_ts": "2026-10-14T22:15:33+08:00",
       "ai_points": [
@@ -4337,9 +4374,9 @@
     },
     {
       "article_id": "6630610",
-      "title": "鉅亨速報 - Factset 最新調查：Caris Life Sciences, Inc.CAI-US的目標價調升至33元，幅度約3.13% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：Caris Life Sciences, Inc.CAI-US的目標價調升至33元，幅度約3.13%",
       "url": "https://news.cnyes.com/news/id/6630610",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-15 00:15:35",
       "published_ts": "2026-10-15T00:15:35+08:00",
       "ai_points": [
@@ -4963,6 +5000,41 @@
       "source": "鉅亨網"
     },
     {
+      "article_id": "6630764",
+      "title": "營收季增45%仍不夠？Anthropic衝刺2兆美元IPO，5,180億美元算力支出成關鍵考驗",
+      "url": "https://news.cnyes.com/news/id/6630764",
+      "category": "美股雷達",
+      "published": "2026-10-15 08:00:36",
+      "published_ts": "2026-10-15T08:00:36+08:00",
+      "ai_points": [
+        "2026年10月15日（優分析／產業數據中心報導）⸺ 生成式AI公司Anthropic營收快速成長，2026年第3季營收達168億美元，較第2季的116億美元成長45%…",
+        "出席投資人透露，公司2026年第1季營收為47億美元，第2季增至116億美元，第3季進一步攀升至168億美元，顯示旗下Claude系列AI模型的商業化規模持續擴大。",
+        "Anthropic在2025年營收擴大至前一年的約12倍，達46億美元，但排除主要與過往募資相關的負債減記影響後，營業虧損仍超過80億美元。"
+      ],
+      "summary": "2026年10月15日（優分析／產業數據中心報導）⸺ 生成式AI公司Anthropic營收快速成長，2026年第3季營收達168億美元，較第2季的116億美元成長45%…；出席投資人透露，公司2026年第1季營收為47億美元，第2季增至116億美元，第3季進一步攀升至168億美元，顯示旗下Claude系列AI模型的商業化規模持續擴大。；Anthropic在2025年營收擴大至前一年的約12倍，達46億美元，但排除主要與過往募資相關的負債減記影響後，營業虧損仍超過80億美元。",
+      "sentiment": "利多",
+      "sectors": [
+        "AI／伺服器"
+      ],
+      "stocks": [],
+      "highlights": [
+        "168億美元",
+        "116億美元",
+        "47億美元",
+        "46億美元",
+        "80億美元",
+        "45%",
+        "12倍",
+        "3季",
+        "2季",
+        "1季"
+      ],
+      "why": "",
+      "importance": 6.4,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
       "article_id": "6628986",
       "title": "企業IT預算大洗牌！Adobe、Zoom、DocuSign恐成輸家 Salesforce反躍居受惠股",
       "url": "https://news.cnyes.com/news/id/6628986",
@@ -5478,9 +5550,9 @@
     },
     {
       "article_id": "6630652",
-      "title": "盤中速報 - Palo Alto Networks Inc(PANW-US)大跌5.03%，報377.07美元 | 鉅亨網",
+      "title": "盤中速報 - Palo Alto Networks Inc(PANW-US)大跌5.03%，報377.07美元",
       "url": "https://news.cnyes.com/news/id/6630652",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-15 02:25:49",
       "published_ts": "2026-10-15T02:25:49+08:00",
       "ai_points": [
@@ -6345,9 +6417,9 @@
     },
     {
       "article_id": "6630550",
-      "title": "俄羅斯儲蓄銀行資料中心 也遭烏克蘭襲擊 | 鉅亨網",
+      "title": "俄羅斯儲蓄銀行資料中心 也遭烏克蘭襲擊",
       "url": "https://news.cnyes.com/news/id/6630550",
-      "category": "wd_stock",
+      "category": "國際政經",
       "published": "2026-10-14 22:22:51",
       "published_ts": "2026-10-14T22:22:51+08:00",
       "ai_points": [
@@ -7043,9 +7115,9 @@
     },
     {
       "article_id": "6630649",
-      "title": "盤中速報 - 超微半導體(AMD-US)大跌5.75%，報570.72美元 | 鉅亨網",
+      "title": "盤中速報 - 超微半導體(AMD-US)大跌5.75%，報570.72美元",
       "url": "https://news.cnyes.com/news/id/6630649",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-15 02:13:55",
       "published_ts": "2026-10-15T02:13:55+08:00",
       "ai_points": [
@@ -7080,9 +7152,9 @@
     },
     {
       "article_id": "6630656",
-      "title": "盤中速報 - 萊迪思半導體(LSCC-US)大跌6.11%，報113.75美元 | 鉅亨網",
+      "title": "盤中速報 - 萊迪思半導體(LSCC-US)大跌6.11%，報113.75美元",
       "url": "https://news.cnyes.com/news/id/6630656",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-15 02:44:43",
       "published_ts": "2026-10-15T02:44:43+08:00",
       "ai_points": [
@@ -7117,9 +7189,9 @@
     },
     {
       "article_id": "6630679",
-      "title": "盤中速報 - 數據狗(DDOG-US)大跌5.03%，報269.08美元 | 鉅亨網",
+      "title": "盤中速報 - 數據狗(DDOG-US)大跌5.03%，報269.08美元",
       "url": "https://news.cnyes.com/news/id/6630679",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-15 04:07:38",
       "published_ts": "2026-10-15T04:07:38+08:00",
       "ai_points": [
@@ -7154,9 +7226,9 @@
     },
     {
       "article_id": "6630684",
-      "title": "盤中速報 - 甲骨文(ORCL-US)大跌8.8%，報130.6美元 | 鉅亨網",
+      "title": "盤中速報 - 甲骨文(ORCL-US)大跌8.8%，報130.6美元",
       "url": "https://news.cnyes.com/news/id/6630684",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-15 04:16:59",
       "published_ts": "2026-10-15T04:16:59+08:00",
       "ai_points": [
@@ -7191,9 +7263,9 @@
     },
     {
       "article_id": "6630685",
-      "title": "盤中速報 - 英特格(ENTG-US)大跌5.01%，報153.08美元 | 鉅亨網",
+      "title": "盤中速報 - 英特格(ENTG-US)大跌5.01%，報153.08美元",
       "url": "https://news.cnyes.com/news/id/6630685",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-15 04:17:24",
       "published_ts": "2026-10-15T04:17:24+08:00",
       "ai_points": [
@@ -7526,9 +7598,9 @@
     },
     {
       "article_id": "6630589",
-      "title": "盤中速報 - 邁威爾科技(MRVL-US)大跌5.03%，報255.2美元 | 鉅亨網",
+      "title": "盤中速報 - 邁威爾科技(MRVL-US)大跌5.03%，報255.2美元",
       "url": "https://news.cnyes.com/news/id/6630589",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-14 23:22:16",
       "published_ts": "2026-10-14T23:22:16+08:00",
       "ai_points": [
@@ -7563,9 +7635,9 @@
     },
     {
       "article_id": "6630596",
-      "title": "盤中速報 - 邁威爾科技(MRVL-US)大跌5.67%，報253.48美元 | 鉅亨網",
+      "title": "盤中速報 - 邁威爾科技(MRVL-US)大跌5.67%，報253.48美元",
       "url": "https://news.cnyes.com/news/id/6630596",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-14 23:47:28",
       "published_ts": "2026-10-14T23:47:28+08:00",
       "ai_points": [
@@ -7600,9 +7672,9 @@
     },
     {
       "article_id": "6630623",
-      "title": "盤中速報 - 科林研發(LRCX-US)大跌5%，報286.05美元 | 鉅亨網",
+      "title": "盤中速報 - 科林研發(LRCX-US)大跌5%，報286.05美元",
       "url": "https://news.cnyes.com/news/id/6630623",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-15 00:37:46",
       "published_ts": "2026-10-15T00:37:46+08:00",
       "ai_points": [
@@ -7637,9 +7709,9 @@
     },
     {
       "article_id": "6630635",
-      "title": "盤中速報 - 連貫(COHR-US)大跌8.1%，報266.49美元 | 鉅亨網",
+      "title": "盤中速報 - 連貫(COHR-US)大跌8.1%，報266.49美元",
       "url": "https://news.cnyes.com/news/id/6630635",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-15 01:10:30",
       "published_ts": "2026-10-15T01:10:30+08:00",
       "ai_points": [
@@ -10048,9 +10120,9 @@
     },
     {
       "article_id": "6630571",
-      "title": "盤中速報 - Onto Innovation Inc.(ONTO-US)大跌5%，報250.37美元 | 鉅亨網",
+      "title": "盤中速報 - Onto Innovation Inc.(ONTO-US)大跌5%，報250.37美元",
       "url": "https://news.cnyes.com/news/id/6630571",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-14 22:38:39",
       "published_ts": "2026-10-14T22:38:39+08:00",
       "ai_points": [
@@ -10085,9 +10157,9 @@
     },
     {
       "article_id": "6630574",
-      "title": "盤中速報 - Onto Innovation Inc.(ONTO-US)大跌5.89%，報248.04美元 | 鉅亨網",
+      "title": "盤中速報 - Onto Innovation Inc.(ONTO-US)大跌5.89%，報248.04美元",
       "url": "https://news.cnyes.com/news/id/6630574",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-14 22:47:14",
       "published_ts": "2026-10-14T22:47:14+08:00",
       "ai_points": [
@@ -10122,9 +10194,9 @@
     },
     {
       "article_id": "6630597",
-      "title": "盤中速報 - DoorDash公司(DASH-US)大跌5.99%，報181.52美元 | 鉅亨網",
+      "title": "盤中速報 - DoorDash公司(DASH-US)大跌5.99%，報181.52美元",
       "url": "https://news.cnyes.com/news/id/6630597",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-14 23:47:28",
       "published_ts": "2026-10-14T23:47:28+08:00",
       "ai_points": [
@@ -10159,9 +10231,9 @@
     },
     {
       "article_id": "6630599",
-      "title": "盤中速報 - 泰瑞達(TER-US)大跌5%，報361.26美元 | 鉅亨網",
+      "title": "盤中速報 - 泰瑞達(TER-US)大跌5%，報361.26美元",
       "url": "https://news.cnyes.com/news/id/6630599",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-14 23:48:27",
       "published_ts": "2026-10-14T23:48:27+08:00",
       "ai_points": [
@@ -10196,9 +10268,9 @@
     },
     {
       "article_id": "6630600",
-      "title": "盤中速報 - 星座能源(CEG-US)大跌5.01%，報280.98美元 | 鉅亨網",
+      "title": "盤中速報 - 星座能源(CEG-US)大跌5.01%，報280.98美元",
       "url": "https://news.cnyes.com/news/id/6630600",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-14 23:50:28",
       "published_ts": "2026-10-14T23:50:28+08:00",
       "ai_points": [
@@ -10233,9 +10305,9 @@
     },
     {
       "article_id": "6630603",
-      "title": "盤中速報 - 安可(AMKR-US)大跌5.02%，報45.22美元 | 鉅亨網",
+      "title": "盤中速報 - 安可(AMKR-US)大跌5.02%，報45.22美元",
       "url": "https://news.cnyes.com/news/id/6630603",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-14 23:57:20",
       "published_ts": "2026-10-14T23:57:20+08:00",
       "ai_points": [
@@ -10270,9 +10342,9 @@
     },
     {
       "article_id": "6630604",
-      "title": "盤中速報 - 超微電腦(SMCI-US)大跌5.3%，報37美元 | 鉅亨網",
+      "title": "盤中速報 - 超微電腦(SMCI-US)大跌5.3%，報37美元",
       "url": "https://news.cnyes.com/news/id/6630604",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-15 00:07:11",
       "published_ts": "2026-10-15T00:07:11+08:00",
       "ai_points": [
@@ -10307,9 +10379,9 @@
     },
     {
       "article_id": "6630605",
-      "title": "盤中速報 - 安森美半導體(ON-US)大跌5.01%，報72.85美元 | 鉅亨網",
+      "title": "盤中速報 - 安森美半導體(ON-US)大跌5.01%，報72.85美元",
       "url": "https://news.cnyes.com/news/id/6630605",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-15 00:07:19",
       "published_ts": "2026-10-15T00:07:19+08:00",
       "ai_points": [
@@ -10344,9 +10416,9 @@
     },
     {
       "article_id": "6630631",
-      "title": "盤中速報 - 格羅方德(GFS-US)大漲5.2%，報49.13美元 | 鉅亨網",
+      "title": "盤中速報 - 格羅方德(GFS-US)大漲5.2%，報49.13美元",
       "url": "https://news.cnyes.com/news/id/6630631",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-15 01:05:22",
       "published_ts": "2026-10-15T01:05:22+08:00",
       "ai_points": [
@@ -10381,9 +10453,9 @@
     },
     {
       "article_id": "6630634",
-      "title": "盤中速報 - 和康電訊(MTSI-US)大跌5.08%，報293.08美元 | 鉅亨網",
+      "title": "盤中速報 - 和康電訊(MTSI-US)大跌5.08%，報293.08美元",
       "url": "https://news.cnyes.com/news/id/6630634",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-15 01:10:29",
       "published_ts": "2026-10-15T01:10:29+08:00",
       "ai_points": [
@@ -10418,9 +10490,9 @@
     },
     {
       "article_id": "6630636",
-      "title": "盤中速報 - 安謀控股公司(ARM-US)大跌5.13%，報242.28美元 | 鉅亨網",
+      "title": "盤中速報 - 安謀控股公司(ARM-US)大跌5.13%，報242.28美元",
       "url": "https://news.cnyes.com/news/id/6630636",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-15 01:12:07",
       "published_ts": "2026-10-15T01:12:07+08:00",
       "ai_points": [
@@ -10455,9 +10527,9 @@
     },
     {
       "article_id": "6630637",
-      "title": "盤中速報 - 芯源系統(MPWR-US)大跌5.02%，報1253.29美元 | 鉅亨網",
+      "title": "盤中速報 - 芯源系統(MPWR-US)大跌5.02%，報1253.29美元",
       "url": "https://news.cnyes.com/news/id/6630637",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-15 01:12:26",
       "published_ts": "2026-10-15T01:12:26+08:00",
       "ai_points": [
@@ -10964,9 +11036,9 @@
     },
     {
       "article_id": "6630576",
-      "title": "盤中速報 - 超微電腦(SMCI-US)大跌5.11%，報37.08美元 | 鉅亨網",
+      "title": "盤中速報 - 超微電腦(SMCI-US)大跌5.11%，報37.08美元",
       "url": "https://news.cnyes.com/news/id/6630576",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-14 22:51:30",
       "published_ts": "2026-10-14T22:51:30+08:00",
       "ai_points": [
@@ -10999,9 +11071,9 @@
     },
     {
       "article_id": "6630582",
-      "title": "盤中速報 - 格羅方德(GFS-US)大漲5.22%，報49.14美元 | 鉅亨網",
+      "title": "盤中速報 - 格羅方德(GFS-US)大漲5.22%，報49.14美元",
       "url": "https://news.cnyes.com/news/id/6630582",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-14 23:06:59",
       "published_ts": "2026-10-14T23:06:59+08:00",
       "ai_points": [
@@ -11036,9 +11108,9 @@
     },
     {
       "article_id": "6630592",
-      "title": "盤中速報 - DoorDash公司(DASH-US)大跌6.33%，報180.88美元 | 鉅亨網",
+      "title": "盤中速報 - DoorDash公司(DASH-US)大跌6.33%，報180.88美元",
       "url": "https://news.cnyes.com/news/id/6630592",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-14 23:32:08",
       "published_ts": "2026-10-14T23:32:08+08:00",
       "ai_points": [
@@ -11071,9 +11143,9 @@
     },
     {
       "article_id": "6630598",
-      "title": "盤中速報 - Onto Innovation Inc.(ONTO-US)大跌7.15%，報244.71美元 | 鉅亨網",
+      "title": "盤中速報 - Onto Innovation Inc.(ONTO-US)大跌7.15%，報244.71美元",
       "url": "https://news.cnyes.com/news/id/6630598",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-14 23:47:32",
       "published_ts": "2026-10-14T23:47:32+08:00",
       "ai_points": [
