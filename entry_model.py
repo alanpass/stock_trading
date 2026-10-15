@@ -168,13 +168,18 @@ def detect_pattern(bars: pd.DataFrame) -> dict:
                 else {"name": "上吊線", "score": -0.3, "desc": "上漲後長下影線，留意高檔賣壓"} if rising
                 else {"name": "長下影線", "score": 0.2, "desc": "盤中下探後拉回，有支撐"})
     if upper[-1] >= 2 * max(size[-1], 1e-9) and lower[-1] <= 0.3 * r[-1]:
+        # 黑 K 收在最低附近＝衝高後被壓回，不算「倒錘線」的反攻訊號
+        closed_at_low = body[-1] < 0 and lower[-1] <= 0.05 * r[-1]
         return ({"name": "流星線", "score": -0.5, "desc": "上漲後長上影線，高檔遇壓"} if rising
-                else {"name": "倒錘線", "score": 0.3, "desc": "下跌後長上影線，買方嘗試反攻"} if falling
-                else {"name": "長上影線", "score": -0.2, "desc": "盤中衝高後拉回，上方有賣壓"})
+                else {"name": "倒錘線", "score": 0.3, "desc": "下跌後長上影線，買方嘗試反攻"} if falling and not closed_at_low
+                else {"name": "長上影線", "score": -0.3 if closed_at_low else -0.2,
+                      "desc": "衝高後被壓回並收在最低附近，上方賣壓重" if closed_at_low else "盤中衝高後拉回，上方有賣壓"})
+    move = c[-1] / c[-2] - 1  # 相對前一根收盤的漲跌
+    move_text = f"（較前一根 {move * 100:+.1f}%）"
     if size[-1] <= 0.1 * r[-1]:
-        return {"name": "十字線", "score": -0.1 if rising else 0.1 if falling else 0.0, "desc": "多空拉鋸，等待方向"}
-    return ({"name": "小紅K", "score": 0.2, "desc": "小幅收紅，走勢溫和"} if body[-1] > 0
-            else {"name": "小黑K", "score": -0.2, "desc": "小幅收黑，走勢偏弱"})
+        return {"name": "十字線", "score": -0.1 if rising else 0.1 if falling else 0.0, "desc": "多空拉鋸，等待方向" + move_text}
+    return ({"name": "小紅K", "score": 0.2, "desc": "收紅但實體未達長紅標準" + move_text} if body[-1] > 0
+            else {"name": "小黑K", "score": -0.2, "desc": "收黑但實體未達長黑標準" + move_text})
 
 
 def daily_trend(daily: pd.DataFrame | None, price: float) -> dict:
@@ -186,8 +191,21 @@ def daily_trend(daily: pd.DataFrame | None, price: float) -> dict:
     ma60 = c.rolling(60).mean() if len(c) >= 60 else pd.Series(np.nan, index=c.index)
     m20, m60 = float(ma20.iloc[-1]), float(ma60.iloc[-1])
     slope = float(ma20.iloc[-1] / ma20.iloc[-6] - 1) if len(ma20.dropna()) >= 6 else 0.0
-    score = (40 if price > m20 else 0) + (30 if slope > 0 else 0) + (30 if np.isfinite(m60) and price > m60 else 0 if np.isfinite(m60) else 15)
-    state = "多頭排列" if score >= 70 else "整理" if score >= 40 else "空頭排列"
+
+    def vs(ma, full):
+        """價格在均線 ±0.5% 緩衝內只給一半分數，避免剛好壓在均線上就判成多或空。"""
+        if not np.isfinite(ma):
+            return full / 2
+        gap = price / ma - 1
+        return full if gap > 0.005 else 0 if gap < -0.005 else full / 2
+
+    score = vs(m20, 40) + (30 if slope > 0.001 else 0 if slope < -0.001 else 15) + vs(m60, 30)
+    if np.isfinite(m60) and price > m20 > m60 and slope > 0:
+        state = "多頭排列"
+    elif np.isfinite(m60) and price < m20 < m60 and slope < 0:
+        state = "空頭排列"
+    else:
+        state = "偏多" if score >= 70 else "偏空" if score < 40 else "整理"
     return {"score": float(score), "state": state, "ma20": m20, "ma60": m60, "ma20_slope": slope}
 
 
@@ -297,31 +315,34 @@ def predict_entry(model, k5, live_price, daily=None, market_open=True):
 
     def flag(v):
         return float(v) > 0 if np.isfinite(v) else False
-    intraday = (30 if c > vwap else 0) + (25 if flag(row["ma6"]) else 0) + (20 if flag(row["ma12"]) else 0) + (25 if flag(row["ret6"]) else 0)
+    parts = {"VWAP": c > vwap, "MA6": flag(row["ma6"]), "MA12": flag(row["ma12"]), "動能": flag(row["ret6"])}
+    intraday = 30 * parts["VWAP"] + 25 * parts["MA6"] + 20 * parts["MA12"] + 25 * parts["動能"]
     trend = intraday if not np.isfinite(dtrend["score"]) else 0.55 * intraday + 0.45 * dtrend["score"]
 
     pattern_part = (pattern["score"] + 1) * 50  # 0～100
     score = float(np.clip(0.55 * trend + 0.25 * opp * 100 + 0.20 * pattern_part, 0, 100))
-    over = bool(c > vwap + atr)
+    over = bool(c > vwap + 1.5 * atr)
     bearish = pattern["score"] <= -0.5 or day_pat["score"] <= -0.6
-    if trend >= 68 and score >= 66 and not over and not bearish:
-        action = "適合回檔進場"
-    elif trend >= 55 and over:
+    # 動作與趨勢狀態使用同一組門檻：≥68 偏強、45～68 震盪、<45 偏弱
+    if trend >= 68 and over:
         action = "上漲趨勢，但不追高"
-    elif trend >= 55 and score >= 52:
+    elif trend >= 68 and score >= 66 and not bearish:
+        action = "適合回檔進場"
+    elif trend >= 55 and score >= 52 and not bearish:
         action = "等待回檔確認"
     else:
         action = "不建議進場"
 
+    detail = "／".join(f"{k}{'上' if k != '動能' and v else '下' if k != '動能' else '+' if v else '−'}" for k, v in parts.items())
     reasons = [
-        f"日內趨勢{'偏多' if intraday >= 55 else '偏弱'}（價格{'高於' if c > vwap else '低於'}當日 VWAP {vwap:.2f}）",
+        f"日內趨勢{'偏多' if intraday >= 55 else '偏弱'}（{intraday:.0f} 分：{detail}；當日 VWAP {vwap:.2f}）",
         f"日線{dtrend['state']}" + (f"（MA20 {dtrend['ma20']:.2f}）" if np.isfinite(dtrend.get("ma20", np.nan)) else ""),
         f"5 分 K：{pattern['name']}，{pattern['desc']}",
     ]
     if day_pat["name"] != "—":
         reasons.append(f"日 K：{day_pat['name']}，{day_pat['desc']}")
     if over:
-        reasons.append("價格高於 VWAP 超過 1 個 ATR，不追高")
+        reasons.append("價格高於 VWAP 超過 1.5 個 ATR，不追高")
     if bearish and trend >= 68:
         reasons.append("趨勢偏多但出現偏空 K 線型態，等待確認")
     if not skill:

@@ -21,10 +21,12 @@ import numpy as np
 import pandas as pd
 
 import entry_model as em
+from market_calendar import is_twse_trading_day
 from stock_api import FugleClient, clean_symbol
 
 BASE = Path(__file__).resolve().parent
 AUDIT_PATH = BASE / "output" / "research_reports" / "entry_model_audit.json"
+AUDIT_HISTORY = BASE / "output" / "research_reports" / "entry_model_audit_history.jsonl"
 TAIPEI = ZoneInfo("Asia/Taipei")
 _client: FugleClient | None = None
 
@@ -74,7 +76,15 @@ def analyze(symbol: str) -> dict:
     daily = client.historical_candles(symbol, date.today() - timedelta(days=150), date.today(), "D")
     model = _model_for(symbol, hist)
     now = datetime.now(TAIPEI)
-    market_open = now.weekday() < 5 and (9, 0) <= (now.hour, now.minute) <= (13, 30) and last_day == now.date()
+    market_open = bool(is_twse_trading_day(now, BASE)) and (9, 0) <= (now.hour, now.minute) <= (13, 30)
+    if market_open:
+        # 歷史 5 分 K 不含今天；盤中改用今天的即時 5 分 K
+        try:
+            live = client.intraday_candles(symbol, "5")
+            if live is not None and not live.empty:
+                k5, last_day = live, now.date()
+        except Exception:
+            pass
     r = em.predict_entry(model, k5, float(k5["close"].iloc[-1]), daily=daily, market_open=market_open)
     keep = ("action", "decision_reason", "reference_price", "best_entry_price", "entry_lower", "entry_upper", "entry_score",
             "confidence", "trend_score", "trend_state", "intraday_trend_score", "daily_trend_score", "daily_trend_state",
@@ -89,10 +99,12 @@ def analyze(symbol: str) -> dict:
 def audit(symbols: list[str] | None = None, save: bool = True) -> dict:
     if not symbols:
         symbols = [str(s) for s in json.loads((BASE / "user_watchlist.json").read_text(encoding="utf-8"))]
-    previous = {}
+    previous, previous_at = {}, None
     if AUDIT_PATH.exists():
         try:
-            previous = {r["symbol"]: r for r in json.loads(AUDIT_PATH.read_text(encoding="utf-8")).get("results", [])}
+            last = json.loads(AUDIT_PATH.read_text(encoding="utf-8"))
+            previous = {r["symbol"]: r for r in last.get("results", [])}
+            previous_at = last.get("audited_at")
         except Exception:
             previous = {}
     results, errors = [], []
@@ -113,6 +125,7 @@ def audit(symbols: list[str] | None = None, save: bool = True) -> dict:
             "prob_model_useful": sum(r["prob_has_skill"] for r in results),
             "low_model_useful": sum(r["low_has_skill"] for r in results),
             "median_brier_skill": _num(float(np.median(skills))) if skills else None,
+            "compared_with": previous_at or "（沒有上一次稽核）",
             "lost_skill_since_last": lost, "gained_skill_since_last": gained,
         },
         "results": results, "errors": errors,
@@ -120,6 +133,11 @@ def audit(symbols: list[str] | None = None, save: bool = True) -> dict:
     if save:
         AUDIT_PATH.parent.mkdir(parents=True, exist_ok=True)
         AUDIT_PATH.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+        # 每次稽核的摘要與各檔 Brier skill 另存一行，之後可以看長期趨勢
+        line = {"audited_at": report["audited_at"], **report["summary"],
+                "brier_skill": {r["symbol"]: r["brier_skill"] for r in results}}
+        with AUDIT_HISTORY.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(line, ensure_ascii=False) + "\n")
     return report
 
 
