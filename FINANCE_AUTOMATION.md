@@ -9,9 +9,9 @@
 
 安裝／更新排程：`powershell -ExecutionPolicy Bypass -File .\setup_research_task_v12.ps1`
 手動測試：
-- 快速（約 1 分鐘，只爬新聞＋規則摘要，不用 Ollama、略過法說會）：`python run_finance_info_update.py --quick`
+- 快速（約 1 分鐘，只爬新聞＋規則摘要、略過法說會）：`python run_finance_info_update.py --quick`
 - 完整（會即時顯示進度）：`python scheduled_job_runner.py finance`
-- 其他旗標：`--no-llm`（不呼叫 Qwen3）、`--no-earnings`（略過法說會）、`--no-crawl`（只重跑 Agent 分析）
+- 其他旗標：`--no-earnings`（略過法說會）、`--no-crawl`（只重跑規則分析）
 
 ## 每次更新做的事
 1. **爬取**：頭條＋台股＋國際股＋外匯＋期貨（`CNYES_CATEGORIES` 可改），沒有的分類自動略過。
@@ -23,16 +23,15 @@
    - 分析：利多／利空／中性／混合、影響產業、相關個股、重要度（★）、「為什麼重要」
    - 去重：同一事件的重複報導合併
    - 總覽：`news_digest`＝今日重點、利多／利空主題、產業熱度、待追蹤、風險
-   - Qwen3 可用時重寫重要度前 40 篇＋總覽；已摘要過的存 `finance_summary_cache.json`，下次不重做
+   - AI 層由 Claude 排程任務（finance-news-digest skill）完成：`python finance_digest.py export` → Claude 撰寫 → `python finance_digest.py apply <notes.json>`；
+     逐篇重點存在 `finance_summary_cache.json`，「AI 今日重點」在之後的規則更新中保留（`CLAUDE_DIGEST_KEEP_HOURS`，預設 12 小時）
 
 ## 可調整的環境變數（.env）
 | 變數 | 預設 | 說明 |
 |---|---|---|
 | `CNYES_CATEGORIES` | headline,tw_stock,wd_stock,forex,future | 要爬的鉅亨分類 |
 | `CNYES_NIGHTLY_MAX_ARTICLES` | 600 | 一次最多保留幾篇 |
-| `FINANCE_USE_LLM` | true | false = 只用規則層，不呼叫 Ollama |
-| `FINANCE_LLM_MAX_ARTICLES` | 40 | 每次最多讓 Qwen3 重寫幾篇 |
-| `FINANCE_LLM_TIME_BUDGET_SEC` | 900 | Qwen3 摘要的時間上限 |
+| `CLAUDE_DIGEST_KEEP_HOURS` | 12 | Claude 寫的 AI 今日重點保留多久 |
 | `FINANCE_MIN_NEWS` | 8 | 鉅亨少於這個數量才補 Google News 備援 |
 | `EARNINGS_FORCE_REFRESH` | false | true = 法說會全部重新分析 |
 | `EARNINGS_NEW_PER_RUN` | 12 | 每次最多新分析幾場法說會，其餘留給下一個時段 |

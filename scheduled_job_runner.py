@@ -66,6 +66,13 @@ def validate_output(job: str) -> tuple[bool, str]:
     research_dir = BASE / "output" / "research_reports"
 
     if job == "morning":
+        # Claude 模式：Windows 排程只建立研究包，早報內容與寄信由 Claude 排程任務完成。
+        entry_status = LOG_DIR / f"morning_entry_status_{d}.json"
+        try:
+            if json.loads(entry_status.read_text(encoding="utf-8")).get("status") == "awaiting_claude":
+                return True, "Morning package prepared; awaiting Claude"
+        except Exception:
+            pass
         path = research_dir / f"morning_{d}.json"
         if not path.exists():
             return False, f"Morning report missing: {path}"
@@ -113,7 +120,8 @@ def validate_output(job: str) -> tuple[bool, str]:
                 try:
                     data = json.loads(status_file.read_text(encoding="utf-8"))
                     state = str(data.get("status", ""))
-                    if state in {"success", "skipped_non_trading_day"}:
+                    # awaiting_claude：Claude 模式下研究包已備妥，筆記與寄信由 Claude 排程任務完成。
+                    if state in {"success", "skipped_non_trading_day", "awaiting_claude"}:
                         return True, f"After-close status OK: {state}"
                     return False, f"After-close status = {state or 'unknown'}"
                 except Exception as exc:

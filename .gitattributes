@@ -1,0 +1,6 @@
+# Store text files with LF in git; Windows working copies keep CRLF.
+* text=auto
+*.png binary
+*.jpg binary
+*.ico binary
+*.joblib binary

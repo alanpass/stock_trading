@@ -7,10 +7,11 @@ AI 台股盤後研究助理 Agent
     一個 AI 研究助理幫使用者讀完一堆資料後，
     自己決定哪些事情值得記錄、哪些需要標記、哪些需要進一步查證。
 
-ResearchAgent 負責資料工程與證據蒐集；本模組負責 Agent Orchestration：
-Qwen3 8B 透過 Tool Calling 自主決定要看哪些資料，再產生可保存的研究筆記。
+ResearchAgent 負責資料工程與證據蒐集；本模組提供研究工具與研究記憶：
+Claude 盤後研究（.claude/skills/after-close-research）透過 claude_tools.py 呼叫這些工具，
+自主決定要看哪些資料，再寫出研究筆記；--finalize 時用 _normalize 驗證並存入研究記憶。
 
-Agent 可使用：
+可用工具：
     - 市場概況
     - 公司財務
     - 法說會事件
@@ -35,16 +36,14 @@ import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any
-from urllib.parse import quote_plus
 from xml.etree import ElementTree as ET
 
 import numpy as np
 import requests
 
+from ai_backend import AGENT_STATUS
 
-DEFAULT_OLLAMA_HOST = "http://127.0.0.1:11434"
-DEFAULT_OLLAMA_MODEL = "qwen3:8b"
-DEFAULT_MAX_TOOL_ROUNDS = 14
+
 MAX_NEWS_RESULTS = 10
 MEMORY_FILE_NAME = "agent_memory.json"
 GOOGLE_NEWS_RSS = "https://news.google.com/rss/search"
@@ -180,55 +179,6 @@ def _as_list(value: Any) -> list[str]:
     return [str(value).strip()]
 
 
-def _extract_json(text: str) -> dict[str, Any] | None:
-    text = str(text or "").strip()
-    text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text, flags=re.I)
-    start = text.find("{")
-    end = text.rfind("}")
-    if start < 0 or end <= start:
-        return None
-    try:
-        value = json.loads(text[start:end + 1])
-        return value if isinstance(value, dict) else None
-    except Exception:
-        return None
-
-
-def _assistant_message(resp: Any) -> dict[str, Any]:
-    msg = getattr(resp, "message", None)
-    out: dict[str, Any] = {"role": "assistant", "content": getattr(msg, "content", "") or ""}
-    calls: list[dict[str, Any]] = []
-    for call in getattr(msg, "tool_calls", None) or []:
-        try:
-            args = call.function.arguments
-            if not isinstance(args, dict):
-                args = json.loads(str(args))
-            calls.append({"function": {"name": str(call.function.name), "arguments": args}})
-        except Exception:
-            continue
-    if calls:
-        out["tool_calls"] = calls
-    return out
-
-
-def _call_name(call: Any) -> str:
-    try:
-        return str(call.function.name)
-    except Exception:
-        return ""
-
-
-def _call_args(call: Any) -> dict[str, Any]:
-    try:
-        args = call.function.arguments
-        if isinstance(args, dict):
-            return args
-        value = json.loads(str(args))
-        return value if isinstance(value, dict) else {}
-    except Exception:
-        return {}
-
-
 CNYES_QUERY_EXPANSIONS = {
     "電子零組件": ["電子零組件", "PCB", "IC載板", "載板", "ABF", "BT", "CCL", "高速材料", "MLCC", "連接器"],
     "載板": ["載板", "IC載板", "ABF", "BT", "substrate"],
@@ -280,7 +230,7 @@ def _normalize(raw: dict[str, Any], tool_history: list[dict[str, Any]], model: s
 
     notes = [x for x in notes if x["note"]]
     return {
-        "agent_status": "qwen3",
+        "agent_status": AGENT_STATUS,
         "model": model,
         "generated_at": datetime.now().isoformat(),
         "overview": str(raw.get("overview", "")).strip()[:1600],
@@ -359,13 +309,11 @@ def _memory_path(base: Path) -> Path:
     return p / MEMORY_FILE_NAME
 
 
-class ResearchOrchestratorAgent:
-    """Qwen3 自主研究／工具選擇／研究筆記 Agent。"""
+class ResearchToolbox:
+    """盤後研究工具（市場、財務、法說會、新聞、題材、公司研究）與跨日研究記憶。"""
 
-    def __init__(self, base_dir: str | Path = ".", ollama_host: str | None = None, ollama_model: str | None = None):
+    def __init__(self, base_dir: str | Path = "."):
         self.base = Path(base_dir).resolve()
-        self.ollama_host = (ollama_host or DEFAULT_OLLAMA_HOST).rstrip("/")
-        self.ollama_model = ollama_model or DEFAULT_OLLAMA_MODEL
         self._earnings_agent = None
 
     def _load_memory(self) -> dict[str, Any]:
@@ -420,11 +368,7 @@ class ResearchOrchestratorAgent:
     def _get_earnings_agent(self):
         if self._earnings_agent is None:
             from earnings_call_agent import EarningsCallAgent
-            self._earnings_agent = EarningsCallAgent(
-                self.base,
-                ollama_host=self.ollama_host,
-                ollama_model=self.ollama_model,
-            )
+            self._earnings_agent = EarningsCallAgent(self.base)
         return self._earnings_agent
 
     def _tool(self, name: str, args: dict[str, Any], payload: dict[str, Any]) -> dict[str, Any]:
@@ -610,7 +554,7 @@ class ResearchOrchestratorAgent:
             except Exception:
                 limit = 50
             batch = articles[offset:offset + limit]
-            # 廣泛閱讀時只給短摘要，避免將兩日數百篇全文一次塞進 Qwen context；
+            # 廣泛閱讀時只給短摘要，避免一次回傳兩日數百篇全文；
             # Agent 若發現研究價值，再用 search_cnyes_news 取得完整正文。
             compact_articles = []
             for x in batch:
@@ -675,311 +619,3 @@ class ResearchOrchestratorAgent:
             }
 
         return {"ok": False, "error": f"未知工具：{name}"}
-
-    def _fallback(self, payload: dict[str, Any], error: str) -> dict[str, Any]:
-        mm = payload.get("market_movers", {}) or {}
-        movers = [x for x in mm.get("movers", []) if isinstance(x, dict)]
-        movers.sort(key=lambda x: abs(_safe_float(x.get("today_change_percent"), 0) or 0), reverse=True)
-        calls = [x for x in payload.get("earnings_calls", []) if isinstance(x, dict) and not x.get("error")]
-        notes = []
-        for x in movers[:6]:
-            notes.append({
-                "importance": "medium",
-                "type": "market",
-                "symbol": _clean_symbol(x.get("symbol")),
-                "title": "市場波動候選",
-                "note": f"今日變動 {(_safe_float(x.get('today_change_percent'), 0) or 0):+.2f}%；可能原因：{str(x.get('reason', '待查證'))[:250]}",
-                "evidence": [f"今日變動 {(_safe_float(x.get('today_change_percent'), 0) or 0):+.2f}%"],
-                "tags": ["市場波動", "待查證"],
-                "confidence": 35.0,
-                "follow_up": ["需要公司公告或多來源新聞確認原因"],
-            })
-        # 讓即使主研究 Agent 進入 fallback，夜間新聞 Agent 的研究也不會消失。
-        cnyes_research = payload.get("cnyes_research_digest", {}) or {}
-        for item in cnyes_research.get("key_findings", []) or []:
-            if not isinstance(item, dict) or not item.get("summary"):
-                continue
-            notes.append({
-                "importance": "medium",
-                "type": "industry",
-                "symbol": _clean_symbol((item.get("related_symbols") or [""])[0]) if item.get("related_symbols") else "",
-                "title": f"新聞研究｜{str(item.get('title','鉅亨新聞')).strip()[:90]}",
-                "note": (str(item.get("summary", "")) + (f"；研究意義：{item.get('why_relevant')}" if item.get("why_relevant") else ""))[:1200],
-                "evidence": [str(x) for x in (item.get("evidence") or [])][:8] or ["鉅亨近兩日新聞快取"],
-                "tags": ["鉅亨新聞", str(item.get("impact", "待查證"))],
-                "confidence": max(0.0, min(1.0, float(item.get("confidence") or 0))),
-                "follow_up": ["與公司公告、財報、法人或其他產業資料交叉驗證"],
-                "source_links": [str(x) for x in (item.get("source_links") or []) if str(x).strip()][:8],
-            })
-
-        cnyes_digest = []
-        cnyes_research = payload.get("cnyes_research_digest", {}) or {}
-        if isinstance(cnyes_research, dict):
-            for item in cnyes_research.get("key_findings", []) or []:
-                if isinstance(item, dict) and item.get("summary"):
-                    text = str(item.get("summary"))
-                    if item.get("why_relevant"):
-                        text += f"；{item.get('why_relevant')}"
-                    cnyes_digest.append(text[:700])
-        if not cnyes_digest:
-            cnyes = payload.get("cnyes_news", {}) or {}
-            for item in (cnyes.get("articles", []) or [])[:8]:
-                if isinstance(item, dict) and item.get("title"):
-                    cnyes_digest.append(f"{item.get('title')}（鉅亨網，{item.get('published', '')}）")
-
-        return {
-            "agent_status": "fallback",
-            "model": self.ollama_model,
-            "generated_at": datetime.now().isoformat(),
-            "overview": "Qwen3 研究助理本次無法完成自主工具分析；以下僅為保守資料摘要。",
-            "key_takeaways": [f"近期市場波動候選 {len(movers)} 筆", f"近期法說會可用資料 {len(calls)} 筆"],
-            "research_notes": notes,
-            "positive_signals": [],
-            "negative_signals": [],
-            "watch_items": [f"Agent 錯誤：{error}"],
-            "earnings_digest": "；".join(f"{x.get('symbol')} {x.get('one_line_summary') or x.get('summary','')}" for x in calls[:5]),
-            "financial_focus": [],
-            "cnyes_news_digest": cnyes_digest[:8],
-            "model_alert": "",
-            "agent_actions": [],
-            "error": error,
-        }
-
-    def run(self, payload: dict[str, Any]) -> dict[str, Any]:
-        try:
-            import ollama
-        except Exception as exc:
-            return self._fallback(payload, f"ollama 套件不可用：{exc}")
-
-        client = ollama.Client(host=self.ollama_host)
-        previous_memory = self._load_memory()
-        evidence_index = {
-            "研究日期": payload.get("report_date", ""),
-            "研究範圍": payload.get("research_scope", {}),
-            "研究包已存在的資料": {
-                "market_movers": len((payload.get("market_movers", {}) or {}).get("movers", []) or []),
-                "financial_snapshots": len(payload.get("financial_snapshots", []) or []),
-                "earnings_calls": len(payload.get("earnings_calls", []) or []),
-                "news": len(payload.get("news", []) or []),
-                "cnyes_news": int((payload.get("cnyes_news", {}) or {}).get("article_count", 0) or 0),
-                "bullish_themes": len(payload.get("bullish_themes", []) or []),
-                "company_research": len(payload.get("company_research", []) or []),
-                "model_health": len(payload.get("model_health", []) or []),
-            },
-            "可用工具": [x["function"]["name"] for x in TOOLS],
-            "上一期筆記存在": bool(previous_memory),
-        }
-
-        system_prompt = """
-你是「AI 台股盤後研究助理」，不是報表排版器，也不是只會重述資料的摘要器。
-
-你的工作方式是：先讀研究包 → 發現問題／異常 → 主動選擇工具補證據 → 必要時上網查近期新聞 → 交叉比對 → 最後整理成研究筆記。
-研究的目標不是把所有資料列出來，而是回答：「今天市場到底發生了什麼？為什麼？哪些只是題材、哪些有基本面支撐、哪些仍然不知道？」
-
-【最重要的研究規則】
-1. 你必須先使用 Tool Calling 取得具體證據，再輸出最後 JSON。至少 1 次；視研究問題可使用多個不同工具。
-2. 你不是被固定工具流程綁住，但有「條件式必查」：
-   - 如果看到某個產業／個股明顯上漲或下跌，而原因不清楚、只有「可能」或「待查證」，就要主動 search_news_evidence 或 search_live_news。
-   - 對產業異動，搜尋時要從「股價異動 → 新聞原因 → 供應鏈／產業題材 → 財務或公司資料」一路追下去。例如電子零組件族群上漲，不要停在「電子零組件上漲」，要檢查 PCB、IC 載板、ABF/BT、CCL、高速材料、AI 伺服器等可能的產業驅動因素，哪一個有近期新聞支持，再與公司／產業資料交叉比對。
-   - 如果財報／營收資料缺失、過時或不足以解釋市場變化，就主動 get_company_financial；若工具仍沒有資料，再 search_live_news 查近期營收、EPS、需求、訂單等公開資訊，並明確標記來源與查證程度。
-   - 如果題材很強但原因不清楚，主動 get_theme_evidence；若研究包證據不足，再 search_live_news。
-   - 如果法說會看起來會影響股價，就先 get_earnings_events，再視需要 read_fugle_memo 讀詳細正文。
-3. 上網查詢不是最後才使用的裝飾功能。只要你真的不知道、現有資料不足、或需要解釋近期市場異動，就應該上網查。沒有網路證據時，不准假裝知道。
-   - 本研究包中的鉅亨新聞是「前一晚 23:00 已完成的日檔快取」，盤後研究時間不應再次爬網站。若 cnyes_news > 0，先使用 get_cnyes_research_digest 讀取已完成的新聞 Agent 摘要，再依需要用 get_cnyes_news_overview / search_cnyes_news 深讀原文。
-   - 對「為什麼某產業今天上漲／下跌」這類問題，優先從鉅亨近兩日新聞尋找市場原因。例如電子零組件族群上漲，要查是否由載板、ABF/BT、PCB、CCL、高速材料、AI 伺服器等新聞驅動，而不是停在產業漲幅描述。
-   - 你不是要把所有新聞逐篇重複到 Email；你要從大量新聞中找出有關聯的事件、共同敘事、矛盾資訊與真正值得研究的因果鏈。
-4. 新聞是線索，不是自動等於事實。優先尋找多來源、官方公告、公司說法、財務數據或產業公開資訊交叉驗證；若只有單一媒體報導，confidence 要降低，並在 follow_up 標示查證事項。
-5. 主動尋找「因果鏈」與「矛盾訊號」，例如：
-   - 產業上漲，但真正帶動的是載板／CCL／散熱／電源中的哪一段？
-   - 股價上漲，但營收沒有跟上，是否只是題材？
-   - 營收大增，但市場股價沒有反應，是否已反映或存在其他風險？
-   - 法說偏正向，但新聞或產業供給訊息是否相反？
-6. 不要只寫「市場漲跌參半」「族群受到關注」等空泛句。每個重要筆記盡量回答「發生什麼、為什麼、證據是什麼、還缺什麼」。
-7. 自己決定研究筆記數量，不要硬湊 3 個、5 個或固定數量。
-8. 每個筆記自行決定 importance、type、tags。type 可使用 market|financial|earnings|theme|risk|model|contradiction|industry|event|data_quality|other。
-9. 每個重要筆記都應有 evidence；如果有新聞來源，盡量在 source_links 放入實際網址；如果沒有足夠證據，就降低 confidence 並標記待查證。
-10. confidence 使用 0～100 的百分比數字：多來源＋直接數據可高；單一新聞或間接推論要低；沒有可用證據才可以是 0。不要把 0 當成預設值。
-11. 可以參考上一期 Agent 筆記，但上一期不是今日事實；今日結論必須由今日工具重新驗證。
-12. 不得捏造數字、新聞、公司關係、管理層說法或因果關係。無法證明就說「尚未確認」。
-13. 不輸出 chain-of-thought、隱藏推理或逐步思考，只輸出最終研究結果。
-14. 不提供買進、賣出、持有、投資建議，也不做股票排名。
-15. 若同一股票代號對應到矛盾公司名稱，標記「資料一致性問題／需要查證」，不能自行猜測。
-
-【研究輸出】
-最後只輸出 JSON：
-{
-  "overview": "一句話總結今天市場最重要的研究發現",
-  "key_takeaways": ["Agent 自主挑出的重要發現；可自行決定數量"],
-  "research_notes": [
-    {
-      "importance": "high|medium|low",
-      "type": "market|financial|earnings|theme|risk|model|contradiction|industry|event|data_quality|other",
-      "symbol": "可空白",
-      "title": "研究筆記標題",
-      "note": "簡潔說明發生什麼＋為何發生＋目前證據強度；不要空泛描述",
-      "evidence": ["具體資料、新聞標題／來源、官方資料或交叉驗證結果"],
-      "source_links": ["若有新聞／公開資料網址就填入"],
-      "tags": ["Agent 自己決定的記號"],
-      "confidence": 0,
-      "follow_up": ["後續要觀察或查證的事項"]
-    }
-  ],
-  "positive_signals": ["真正值得記錄的正向訊號；可空"],
-  "negative_signals": ["真正值得記錄的負向訊號；可空"],
-  "watch_items": ["真正值得持續追蹤或需要查證的事項；可空"],
-  "earnings_digest": "不要重複列出每一篇法說摘要，只保留跨法說的共同影響或新發現；如果 Email 已有最近5天法說會區塊，可寫空字串",
-  "financial_focus": ["只放本次額外查到、且值得補充的財報／營收研究；不要重複 Email 結構化表格已有的內容"],
-  "cnyes_news_digest": ["從鉅亨近兩日新聞中整理出的市場／產業研究重點；不要逐篇複述，應整理成事件、原因、影響與查證狀態"],
-  "model_alert": "只有真的存在值得提醒的模型異常才填；否則空字串"
-}
-        """.strip()
-        if _env_bool("AFTER_CLOSE_FAST_MODE", False):
-            system_prompt += "\n\n【快速盤後模式】本次研究以速度優先；禁止使用 search_live_news。鉅亨新聞只讀本機夜間快取與早報已完成的新聞摘要。仍需使用工具查證，但不得重新爬網站或重複進行新聞深度摘要。"
-
-        messages: list[dict[str, Any]] = [
-            {"role": "system", "content": system_prompt},
-            {
-                "role": "user",
-                "content": (
-                    "先開始自主研究。這是研究包索引，不是答案。"
-                    "你必須先使用工具取得具體證據，再整理最終研究筆記。"
-                    "若研究包有 CNYES 近兩日新聞，第一個工具呼叫請使用 get_cnyes_news_overview，然後再自主選擇最需要的新聞搜尋／批次與其他工具。"
-                    "不要把所有工具機械式呼叫一次。\n\n"
-                    + json.dumps(evidence_index, ensure_ascii=False, default=str)
-                ),
-            },
-        ]
-        tool_history: list[dict[str, Any]] = []
-        had_tool_call = False
-        no_tool_rounds = 0
-        try:
-            max_tool_rounds = max(2, min(DEFAULT_MAX_TOOL_ROUNDS, int(os.getenv("AGENT_MAX_TOOL_ROUNDS", str(DEFAULT_MAX_TOOL_ROUNDS)))))
-        except Exception:
-            max_tool_rounds = DEFAULT_MAX_TOOL_ROUNDS
-
-        for round_no in range(max_tool_rounds):
-            try:
-                resp = client.chat(
-                    model=self.ollama_model,
-                    messages=messages,
-                    tools=TOOLS,
-                    think=True,
-                    options={"temperature": 0.1},
-                )
-            except TypeError:
-                resp = client.chat(
-                    model=self.ollama_model,
-                    messages=messages,
-                    tools=TOOLS,
-                    options={"temperature": 0.1},
-                )
-
-            calls = getattr(getattr(resp, "message", None), "tool_calls", None) or []
-
-            if not calls:
-                no_tool_rounds += 1
-                raw = _extract_json(getattr(getattr(resp, "message", None), "content", "") or "")
-
-                if raw is not None and had_tool_call:
-                    cnyes_count = int(evidence_index["研究包已存在的資料"].get("cnyes_news", 0) or 0)
-                    cnyes_actions = {"get_cnyes_research_digest", "search_cnyes_news", "get_cnyes_news_batch"}
-                    if cnyes_count > 0 and not any(x.get("tool") in cnyes_actions for x in tool_history):
-                        messages.append({
-                            "role": "assistant",
-                            "content": getattr(getattr(resp, "message", None), "content", "") or "",
-                        })
-                        messages.append({
-                            "role": "user",
-                            "content": (
-                                "研究包已有鉅亨近兩日新聞，但你尚未實際搜尋／閱讀新聞內容。"
-                                "先使用 get_cnyes_news_batch 廣泛閱讀兩日新聞，再針對最需要解釋的市場／產業異動使用 search_cnyes_news 深讀，最後才整理 JSON。"
-                            ),
-                        })
-                        continue
-                    result = _normalize(raw, tool_history, self.ollama_model)
-                    result["report_date"] = payload.get("report_date", "")
-                    result["agent_status"] = "qwen3_tool_agent"
-                    result = _merge_cnyes_digest(result, payload)
-                    self._save_memory(result)
-                    return result
-
-                # Qwen3 在第一輪可能直接回答而沒有產生 tool call。
-                # 不接受這種答案；先給一次明確的工具使用要求。
-                messages.append({
-                    "role": "assistant",
-                    "content": getattr(getattr(resp, "message", None), "content", "") or "",
-                })
-                messages.append({
-                    "role": "user",
-                    "content": (
-                        "你目前尚未使用任何研究工具。請不要直接下結論。"
-                        "現在請根據研究目標自行選擇最需要的工具，至少實際查一項市場、財務、法說會、新聞、題材或模型證據。"
-                        "取得工具結果後再繼續研究。"
-                    ),
-                })
-                if no_tool_rounds >= 2 and not had_tool_call:
-                    # 最後一道保險：只在模型連續不使用工具時，建立一個最小的市場/法說探查，
-                    # 探查內容本身仍不決定最後研究重點。
-                    if (evidence_index["研究包已存在的資料"].get("cnyes_news", 0) or 0) > 0:
-                        starter_name = "get_cnyes_research_digest"
-                        starter_args = {}
-                    elif (evidence_index["研究包已存在的資料"].get("earnings_calls", 0) or 0) > 0:
-                        starter_name = "get_earnings_events"
-                        starter_args = {"symbol": ""}
-                    else:
-                        starter_name = "get_market_overview"
-                        starter_args = {"focus": "找出需要深入研究的異常訊號"}
-                    starter_result = self._tool(starter_name, starter_args, payload)
-                    compact = json.dumps(starter_result, ensure_ascii=False, default=str)
-                    tool_history.append({
-                        "tool": starter_name,
-                        "reason": "bootstrap：模型連續兩輪未產生工具呼叫，先提供最低限度偵察資料；最終重點仍由 Agent 決定。",
-                        "result": compact,
-                    })
-                    messages.append({"role": "tool", "tool_name": starter_name, "content": compact[:52000]})
-                    had_tool_call = True
-                continue
-
-            # Ollama 官方 tool-calling 流程要求先把 assistant message（含 tool_calls）
-            # 放回 messages，再逐一加入 tool result。
-            messages.append(resp.message)
-
-            for call in calls:
-                name = _call_name(call)
-                args = _call_args(call)
-                result = self._tool(name, args, payload)
-                compact = json.dumps(result, ensure_ascii=False, default=str)
-                tool_history.append({
-                    "tool": name,
-                    "reason": f"Agent 自主選擇工具；arguments={json.dumps(args, ensure_ascii=False)}",
-                    "result": compact,
-                })
-                messages.append({
-                    "role": "tool",
-                    "tool_name": name,
-                    "content": compact[:52000],
-                })
-                had_tool_call = True
-
-        # 工具輪數用完後，要求 Agent 只輸出最後 JSON。
-        try:
-            resp = client.chat(
-                model=self.ollama_model,
-                messages=messages + [{"role": "user", "content": "停止查資料，現在輸出最後 JSON 研究結果。不要輸出思考過程。只輸出最終研究筆記。"}],
-                tools=TOOLS,
-                options={"temperature": 0.0},
-                format="json",
-                think=True,
-            )
-            raw = _extract_json(getattr(getattr(resp, "message", None), "content", "") or "")
-            if raw is not None:
-                result = _normalize(raw, tool_history, self.ollama_model)
-                result["report_date"] = payload.get("report_date", "")
-                result["agent_status"] = "qwen3_tool_agent" if tool_history else "qwen3"
-                result = _merge_cnyes_digest(result, payload)
-                self._save_memory(result)
-                return result
-        except Exception as exc:
-            return self._fallback(payload, f"Agent 最終 JSON 失敗：{exc}")
-
-        return self._fallback(payload, "Agent 未產生有效 JSON 結果")

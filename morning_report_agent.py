@@ -9,7 +9,7 @@
 設計重點：
 - CNYES 新聞由前一晚 23:00 夜間爬蟲建立日檔；早報只讀本機快取。
 - 法說會優先使用前一日盤後已建立的 Fugle memo cache；若沒有可用 cache 才補抓。
-- 產業／股票研究由本機 Qwen3 8B 完成，不寫死固定產業排名。
+- 產業／股票研究由 Claude 早報研究（morning-report skill）完成，不寫死固定產業排名。
 """
 from __future__ import annotations
 
@@ -43,10 +43,9 @@ else:
 
 from earnings_call_agent import EarningsCallAgent
 from business_master import business_map_for_symbols, build_business_research_context
+from ai_backend import AGENT_MODEL, AGENT_STATUS, PENDING_STATUS
 
 TAIPEI = ZoneInfo("Asia/Taipei")
-DEFAULT_OLLAMA_HOST = "http://127.0.0.1:11434"
-DEFAULT_OLLAMA_MODEL = "qwen3:8b"
 DEFAULT_WATCHLIST = [
     "3481", "2327", "2492", "3037", "3044", "3533", "2303", "2330", "2344", "2408",
     "6515", "7769", "6488", "3374", "2377", "3450", "0050", "3006", "3661", "8299",
@@ -103,12 +102,10 @@ def _news_fallback_summary(item: dict[str, Any]) -> str:
 
 
 class MorningResearchAgent:
-    def __init__(self, base_dir: str | Path = ".", ollama_host: str | None = None, ollama_model: str | None = None):
+    def __init__(self, base_dir: str | Path = "."):
         self.base = Path(base_dir).resolve()
         self.output_dir = self.base / "output" / "research_reports"
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        self.ollama_host = (ollama_host or os.getenv("OLLAMA_HOST", DEFAULT_OLLAMA_HOST)).rstrip("/")
-        self.ollama_model = ollama_model or os.getenv("OLLAMA_MODEL", DEFAULT_OLLAMA_MODEL)
 
     def _load_latest_research(self) -> dict[str, Any]:
         files = sorted(self.output_dir.glob("research_*.json"))
@@ -222,7 +219,7 @@ class MorningResearchAgent:
 
         # 沒有現成 cache：補抓一次，但 EarningsCallAgent 本身使用 DB 避免重複分析。
         try:
-            agent = EarningsCallAgent(self.base, ollama_model=self.ollama_model)
+            agent = EarningsCallAgent(self.base)
             out = agent.daily_run(
                 days=int(os.getenv("EARNINGS_MEMO_LOOKBACK_DAYS", str(days))),
                 limit=int(os.getenv("EARNINGS_MEMO_MAX_ARTICLES", "80")),
@@ -343,14 +340,8 @@ class MorningResearchAgent:
             )
         else:
             try:
-                # 先嘗試目前新版的三參數建構方式。
-                try:
-                    digest_agent = CnyesNewsDigestAgent(
-                        self.base, self.ollama_host, self.ollama_model
-                    )
-                except TypeError:
-                    # 相容只接受 base_dir 的舊版實作。
-                    digest_agent = CnyesNewsDigestAgent(self.base)
+                # 規則式新聞候選；新聞研究由 Claude 早報研究完成。
+                digest_agent = CnyesNewsDigestAgent(self.base)
 
                 runner = getattr(digest_agent, "run", None)
                 if not callable(runner):
@@ -412,7 +403,7 @@ class MorningResearchAgent:
         }
 
     def _fallback(self, payload: dict[str, Any], error: str) -> dict[str, Any]:
-        """Qwen 主早報失敗時的證據保底。
+        """Claude 早報完成前的證據保底（研究包與 Email fallback 共用）。
 
         重要：
         1. 不再把自選股前 8 檔直接塞進「看好的股票」。
@@ -650,7 +641,7 @@ class MorningResearchAgent:
 
         return {
             "agent_status": "morning_fallback_evidence",
-            "model": self.ollama_model,
+            "model": AGENT_MODEL,
             "generated_at": datetime.now(TAIPEI).isoformat(),
             "overview": overview,
             "news_summary": news_summary[:MORNING_NEWS_MAX],
@@ -661,8 +652,8 @@ class MorningResearchAgent:
             "error": error,
         }
 
-    def run(self, watchlist: list[str], payload: dict[str, Any] | None = None) -> dict[str, Any]:
-        payload = payload if isinstance(payload, dict) else self._build_payload(watchlist)
+    def _prompt(self, watchlist: list[str], payload: dict[str, Any]) -> str:
+        """早報研究指示與資料，寫進 output/claude_jobs/morning_<date>/brief.md 給 Claude。"""
         digest = payload.get("cnyes_research_digest", {}) or {}
         earnings = payload.get("earnings_calls", []) or []
         profiles = payload.get("business_profiles", {}) or {}
@@ -670,10 +661,6 @@ class MorningResearchAgent:
         theme_hint = prev.get("bullish_themes", []) or []
         financial_hint = prev.get("financial_snapshots", []) or []
 
-        try:
-            import ollama
-        except Exception as exc:
-            return self._fallback(payload, f"ollama 套件不可用：{exc}")
 
         earnings_compact = []
         for x in earnings[:20]:
@@ -768,144 +755,121 @@ class MorningResearchAgent:
 題材：{json.dumps(theme_hint, ensure_ascii=False, default=str)}
 營收：{json.dumps(financial_hint, ensure_ascii=False, default=str)}
 """.strip()
+        return prompt
 
-        try:
-            client = ollama.Client(host=self.ollama_host)
-            try:
-                resp = client.chat(
-                    model=self.ollama_model,
-                    messages=[
-                        {"role": "system", "content": "你是本機 AI 台股早報研究 Agent，只能使用輸入的資料。"},
-                        {"role": "user", "content": prompt},
-                    ],
-                    options={"temperature": 0.05},
-                    format="json",
-                    think=True,
-                )
-            except TypeError:
-                resp = client.chat(
-                    model=self.ollama_model,
-                    messages=[
-                        {"role": "system", "content": "你是本機 AI 台股早報研究 Agent，只能使用輸入的資料。"},
-                        {"role": "user", "content": prompt},
-                    ],
-                    options={"temperature": 0.05},
-                    format="json",
-                )
-            raw_text = getattr(getattr(resp, "message", None), "content", "") or ""
-            raw = json.loads(raw_text)
-            if not isinstance(raw, dict):
-                raise ValueError("早報 Agent 輸出不是 JSON object")
+    def _normalize_raw(self, raw: dict[str, Any], payload: dict[str, Any], watchlist: list[str]) -> dict[str, Any]:
+        """驗證並整理 Claude 寫出的早報 JSON（morning_notes.json）。"""
+        earnings = payload.get("earnings_calls", []) or []
+        profiles = payload.get("business_profiles", {}) or {}
 
-            raw_articles = [a for a in (payload.get("cnyes_news", {}).get("articles", []) or []) if isinstance(a, dict)]
-            valid_urls = {str(a.get("url", "")).strip() for a in raw_articles if a.get("url")}
-            article_meta = {}
-            for article in raw_articles:
-                title_key = _clean_text(article.get("title") or article.get("headline") or "", 160).lower()
-                url_key = str(article.get("url") or "").strip()
-                published = _clean_text(article.get("published_at") or article.get("published_time") or article.get("date") or article.get("created_at") or article.get("updated_at") or "", 80)
-                if title_key:
-                    article_meta[title_key] = published
-                if url_key:
-                    article_meta[url_key] = published
+        raw_articles = [a for a in (payload.get("cnyes_news", {}).get("articles", []) or []) if isinstance(a, dict)]
+        valid_urls = {str(a.get("url", "")).strip() for a in raw_articles if a.get("url")}
+        article_meta = {}
+        for article in raw_articles:
+            title_key = _clean_text(article.get("title") or article.get("headline") or "", 160).lower()
+            url_key = str(article.get("url") or "").strip()
+            published = _clean_text(article.get("published_at") or article.get("published_time") or article.get("date") or article.get("created_at") or article.get("updated_at") or "", 80)
+            if title_key:
+                article_meta[title_key] = published
+            if url_key:
+                article_meta[url_key] = published
 
-            news_summary = []
-            for x in raw.get("news_summary", []) or []:
-                if not isinstance(x, dict):
-                    continue
-                links = [str(u).strip() for u in (x.get("source_links") or []) if str(u).strip() in valid_urls]
-                title = _clean_text(x.get("title", "財經事件"), 120)
-                published = _clean_text(x.get("published_at") or x.get("published_time") or "", 80)
-                if not published:
-                    published = article_meta.get(title.lower(), "")
-                    for link in links[:1]:
-                        if not published:
-                            published = article_meta.get(link, "")
-                news_summary.append({
-                    "title": title,
-                    "summary": _clean_text(x.get("summary", ""), 900),
-                    "published_at": published,
-                    "impact": _clean_text(x.get("impact", "待查證"), 20),
-                    "industries": [_clean_text(v, 80) for v in (x.get("industries") or []) if str(v).strip()][:8],
-                    "evidence": [_clean_text(v, 500) for v in (x.get("evidence") or []) if str(v).strip()][:6],
-                    "source_links": links[:4],
-                    "confidence": max(0.0, min(1.0, _safe_float(x.get("confidence"), 0.0) or 0.0)),
-                })
+        news_summary = []
+        for x in raw.get("news_summary", []) or []:
+            if not isinstance(x, dict):
+                continue
+            links = [str(u).strip() for u in (x.get("source_links") or []) if str(u).strip() in valid_urls]
+            title = _clean_text(x.get("title", "財經事件"), 120)
+            published = _clean_text(x.get("published_at") or x.get("published_time") or "", 80)
+            if not published:
+                published = article_meta.get(title.lower(), "")
+                for link in links[:1]:
+                    if not published:
+                        published = article_meta.get(link, "")
+            news_summary.append({
+                "title": title,
+                "summary": _clean_text(x.get("summary", ""), 900),
+                "published_at": published,
+                "impact": _clean_text(x.get("impact", "待查證"), 20),
+                "industries": [_clean_text(v, 80) for v in (x.get("industries") or []) if str(v).strip()][:8],
+                "evidence": [_clean_text(v, 500) for v in (x.get("evidence") or []) if str(v).strip()][:6],
+                "source_links": links[:4],
+                "confidence": max(0.0, min(1.0, _safe_float(x.get("confidence"), 0.0) or 0.0)),
+            })
 
-            recommended_industries = []
-            for x in raw.get("recommended_industries", []) or []:
-                if not isinstance(x, dict):
-                    continue
-                syms = [_clean_symbol(v) for v in (x.get("related_symbols") or []) if _clean_symbol(v) in watchlist]
-                recommended_industries.append({
-                    "industry": _clean_text(x.get("industry", ""), 100),
-                    "why": _clean_text(x.get("why", ""), 800),
-                    "evidence": [_clean_text(v, 500) for v in (x.get("evidence") or []) if str(v).strip()][:6],
-                    "related_symbols": syms[:15],
-                })
+        recommended_industries = []
+        for x in raw.get("recommended_industries", []) or []:
+            if not isinstance(x, dict):
+                continue
+            syms = [_clean_symbol(v) for v in (x.get("related_symbols") or []) if _clean_symbol(v) in watchlist]
+            recommended_industries.append({
+                "industry": _clean_text(x.get("industry", ""), 100),
+                "why": _clean_text(x.get("why", ""), 800),
+                "evidence": [_clean_text(v, 500) for v in (x.get("evidence") or []) if str(v).strip()][:6],
+                "related_symbols": syms[:15],
+            })
 
-            recommended_stocks = []
-            profile_lookup = {str(k).strip().upper(): v for k, v in profiles.items()}
-            for x in raw.get("recommended_stocks", []) or []:
-                if not isinstance(x, dict):
-                    continue
-                sym = _clean_symbol(x.get("symbol"))
-                if not sym or sym not in watchlist:
-                    continue
-                p = profile_lookup.get(sym, {}) or {}
-                name = _clean_text(x.get("name") or p.get("name") or sym, 80)
-                industry = _clean_text(x.get("industry") or p.get("business_group") or p.get("primary_chain") or p.get("industry_name") or "", 120)
-                recommended_stocks.append({
-                    "symbol": sym,
-                    "name": name,
-                    "industry": industry,
-                    "reason": _clean_text(x.get("reason", ""), 900),
-                    "evidence": [_clean_text(v, 500) for v in (x.get("evidence") or []) if str(v).strip()][:6],
-                    "source_links": [str(v).strip() for v in (x.get("source_links") or []) if str(v).strip() in valid_urls][:4],
-                })
+        recommended_stocks = []
+        profile_lookup = {str(k).strip().upper(): v for k, v in profiles.items()}
+        for x in raw.get("recommended_stocks", []) or []:
+            if not isinstance(x, dict):
+                continue
+            sym = _clean_symbol(x.get("symbol"))
+            if not sym or sym not in watchlist:
+                continue
+            p = profile_lookup.get(sym, {}) or {}
+            name = _clean_text(x.get("name") or p.get("name") or sym, 80)
+            industry = _clean_text(x.get("industry") or p.get("business_group") or p.get("primary_chain") or p.get("industry_name") or "", 120)
+            recommended_stocks.append({
+                "symbol": sym,
+                "name": name,
+                "industry": industry,
+                "reason": _clean_text(x.get("reason", ""), 900),
+                "evidence": [_clean_text(v, 500) for v in (x.get("evidence") or []) if str(v).strip()][:6],
+                "source_links": [str(v).strip() for v in (x.get("source_links") or []) if str(v).strip() in valid_urls][:4],
+            })
 
-            result = {
-                "agent_status": "qwen3_morning_agent",
-                "model": self.ollama_model,
-                "generated_at": datetime.now(TAIPEI).isoformat(),
-                "overview": _clean_text(raw.get("overview", ""), 1200),
-                "news_summary": news_summary[:MORNING_NEWS_MAX],
-                "recommended_industries": recommended_industries[:10],
-                "recommended_stocks": recommended_stocks[:12],
-                "watch_items": [_clean_text(x, 500) for x in (raw.get("watch_items") or []) if str(x).strip()][:10],
-                "cnyes_cache_dates": payload.get("cnyes_news", {}).get("cache_dates", []),
-                "cnyes_article_count": int(payload.get("cnyes_news", {}).get("article_count", 0) or 0),
-                "earnings_count": len(earnings),
-            }
-            raw_article_count = int(payload.get("cnyes_news", {}).get("article_count", 0) or 0)
-            if raw_article_count > 0:
-                raw_fallback = self._fallback_news_from_raw_cache(payload, watchlist)
-                if not result["news_summary"]:
-                    result["news_summary"] = raw_fallback[:MORNING_NEWS_MAX]
-                    result["agent_status"] = "qwen3_morning_agent_raw_news_fallback"
-                else:
-                    # Qwen 有時只輸出標題，保留其判斷，但把空摘要用原始文章補齊。
-                    by_title = {str(x.get("title") or "").strip().lower(): x for x in raw_fallback}
-                    for item in result["news_summary"]:
-                        if not isinstance(item, dict):
-                            continue
-                        summary = str(item.get("summary") or "").strip()
-                        key = str(item.get("title") or "").strip().lower()
-                        if len(summary) < 40 and key in by_title:
-                            item["summary"] = by_title[key].get("summary", summary)
-            if not result["news_summary"] and not result["recommended_industries"] and not result["recommended_stocks"]:
-                raise ValueError("早報 Agent 沒有產生有效內容")
-            return result
-        except Exception as exc:
-            return self._fallback(payload, str(exc))
+        result = {
+            "agent_status": AGENT_STATUS,
+            "model": AGENT_MODEL,
+            "generated_at": datetime.now(TAIPEI).isoformat(),
+            "overview": _clean_text(raw.get("overview", ""), 1200),
+            "news_summary": news_summary[:MORNING_NEWS_MAX],
+            "recommended_industries": recommended_industries[:10],
+            "recommended_stocks": recommended_stocks[:12],
+            "watch_items": [_clean_text(x, 500) for x in (raw.get("watch_items") or []) if str(x).strip()][:10],
+            "cnyes_cache_dates": payload.get("cnyes_news", {}).get("cache_dates", []),
+            "cnyes_article_count": int(payload.get("cnyes_news", {}).get("article_count", 0) or 0),
+            "earnings_count": len(earnings),
+        }
+        raw_article_count = int(payload.get("cnyes_news", {}).get("article_count", 0) or 0)
+        if raw_article_count > 0:
+            raw_fallback = self._fallback_news_from_raw_cache(payload, watchlist)
+            if not result["news_summary"]:
+                result["news_summary"] = raw_fallback[:MORNING_NEWS_MAX]
+                result["news_summary_source"] = "raw_news_fallback"
+            else:
+                # 摘要過短時保留 Agent 判斷，用原始文章補齊內容。
+                by_title = {str(x.get("title") or "").strip().lower(): x for x in raw_fallback}
+                for item in result["news_summary"]:
+                    if not isinstance(item, dict):
+                        continue
+                    summary = str(item.get("summary") or "").strip()
+                    key = str(item.get("title") or "").strip().lower()
+                    if len(summary) < 40 and key in by_title:
+                        item["summary"] = by_title[key].get("summary", summary)
+        if not result["news_summary"] and not result["recommended_industries"] and not result["recommended_stocks"]:
+            raise ValueError("早報 Agent 沒有產生有效內容")
+        return result
+
+    def run(self, watchlist: list[str], payload: dict[str, Any] | None = None) -> dict[str, Any]:
+        payload = payload if isinstance(payload, dict) else self._build_payload(watchlist)
+        # 早報研究由 Claude 排程任務完成（morning-report skill），此處只回傳程式化 fallback。
+        return {**self._fallback(payload, "等待 Claude 早報研究"), "agent_status": PENDING_STATUS}
 
 
-def build_morning_report(base_dir: str | Path = ".", watchlist: list[str] | None = None) -> dict[str, Any]:
-    base = Path(base_dir).resolve()
-    symbols = [_clean_symbol(x) for x in (watchlist or DEFAULT_WATCHLIST) if _clean_symbol(x)]
-    agent = MorningResearchAgent(base)
-    payload = agent._build_payload(symbols)
-    morning = agent.run(symbols, payload=payload)
+def save_morning_report(agent: MorningResearchAgent, payload: dict[str, Any], morning: dict[str, Any]) -> dict[str, Any]:
+    """把早報 Agent 結果寫回 payload，並輸出 morning_<date>.json / .md。"""
     payload["morning_agent"] = morning
     payload["agent_research_notes"] = {
         "agent_status": morning.get("agent_status", ""),

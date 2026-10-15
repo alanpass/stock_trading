@@ -9,8 +9,10 @@
 from __future__ import annotations
 
 import os
-import re
+import json
+import threading
 import time
+from collections import deque
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
@@ -32,7 +34,31 @@ TPEX_3INSTI = "https://www.tpex.org.tw/openapi/v1/tpex_3insti_daily_trading"
 # TPEx 舊版三大法人日報下載端點，能指定民國日期，可補足 OpenAPI 只提供最新日的限制。
 TPEX_3INSTI_DOWNLOAD = "https://www.tpex.org.tw/web/stock/3insti/daily_trade/3itrade_hedge_download.php"
 
-FUGLE_API_KEY = "MjQwNTMxZTgtYTIwOS00Y2VkLTg5ZTktZjVlMDgxNjMzMWUxIGE0ZjA1NDIxLWZmZjAtNDZhOC1hN2RmLTZjNmVjYzdiZjA1OQ=="
+def _read_fugle_api_key() -> str:
+    """Fugle 金鑰只放在 .env 或 Streamlit Secrets，不寫進程式碼。
+
+    順序：環境變數（Streamlit Cloud 由 Secrets 同步）→ 專案 .env → 本機 .streamlit/secrets.toml。
+    """
+    value = os.getenv("FUGLE_API_KEY", "").strip()
+    if value:
+        return value
+    root = Path(__file__).resolve().parent
+    try:
+        for line in (root / ".env").read_text(encoding="utf-8").splitlines():
+            name, sep, raw = line.partition("=")
+            if sep and name.strip() == "FUGLE_API_KEY":
+                return raw.strip().strip('"').strip("'")
+    except OSError:
+        pass
+    try:
+        import tomllib
+        secrets = tomllib.loads((root / ".streamlit" / "secrets.toml").read_text(encoding="utf-8"))
+        return str(secrets.get("FUGLE_API_KEY", "")).strip()
+    except Exception:
+        return ""
+
+
+FUGLE_API_KEY = _read_fugle_api_key()
 
 INDUSTRIES = {
     "01":"水泥工業","02":"食品工業","03":"塑膠工業","04":"紡織纖維","05":"電機機械",
@@ -49,10 +75,40 @@ class APIError(RuntimeError):
     pass
 
 
+class RateLimited(APIError):
+    """Fugle 每分鐘請求額度已用完。"""
+
+
+# Fugle 行情 API 每分鐘 60 次（同一把 key 共用）。同一個程序內的所有 FugleClient 共用這個計數，
+# 先在本機擋下，避免打出 429 後再等 1+2+4 秒重試，讓整個網頁卡住。
+FUGLE_RATE_LIMIT_PER_MIN = int(os.getenv("FUGLE_RATE_LIMIT_PER_MIN", "55"))
+_RATE_LOCK = threading.Lock()
+_RATE_TIMES: deque[float] = deque()
+
+
+def _acquire_rate_slot(wait: bool) -> None:
+    while True:
+        with _RATE_LOCK:
+            now = time.monotonic()
+            while _RATE_TIMES and now - _RATE_TIMES[0] >= 60:
+                _RATE_TIMES.popleft()
+            if len(_RATE_TIMES) < FUGLE_RATE_LIMIT_PER_MIN:
+                _RATE_TIMES.append(now)
+                return
+            delay = 60 - (now - _RATE_TIMES[0]) + 0.05
+        if not wait:
+            raise RateLimited(f"Fugle 每分鐘 {FUGLE_RATE_LIMIT_PER_MIN} 次額度已用完，約 {delay:.0f} 秒後恢復")
+        time.sleep(delay)
+
+
 class FugleClient:
-    def __init__(self, api_key: str | None = None, timeout: int = 20):
-        self.api_key = (api_key or FUGLE_API_KEY).strip()
+    def __init__(self, api_key: str | None = None, timeout: int = 20, wait_on_limit: bool = True):
+        """wait_on_limit=False（網站用）：額度用完時立即放棄這次請求，不讓頁面等待；
+        True（排程腳本用）：等到有額度再送出。"""
+        # 每次建立時重新讀取，Streamlit 會在 import 之後才把 Secrets 同步成環境變數。
+        self.api_key = (api_key or _read_fugle_api_key()).strip()
         self.timeout = timeout
+        self.wait_on_limit = wait_on_limit
         self.session = requests.Session()
         self.session.headers.update({"User-Agent": "Mozilla/5.0 stock-dashboard/3.0"})
         if self.api_key:
@@ -60,14 +116,17 @@ class FugleClient:
 
     def _get(self, path: str, params: dict[str, Any] | None = None, retry: int = 3) -> dict:
         if not self.api_key:
-            raise APIError("FUGLE_API_KEY 尚未設定。請在目前 PowerShell 視窗設定 $env:FUGLE_API_KEY。")
+            raise APIError("FUGLE_API_KEY 尚未設定：請寫在專案 .env（本機）或 Streamlit Secrets（雲端）。")
         url = f"{BASE}/{path.lstrip('/')}"
         last = None
         for i in range(retry):
+            _acquire_rate_slot(self.wait_on_limit)
             try:
                 r = self.session.get(url, params=params or {}, timeout=self.timeout)
                 if r.status_code == 429:
                     last = f"429 Rate Limit: {r.text[:300]}"
+                    if not self.wait_on_limit:
+                        raise RateLimited(last)
                     time.sleep(2 ** i)
                     continue
                 if r.status_code in (401, 403):
@@ -99,8 +158,17 @@ class FugleClient:
             row["industry"] = INDUSTRY_OVERRIDES.get(code, normalize_industry(row.get("industry", "00")))
         return rows
 
+    _snapshot_forbidden = False  # 這把 key 沒有 snapshot 權限（HTTP 403）時記住，不再每次重試
+
     def snapshot_quotes(self, market: str) -> list[dict]:
-        data = self._get(f"snapshot/quotes/{market}", {"type": "ALLBUT0999"})
+        if FugleClient._snapshot_forbidden:
+            raise APIError("Fugle snapshot 未開通（HTTP 403），改用逐檔 Quote")
+        try:
+            data = self._get(f"snapshot/quotes/{market}", {"type": "ALLBUT0999"})
+        except APIError as exc:
+            if "HTTP 403" in str(exc):
+                FugleClient._snapshot_forbidden = True
+            raise
         return data.get("data", []) or []
 
     def intraday_candles(self, symbol: str, timeframe: str = "1") -> pd.DataFrame:
@@ -128,26 +196,6 @@ class FugleClient:
             params["adjusted"] = "true" if adjusted else "false"
         data = self._get(f"historical/candles/{clean_symbol(symbol)}", params)
         return self._candles_df(data.get("data", []) or [], clean_symbol(symbol))
-
-    def history_3y(self, symbol: str, cache_dir: Path, years: int = 3) -> pd.DataFrame:
-        cache_dir.mkdir(parents=True, exist_ok=True)
-        path = cache_dir / f"{clean_symbol(symbol)}.csv"
-        end = pd.Timestamp.today().normalize().date()
-        start = (pd.Timestamp.today().normalize() - pd.Timedelta(days=365 * years + 10)).date()
-        parts = []
-        cur = pd.Timestamp(start)
-        end_ts = pd.Timestamp(end)
-        while cur <= end_ts:
-            chunk_end = min(cur + pd.Timedelta(days=329), end_ts)
-            part = self.historical_candles(clean_symbol(symbol), cur.date(), chunk_end.date(), "D", adjusted=False)
-            if not part.empty:
-                parts.append(part)
-            cur = chunk_end + pd.Timedelta(days=1)
-        if not parts:
-            raise APIError(f"{symbol} 沒有歷史日 K 資料")
-        out = pd.concat(parts, ignore_index=True).drop_duplicates("date", keep="last").sort_values("date")
-        out.to_csv(path, index=False, encoding="utf-8-sig")
-        return out
 
     @staticmethod
     def _candles_df(rows: list[dict], symbol: str) -> pd.DataFrame:
@@ -242,6 +290,33 @@ def _tpex_record_from_json(row: dict) -> dict | None:
     }
 
 
+INSTI_CACHE_DIR = Path(__file__).resolve().parent / "data" / "cache" / "institutions"
+_INSTI_MEM: dict[str, tuple[float, str | None]] = {}
+
+
+def _daily_report_text(kind: str, day: date, url: str, params: dict, headers: dict, timeout: int) -> str | None:
+    """三大法人日報（整個市場一天一份）。過去日期的內容不會再變，存到磁碟；今天的只在記憶體快取 10 分鐘。
+    這樣每支股票查 10 個交易日時，不必每次重新下載 20 幾份全市場日報。"""
+    key = f"{kind}_{day:%Y%m%d}"
+    past = day < date.today()
+    path = INSTI_CACHE_DIR / f"{key}.txt"
+    if past and path.exists():
+        return path.read_text(encoding="utf-8")
+    hit = _INSTI_MEM.get(key)
+    if hit and time.time() - hit[0] < 600:
+        return hit[1]
+    try:
+        r = requests.get(url, params=params, headers=headers, timeout=timeout)
+        text = r.text if r.ok else None
+    except Exception:
+        text = None
+    if text is not None and past:
+        INSTI_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
+    _INSTI_MEM[key] = (time.time(), text)
+    return text
+
+
 def _tpex_legacy_download(day: date, symbol: str) -> dict | None:
     """TPEx 歷史三大法人日報。
 
@@ -255,10 +330,9 @@ def _tpex_legacy_download(day: date, symbol: str) -> dict | None:
         "Referer": "https://www.tpex.org.tw/web/stock/3insti/daily_trade/3itrade_hedge.php",
     }
     try:
-        r = requests.get(TPEX_3INSTI_DOWNLOAD, params=params, headers=headers, timeout=20)
-        if not r.ok or not r.text:
+        text = _daily_report_text("tpex", day, TPEX_3INSTI_DOWNLOAD, params, headers, 20)
+        if not text:
             return None
-        text = r.text
         # 若伺服器返回 CSV，先直接處理；若返回 HTML，從 table 讀取。
         tables = []
         if "<table" in text.lower():
@@ -351,10 +425,10 @@ def fetch_institution_daily(symbol: str, d: date | None = None, market: str | No
             try:
                 url = TWSE_T86
                 params = {"date": day.strftime("%Y%m%d"), "selectType": "ALLBUT0999", "response": "json"}
-                r = requests.get(url, params=params, timeout=15, headers={"User-Agent": "Mozilla/5.0"})
-                if not r.ok:
+                text = _daily_report_text("twse_t86", day, url, params, {"User-Agent": "Mozilla/5.0"}, 15)
+                if not text:
                     continue
-                js = r.json()
+                js = json.loads(text)
                 data = js.get("data", []) if isinstance(js, dict) else []
                 fields = js.get("fields", []) if isinstance(js, dict) else []
                 if not data or not fields:

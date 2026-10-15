@@ -5,18 +5,14 @@
 設計原則：
 - 題材不是單純新聞情緒，而是「題材 -> 產業鏈 -> 公司 -> 基本面」的證據鏈。
 - 只把已存在的資料做結構化整合；不存在的證據不補猜。
-- Qwen3 可做研究摘要，但不能自行創造題材證據。
+- Claude 研究 Agent 可做研究摘要，但不能自行創造題材證據。
 """
 from __future__ import annotations
 
-from collections import defaultdict
 from dataclasses import dataclass, asdict
 from typing import Any, Iterable
-import re
 
 import numpy as np
-import pandas as pd
-import plotly.express as px
 
 
 THEME_CATALOG: list[dict[str, Any]] = [
@@ -328,16 +324,3 @@ def discover_bullish_themes(
     results.sort(key=lambda x: float(x.get("strength", 0)), reverse=True)
     return results
 
-
-def theme_sankey_frame(themes: list[dict[str, Any]], business_profiles: dict[str, dict[str, Any]], top_n: int = 8) -> pd.DataFrame:
-    rows = []
-    for t in themes[:top_n]:
-        for sym in t.get("affected_symbols", [])[:12]:
-            p = business_profiles.get(sym, {})
-            rows.append({
-                "題材": t.get("theme"),
-                "公司": f"{sym} {p.get('name','')}".strip(),
-                "強度": float(t.get("strength", 0)),
-                "業務": p.get("business_group", ""),
-            })
-    return pd.DataFrame(rows)

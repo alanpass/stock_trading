@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-"""CNYES API/HTML parser + Agent tool smoke test（不需連外網/Ollama）。"""
+"""CNYES API/HTML parser + 研究工具 smoke test（不需連外網）。"""
 from __future__ import annotations
 
 import json
 from tempfile import TemporaryDirectory
 
 from cnyes_news_crawler import CnyesNewsCrawler
-from agent_research_assistant import ResearchOrchestratorAgent
+from agent_research_assistant import ResearchToolbox
 
 
 def main() -> None:
@@ -57,7 +57,7 @@ def main() -> None:
         assert html_article.category == "台股"
         assert html_article.published.startswith("2026-09-28")
 
-        agent = ResearchOrchestratorAgent(td)
+        agent = ResearchToolbox(td)
         payload = {
             "cnyes_news": {
                 "source_url": "https://news.cnyes.com/news/cat/headline",

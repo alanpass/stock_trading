@@ -12,8 +12,8 @@
 
 兩層設計：
 - 規則層（永遠可用）：從 Fugle 法說會 Agent 已產生的結構化欄位＋備忘錄正文抽重點。
-- LLM 層（Ollama Qwen3 可用時）：重要度前 N 場重寫摘要；結果存在 earnings_summary_cache.json，
-  下次更新不重做。
+- 法說會的研究摘要由 Claude 法說會研究（earnings-call-memo skill，earnings_memo.py）寫回；
+  earnings_summary_cache.json 裡舊的 AI 摘要仍會沿用。
 
 用法（run_finance_info_update.py 已改成這樣呼叫）：
 
@@ -23,7 +23,6 @@
 from __future__ import annotations
 
 import hashlib
-import os
 import re
 import time
 from datetime import datetime
@@ -32,7 +31,6 @@ from typing import Any
 from finance_agent import (
     IMPORTANT_WORDS,
     NUMBER_PATTERN,
-    SECTOR_KEYWORDS,
     TAIPEI,
     FinanceNewsAgent,
     _clean,
@@ -74,28 +72,10 @@ def _row_key(row: dict[str, Any]) -> str:
 class EarningsSummaryAgent(FinanceNewsAgent):
     """沿用 FinanceNewsAgent 的摘要／畫重點／LLM 連線，只是把輸入換成法說會。"""
 
-    EARNINGS_SYSTEM = (
-        "你是台股法說會研究助理。只能根據提供的法說會內容整理，不可編造任何數字、公司或事件，也不給買賣建議。"
-        "輸出 JSON，欄位：points（2~4 條繁體中文重點，每條 70 字內，優先寫營收／獲利／毛利率等財務數字、"
-        "訂單與產能、展望與財測、風險；保留關鍵數字）、"
-        "sentiment（利多／利空／中性／混合，指法說內容對該公司基本面的訊號）、"
-        "sectors（最多 3 個，只能從這份清單挑：" + "、".join(SECTOR_KEYWORDS) + "）、"
-        "why（一句話說明這場法說最值得注意的地方，40 字內）、"
-        "highlights（3~8 個關鍵詞，必須逐字出現在 points 裡，例如數字、公司、事件）、"
-        "watch（0~2 條後續要追蹤的事項，每條 30 字內）。"
-    )
-    DIGEST_SYSTEM = (
-        "你是台股法說會研究主編。只能根據提供的條列整理，不可編造，也不給買賣建議。輸出 JSON："
-        "headline（60 字內總結這幾天法說會的共同焦點）、key_points（4~6 條最重要的事件重點，每條 60 字內）、"
-        "watch_items（3~5 條接下來要追蹤的事項）、risks（最多 3 條風險）。"
-    )
-
     def __init__(self, base_dir: str = ".", **kwargs: Any):
         super().__init__(base_dir, **kwargs)
         # 與新聞摘要分開存，避免互相覆蓋
         self.cache_path = self.out_dir / "earnings_summary_cache.json"
-        self.llm_max_articles = int(os.getenv("EARNINGS_LLM_MAX", "30"))
-        self.llm_time_budget = int(os.getenv("EARNINGS_LLM_TIME_BUDGET_SEC", "480"))
 
     # ---------------- 讀取欄位 ----------------
     @staticmethod
@@ -158,31 +138,6 @@ class EarningsSummaryAgent(FinanceNewsAgent):
             "ai_source": "rule",
         }
 
-    # ---------------- LLM 層 ----------------
-    def _llm_row(self, row: dict[str, Any]) -> dict[str, Any] | None:
-        structured, memo = self._texts(row)
-        body = (structured + "\n" + memo)[:2600]
-        user = (
-            f"公司：{self._company(row)}（{row.get('symbol', '')}）\n標題：{row.get('title', '')}\n"
-            f"日期：{row.get('published_date') or row.get('event_date') or ''}\n內容：{body}"
-        )
-        obj = self._chat_json(self.EARNINGS_SYSTEM, user)
-        if not obj:
-            return None
-        points = [str(x).strip() for x in (obj.get("points") or []) if str(x).strip()][:4]
-        if not points:
-            return None
-        sentiment = str(obj.get("sentiment") or "").strip()
-        blob = " ".join(points)
-        return {
-            "points": points,
-            "sentiment": sentiment if sentiment in SENTIMENTS else "",
-            "sectors": self._canon_sectors(obj.get("sectors") or [], f"{row.get('title', '')} {body}"),
-            "why": str(obj.get("why") or "").strip()[:80],
-            "highlights": [str(h).strip() for h in (obj.get("highlights") or []) if str(h).strip() and str(h).strip() in blob],
-            "watch": [str(x).strip()[:40] for x in (obj.get("watch") or []) if str(x).strip()][:2],
-        }
-
     @staticmethod
     def _fingerprint_row(row: dict[str, Any]) -> str:
         raw = f"{row.get('title', '')}|{row.get('content_hash', '')}|{len(str(row.get('memo_text') or ''))}|{len(_flat(row.get('one_line_summary')))}"
@@ -202,34 +157,12 @@ class EarningsSummaryAgent(FinanceNewsAgent):
             row["_rule"] = self._rule_row(row, now)
 
         cache = self._load_cache()
-        llm_on = self._check_llm()
-        llm_done = llm_cached = llm_fail = 0
-        budget_hit = False
-        ranked = sorted(rows, key=lambda r: -r["_rule"]["importance"])
-        for idx, row in enumerate(ranked):
-            key, fp = _row_key(row), self._fingerprint_row(row)
-            hit = cache.get(key)
-            if hit and hit.get("fp") == fp and hit.get("ai"):
+        ai_cached = 0
+        for row in rows:
+            hit = cache.get(_row_key(row))
+            if hit and hit.get("fp") == self._fingerprint_row(row) and hit.get("ai"):
                 row["_llm"] = hit["ai"]
-                llm_cached += 1
-                continue
-            if not llm_on or idx >= self.llm_max_articles:
-                continue
-            if time.time() - t0 > self.llm_time_budget:
-                budget_hit = True
-                continue
-            try:
-                ai = self._llm_row(row)
-            except Exception as exc:  # noqa: BLE001
-                ai = None
-                if llm_fail == 0:
-                    print(f"[earnings-agent] Qwen3 呼叫失敗（之後同類錯誤不再重複顯示）：{type(exc).__name__}: {exc}", flush=True)
-            if ai:
-                row["_llm"] = ai
-                cache[key] = {"fp": fp, "ai": ai, "ts": now.isoformat()}
-                llm_done += 1
-            else:
-                llm_fail += 1
+                ai_cached += 1
 
         # 合併：LLM 優先、規則補洞；法說會 Agent 已給的 impact 視為權威，不被覆蓋
         for row in rows:
@@ -238,7 +171,7 @@ class EarningsSummaryAgent(FinanceNewsAgent):
             use = dict(r)
             if l:
                 use.update({k: v for k, v in l.items() if v not in (None, "", [])})
-                use["ai_source"] = "qwen3"
+                use["ai_source"] = l.get("ai_source") or "qwen3"  # 舊快取為 Qwen3 寫的
                 if not l.get("highlights"):
                     use["highlights"] = self.extract_highlights(use["points"], row.get("title", ""), use.get("stocks", []), use.get("sectors", []))
                 if str(row.get("impact") or "") in SENTIMENTS:
@@ -265,17 +198,8 @@ class EarningsSummaryAgent(FinanceNewsAgent):
 
         rows.sort(key=lambda r: -r["importance"])
         digest = self._earnings_digest(rows, days, now)
-        digest["llm"] = {
-            "enabled": llm_on,
-            "note": self.llm_note,
-            "model": self.model if llm_on else "",
-            "summarized_now": llm_done,
-            "from_cache": llm_cached,
-            "failed": llm_fail,
-            "time_budget_hit": budget_hit,
-        }
-        self.stats["earnings"] = {"total": len(rows), "llm_summarized": llm_done, "llm_cached": llm_cached,
-                                  "llm_failed": llm_fail, "seconds": round(time.time() - t0, 1)}
+        digest["llm"] = {"source": "Claude 排程任務", "from_cache": ai_cached}
+        self.stats["earnings"] = {"total": len(rows), "ai_cached": ai_cached, "seconds": round(time.time() - t0, 1)}
         return rows, digest
 
     # ---------------- 總覽 ----------------
@@ -343,21 +267,4 @@ class EarningsSummaryAgent(FinanceNewsAgent):
             "risks": risks,
             "generated_by": "rule",
         }
-        if self.llm_ready and rows:
-            try:
-                lines = [
-                    f"- [{r.get('sentiment', '中性')}]{label(r)} {str(r.get('published_date') or '')[:10]}｜{'；'.join((r.get('ai_points') or [])[:2])}"
-                    for r in rows[:20]
-                ]
-                obj = self._chat_json(self.DIGEST_SYSTEM, "\n".join(lines))
-                if obj and obj.get("key_points"):
-                    digest["agent_headline"] = str(obj.get("headline") or "").strip()
-                    digest["agent_key_points"] = [str(x).strip() for x in obj["key_points"] if str(x).strip()][:6]
-                    wi = [str(x).strip() for x in obj.get("watch_items", []) if str(x).strip()][:5]
-                    rk = [str(x).strip() for x in obj.get("risks", []) if str(x).strip()][:3]
-                    digest["watch_items"] = wi or watch_items
-                    digest["risks"] = rk or risks
-                    digest["generated_by"] = "qwen3"
-            except Exception:  # noqa: BLE001
-                pass
         return digest

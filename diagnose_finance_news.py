@@ -56,15 +56,7 @@ def main() -> None:
 
     print("\n[4] 最近執行紀錄（每個時段抓了幾篇）")
     for r in load(REPORTS / "finance_run_history.json").get("runs", [])[-10:]:
-        print(f"  {r.get('at','')[:19]}  新聞={r.get('news'):4}  法說會={r.get('earnings'):3}  LLM新摘要={r.get('llm')}  stale={r.get('stale')}  錯誤={r.get('errors')}")
-
-    print("\n[5] Ollama / Qwen3")
-    try:
-        from finance_agent import FinanceNewsAgent
-        a = FinanceNewsAgent(BASE)
-        print("  可用" if a._check_llm() else f"  不可用：{a.llm_note}（仍會用規則層摘要，只是少了 Qwen3 的重寫）")
-    except Exception as exc:
-        print("  檢查失敗：", exc)
+        print(f"  {r.get('at','')[:19]}  新聞={r.get('news'):4}  法說會={r.get('earnings'):3}  AI沿用={r.get('ai_cached', r.get('llm'))}  stale={r.get('stale')}  錯誤={r.get('errors')}")
 
 
 if __name__ == "__main__":

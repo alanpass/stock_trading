@@ -6,18 +6,20 @@
 
 [![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red?logo=streamlit)](https://streamlit.io/)
-[![Ollama](https://img.shields.io/badge/Ollama-Qwen3%208B-black)](https://ollama.com/)
+[![Claude](https://img.shields.io/badge/Claude-Research%20Agent-orange)](https://claude.com/)
 [![Scikit-learn](https://img.shields.io/badge/scikit--learn-Random%20Forest-orange)](https://scikit-learn.org/)
 
 ## 🌐 Online Demo
 
 **Streamlit Dashboard**
 
-[https://stocktrading-c66hschtsd2qh6vkyv4mtq.streamlit.app/](https://tpe-stock-dashboard.streamlit.app/)
+https://stocktrading-c66hschtsd2qh6vkyv4mtq.streamlit.app/
 
 > 網站主要提供台股行情、個股研究、技術分析、籌碼資訊、AI 模型與研究結果的互動式介面。
 
 ---
+
+> AI 研究流程（盤後研究、早報、新聞重點、法說會、個股研究筆記）已由本機 Qwen3 改為 Claude 研究 Agent，架構說明見 [CLAUDE_AGENT_ARCHITECTURE.md](CLAUDE_AGENT_ARCHITECTURE.md)。
 
 # 🎯 專案介紹
 
@@ -35,7 +37,7 @@
 - 鉅亨網財經新聞
 - 技術與量價資料
 
-再交由本機 **Qwen3 8B + Ollama** Agent 進行研究。
+再交由 **Claude 研究 Agent**（Claude 桌面版排程任務 + Agent Skills）進行研究。
 
 Agent 不只是固定套用一組摘要模板，而是可以：
 
@@ -71,7 +73,7 @@ Agent 不只是固定套用一組摘要模板，而是可以：
 |---|---|
 | 📊 台股 Dashboard | Streamlit 互動式台股研究介面 |
 | 🔮 AI 隔日預測 | Random Forest + 44 項技術與量價特徵 |
-| 🧠 AI Research Agent | Qwen3 8B Tool Calling 自主研究 |
+| 🧠 AI Research Agent | Claude 依 Agent Skill 呼叫研究工具自主研究 |
 | 📰 財經新聞爬蟲 | 自動取得鉅亨網近期財經新聞 |
 | 📣 法說會 Agent | 閱讀 Fugle 法說會詳細備忘錄 |
 | 💰 財報／營收分析 | 整合 TWSE / TPEx / MOPS |
@@ -143,7 +145,7 @@ Agent 不只是固定套用一組摘要模板，而是可以：
 
 ## 8. 法說會 AI Agent
 
-將 Fugle 法說會備忘錄交由本機 Qwen3 8B Agent 進行分析，整理：
+將 Fugle 法說會備忘錄交由 Claude 研究 Agent 進行分析，整理：
 
 - 財務重點
 - 營運展望
@@ -178,7 +180,7 @@ Agent 不只是固定套用一組摘要模板，而是可以：
  ↓
 Research Package
  ↓
-Qwen3 8B Agent
+Claude 研究 Agent
  ↓
 判斷研究需求
  ↓
@@ -281,7 +283,7 @@ Agent 不只是搜尋固定關鍵字，而是可以根據研究脈絡延伸相�
     ↓
 Fugle 詳細備忘錄
     ↓
-Qwen3 8B
+Claude 研究 Agent
     ↓
 財務重點
     ↓
@@ -417,7 +419,7 @@ Email 顯示時會將：
 
 # 🤖 Agent Tool Calling
 
-Qwen3 8B 透過 Ollama 執行 Tool Calling。
+Claude 研究 Agent 透過 `claude_tools.py` 呼叫研究工具（工具定義在 `agent_research_assistant.py`），流程寫在 `.claude/skills/`。
 
 主要研究工具包括：
 
@@ -583,8 +585,8 @@ AI / Edge AI / Physical AI
                 ▼                       ▼
       ┌─────────────────┐     ┌──────────────────┐
       │ Quantitative AI │     │ Research Agent   │
-      │ Random Forest   │     │ Qwen3 8B         │
-      │ 44 Features     │     │ Tool Calling     │
+      │ Random Forest   │     │ Claude           │
+      │ 44 Features     │     │ Skills + Tools   │
       └────────┬────────┘     └────────┬─────────┘
                │                       │
                │              ┌────────┴─────────┐
@@ -611,8 +613,8 @@ AI / Edge AI / Physical AI
 | Plotly | K 線與互動式圖表 |
 | Pandas / NumPy | 資料處理 |
 | Scikit-learn | Random Forest 模型 |
-| Ollama | 本機 LLM 執行環境 |
-| Qwen3 8B | AI Research Agent |
+| Claude（桌面版排程任務） | AI Research Agent |
+| Agent Skills | 研究流程（`.claude/skills/`） |
 | Requests | API / 網路資料取得 |
 | BeautifulSoup | HTML 解析 |
 | Selenium | 動態網站與法說會資料 |
@@ -679,7 +681,7 @@ ResearchAgent
 建立 Research Package
         │
         ▼
-Qwen3 8B Agent
+Claude 研究 Agent
         │
         ├── 市場分析
         ├── 新聞分析
@@ -707,7 +709,7 @@ Agent Research Notes
 
 ### 1. 量化模型與 LLM 分工
 
-Random Forest 負責數值預測，Qwen3 Agent 負責研究與解釋。
+Random Forest 負責數值預測，Claude 研究 Agent 負責研究與解釋。
 
 ### 2. 證據優先
 
@@ -723,7 +725,7 @@ Random Forest 負責數值預測，Qwen3 Agent 負責研究與解釋。
 
 ### 5. 不把生成式模型當成數值預測器
 
-Qwen3 8B 不直接創造股票價格，數值預測由量化模型負責。
+Claude 研究 Agent 不直接創造股票價格，數值預測由量化模型負責。
 
 ---
 
@@ -736,8 +738,8 @@ Qwen3 8B 不直接創造股票價格，數值預測由量化模型負責。
 - ✅ 44 項技術與量價特徵
 - ✅ 5-Fold Walk-Forward Validation
 - ✅ OOS Backtest
-- ✅ Qwen3 8B 本機 Research Agent
-- ✅ Tool Calling
+- ✅ Claude 研究 Agent（排程任務 + Agent Skills）
+- ✅ 研究工具呼叫（claude_tools.py）
 - ✅ Agent Research Memory
 - ✅ CNYES 財經新聞爬蟲
 - ✅ Fugle 法說會研究
@@ -789,8 +791,7 @@ Windows
 Streamlit
 Fugle API
 TWSE / TPEx / MOPS
-Ollama
-Qwen3 8B
+Claude 桌面版（排程任務）
 Scikit-learn
 Selenium
 BeautifulSoup
@@ -809,7 +810,7 @@ Windows Task Scheduler
 本專案已加入 Windows → GitHub → Streamlit Cloud 自動發布層：
 
 ```text
-CNYES + Fugle + Qwen3 8B
+CNYES + Fugle + Claude 研究 Agent
         ↓
 finance_info_latest.json（本機完整研究資料）
         ↓
@@ -822,4 +823,4 @@ GitHub
 Streamlit Community Cloud
 ```
 
-網站不需要連到你的 Windows，也不需要連到本機 Ollama；Windows 只負責研究與發布，Cloud 只負責展示。完整設定請看 `GITHUB_AUTO_PUBLISH.md`。
+網站不需要連到你的 Windows；Windows 只負責研究與發布，Cloud 只負責展示。完整設定請看 `GITHUB_AUTO_PUBLISH.md`。

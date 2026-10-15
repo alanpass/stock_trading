@@ -252,7 +252,7 @@ def _load_earnings(base: Path, previous: dict[str, Any], watchlist: list[str], e
         deadline = time.time() + max(60, timeout - 150)  # 到時間自己停，留時間給最後一場收尾
 
         def work():
-            agent = EarningsCallAgent(base, ollama_model=os.getenv("OLLAMA_MODEL", "qwen3:8b"))
+            agent = EarningsCallAgent(base)
             return agent.daily_run(
                 days=EARNINGS_LOOKBACK_DAYS, limit=per_run, force=force, watchlist=[], skip_urls=skip or None,
                 deadline_ts=deadline, on_item=partial.append, log_fn=log,
@@ -350,6 +350,7 @@ def update_finance_info(base_dir: str | Path = BASE, watchlist: list[str] | None
     stale = False
     if articles:
         news, news_digest = agent.analyze_news(articles, now=started)
+        news_digest = carry_claude_digest(news_digest, previous.get("news_digest", {}))
     else:
         prev_news = [x for x in previous.get("news", []) if isinstance(x, dict)]
         if prev_news:
@@ -367,6 +368,7 @@ def update_finance_info(base_dir: str | Path = BASE, watchlist: list[str] | None
     # 法說會用專屬 Agent（沿用新聞摘要的重點／畫重點邏輯），範圍 EARNINGS_LOOKBACK_DAYS 天
     earnings_agent = EarningsSummaryAgent(base)
     earnings, earnings_digest = earnings_agent.analyze_earnings(earnings_raw, days=EARNINGS_LOOKBACK_DAYS, now=started)
+    earnings_digest = carry_claude_digest(earnings_digest, previous.get("earnings_digest", {}))
     agent.stats["earnings"] = earnings_agent.stats.get("earnings", {})
     payload = build_payload(news, news_digest, earnings, earnings_digest, crawl_info, stale, agent.stats)
     _atomic_write_json(latest, payload)  # 直接取代上一個時間點的資料
@@ -377,7 +379,7 @@ def update_finance_info(base_dir: str | Path = BASE, watchlist: list[str] | None
     hist = _read_json(hist_path).get("runs", [])
     hist.append({
         "at": payload["updated_at"], "news": len(news), "earnings": len(earnings),
-        "per_category": crawl_info.get("per_category_count", {}), "llm": agent.stats.get("llm_summarized", 0),
+        "per_category": crawl_info.get("per_category_count", {}), "ai_cached": agent.stats.get("ai_cached", 0),
         "stale": stale, "errors": len(errors),
     })
     _atomic_write_json(hist_path, {"runs": hist[-30:]})
@@ -395,17 +397,30 @@ def update_finance_info(base_dir: str | Path = BASE, watchlist: list[str] | None
     }
 
 
+CLAUDE_DIGEST_FIELDS = ("agent_headline", "agent_key_points", "watch_items", "risks", "generated_by", "agent_generated_at")
+
+
+def carry_claude_digest(new: dict, old: dict) -> dict:
+    """規則層每次重算 digest；Claude 寫的 AI 重點保留到下一次 Claude 更新（最多 CLAUDE_DIGEST_KEEP_HOURS 小時）。"""
+    if not isinstance(new, dict) or not isinstance(old, dict) or old.get("generated_by") != "claude":
+        return new
+    try:
+        age_h = (now_taipei() - datetime.fromisoformat(str(old.get("agent_generated_at")))).total_seconds() / 3600
+    except Exception:
+        return new
+    if age_h > float(os.getenv("CLAUDE_DIGEST_KEEP_HOURS", "12")):
+        return new
+    return {**new, **{k: old[k] for k in CLAUDE_DIGEST_FIELDS if k in old}}
+
+
 def main() -> int:
     print("=" * 72)
     print("AI TW STOCK FINANCE INFO UPDATE")
     print(f"TIME={now_taipei().isoformat()}")
     try:
-        if "--no-llm" in sys.argv:
-            os.environ["FINANCE_USE_LLM"] = "false"
         if "--no-earnings" in sys.argv:
             os.environ["FINANCE_SKIP_EARNINGS"] = "true"
         if "--quick" in sys.argv:  # 只爬新聞＋規則摘要，幾十秒內完成，用來確認流程
-            os.environ["FINANCE_USE_LLM"] = "false"
             os.environ["FINANCE_SKIP_EARNINGS"] = "true"
         result = update_finance_info(BASE, watchlist=load_watchlist(BASE), refresh_news="--no-crawl" not in sys.argv)
         print(json.dumps(result, ensure_ascii=False, indent=2, default=str))

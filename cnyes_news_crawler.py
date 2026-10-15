@@ -12,7 +12,7 @@
 2. API 回傳的新聞項目本身包含標題、正文、摘要、關鍵字、分類與 publishAt，
    直接保存為 ResearchAgent 的近期新聞資料庫。
 3. API 失敗時回退到 HTML 頭條頁面；必要時再用 Selenium 取得動態載入的文章連結。
-4. 每篇文章保存完整正文（去除 HTML 標籤）及來源 URL，給 Qwen3 Agent 後續摘要、查證與因果分析。
+4. 每篇文章保存完整正文（去除 HTML 標籤）及來源 URL，給 Claude 研究 Agent 後續摘要、查證與因果分析。
 5. 不繞過登入、付費牆或其他存取控制；請遵守來源網站服務條款與合理請求頻率。
 """
 from __future__ import annotations

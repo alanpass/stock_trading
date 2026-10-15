@@ -50,13 +50,6 @@ def normalize_industry(value) -> str:
     return s.zfill(2)
 
 
-def canonical_industry_for_symbol(symbol: str, fallback: str = "00") -> str:
-    code = str(symbol or "").strip().upper()
-    if "." in code:
-        code = code.split(".")[0]
-    return INDUSTRY_OVERRIDES.get(code, normalize_industry(fallback))
-
-
 def build_master(client, path: Path, force: bool = False) -> pd.DataFrame:
     """取得 TSE + OTC 全市場一般股票分類，保存成本機快取。"""
     path.parent.mkdir(parents=True, exist_ok=True)

@@ -6,12 +6,11 @@
 2. 對候選股再抓 5 / 20 交易日歷史，驗證近期趨勢。
 3. 依產業代碼彙整上漲 / 下跌股票。
 4. 對前段漲跌個股抓少量新聞，提供利多 / 利空原因的原始證據。
-5. Qwen 可再對這些證據做摘要，但規則式結果本身也可獨立運作。
+5. Claude 盤後研究可再對這些證據做摘要，但規則式結果本身也可獨立運作。
 """
 from __future__ import annotations
 
 import json
-import math
 import os
 import time
 from pathlib import Path
@@ -23,7 +22,7 @@ import requests
 import xml.etree.ElementTree as ET
 
 from stock_api import FugleClient, clean_symbol, INDUSTRIES, INDUSTRY_OVERRIDES
-from business_master import business_map_for_symbols, build_business_research_context
+from business_master import business_map_for_symbols
 
 GOOGLE_NEWS_RSS = "https://news.google.com/rss/search"
 TWSE_DAILY_ALL_URL = "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
@@ -127,19 +126,6 @@ class MarketMoverAnalyzer:
         df["industry"] = df["industry"].map(lambda x: str(x).zfill(2))
         df["industry_name"] = df["industry"].map(lambda x: INDUSTRIES.get(str(x).zfill(2), "其他"))
         return df
-
-    @staticmethod
-    def _roc_to_iso(value: Any) -> str:
-        """將交易所民國年月日字串轉成 YYYY-MM-DD。"""
-        text = str(value or "").strip().replace("/", "").replace("-", "")
-        if not text.isdigit():
-            return ""
-        if len(text) == 7:
-            try:
-                return f"{int(text[:3]) + 1911:04d}-{int(text[3:5]):02d}-{int(text[5:7]):02d}"
-            except Exception:
-                return ""
-        return ""
 
     def _http_json(self, url: str, params: dict[str, Any] | None = None) -> Any:
         """GET JSON；遇到企業網路／憑證攔截時，再嘗試 verify=False。"""

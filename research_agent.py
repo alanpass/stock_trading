@@ -10,7 +10,7 @@
 3. 讀取 TWSE / TPEx 官方重大訊息與月營收資料。
 4. 讀取 Google News RSS，做新聞搜尋與跨來源比對。
 5. 整理總體經濟 / 國際情勢 / 產業新聞證據。
-6. 使用本機 Ollama / Qwen3 做「證據統整與待查證判斷」，不是直接相信新聞標題。
+6. 證據統整與待查證判斷由 Claude 盤後研究（after-close-research skill）完成，不是直接相信新聞標題。
 7. 抓取 MOPS 法人說明會資料，判斷偏利多／偏利空，並用法說後股價反應交叉驗證。
 8. 分析近期市場漲幅／跌幅個股，依產業聚合，並用新聞與公司主要業務產生利多／利空原因候選。
 9. 產生「是否建議重新訓練、哪些特徵值得研究」報告，不自動改模型。
@@ -19,11 +19,8 @@ from __future__ import annotations
 
 import json
 import os
-import math
 import re
-import statistics
 from dataclasses import dataclass, asdict
-from datetime import datetime, timedelta, date
 from pathlib import Path
 from typing import Any, Iterable
 from urllib.parse import quote_plus
@@ -39,24 +36,10 @@ from stock_api import INDUSTRIES, INDUSTRY_OVERRIDES, clean_symbol, FugleClient
 from business_master import business_map_for_symbols, build_business_research_context
 from theme_agent import discover_bullish_themes
 from earnings_call_agent import EarningsCallAgent
-from agent_research_assistant import ResearchOrchestratorAgent
+from ai_backend import AGENT_MODEL, pending_agent_notes, pending_news_digest
 from market_mover_analysis import MarketMoverAnalyzer
-from market_calendar import market_status_text, is_twse_trading_day
+from market_calendar import market_status_text
 from cnyes_news_crawler import CnyesNewsCrawler
-# 相容不同版本的 CNYES Agent：
-# 舊版類別名稱為 CnyesNewsDigestAgent；目前專案可能使用 CnyesNewsAgent。
-try:
-    from cnyes_news_agent import CnyesNewsDigestAgent  # type: ignore
-except ImportError:
-    try:
-        from cnyes_news_agent import CnyesNewsAgent as CnyesNewsDigestAgent  # type: ignore
-    except ImportError as exc:
-        CnyesNewsDigestAgent = None  # type: ignore
-        _CNYES_AGENT_IMPORT_ERROR = exc
-    else:
-        _CNYES_AGENT_IMPORT_ERROR = None
-else:
-    _CNYES_AGENT_IMPORT_ERROR = None
 
 TAIPEI_TZ = "Asia/Taipei"
 TWSE_OPENAPI = "https://openapi.twse.com.tw/v1"
@@ -68,8 +51,6 @@ TPEX_INCOME = f"{TPEX_OPENAPI}/mopsfin_t187ap06_O_ci"
 TWSE_BALANCE = f"{TWSE_OPENAPI}/opendata/t187ap07_L_ci"
 TPEX_BALANCE = f"{TPEX_OPENAPI}/mopsfin_t187ap07_O_ci"
 GOOGLE_NEWS_RSS = "https://news.google.com/rss/search"
-DEFAULT_OLLAMA_HOST = "http://127.0.0.1:11434"
-DEFAULT_OLLAMA_MODEL = "qwen3:8b"
 
 
 def _env_bool(name: str, default: bool = False) -> bool:
@@ -195,8 +176,6 @@ class ResearchAgent:
     def __init__(
         self,
         base_dir: str | Path = ".",
-        ollama_model: str = DEFAULT_OLLAMA_MODEL,
-        ollama_host: str = DEFAULT_OLLAMA_HOST,
     ):
         self.base = Path(base_dir).resolve()
         self.data_dir = self.base / "data"
@@ -206,8 +185,6 @@ class ResearchAgent:
         self.cache_dir = self.data_dir / "research"
         for p in [self.research_dir, self.cache_dir]:
             p.mkdir(parents=True, exist_ok=True)
-        self.ollama_model = ollama_model
-        self.ollama_host = ollama_host
         self.fugle_client = FugleClient()
         self.session = requests.Session()
         self.session.headers.update({
@@ -659,32 +636,6 @@ class ResearchAgent:
         except Exception as exc:
             return {"_load_error": str(exc)}
 
-    def feature_drift(self, bundle: dict[str, Any], current_df: pd.DataFrame) -> dict[str, Any]:
-        profile = bundle.get("feature_profile") or {}
-        if not profile or current_df is None or current_df.empty:
-            return {"available": False, "score": np.nan, "top_features": []}
-        scores = []
-        for feat in FEATURES:
-            if feat not in current_df.columns:
-                continue
-            cur = pd.to_numeric(current_df[feat], errors="coerce").dropna()
-            if cur.empty:
-                continue
-            p = profile.get(feat) or {}
-            mu = self._safe_float(p.get("mean"))
-            sd = self._safe_float(p.get("std"), 1.0)
-            if not np.isfinite(mu) or not np.isfinite(sd) or sd <= 1e-9:
-                continue
-            cm = float(cur.mean())
-            z = abs(cm - mu) / sd
-            scores.append((feat, float(min(1.0, z / 3.0)), z))
-        scores.sort(key=lambda x: x[1], reverse=True)
-        return {
-            "available": bool(scores),
-            "score": float(np.mean([x[1] for x in scores])) if scores else np.nan,
-            "top_features": [{"feature": f, "score": s, "z": z} for f, s, z in scores[:8]],
-        }
-
     def model_health(self) -> list[dict[str, Any]]:
         records = []
         now = pd.Timestamp.now(tz=TAIPEI_TZ)
@@ -820,228 +771,6 @@ class ResearchAgent:
         return results
 
     # ---------------------------- earnings call fallback ----------------------------
-    def _announcement_earnings_fallback(self, df: pd.DataFrame, requested_symbols: Iterable[str], market: str, existing_keys: set[tuple[str, str]] | None = None) -> list[dict[str, Any]]:
-        """從 TWSE/TPEx 官方重大訊息補抓法說會公告。
-
-        MOPS 法說查詢偶爾會因入口/防爬機制回傳空頁；官方重大訊息仍會留下「法人說明會/業績說明會」公告，
-        因此用精確的 (代號, 法說日期) 去重，而不是用「同公司就跳過」，避免漏掉同一公司新的法說。
-        """
-        if df is None or df.empty:
-            return []
-        wanted = {clean_symbol(x) for x in requested_symbols if clean_symbol(x)}
-        mapping = self._load_focus_industry_map()
-        existing_keys = existing_keys or set()
-        rows = []
-        code_cols = [c for c in df.columns if str(c).strip() in {"公司代號", "證券代號", "SecuritiesCompanyCode", "代號", "公司代碼"}]
-        name_cols = [c for c in df.columns if str(c).strip() in {"公司名稱", "CompanyName", "名稱"}]
-
-        def parse_any_date(v: Any) -> str | None:
-            text = str(v or "").strip()
-            patterns = [
-                r"(?<!\d)(\d{3})[./-](\d{1,2})[./-](\d{1,2})(?!\d)",
-                r"(?<!\d)(\d{2,3})/(\d{1,2})/(\d{1,2})(?!\d)",
-                r"(?<!\d)(\d{7,8})(?!\d)",
-                r"(?<!\d)(20\d{2})[./-](\d{1,2})[./-](\d{1,2})(?!\d)",
-            ]
-            for pat in patterns:
-                m = re.search(pat, text)
-                if not m:
-                    continue
-                vals = list(map(int, m.groups()))
-                try:
-                    y, mo, d = vals
-                    if y < 1911:
-                        y += 1911
-                    return pd.Timestamp(year=y, month=mo, day=d).strftime("%Y-%m-%d")
-                except Exception:
-                    continue
-            return None
-
-        report_today = pd.Timestamp.now(tz=TAIPEI_TZ).date()
-        for _, row in df.iterrows():
-            raw = " ".join(str(v) for v in row.to_dict().values() if pd.notna(v))
-            if not re.search(r"法人說明會|法說會|業績說明會|業績發表會", raw):
-                continue
-            sym = ""
-            if code_cols:
-                for c in code_cols:
-                    v = clean_symbol(row.get(c, ""))
-                    if v:
-                        sym = v; break
-            if not sym:
-                for w in wanted:
-                    if re.search(rf"(?<!\d){re.escape(w)}(?!\d)", raw):
-                        sym = w; break
-            if not sym or (wanted and sym not in wanted):
-                continue
-            name = ""
-            for c in name_cols:
-                if str(row.get(c, "")).strip():
-                    name = str(row.get(c)).strip(); break
-            if not name:
-                name = sym
-            text_norm = re.sub(r"\s+", " ", raw).strip()
-            event_date = None
-            for key in ["召開日期", "法說會日期", "說明會日期", "會議日期", "發表日期"]:
-                hit_cols = [c for c in row.index if key in str(c)]
-                if hit_cols:
-                    event_date = parse_any_date(row.get(hit_cols[0]))
-                    if event_date: break
-            dates = []
-            for m in re.finditer(r"(20\d{2}|\d{3})[./-]\d{1,2}[./-]\d{1,2}|\d{7,8}", text_norm):
-                d = parse_any_date(m.group(0))
-                if d: dates.append(d)
-            # 優先找未來日期；其次找最近的歷史日期。不要只把「公告日期」當法說日期，除非找不到其他日期。
-            if not event_date:
-                future = sorted(set(d for d in dates if d >= report_today))
-                event_date = future[0] if future else (sorted(set(dates))[-1] if dates else None)
-            if not event_date:
-                continue
-            key = (sym, event_date)
-            if key in existing_keys:
-                continue
-            # 使用與研究新聞一致的文字規則，明確標示官方公告證據。
-            pos_hits = [w for w in POSITIVE_WORDS if w in text_norm]
-            neg_hits = [w for w in NEGATIVE_WORDS if w in text_norm]
-            ps, ns = len(pos_hits), len(neg_hits)
-            if ps > ns and ps:
-                label = "偏利多"
-            elif ns > ps and ns:
-                label = "偏利空"
-            else:
-                label = "中性／待確認"
-            rows.append({
-                "symbol": sym,
-                "name": name,
-                "industry_code": mapping.get(sym, "00"),
-                "industry_name": INDUSTRIES.get(mapping.get(sym, "00"), "未知產業"),
-                "event_date": event_date,
-                "event_time": "",
-                "venue": "",
-                "summary": text_norm[:1600],
-                "impact": label,
-                "impact_score": round((ps - ns) / max(1, ps + ns), 4),
-                "positive_terms": pos_hits[:6],
-                "negative_terms": neg_hits[:6],
-                "evidence_level": "官方重大訊息補漏",
-                "source_url": "https://mops.twse.com.tw/mops/web/t100sb07_1",
-                "source_type": "MOPS t100sb07_1 / 重大訊息補漏",
-                "related_links": [],
-                "post_1d_return": None,
-                "post_5d_return": None,
-                "price_reaction_label": "尚無法計算",
-                "market": market,
-            })
-            existing_keys.add(key)
-        return rows
-
-    # ---------------------------- Ollama synthesis ----------------------------
-    def _deterministic_llm_fallback(self, payload: dict[str, Any]) -> str:
-        """當 Qwen 輸出混入研究包外年份/資料時，產生只使用本次 payload 的摘要。"""
-        lines = ["### 本次盤後研究摘要", ""]
-        movers = (payload.get("market_movers", {}) or {}).get("movers", [])
-        if movers:
-            rises = [m for m in movers if m.get("direction") == "上漲"][:3]
-            falls = [m for m in movers if m.get("direction") == "下跌"][:3]
-            if rises:
-                lines.append("- 上漲樣本：" + "、".join(f"{m.get('name', m.get('symbol'))}({m.get('symbol')}) {float(m.get('today_change_percent',0)):+.2f}%" for m in rises))
-            if falls:
-                lines.append("- 下跌樣本：" + "、".join(f"{m.get('name', m.get('symbol'))}({m.get('symbol')}) {float(m.get('today_change_percent',0)):+.2f}%" for m in falls))
-        ind = (payload.get("market_movers", {}) or {}).get("industry_summary", [])
-        if ind:
-            strongest = sorted(ind, key=lambda x: float(x.get("today_avg_change", 0) or 0), reverse=True)[:2]
-            weakest = sorted(ind, key=lambda x: float(x.get("today_avg_change", 0) or 0))[:2]
-            lines.append("- 產業強弱：強勢 " + "、".join(f"{x.get('industry_code')} {x.get('industry_name')} {float(x.get('today_avg_change',0)):+.2f}%" for x in strongest))
-            lines.append("- 產業弱勢：" + "、".join(f"{x.get('industry_code')} {x.get('industry_name')} {float(x.get('today_avg_change',0)):+.2f}%" for x in weakest))
-        calls = [x for x in payload.get("earnings_calls", []) if isinstance(x, dict) and x.get("event_date")][:5]
-        if calls:
-            lines.append("- 最近法說會：" + "；".join(f"{x.get('event_date')} {x.get('name',x.get('symbol'))}（{x.get('impact','中性／待確認')}）" for x in calls))
-            for x in calls[:5]:
-                if x.get("memo_opened"):
-                    lines.append(f"  - {x.get('symbol')} 備忘錄摘要：{str(x.get('summary',''))[:700]}")
-                    lines.append(f"  - Fugle來源：{x.get('source_url')}")
-        else:
-            lines.append("- 最近法說會：本次研究包沒有取得可驗證的法說事件。")
-        themes = payload.get("bullish_themes", [])[:3]
-        if themes:
-            lines.append("- 利多題材：" + "；".join(f"{x.get('theme')}（{x.get('status')}）" for x in themes))
-        fin = payload.get("financial_snapshots", [])
-        positive_fin = []
-        for x in fin:
-            try:
-                yoy = float(x.get("revenue_yoy"))
-                if np.isfinite(yoy) and yoy > 0:
-                    positive_fin.append((yoy, x))
-            except Exception:
-                pass
-        if positive_fin:
-            positive_fin.sort(reverse=True, key=lambda z: z[0])
-            lines.append("- 營收成長樣本：" + "、".join(f"{x.get('symbol')} YoY {y:+.1f}%" for y,x in positive_fin[:5]))
-        lines.append("- 判讀原則：法說文字中的利多／利空只表示營運訊號；新聞若缺官方或多來源交叉驗證，維持待查證。")
-        return "\n".join(lines)
-
-    def ollama_synthesis(self, payload: dict[str, Any]) -> dict[str, Any]:
-        try:
-            import ollama
-        except Exception as exc:
-            return {"available": False, "error": f"未安裝 ollama：{exc}"}
-        client = ollama.Client(host=self.ollama_host)
-        report_date = str(payload.get("report_date", ""))
-        packet = {
-            "研究日期": report_date,
-            "市場狀態": payload.get("market_status", ""),
-            "近期漲跌產業與個股": (payload.get("market_movers", {}) or {}).get("movers", [])[:20],
-            "產業彙整": (payload.get("market_movers", {}) or {}).get("industry_summary", [])[:15],
-            "法說會": [
-                {
-                    **{k: x.get(k) for k in ("symbol","name","event_date","published_date","title","summary","impact","impact_score","positive_terms","negative_terms","evidence_level","source_url","topic_url","memo_opened","memo_sections","post_1d_return","post_5d_return","price_reaction_label")},
-                    "memo_text": x.get("memo_text", "")[:12000],
-                }
-                for x in payload.get("earnings_calls", [])
-                if isinstance(x, dict) and x.get("event_date")
-            ][:30],
-            "利多題材": payload.get("bullish_themes", [])[:10],
-            "財報營收": payload.get("financial_snapshots", [])[:25],
-            "模型健康": payload.get("model_health", [])[:10],
-            "公司研究": payload.get("company_research", [])[:20],
-        }
-        prompt = (
-            "你是台灣股市盤後研究 Agent。只能使用下方『本次研究包』，禁止引用你記憶中的舊報告。"
-            "如果資料不足，寫『資料不足／待查證』，不要自行補數字。"
-            f"本次研究日期為 {report_date}。輸出不得出現研究包內沒有的年份、公司、數字或事件。"
-            "請用繁體中文，以手機容易閱讀的格式輸出。第一段固定是『今日五個重點』，後面依序：產業強弱、法說會、利多題材、財報營收、待查證風險。"
-            "不要提供買賣建議或預測式結論。法說會利多／利空只代表公開營運文字的訊號分類。法說會摘要必須直接引用/改寫本次研究包中的 Fugle memo_text；memo_opened=false 的資料只能寫成『官方日程，沒有備忘錄摘要』，不得把網址或網站導覽當成摘要。"
-            "全文不超過 1600 字。\n\n"
-            + json.dumps(packet, ensure_ascii=False, default=str)[:30000]
-        )
-        try:
-            resp = client.chat(
-                model=self.ollama_model,
-                messages=[
-                    {"role": "system", "content": "完全本機研究 Agent；只能根據本次資料，不得引用記憶中的舊內容。"},
-                    {"role": "user", "content": prompt},
-                ],
-                options={"temperature": 0.0},
-            )
-            content = getattr(resp.message, "content", "") or ""
-            # 只允許「本次研究包本身出現過」的年份。
-            # 法說備忘錄可能合法提到 2027/2028 展望，因此不能再只允許 report_date 的年份；
-            # 只有 Qwen 自行冒出研究包外年份（例如舊報告 2023）才觸發 fallback。
-            packet_years = set(re.findall(r"20\d{2}", json.dumps(packet, ensure_ascii=False, default=str)))
-            packet_years.add(report_date[:4])
-            bad_years = sorted(set(y for y in re.findall(r"20\d{2}", content) if y not in packet_years))
-            if bad_years:
-                fallback = self._deterministic_llm_fallback(payload)
-                return {
-                    "available": True, "model": self.ollama_model, "content": fallback,
-                    "validation": "fallback",
-                    "error": f"Qwen 原始輸出含研究包外年份 {bad_years}，已改用本次資料的安全摘要。",
-                }
-            return {"available": True, "model": self.ollama_model, "content": content.strip(), "validation": "passed"}
-        except Exception as exc:
-            fallback = self._deterministic_llm_fallback(payload)
-            return {"available": True, "model": self.ollama_model, "content": fallback, "validation": "fallback", "error": str(exc)}
-
     # ---------------------------- final report ----------------------------
     def run_daily_research(self, symbols: Iterable[str] = (), sector_codes: Iterable[str] | None = None) -> dict[str, Any]:
         # 研究範圍：自選股優先，聚焦半導體/光電/電子零組件；只在需要時補同產業少量競品。
@@ -1147,7 +876,7 @@ class ResearchAgent:
                 if use_cache_only and loaded_cache:
                     earnings_memo_report = loaded_cache
                 else:
-                    ea = EarningsCallAgent(self.base, ollama_model=getattr(self, "ollama_model", DEFAULT_OLLAMA_MODEL))
+                    ea = EarningsCallAgent(self.base)
                     earnings_memo_report = ea.daily_run(
                         days=int(os.getenv("EARNINGS_MEMO_LOOKBACK_DAYS", "5")),
                         limit=int(os.getenv("EARNINGS_MEMO_MAX_ARTICLES", "80")),
@@ -1229,7 +958,7 @@ class ResearchAgent:
                 last_selected = (json.loads(sel_path.read_text(encoding="utf-8")) or {}).get("symbol")
             if last_selected and clean_symbol(last_selected) in requested_symbols:
                 from post_market_analysis import PostMarketAnalyzer
-                analyzer = PostMarketAnalyzer(self.base, ollama_model=self.ollama_model if hasattr(self, "ollama_model") else DEFAULT_OLLAMA_MODEL)
+                analyzer = PostMarketAnalyzer(self.base)
                 # 使用同一份自選股作為 peer set；實際新聞查詢會依公司業務做精準化。
                 post_market_selected = analyzer.analyze(clean_symbol(last_selected), industry_symbols=requested_symbols)
         except Exception as exc:
@@ -1259,7 +988,7 @@ class ResearchAgent:
             "financial_snapshots": financials,
             "earnings_calls": earnings_calls[:160],
             "earnings_memo_report": earnings_memo_report,
-            "earnings_call_primary_source": "Fugle 法說會備忘錄：https://blog.fugle.tw/topic/earnings-call-memo；每篇摘要都必須由 Ollama Agent 呼叫 read_fugle_memo 開啟詳細文章後產生。",
+            "earnings_call_primary_source": "Fugle 法說會備忘錄：https://blog.fugle.tw/topic/earnings-call-memo；每篇摘要由 Claude 法說會研究讀取 Fugle 詳細文章後產生。",
             "earnings_call_count": int(sum(1 for x in earnings_calls if isinstance(x, dict) and x.get("memo_opened"))),
             "earnings_memo_daily_digest": earnings_memo_report.get("daily_digest", {}) if isinstance(earnings_memo_report, dict) else {},
             "market_movers": market_movers,
@@ -1294,128 +1023,28 @@ class ResearchAgent:
 
         # ============================================================
         # CNYES News Research Agent / 晨報快取
-        # 快速盤後模式直接讀取早報已產生的 digest，不再次呼叫 Qwen3 新聞摘要。
+        # 快速盤後模式直接讀取早報已產生的 digest；否則等待 Claude 新聞研究。
         # ============================================================
-        cnyes_research_digest = {}
+        cnyes_research_digest = pending_news_digest()
         try:
             morning_files = sorted(self.research_dir.glob(f"morning_{report_date}.json"), reverse=True)
-            morning_loaded = None
-            if morning_files:
-                try:
-                    morning_loaded = json.loads(morning_files[0].read_text(encoding="utf-8"))
-                except Exception:
-                    morning_loaded = None
+            morning_loaded = json.loads(morning_files[0].read_text(encoding="utf-8")) if morning_files else None
             if fast_mode and isinstance(morning_loaded, dict) and isinstance(morning_loaded.get("cnyes_research_digest"), dict):
                 cnyes_research_digest = {**morning_loaded.get("cnyes_research_digest", {}), "reused_from_morning_report": True}
-            else:
-                if CnyesNewsDigestAgent is None:
-                    raise ImportError(f"無法匯入 CNYES Agent：{_CNYES_AGENT_IMPORT_ERROR}")
+        except Exception:
+            pass
 
-                # 相容不同版本的建構子：
-                # 1) (base_dir, ollama_host=..., ollama_model=...)
-                # 2) (base_dir, host, model)
-                # 3) (base_dir)
-                try:
-                    cnyes_digest_agent = CnyesNewsDigestAgent(
-                        self.base,
-                        ollama_host=self.ollama_host,
-                        ollama_model=self.ollama_model,
-                    )
-                except TypeError:
-                    try:
-                        cnyes_digest_agent = CnyesNewsDigestAgent(
-                            self.base, self.ollama_host, self.ollama_model
-                        )
-                    except TypeError:
-                        cnyes_digest_agent = CnyesNewsDigestAgent(self.base)
-
-                payload_for_cnyes = {
-                    "report_date": report_date,
-                    "symbols": requested_symbols,
-                    "cnyes_news": cnyes_news,
-                    "market_movers": market_movers,
-                }
-
-                # 相容不同版本的執行方法名稱。
-                cnyes_runner = getattr(cnyes_digest_agent, "run", None)
-                if not callable(cnyes_runner):
-                    for method_name in ("analyze", "summarize", "digest"):
-                        candidate = getattr(cnyes_digest_agent, method_name, None)
-                        if callable(candidate):
-                            cnyes_runner = candidate
-                            break
-                if not callable(cnyes_runner):
-                    raise AttributeError(
-                        "CNYES Agent 沒有 run/analyze/summarize/digest 方法"
-                    )
-
-                try:
-                    cnyes_research_digest = cnyes_runner(
-                        payload_for_cnyes,
-                        limit=int(os.getenv("CNYES_RESEARCH_AGENT_INPUT_ARTICLES", "100")),
-                    )
-                except TypeError:
-                    cnyes_research_digest = cnyes_runner(payload_for_cnyes)
-
-                if not isinstance(cnyes_research_digest, dict):
-                    cnyes_research_digest = {
-                        "agent_status": "cnyes_digest_text",
-                        "model": self.ollama_model,
-                        "overview": str(cnyes_research_digest or ""),
-                        "key_findings": [],
-                        "market_drivers": [],
-                        "watch_topics": [],
-                    }
-        except Exception as exc:
-            cnyes_research_digest = {
-                "agent_status": "cnyes_digest_error",
-                "model": self.ollama_model,
-                "overview": "鉅亨新聞快取已取得，但新聞研究 Agent 執行失敗。",
-                "key_findings": [],
-                "market_drivers": [],
-                "watch_topics": [],
-                "error": str(exc),
-            }
-        
         # ============================================================
-        # AI Research Assistant Agent
-        #
-        # 這一層不再由 EmailAgent 固定挑選「前 3 / 前 5」資訊。
-        # Qwen3 會自己選工具、深入查證、建立研究筆記與標籤。
+        # AI 研究筆記由 Claude 排程任務（after-close-research skill）讀取研究包後寫入；
+        # 這裡只保留空白結構，讓 Dashboard／Email 在筆記完成前也能正常顯示。
         # ============================================================
-        try:
-            research_assistant = ResearchOrchestratorAgent(
-                self.base,
-                ollama_host=self.ollama_host,
-                ollama_model=self.ollama_model,
-            )
-            agent_notes = research_assistant.run(payload)
-        except Exception as exc:
-            agent_notes = {
-                "agent_status": "fallback",
-                "model": self.ollama_model,
-                "error": f"Research Assistant Agent 失敗：{exc}",
-                "overview": "本次 AI 研究助理未完成自主分析。",
-                "key_takeaways": [],
-                "research_notes": [],
-                "positive_signals": [],
-                "negative_signals": [],
-                "watch_items": [str(exc)],
-                "earnings_digest": "",
-                "financial_focus": [],
-                "model_alert": "",
-                "agent_actions": [],
-            }
-
+        agent_notes = pending_agent_notes()
         payload["agent_research_notes"] = agent_notes
-
-        # 舊版欄位保留，避免 Dashboard / 舊程式讀不到 ollama_analysis。
-        payload["ollama_analysis"] = {
-            "available": agent_notes.get("agent_status") == "qwen3",
-            "model": self.ollama_model,
-            "content": agent_notes.get("overview", ""),
-            "validation": "agent_orchestrator",
-            "agent_status": agent_notes.get("agent_status", "fallback"),
+        payload["ai_analysis"] = {
+            "available": False,
+            "model": AGENT_MODEL,
+            "content": "",
+            "agent_status": agent_notes["agent_status"],
         }
 
         payload["recommend_retrain"] = bool(should_retrain)
@@ -1491,7 +1120,7 @@ class ResearchAgent:
                 f"- {e.get('event_date')} {e.get('symbol')}｜{e.get('impact')} {float(e.get('impact_score',0)):+.2f}｜證據 {e.get('evidence_level')}｜法說後1日 {'' if r1 is None else f'{float(r1)*100:+.2f}%'}｜法說後5日 {'' if r5 is None else f'{float(r5)*100:+.2f}%'}"
             )
             if e.get("memo_opened"):
-                lines.append(f"  - Ollama Agent 一句話摘要：{e.get('one_line_summary') or e.get('summary','')}")
+                lines.append(f"  - Agent 一句話摘要：{e.get('one_line_summary') or e.get('summary','')}")
                 for field_label, field_key in [("財務重點","financial_highlights"),("營運重點","operating_highlights"),("展望/指引","guidance"),("利多因素","positive_factors"),("利空/風險","negative_factors"),("Q&A重點","qa_highlights")]:
                     vals=e.get(field_key) or []
                     if vals:
@@ -1566,15 +1195,7 @@ class ResearchAgent:
             lines.append("### Agent 工具操作紀錄")
             for action in agent.get("agent_actions", [])[-30:]:
                 lines.append(f"- {action.get('tool','')}｜{action.get('reason','')}")
-        lines += ["", "## 本機 Qwen3 相容摘要", p.get("ollama_analysis", {}).get("content", "未產生本機 LLM 摘要。")]
+        lines += ["", "## AI 研究摘要", (p.get("ai_analysis") or p.get("ollama_analysis") or {}).get("content", "") or "Claude 研究筆記完成後會更新。"]
         lines += ["", "> 本報告是研究與模型治理工具，不保證新聞真偽或投資結果；涉及重大消息時應人工查看原始公告。"]
         return "\n".join(lines)
 
-
-def run_after_close(base_dir: str | Path = ".", symbols: Iterable[str] = ()) -> dict[str, Any] | None:
-    """盤後研究入口：每天 15:00 後皆可執行；休市日也可研究最近交易日資料。"""
-    now = pd.Timestamp.now(tz=TAIPEI_TZ)
-    if now.hour < 15:
-        return None
-    agent = ResearchAgent(base_dir)
-    return agent.run_daily_research(symbols=symbols)

@@ -3,9 +3,10 @@
 
 Primary source: https://blog.fugle.tw/topic/earnings-call-memo
 
-每篇文章都必須由 Ollama Agent 呼叫 read_fugle_memo(url) tool，tool 才會開啟
-Fugle 詳細文章頁並回傳正文。MOPS/TWSE/TPEx 不會混入 memo 摘要；它們僅能在
-其他模組中作為獨立官方事件資料。
+Python 只負責探索文章、開啟 Fugle 詳細文章頁取得正文，並產生規則式保守重點
+（agent_status=pending_claude）。結構化研究摘要由 Claude 法說會研究
+（.claude/skills/earnings-call-memo，earnings_memo.py）讀正文後寫回。
+MOPS/TWSE/TPEx 不會混入 memo 摘要；它們僅能在其他模組中作為獨立官方事件資料。
 """
 from __future__ import annotations
 
@@ -22,6 +23,7 @@ from typing import Any
 from urllib.parse import urljoin, quote_plus
 
 import requests
+from ai_backend import PENDING_STATUS
 
 try:
     from bs4 import BeautifulSoup
@@ -31,8 +33,6 @@ except Exception:
 TOPIC_URL = "https://blog.fugle.tw/topic/earnings-call-memo"
 HOME_URL = "https://blog.fugle.tw/"
 POST_PREFIX = "https://blog.fugle.tw/post/earnings-call-"
-DEFAULT_OLLAMA_HOST = "http://127.0.0.1:11434"
-DEFAULT_OLLAMA_MODEL = "qwen3:8b"
 
 POSITIVE_WORDS = [
     "營收成長", "營收增加", "獲利成長", "獲利改善", "毛利率提升", "毛利率改善",
@@ -46,25 +46,6 @@ NEGATIVE_WORDS = [
     "庫存過高", "稼動率下降", "降價", "價格下跌", "報價下調", "ASP下降", "成本上升",
     "原料上漲", "匯兌損失", "下修", "資本支出下修", "放緩", "虧損", "風險",
 ]
-
-TOOL_SCHEMA = {
-    "type": "function",
-    "function": {
-        "name": "read_fugle_memo",
-        "description": "開啟指定的富果法說會備忘錄詳細文章，讀取正文；不能用網址或搜尋摘要代替。",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "url": {
-                    "type": "string",
-                    "description": "https://blog.fugle.tw/post/earnings-call-* 文章網址",
-                }
-            },
-            "required": ["url"],
-        },
-    },
-}
-
 
 def clean(v: Any) -> str:
     s = html.unescape(str(v or "")).replace("\u00a0", " ")
@@ -199,23 +180,6 @@ class FugleMemoCrawler:
             analysis_json TEXT, memo_text TEXT
         )""")
         con.commit(); con.close()
-
-    def fetch(self, url: str, timeout: int = 35, allow_browser: bool = True, load_more: bool = False) -> tuple[str, str, str]:
-        errors=[]
-        for fn in (
-            lambda: self._fetch_requests(url, timeout),
-            lambda: self._fetch_curl_cffi(url, timeout),
-        ):
-            try:
-                return fn()
-            except Exception as exc:
-                errors.append(type(exc).__name__ + ": " + str(exc))
-        if allow_browser and os.getenv("FUGLE_MEMO_USE_BROWSER", "true").lower() in {"1","true","yes","on"}:
-            try:
-                return self._fetch_browser(url, min(timeout+10,60), load_more=load_more)
-            except Exception as exc:
-                errors.append(type(exc).__name__ + ": " + str(exc))
-        raise RuntimeError("；".join(errors[-3:]))
 
     def discover(self) -> list[dict[str, str]]:
         """從 Fugle 法說會主題頁探索文章；若靜態 HTML 沒有連結，繼續嘗試 curl_cffi 與瀏覽器 DOM。"""
@@ -472,88 +436,8 @@ class FugleMemoCrawler:
 
 
 class FugleEarningsCallAgent:
-    def __init__(self,base_dir=".",ollama_host=None,ollama_model=None):
-        self.base=Path(base_dir).resolve(); self.crawler=FugleMemoCrawler(self.base)
-        self.ollama_host=ollama_host or os.getenv("OLLAMA_HOST",DEFAULT_OLLAMA_HOST)
-        self.ollama_model=ollama_model or os.getenv("OLLAMA_MODEL",DEFAULT_OLLAMA_MODEL)
-        self.max_rounds=int(os.getenv("EARNINGS_AGENT_MAX_TOOL_ROUNDS","5"))
-
-    def _client(self):
-        import ollama
-        return ollama.Client(host=self.ollama_host)
-
-    @staticmethod
-    def _call_name(call):
-        try:return str(call.function.name)
-        except Exception:return ""
-
-    @staticmethod
-    def _call_args(call):
-        try:
-            a=call.function.arguments
-            return a if isinstance(a,dict) else json.loads(str(a))
-        except Exception:return {}
-
-    @staticmethod
-    def _assistant_message(resp):
-        m=getattr(resp,"message",None)
-        out={"role":"assistant","content":getattr(m,"content","") or ""}
-        calls=[]
-        for c in (getattr(m,"tool_calls",None) or []):
-            try:calls.append({"function":{"name":str(c.function.name),"arguments":c.function.arguments}})
-            except Exception:pass
-        if calls:out["tool_calls"]=calls
-        return out
-
-    @staticmethod
-    def _parse_json(text):
-        s=re.sub(r"^```(?:json)?\s*|\s*```$","",str(text or "").strip(),flags=re.I)
-        m=re.search(r"\{.*\}",s,flags=re.S)
-        if not m:raise ValueError("Agent JSON not found")
-        return json.loads(m.group(0))
-
-    def analyze_one(self,url:str):
-        """Agent：Qwen3 先呼叫 read_fugle_memo，再依實際正文輸出結構化摘要。"""
-        client=self._client()
-        messages=[
-          {"role":"system","content":"你是 Fugle 法說會備忘錄研究 Agent。第一個必要動作必須呼叫 read_fugle_memo(url)。不能只看網址/標題，也不能使用記憶補資料。工具成功取得正文後，才能分析。"},
-          {"role":"user","content":f"先呼叫 read_fugle_memo 讀取並理解這篇詳細法說會：{url}"},
-        ]
-        tool_used=False; article=None
-        for _ in range(max(2,self.max_rounds)):
-            resp=client.chat(model=self.ollama_model,messages=messages,tools=[TOOL_SCHEMA],options={"temperature":0},think=True)
-            calls=getattr(getattr(resp,"message",None),"tool_calls",None) or []
-            if not calls:
-                messages.append({"role":"user","content":"不要先回答；請立即呼叫 read_fugle_memo 工具。"}); continue
-            messages.append(self._assistant_message(resp))
-            for call in calls:
-                if self._call_name(call)!="read_fugle_memo": continue
-                tool_used=True; target=self._call_args(call).get("url") or url
-                try:
-                    article=self.crawler.read_memo_tool(target)
-                    if not article.get("detail_read_verified") or len(article.get("memo_text", ""))<1200: raise RuntimeError("正文驗證失敗")
-                    messages.append({"role":"tool","content":json.dumps(article,ensure_ascii=False)[:65000]})
-                except Exception as exc:
-                    messages.append({"role":"tool","content":json.dumps({"ok":False,"error":str(exc),"detail_read_verified":False},ensure_ascii=False)})
-            break
-        if not tool_used or not article or not article.get("detail_read_verified"): raise RuntimeError("Ollama Agent 沒有成功讀取 Fugle 詳細文章")
-        prompt=("你是嚴謹的台股法說會研究 Agent。只根據 read_fugle_memo 讀取的文章正文輸出合法 JSON，禁止補造文章外資訊。"
-                 "欄位：impact(利多/利空/中性/混合), confidence(0-100), one_line_summary(繁體中文 1-2 句，指出最重要的營運結論), "
-                 "key_points[](3-5 條可直接顯示在網站的重點，每條約 30-100 字，開頭標示「財務：」「營運：」「展望：」「利多：」「風險：」等類別，保留正文中的公司、期間、數字、成長率、資本支出與時程；不要重複同一句), "
-                 "highlights[](5-12 個需在 one_line_summary 或 key_points 中逐字出現的關鍵字／數字，例如營收、EPS、毛利率、成長率、產能、訂單、展望、風險；不得加入未出現在文字中的詞), "
-                 "financial_highlights[](最多 3 條), operating_highlights[](最多 3 條), guidance[](最多 3 條), positive_factors[](最多 4 條), negative_factors[](最多 4 條), key_risks[](最多 4 條), qa_highlights[](最多 3 條), reasoning(簡述判斷依據)。"
-                 "每一條都要精簡、具體、可驗證；數字單位與期間必須正確；若正文沒有資訊，對應陣列留空。")
-        context=article.get("memo_text","")
-        resp2=client.chat(model=self.ollama_model,messages=[{"role":"system","content":prompt},{"role":"user","content":context[:48000]}],options={"temperature":0},format="json",think=False)
-        txt=getattr(getattr(resp2,"message",None),"content","") or ""
-        try: a=self._parse_json(txt)
-        except Exception:
-            resp3=client.chat(model=self.ollama_model,messages=[{"role":"system","content":prompt},{"role":"user","content":context[:24000]}],options={"temperature":0},format="json",think=False)
-            a=self._parse_json(getattr(getattr(resp3,"message",None),"content","") or "")
-        a["agent_tool_used"]=True; a["memo_read_success"]=True
-        out=self._validate(a)
-        if not out.get("one_line_summary") and not any(out.get(k) for k in ("financial_highlights","operating_highlights","guidance","positive_factors","negative_factors","qa_highlights")): raise RuntimeError("Qwen3 沒有產生有效摘要")
-        return out
+    def __init__(self, base_dir="."):
+        self.base = Path(base_dir).resolve(); self.crawler = FugleMemoCrawler(self.base)
 
     @staticmethod
     def _fallback(article):
@@ -609,7 +493,7 @@ class FugleEarningsCallAgent:
             "negative_factors": n[:4],
             "key_risks": n[:4],
             "qa_highlights": [first_sentence(sections.get("Q&A 重點") or sections.get("Q&A"), 320)] if (sections.get("Q&A 重點") or sections.get("Q&A")) else [],
-            "reasoning": "Ollama 無法完成結構化輸出，改用已成功讀取的 Fugle 正文與可辨識段落產生保守重點。",
+            "reasoning": "依 Fugle 正文可辨識段落產生的保守重點；Claude 法說會研究完成後會取代。",
             "agent_tool_used": False,
             "memo_read_success": True,
         }
@@ -641,11 +525,6 @@ class FugleEarningsCallAgent:
             "agent_tool_used": bool(a.get("agent_tool_used")),
             "memo_read_success": bool(a.get("memo_read_success", True)),
         }
-
-    def _fugle_memo_events(self, symbol: str = "", max_events: int = 20):
-        rows=self.crawler.discover(); sym=str(symbol or "").strip().upper()
-        if sym: rows=[x for x in rows if str(x.get("symbol","")).upper()==sym]
-        return rows[:max_events]
 
     def daily_run(self, days=14, limit=80, force=False, watchlist=None, skip_urls=None, deadline_ts=None, on_item=None, log_fn=None):
         _log = log_fn or (lambda msg: None)
@@ -702,26 +581,16 @@ class FugleEarningsCallAgent:
                 errors.append({"warning": f"已達時間上限，本次先處理 {len(items)} 場，剩下的會在下一個時段繼續。"})
                 break
             try:
-                try:
-                    # 主要路徑：由 Qwen3 Agent 自己呼叫 read_fugle_memo。
-                    a = self.analyze_one(x["url"])
-                    article = self.crawler.extract_article(x["url"])
-                except Exception as agent_exc:
-                    # Ollama tool-calling / JSON 失敗時，若可取得正文，改用正文 fallback。
-                    article = self.crawler.extract_article(x["url"])
-                    a = self._fallback(article)
-                    errors.append({
-                        "url": x.get("url"),
-                        "title": x.get("title"),
-                        "warning": f"Ollama 分析失敗，使用正文 fallback：{agent_exc}",
-                    })
+                # 規則式重點先讓網站有內容；Claude 法說會研究（earnings_memo.py apply）會再取代。
+                article = self.crawler.extract_article(x["url"])
+                a = {**self._fallback(article), "agent_status": PENDING_STATUS}
                 self.crawler.db_save(article, a)
                 items.append({
                     **article,
                     **a,
                     "memo_opened": True,
                     "source_type": "Fugle 法說會備忘錄",
-                    "agent_source": "Ollama Tool Calling -> read_fugle_memo(url) -> detailed article正文 / fallback",
+                    "agent_source": "Fugle 詳細文章正文 -> 規則式重點（等待 Claude 研究）",
                     "detail_read_verified": True,
                 })
                 _log(f"法說會：完成 {_n}/{len(chosen)}（{time.time() - _t1:.0f} 秒）")
@@ -754,7 +623,7 @@ class FugleEarningsCallAgent:
             "items": items,
             "daily_digest": digest,
             "primary_source": "Fugle 法說會備忘錄",
-            "agent_flow": "Ollama Agent -> read_fugle_memo(url) -> article正文 -> structured analysis",
+            "agent_flow": "Fugle 詳細文章正文 -> 規則式重點 -> Claude 法說會研究（earnings_memo.py）",
         }
         od = self.base / "output" / "research_reports"
         od.mkdir(parents=True, exist_ok=True)

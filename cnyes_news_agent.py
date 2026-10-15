@@ -4,7 +4,7 @@
 ============================================================
 用途：
 1. 讀取「前一晚 23:00 已完成」的鉅亨網每日新聞快取。
-2. 在盤後研究時間由本機 Ollama / Qwen3 8B 做新聞摘要與市場因果研究。
+2. 依研究主題挑出值得研究的新聞候選（規則式），新聞摘要與市場因果研究由 Claude 完成。
 3. 只閱讀已快取新聞，不在盤後重新爬網站，因此不拖慢盤後研究。
 4. 產出結構化新聞研究結果，供 ResearchAgent 與 EmailAgent 使用。
 
@@ -15,17 +15,15 @@
 """
 from __future__ import annotations
 
-import json
 import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
-import requests
 
-DEFAULT_OLLAMA_HOST = "http://127.0.0.1:11434"
-DEFAULT_OLLAMA_MODEL = "qwen3:8b"
+from ai_backend import AGENT_MODEL, PENDING_STATUS
+
 TAIPEI = ZoneInfo("Asia/Taipei")
 
 
@@ -42,12 +40,10 @@ def _clean_text(value: Any, limit: int = 1200) -> str:
 
 
 class CnyesNewsDigestAgent:
-    """使用本機 Qwen3 對已快取 CNYES 新聞進行盤後研究。"""
+    """從已快取的 CNYES 新聞挑出研究候選，交給 Claude 研究。"""
 
-    def __init__(self, base_dir: str | Path = ".", ollama_host: str | None = None, ollama_model: str | None = None):
+    def __init__(self, base_dir: str | Path = "."):
         self.base = Path(base_dir).resolve()
-        self.ollama_host = (ollama_host or DEFAULT_OLLAMA_HOST).rstrip("/")
-        self.ollama_model = ollama_model or DEFAULT_OLLAMA_MODEL
 
     @staticmethod
     def _article_blob(article: dict[str, Any]) -> str:
@@ -126,22 +122,6 @@ class CnyesNewsDigestAgent:
                     break
         return chosen[:limit]
 
-    def _build_context(self, articles: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        rows = []
-        for a in articles:
-            rows.append({
-                "article_id": a.get("article_id", ""),
-                "title": _clean_text(a.get("title", ""), 300),
-                "published": a.get("published", ""),
-                "category": a.get("category", ""),
-                "summary": _clean_text(a.get("summary", "") or a.get("content", ""), 900),
-                "content_excerpt": _clean_text(a.get("content", ""), 1500),
-                "content_length": len(str(a.get("content") or "")),
-                "tags": (a.get("tags") or [])[:12],
-                "url": a.get("url", ""),
-            })
-        return rows
-
     def _fallback(self, selected: list[dict[str, Any]], cache_meta: dict[str, Any], error: str = "") -> dict[str, Any]:
         findings = []
         for a in selected[:8]:
@@ -158,12 +138,12 @@ class CnyesNewsDigestAgent:
             })
         return {
             "agent_status": "cnyes_digest_fallback",
-            "model": self.ollama_model,
+            "model": AGENT_MODEL,
             "generated_at": datetime.now(TAIPEI).isoformat(),
             "cache_dates": cache_meta.get("cache_dates", []),
             "input_article_count": cache_meta.get("article_count", 0),
             "selected_article_count": len(selected),
-            "overview": "鉅亨近兩日新聞已完成離線快取，但本次 Qwen3 新聞摘要未完成；以下為研究候選，未視為已驗證結論。",
+            "overview": "鉅亨近兩日新聞已完成離線快取，尚待 Claude 新聞研究；以下為研究候選，未視為已驗證結論。",
             "key_findings": findings,
             "market_drivers": [],
             "watch_topics": [],
@@ -181,7 +161,7 @@ class CnyesNewsDigestAgent:
         if not articles:
             return {
                 "agent_status": "no_cnyes_cache",
-                "model": self.ollama_model,
+                "model": AGENT_MODEL,
                 "generated_at": datetime.now(TAIPEI).isoformat(),
                 "cache_dates": cache_dates,
                 "input_article_count": 0,
@@ -194,120 +174,5 @@ class CnyesNewsDigestAgent:
             }
 
         selected = self._select_articles(articles, payload, limit=max(40, int(limit)))
-        context = self._build_context(selected)
-
-        # 本機 Qwen3；不要把完整數百篇全文塞進 context。
-        try:
-            import ollama
-        except Exception as exc:
-            return self._fallback(selected, cache_meta, f"ollama 套件不可用：{exc}")
-
-        watchlist = payload.get("symbols", []) or []
-        movers = (payload.get("market_movers", {}) or {}).get("movers", [])[:30]
-        prompt = f"""
-你是「鉅亨新聞盤後研究 Agent」。
-
-今天盤後研究日期：{payload.get('report_date', '')}
-研究股票範圍：{watchlist}
-今日市場異動候選：{movers}
-
-以下是『前一晚／前兩晚已經爬好並保存』的鉅亨網頭條新聞研究資料。你現在的任務不是逐篇摘要，而是把兩日新聞轉成盤後研究：
-1. 找出今天市場、產業或個股最值得注意的事件。
-2. 找出可能解釋今日產業漲跌的新聞脈絡。
-3. 特別檢查電子零組件、PCB、IC載板、ABF/BT、CCL、高速材料、半導體、記憶體、AI伺服器、光電等產業是否存在共同驅動因素。
-4. 找出互相呼應或互相矛盾的新聞。
-5. 不要重複法說會／財報模組已整理的完整內容；只補充新聞層面的新發現。
-6. 不確定時必須寫「待查證」，不得把單一新聞敘事當成事實。
-7. 每個重點盡量回答：「發生什麼、可能為什麼、影響誰、證據是哪篇新聞」。
-8. 只允許引用下面提供的新聞；不得引用你自己的記憶或杜撰資料。
-
-請只輸出 JSON：
-{{
-  "overview": "1~2句盤後新聞總結",
-  "key_findings": [
-    {{
-      "title": "新聞研究標題",
-      "summary": "發生什麼",
-      "why_relevant": "為什麼與今天市場或產業有關",
-      "impact": "利多|利空|混合|待查證",
-      "related_symbols": ["股票代號，可空"],
-      "evidence": ["具體新聞標題／日期／證據"],
-      "source_links": ["只能填輸入資料中的 URL"],
-      "confidence": 0.0
-    }}
-  ],
-  "market_drivers": ["從新聞歸納出的市場／產業驅動因素；每項都要有新聞證據"],
-  "watch_topics": ["值得盤後持續追蹤的新聞題材"]
-}}
-
-新聞資料：
-{json.dumps(context, ensure_ascii=False, default=str)}
-""".strip()
-
-        try:
-            client = ollama.Client(host=self.ollama_host)
-            try:
-                resp = client.chat(
-                    model=self.ollama_model,
-                    messages=[
-                        {"role": "system", "content": "你是完全本機的鉅亨新聞研究 Agent，只能使用使用者提供的新聞資料。"},
-                        {"role": "user", "content": prompt},
-                    ],
-                    options={"temperature": 0.05},
-                    format="json",
-                    think=True,
-                )
-            except TypeError:
-                resp = client.chat(
-                    model=self.ollama_model,
-                    messages=[
-                        {"role": "system", "content": "你是完全本機的鉅亨新聞研究 Agent，只能使用使用者提供的新聞資料。"},
-                        {"role": "user", "content": prompt},
-                    ],
-                    options={"temperature": 0.05},
-                    format="json",
-                )
-            content = getattr(getattr(resp, "message", None), "content", "") or ""
-            raw = json.loads(content)
-            if not isinstance(raw, dict):
-                raise ValueError("Qwen 新聞摘要不是 JSON object")
-
-            valid_urls = {str(a.get("url", "")).strip() for a in selected if a.get("url")}
-            key_findings = []
-            for item in raw.get("key_findings", []) or []:
-                if not isinstance(item, dict):
-                    continue
-                links = [u for u in (item.get("source_links") or []) if str(u).strip() in valid_urls]
-                if not links:
-                    title_text = str(item.get("title", "")).strip()
-                    best = next((a.get("url") for a in selected if title_text and title_text in str(a.get("title", ""))), "")
-                    if best:
-                        links = [best]
-                key_findings.append({
-                    "title": _clean_text(item.get("title", "新聞研究"), 120),
-                    "summary": _clean_text(item.get("summary", ""), 800),
-                    "why_relevant": _clean_text(item.get("why_relevant", ""), 800),
-                    "impact": _clean_text(item.get("impact", "待查證"), 30),
-                    "related_symbols": [str(x).strip() for x in (item.get("related_symbols") or []) if str(x).strip()][:15],
-                    "evidence": [_clean_text(x, 500) for x in (item.get("evidence") or []) if str(x).strip()][:8],
-                    "source_links": links[:5],
-                    "confidence": max(0.0, min(1.0, _safe_float(item.get("confidence"), 0.0) or 0.0)),
-                })
-
-            result = {
-                "agent_status": "qwen3_cnyes_news_agent",
-                "model": self.ollama_model,
-                "generated_at": datetime.now(TAIPEI).isoformat(),
-                "cache_dates": cache_dates,
-                "input_article_count": len(articles),
-                "selected_article_count": len(selected),
-                "overview": _clean_text(raw.get("overview", ""), 1600),
-                "key_findings": key_findings[:10],
-                "market_drivers": [_clean_text(x, 600) for x in (raw.get("market_drivers") or []) if str(x).strip()][:10],
-                "watch_topics": [_clean_text(x, 500) for x in (raw.get("watch_topics") or []) if str(x).strip()][:10],
-            }
-            if not result["key_findings"] and not result["market_drivers"]:
-                raise ValueError("Qwen 新聞摘要沒有產生有效研究內容")
-            return result
-        except Exception as exc:
-            return self._fallback(selected, cache_meta, str(exc))
+        # 新聞研究由 Claude 排程任務完成；這裡先提供規則挑選的研究候選讓研究包可用。
+        return {**self._fallback(selected, cache_meta, "等待 Claude 新聞研究"), "agent_status": PENDING_STATUS}

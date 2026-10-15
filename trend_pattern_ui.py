@@ -2,7 +2,8 @@
 """Streamlit 趨勢型態頁面。"""
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import datetime
+from html import escape
 from pathlib import Path
 from zoneinfo import ZoneInfo
 from typing import Any
@@ -52,22 +53,20 @@ def _guide_key(pattern_name: str) -> str:
     return "盤整待突破"
 
 
-def _schematic_figure(pattern_name: str, height: int = 155) -> go.Figure:
+def _schematic_svg(pattern_name: str, height: int = 120) -> str:
+    """形態示意圖用靜態 SVG：一頁十幾張互動 Plotly 圖會讓瀏覽器卡十幾秒，示意線不需要互動。"""
     key = _guide_key(pattern_name)
     values = PATTERN_GUIDES[key]["values"]
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(
-        x=list(range(1, len(values) + 1)), y=values, mode="lines+markers",
-        line={"width": 3}, marker={"size": 5}, name=key,
-        hovertemplate="示意點 %{x}<extra></extra>",
-    ))
-    fig.update_layout(
-        title={"text": f"{key}｜示意圖（非實際股價）", "font": {"size": 13}},
-        height=height, margin={"l": 8, "r": 8, "t": 35, "b": 8},
-        showlegend=False, xaxis={"visible": False}, yaxis={"visible": False},
-        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+    width, pad = 300, 10
+    step = (width - 2 * pad) / max(1, len(values) - 1)
+    points = [(pad + i * step, pad + (1 - v) * (height - 2 * pad)) for i, v in enumerate(values)]
+    path = " ".join(f"{x:.1f},{y:.1f}" for x, y in points)
+    dots = "".join(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="3.5" fill="#6c8ba3"/>' for x, y in points)
+    return (
+        f'<div style="font-size:13px;color:#8e2b2f;margin-bottom:4px">{escape(key)}｜示意圖（非實際股價）</div>'
+        f'<svg viewBox="0 0 {width} {height}" width="100%" style="display:block;max-width:340px;height:auto" role="img" aria-label="{escape(key)} 示意圖">'
+        f'<polyline points="{path}" fill="none" stroke="#6c8ba3" stroke-width="3" stroke-linejoin="round"/>{dots}</svg>'
     )
-    return fig
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
@@ -395,10 +394,7 @@ def render_trend_patterns_workspace(base_dir: str | Path) -> None:
             pattern_name = str(pattern_name or "盤整待突破")
             cols = st.columns([1.1, 2.4])
             with cols[0]:
-                st.plotly_chart(
-                    _schematic_figure(pattern_name), use_container_width=True,
-                    key=f"trend_pattern_schematic_{category}_{pattern_name}",
-                )
+                st.markdown(_schematic_svg(pattern_name), unsafe_allow_html=True)
             with cols[1]:
                 st.markdown(f"**{pattern_name}｜{len(sub)} 檔**")
                 st.caption(PATTERN_GUIDES.get(_guide_key(pattern_name), PATTERN_GUIDES["盤整待突破"])["note"])
@@ -409,37 +405,39 @@ def render_trend_patterns_workspace(base_dir: str | Path) -> None:
                 name = str(row.get("name") or symbol)
                 themes = row.get("themes") if isinstance(row.get("themes"), list) else []
                 with st.expander(f"{name}（{symbol}）｜{pattern_name}", expanded=False):
-                    left, right = st.columns(2)
-                    with left:
-                        st.write(f"**型態分類：** {category}")
-                        st.write(f"**近 40 個交易日趨勢：** {row.get('trend_40d', '未提供')}")
-                        st.write(f"**近 6 個月背景：** {row.get('market_direction_6m', '未提供')}")
-                        st.write(f"**型態信心參考：** {float(row.get('confidence') or 0):.0%}")
-                    with right:
-                        st.write(f"**最近判讀收盤價：** {row.get('close_at_assessment', '—')}")
-                        st.write(f"**近 3 日報酬：** {row.get('return_3d_pct', '—')}%")
-                        st.write(f"**近 40 個交易日報酬：** {row.get('return_40d_pct', '—')}%")
-                        st.write(f"**支撐／壓力估計：** {row.get('support', '—')}／{row.get('resistance', '—')}")
-                    st.write(f"**六個月方向判讀：** {row.get('market_direction_6m', '未提供')}")
-                    st.write(f"**價格調整方式：** {row.get('adjustment_method', '舊快照／未標記還原方式')}")
+                    # 一檔股票的說明合成一個 markdown 元件：整頁有一百多檔，逐行 st.write 會產生兩千多個元件拖慢瀏覽器。
+                    facts = [
+                        ("型態分類", category),
+                        ("最近判讀收盤價", row.get("close_at_assessment", "—")),
+                        ("近 40 個交易日趨勢", row.get("trend_40d", "未提供")),
+                        ("近 3 日報酬", f"{row.get('return_3d_pct', '—')}%"),
+                        ("近 6 個月背景", row.get("market_direction_6m", "未提供")),
+                        ("近 40 個交易日報酬", f"{row.get('return_40d_pct', '—')}%"),
+                        ("型態信心參考", f"{float(row.get('confidence') or 0):.0%}"),
+                        ("支撐／壓力估計", f"{row.get('support', '—')}／{row.get('resistance', '—')}"),
+                    ]
+                    grid = "".join(f"<div><b>{escape(k)}：</b>{escape(str(v))}</div>" for k, v in facts)
+                    st.markdown(
+                        f'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:4px 18px">{grid}</div>\n\n'
+                        f"**價格調整方式：** {row.get('adjustment_method', '舊快照／未標記還原方式')}  \n"
+                        f"**判讀說明：** {row.get('reason', '目前沒有額外說明。')}  \n"
+                        f"**所屬產業主題：** {'、'.join(themes) if themes else '未分類'}\n\n"
+                        f"<small>最近重大型態變化：{escape(str(row.get('major_change', '初始型態建檔')))}｜"
+                        f"日期：{escape(str(row.get('last_major_change_at', '—')))}｜"
+                        f"最新用於判讀的 K 棒：{escape(str(row.get('last_bar_date', '—')))}<br>"
+                        "按下按鈕才查詢六個月還原日 K；均線可自行勾選，並具備與「操作策略」相同的縮放、雙擊還原、固定視窗範圍及回到最新操作。</small>",
+                        unsafe_allow_html=True,
+                    )
                     if bool(row.get("corporate_action_review", False)):
                         st.warning(
                             f"此股於 {row.get('suspected_gap_date', '未知日期')} 出現 "
                             f"{row.get('suspected_gap_pct', '未知')}% 價格跳空，已暫停趨勢型態判斷。"
                         )
-                    st.write(f"**判讀說明：** {row.get('reason', '目前沒有額外說明。')}")
-                    st.write(f"**所屬產業主題：** {'、'.join(themes) if themes else '未分類'}")
-                    st.caption(
-                        f"最近重大型態變化：{row.get('major_change', '初始型態建檔')}｜"
-                        f"日期：{row.get('last_major_change_at', '—')}｜"
-                        f"最新用於判讀的 K 棒：{row.get('last_bar_date', '—')}"
-                    )
                     chart_visible_key = f"trend_pattern_chart_visible_{symbol}"
                     if st.button("載入／更新此股近六個月 K 棒圖", key=f"trend_pattern_load_chart_{symbol}"):
                         st.session_state[chart_visible_key] = True
                     if st.session_state.get(chart_visible_key, False):
                         _render_live_chart(symbol)
-                    st.caption("展開個股後按鈕才查詢六個月還原日 K；均線可自行勾選，並具備與「操作策略」相同的縮放、雙擊還原、固定視窗範圍及回到最新操作。")
 
     with st.expander("分析方法與更新規則", expanded=False):
         st.markdown(

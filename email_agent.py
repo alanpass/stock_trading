@@ -5,8 +5,8 @@ AI 台股盤後財報 Email Agent v4
 設計目標
 ============================================================
 1. 不把完整 ResearchAgent 報告整份塞進 Email 本文。
-2. 先用本機 Qwen3 8B 擔任「盤後研究摘要 Agent」，把已取得的市場、
-   財報、法說會、題材與模型證據整合成使用者容易閱讀的重點。
+2. 研究重點由 Claude 研究 Agent（盤後研究／早報 skill）寫成 agent_research_notes，
+   本程式把市場、財報、法說會、題材與模型證據整合成使用者容易閱讀的 Email。
 3. Email 本文固定保留研究結果需要的區塊：
       - 今日市場重點
       - 前一日 00:00 至目前法說會（不在 Agent 摘要重複）
@@ -14,7 +14,7 @@ AI 台股盤後財報 Email Agent v4
       - 目前主要利多題材
       - 營收成長重點（若結構化資料不足，由 Agent 先查新聞再補充）
 4. 完整 research JSON / Markdown 仍作為附件，不重複塞進正文。
-5. 絕不把 Qwen3 的思考過程寫進 Email。
+5. 絕不把 AI 的思考過程寫進 Email。
 6. 上漲 / 利多使用紅字；下跌 / 利空使用綠字；待追蹤使用橘色。
 7. 不再限制同一天只能寄一次。每執行 send_report() 就寄一次。
 8. 保留 --force 參數以相容舊版測試指令。
@@ -23,7 +23,7 @@ AI 台股盤後財報 Email Agent v4
 ============================================================
 本程式只負責呈現 ResearchAgent / Research Assistant Agent 已取得的證據。
 若 Agent 主動使用即時新聞工具，Email 可呈現其研究結果與來源；不得把未驗證的新聞推測寫成事實。
-Qwen3 摘要若失敗，會自動使用程式化的保守摘要，不會讓 Email 整封失敗。
+研究筆記若缺少，會自動使用程式化的保守摘要，不會讓 Email 整封失敗。
 """
 from __future__ import annotations
 
@@ -41,7 +41,8 @@ from email.utils import formataddr
 from pathlib import Path
 from typing import Any
 
-import requests
+
+from ai_backend import AGENT_LABEL, status_label
 
 EMAIL_NEWS_MAX = int(os.getenv("EMAIL_NEWS_MAX", "12"))  # 晨報 Email 最多列幾則新聞
 
@@ -50,8 +51,10 @@ TAIPEI_TZ = "Asia/Taipei"
 DEFAULT_SMTP_HOST = "smtp.gmail.com"
 DEFAULT_SMTP_PORT = 587
 DEFAULT_RECIPIENT = "a1113359@mail.nuk.edu.tw"
-DEFAULT_OLLAMA_HOST = "http://127.0.0.1:11434"
-DEFAULT_OLLAMA_MODEL = "qwen3:8b"
+
+
+def engine_label() -> str:
+    return AGENT_LABEL
 
 
 # ---------------------------------------------------------------------------
@@ -204,8 +207,6 @@ class EmailAgent:
             "use_ssl": c.use_ssl,
             "attach_reports": c.attach_reports,
             "missing": missing,
-            "ollama_host": _cfg_value(self.env, "OLLAMA_HOST", DEFAULT_OLLAMA_HOST),
-            "ollama_model": _cfg_value(self.env, "OLLAMA_MODEL", DEFAULT_OLLAMA_MODEL),
             "env_path": str(self.env_path),
         }
 
@@ -227,16 +228,8 @@ class EmailAgent:
             return default
 
     @staticmethod
-    def _pct(value: Any, assume_percent: bool = True) -> str:
-        try:
-            x = float(value)
-            return f"{x:+.2f}%" if assume_percent else f"{x * 100:+.2f}%"
-        except Exception:
-            return "—"
-
-    @staticmethod
     def _clean_llm_text(text: str) -> str:
-        """移除 qwen3 可能輸出的 thinking 區塊，避免把思考過程寄給使用者。"""
+        """移除 AI 可能輸出的 thinking 區塊，避免把思考過程寄給使用者。"""
         if not text:
             return ""
 
@@ -254,36 +247,6 @@ class EmailAgent:
         )
 
         return text.strip()
-
-    @staticmethod
-    def _extract_json(text: str) -> dict[str, Any] | None:
-        if not text:
-            return None
-
-        cleaned = EmailAgent._clean_llm_text(text)
-
-        # ```json ... ```
-        fenced = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", cleaned, re.DOTALL | re.IGNORECASE)
-        candidates = []
-        if fenced:
-            candidates.append(fenced.group(1))
-        candidates.append(cleaned)
-
-        # 找第一個最外層 JSON 物件
-        start = cleaned.find("{")
-        end = cleaned.rfind("}")
-        if start >= 0 and end > start:
-            candidates.append(cleaned[start : end + 1])
-
-        for candidate in candidates:
-            try:
-                value = json.loads(candidate)
-                if isinstance(value, dict):
-                    return value
-            except Exception:
-                continue
-
-        return None
 
     def _table(self, headers: list[str], rows: list[list[Any]], row_classes: list[str] | None = None) -> str:
         if not rows:
@@ -306,107 +269,8 @@ class EmailAgent:
         )
 
     # =======================================================================
-    # Build compact evidence for Qwen3
+    # Build compact evidence
     # =======================================================================
-    def _compact_evidence(self, report: dict[str, Any]) -> str:
-        lines: list[str] = []
-
-        report_date = str(report.get("report_date", ""))
-        lines.append(f"研究日期：{report_date}")
-        lines.append(f"研究結論：{report.get('research_conclusion', '')}")
-        lines.append(f"市場狀態：{report.get('market_status', '')}")
-
-        # 市場強弱
-        mm = report.get("market_movers", {}) or {}
-        movers = self._reportable_market_rows(report)
-        movers = sorted(
-            movers,
-            key=lambda x: abs(self._safe_float(x.get("today_change_percent"), 0) or 0),
-            reverse=True,
-        )[:8]
-        if movers:
-            lines.append("市場波動候選：")
-            for x in movers:
-                lines.append(
-                    f"- {x.get('name', x.get('symbol', ''))}({x.get('symbol', '')}) "
-                    f"今日 {self._safe_float(x.get('today_change_percent'), 0):+.2f}%；"
-                    f"5日 {self._safe_float(x.get('ret_5d'), 0):+.2f}%；"
-                    f"產業 {x.get('industry_name', '')}；"
-                    f"原因候選 {x.get('reason', '待查證')}"
-                )
-
-        industries = [x for x in mm.get("industry_summary", []) if isinstance(x, dict)]
-        industries = sorted(
-            industries,
-            key=lambda x: self._safe_float(x.get("today_avg_change"), 0) or 0,
-            reverse=True,
-        )[:8]
-        if industries:
-            lines.append("產業強弱：")
-            for x in industries:
-                lines.append(
-                    f"- {x.get('industry_name', '')} 今日平均 "
-                    f"{self._safe_float(x.get('today_avg_change'), 0):+.2f}%；"
-                    f"5日平均 {self._safe_float(x.get('ret_5d_avg'), 0):+.2f}%；"
-                    f"漲跌 {x.get('rising_count', 0)}/{x.get('falling_count', 0)}"
-                )
-
-        # 法說會：只傳摘要欄位，不傳整份原文
-        calls = [
-            x for x in report.get("earnings_calls", [])
-            if isinstance(x, dict) and not x.get("error")
-        ]
-        calls = sorted(calls, key=lambda x: str(x.get("event_date", "")), reverse=True)[:8]
-        if calls:
-            lines.append("最近法說會：")
-            for x in calls:
-                lines.append(
-                    f"- {x.get('event_date', '')} {x.get('name', x.get('symbol', ''))}({x.get('symbol', '')})；"
-                    f"訊號 {x.get('impact', '待確認')}；信心 {self._safe_float(x.get('confidence'), 0):.0f}；"
-                    f"摘要 {x.get('one_line_summary') or x.get('summary') or '無摘要'}；"
-                    f"財務 {'；'.join((x.get('financial_highlights') or [])[:3])}；"
-                    f"展望 {'；'.join((x.get('guidance') or [])[:3])}；"
-                    f"風險 {'；'.join((x.get('negative_factors') or [])[:3])}"
-                )
-
-        # 題材
-        themes = [x for x in report.get("bullish_themes", []) if isinstance(x, dict)]
-        themes = sorted(
-            themes,
-            key=lambda x: self._safe_float(x.get("strength"), 0) or 0,
-            reverse=True,
-        )[:6]
-        if themes:
-            lines.append("題材：")
-            for x in themes:
-                lines.append(
-                    f"- {x.get('theme', '')} 強度 {self._safe_float(x.get('strength'), 0):.1f}/100；"
-                    f"狀態 {x.get('status', '')}；"
-                    f"官方 {x.get('official_evidence_count', 0)}；"
-                    f"接單/出貨 {x.get('order_evidence_count', 0)}；"
-                    f"營收支撐 {x.get('revenue_support_count', 0)}；"
-                    f"查證 {('; '.join(x.get('contradiction_flags') or [])) or '無'}"
-                )
-
-        # 財報 / 營收
-        financials = [x for x in report.get("financial_snapshots", []) if isinstance(x, dict)]
-        financials = sorted(
-            financials,
-            key=lambda x: self._safe_float(x.get("revenue_yoy"), -999) or -999,
-            reverse=True,
-        )[:10]
-        if financials:
-            lines.append("財報營收：")
-            for x in financials:
-                lines.append(
-                    f"- {x.get('symbol', '')} 最新月營收 YoY {self._safe_float(x.get('revenue_yoy'), 0):+.2f}%；"
-                    f"營業利益 {x.get('operating_profit', '')}；淨利 {x.get('net_income', '')}；"
-                    f"EPS {x.get('eps', '')}"
-                )
-
-        return "\n".join(lines)
-
-
 
     # =======================================================================
     # Reportable market rows / bad-data defense
@@ -450,9 +314,10 @@ class EmailAgent:
                 pct = change / previous * 100.0
             if pct is None:
                 pct = cls._safe_float(x.get("today_change_percent") or x.get("change_percent"), None)
-                # 某些來源把 0.0988 表示成比例值；僅在合理範圍才轉百分比。
-                if pct is not None and abs(pct) <= 1:
-                    pct *= 100.0
+                # AFTERCLOSE_DATA_QUALITY_PATCH_V1
+                # today_change_percent / change_percent 欄位預設已是「百分比數字」。
+                # 例如 -0.287 代表 -0.287%，不可因為絕對值小於 1 就再乘 100。
+                # 若來源真的提供比例值，應由來源欄位明確標記，不在呈現層猜測。
             if pct is None or abs(pct) > 30:
                 # 台股一般股票／ETF不應出現 +100%/+1000% 這類盤後日漲跌幅。
                 continue
@@ -470,7 +335,7 @@ class EmailAgent:
 
     @staticmethod
     def _sanitize_watch_items(items: Any) -> list[str]:
-        """禁止把模型／Ollama 例外堆疊當成使用者的「待追蹤事項」。"""
+        """禁止把模型／程式例外堆疊當成使用者的「待追蹤事項」。"""
         if not isinstance(items, list):
             items = [items] if items else []
         bad_terms = (
@@ -489,10 +354,10 @@ class EmailAgent:
         return result[:8]
 
     # =======================================================================
-    # Qwen3 Agent digest
+    # AI Agent digest
     # =======================================================================
     def _fallback_digest(self, report: dict[str, Any]) -> dict[str, Any]:
-        """Qwen3 無法使用時的保守摘要；只從結構化資料抽重點。"""
+        """研究筆記缺少時的保守摘要；只從結構化資料抽重點。"""
         mm = report.get("market_movers", {}) or {}
         movers = self._reportable_market_rows(report)
         ups = sorted(
@@ -574,7 +439,7 @@ class EmailAgent:
         """
         Email 不再重新決定研究重點。
 
-        研究重點必須由 ResearchOrchestratorAgent 產生；EmailAgent
+        研究重點由 Claude 研究 Agent（agent_research_notes）產生；EmailAgent
         只負責把 Agent 的研究筆記、標籤、證據與後續追蹤事項排版。
         若本次沒有 Agent 結果，才使用保守的程式化 fallback。
         """
@@ -592,7 +457,7 @@ class EmailAgent:
                 "model_alert": "",
                 "research_notes": agent.get("research_notes", []) if isinstance(agent.get("research_notes"), list) else [],
                 "agent_actions": agent.get("agent_actions", []) if isinstance(agent.get("agent_actions"), list) else [],
-                "agent_status": str(agent.get("agent_status", "qwen3_tool_agent")),
+                "agent_status": str(agent.get("agent_status", "")),
             }
         return self._fallback_digest(report)
 
@@ -770,11 +635,7 @@ class EmailAgent:
                 f"{source_html}</div>"
             )
 
-        status = self._esc(
-            "Qwen3 自主工具研究 Agent"
-            if digest.get("agent_status") == "qwen3_tool_agent"
-            else ("Qwen3 Agent" if digest.get("agent_status") == "qwen3" else "保守 fallback")
-        )
+        status = self._esc(status_label(digest.get("agent_status")))
         overview = self._esc(digest.get("overview", "今日盤後研究已完成。"))
 
         # ---------------------------------------------------------------
@@ -1044,42 +905,187 @@ class EmailAgent:
     # =======================================================================
     # Earnings section
     # =======================================================================
-    def _earnings_section(self, report: dict[str, Any]) -> str:
-        """早報法說會：只顯示前一日 00:00 至目前，並壓成 1~3 個可掃讀重點。"""
-        calls = [
-            x for x in report.get("earnings_calls", [])
+    def _load_morning_finance_cache(self) -> dict[str, Any]:
+        """讀取網站「財經資訊」頁所使用的本機完整快取。"""
+        path = self.output_dir / "finance_info_latest.json"
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            return data if isinstance(data, dict) else {}
+        except Exception:
+            return {}
+
+    def _morning_earnings_rows(self, report: dict[str, Any]) -> tuple[list[dict[str, Any]], str]:
+        """先沿用財經資訊頁法說摘要；時間窗內無項目時，列出頁面仍保留的近期摘要。"""
+        date_keys = (
+            "event_date", "eventDate", "published_date", "modified_date", "date",
+            "published_at", "published_time", "published_ts", "published", "created_at",
+        )
+        finance = self._load_morning_finance_cache()
+        site_calls = [
+            dict(x) for x in (finance.get("earnings", []) or [])
             if isinstance(x, dict) and not x.get("error")
         ]
-        calls = self._filter_previous_day_to_now(
-            calls,
-            ("event_date", "eventDate", "published_date", "modified_date", "date", "published_at", "published_time", "published_ts", "published", "created_at"),
-        )
+        if site_calls:
+            in_window = self._filter_previous_day_to_now(site_calls, date_keys)
+            if in_window:
+                return in_window[:8], "資料來源：直接沿用財經資訊頁快取；以下為前一日 00:00 至目前的項目。"
+            # 財經資訊頁本身只保留近期法說摘要。若指定 24 小時窗剛好沒有資料，
+            # 仍顯示網站現有摘要，並保留原始日期，避免誤報成完全沒有擷取成功。
+            site_calls.sort(
+                key=lambda x: str(
+                    x.get("event_date") or x.get("eventDate") or x.get("published_date")
+                    or x.get("published_at") or x.get("published") or x.get("date") or ""
+                ),
+                reverse=True,
+            )
+            return site_calls[:8], "指定時間窗沒有新項目；以下改列財經資訊頁仍保留的近期法說摘要，請以每筆日期為準。"
 
-        # 若主報告沒有帶到法說，直接從財經資訊快取補一次，仍嚴格套用相同日期窗。
-        if not calls:
-            finance_path = self.output_dir / "finance_info_latest.json"
-            try:
-                if finance_path.exists():
-                    finance = json.loads(finance_path.read_text(encoding="utf-8"))
-                    finance_calls = [x for x in (finance.get("earnings", []) or []) if isinstance(x, dict)]
-                    calls = self._filter_previous_day_to_now(
-                        finance_calls,
-                        ("event_date", "eventDate", "published_date", "modified_date", "date", "published_at", "published_time", "published_ts", "published", "created_at"),
-                    )
-            except Exception:
-                calls = []
+        report_calls = [
+            dict(x) for x in (report.get("earnings_calls", []) or [])
+            if isinstance(x, dict) and not x.get("error")
+        ]
+        in_window = self._filter_previous_day_to_now(report_calls, date_keys)
+        if in_window:
+            return in_window[:8], "資料來源：本次早報報告快取。"
+        if report_calls:
+            report_calls.sort(key=lambda x: str(x.get("event_date") or x.get("published_at") or ""), reverse=True)
+            return report_calls[:8], "指定時間窗沒有新項目；以下列出早報報告仍保留的近期摘要，請以每筆日期為準。"
+        return [], "財經資訊頁與本次早報都沒有可用的法說會摘要。"
 
+    def _morning_recommendations_from_finance_cache(
+        self, report: dict[str, Any]
+    ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+        """Agent 清單為空時，用網站財經新聞已有的產業／股票標籤及原文證據補位。"""
+        finance = self._load_morning_finance_cache()
+        records = [x for x in (finance.get("news", []) or []) if isinstance(x, dict)]
+        if not records:
+            return [], []
+
+        watchlist = {
+            str(x).strip().upper().replace(".TW", "")
+            for x in (report.get("symbols", []) or report.get("research_scope", {}).get("watchlist_symbols", []) or [])
+            if str(x).strip()
+        }
+        profiles = report.get("business_profiles", {}) or {}
+        profile_lookup = {str(k).strip().upper().replace(".TW", ""): v for k, v in profiles.items() if isinstance(v, dict)}
+        industry_evidence: dict[str, dict[str, Any]] = {}
+        stock_evidence: dict[str, list[dict[str, Any]]] = {}
+
+        def values(value: Any) -> list[str]:
+            if isinstance(value, (list, tuple, set)):
+                return [str(v).strip() for v in value if str(v).strip()]
+            if isinstance(value, str) and value.strip():
+                return [value.strip()]
+            return []
+
+        def normalized_code(value: Any) -> str:
+            match = re.search(r"(?<!\d)(\d{4}[A-Z]?)(?!\d)", str(value or "").upper().replace(".TW", ""))
+            return match.group(1) if match else ""
+
+        for article in records:
+            title = str(article.get("title") or article.get("headline") or "財經事件").strip()
+            points = values(article.get("ai_points") or article.get("key_points"))
+            summary = "；".join(points[:3]) or str(
+                article.get("summary") or article.get("ai_summary") or article.get("why") or article.get("content") or ""
+            ).strip()
+            if not title and not summary:
+                continue
+            blob = " ".join([
+                title, summary, str(article.get("why") or ""), str(article.get("content") or ""),
+                " ".join(values(article.get("highlights"))),
+            ])
+            sentiment = str(article.get("sentiment") or article.get("impact") or "待查證").strip()
+            source_url = str(article.get("url") or article.get("source_url") or "").strip()
+            importance = self._safe_float(article.get("importance"), 0) or 0
+            evidence = [title]
+            if summary:
+                evidence.append(summary[:500])
+
+            related: set[str] = set()
+            explicit_symbols = values(article.get("stocks"))
+            explicit_symbols += values(article.get("symbols"))
+            explicit_symbols += values(article.get("related_symbols"))
+            for raw_symbol in explicit_symbols:
+                code = normalized_code(raw_symbol)
+                if code and code in watchlist:
+                    related.add(code)
+            row_code = normalized_code(article.get("symbol") or article.get("stock_code") or article.get("code"))
+            if row_code in watchlist:
+                related.add(row_code)
+
+            # 有些財經新聞的股票代號是在標題／摘要中而非 stocks 陣列；只接受自選股且要有明確名稱／代號命中。
+            for code in watchlist:
+                profile = profile_lookup.get(code, {}) or {}
+                name = str(profile.get("name") or profile.get("company") or "").strip()
+                if re.search(rf"(?<!\d){re.escape(code)}(?!\d)", blob) or (len(name) >= 2 and name.casefold() in blob.casefold()):
+                    related.add(code)
+
+            sector_values = values(article.get("sectors") or article.get("sector") or article.get("industry") or article.get("industries"))
+            if not sector_values and related:
+                sector_values = values([
+                    (profile_lookup.get(code, {}) or {}).get("business_group")
+                    or (profile_lookup.get(code, {}) or {}).get("primary_chain")
+                    or (profile_lookup.get(code, {}) or {}).get("industry_name")
+                    for code in related
+                ])
+            for sector in sector_values[:4]:
+                sector = sector.strip()
+                if not sector:
+                    continue
+                row = industry_evidence.setdefault(sector, {"industry": sector, "related_symbols": [], "_items": [], "_importance": 0})
+                row["_items"].append({"title": title, "summary": summary, "sentiment": sentiment, "source_url": source_url})
+                row["_importance"] = max(row["_importance"], importance)
+                for code in sorted(related):
+                    if code not in row["related_symbols"]:
+                        row["related_symbols"].append(code)
+
+            for code in related:
+                stock_evidence.setdefault(code, []).append({
+                    "title": title, "summary": summary, "sentiment": sentiment,
+                    "source_url": source_url, "importance": importance,
+                    "industry": (sector_values[0] if sector_values else ""),
+                })
+
+        industries: list[dict[str, Any]] = []
+        for sector, row in sorted(industry_evidence.items(), key=lambda item: (-item[1]["_importance"], item[0]))[:8]:
+            items = sorted(row["_items"], key=lambda x: (x.get("sentiment") == "利空", x.get("title", "")))[:3]
+            lead = items[0] if items else {}
+            reason = str(lead.get("summary") or lead.get("title") or "財經資訊頁有近期相關新聞分類").strip()
+            impact = str(lead.get("sentiment") or "待查證")
+            industries.append({
+                "industry": sector,
+                "why": f"財經資訊頁的近期新聞訊號為「{impact}」；重點：{reason[:420]}。此項為研究觀察，不代表看多或買進建議。",
+                "evidence": list(dict.fromkeys(str(x.get("title") or "") for x in items if x.get("title")))[:4],
+                "related_symbols": row["related_symbols"][:12],
+            })
+
+        stocks: list[dict[str, Any]] = []
+        for code, rows in sorted(stock_evidence.items(), key=lambda item: (-max((x.get("importance", 0) for x in item[1]), default=0), item[0]))[:12]:
+            rows.sort(key=lambda x: x.get("importance", 0), reverse=True)
+            lead = rows[0]
+            profile = profile_lookup.get(code, {}) or {}
+            stocks.append({
+                "symbol": code,
+                "name": str(profile.get("name") or profile.get("company") or code),
+                "industry": str(profile.get("business_group") or profile.get("primary_chain") or profile.get("industry_name") or lead.get("industry") or "財經新聞關聯個股"),
+                "reason": f"財經資訊頁近期新聞將此股列為相關標的；訊號：{lead.get('sentiment') or '待查證'}。{str(lead.get('summary') or lead.get('title') or '')[:500]}",
+                "evidence": list(dict.fromkeys(str(x.get("title") or "") for x in rows if x.get("title")))[:5],
+                "source_links": list(dict.fromkeys(str(x.get("source_url") or "") for x in rows if x.get("source_url")))[:3],
+            })
+        return industries, stocks
+
+    def _earnings_section(self, report: dict[str, Any]) -> str:
+        """早報法說會摘要優先直接沿用財經資訊頁，不因 24 小時日期窗而丟掉網站現有內容。"""
+        calls, source_note = self._morning_earnings_rows(report)
         if not calls:
-            return """
-            <section>
-              <h2>1. 法說會摘要</h2>
-              <div class='notice'>前一日 00:00 至目前沒有成功擷取到可用的 Fugle 法說會摘要。</div>
-            </section>
-            """
+            return (
+                "<section><h2>1. 法說會摘要</h2>"
+                "<div class='notice'>財經資訊頁目前也沒有可用的法說會摘要；本次沒有另外編造內容。</div></section>"
+            )
 
         blocks: list[str] = []
         for x in calls[:8]:
-            impact = str(x.get("impact") or x.get("judgement") or x.get("signal") or "待查證")
+            impact = str(x.get("impact") or x.get("judgement") or x.get("signal") or x.get("sentiment") or "待查證")
             if "利多" in impact or "正" in impact:
                 signal_class = "positive-text"
             elif "利空" in impact or "負" in impact:
@@ -1090,59 +1096,50 @@ class EmailAgent:
             candidates: list[str] = []
             for key, label, limit in [
                 ("financial_highlights", "財務", 2),
+                ("operating_highlights", "營運", 1),
                 ("guidance", "展望", 2),
                 ("positive_factors", "利多", 2),
                 ("negative_factors", "風險", 2),
+                ("key_risks", "風險", 1),
                 ("qa_highlights", "Q&A", 1),
             ]:
-                values = x.get(key) or []
-                if isinstance(values, list):
-                    for value in values[:limit]:
+                vals = x.get(key) or []
+                if isinstance(vals, str):
+                    vals = [vals]
+                if isinstance(vals, list):
+                    for value in vals[:limit]:
                         text = str(value).strip()
                         if text:
                             candidates.append(f"{label}：{text}")
+            summary = str(x.get("one_line_summary") or x.get("agent_headline") or x.get("summary") or x.get("ai_summary") or "").strip()
+            if summary and not any(summary in point for point in candidates):
+                candidates.insert(0, "摘要：" + summary[:500])
             if not candidates:
-                candidates = self._summary_points(
-                    x.get("one_line_summary") or x.get("summary") or "",
-                    max_points=3,
-                    max_chars=150,
-                )
-
-            point_html = "".join(
-                f"<li>{self._highlight_keywords(p)}</li>" for p in candidates[:3]
-            ) or "<li>目前沒有可用的摘要重點。</li>"
+                candidates = self._summary_points(summary, max_points=3, max_chars=180)
+            if not candidates and x.get("memo_text"):
+                candidates = self._summary_points(x.get("memo_text"), max_points=3, max_chars=180)
+            point_html = "".join(f"<li>{self._highlight_keywords(p)}</li>" for p in candidates[:4])
+            if not point_html:
+                point_html = "<li>網站有此法說會項目，但摘要欄位目前沒有內容。</li>"
 
             source = str(x.get("source_url") or x.get("url") or "").strip()
-            source_html = (
-                f"<p><a href='{self._esc(source)}'>查看 Fugle 原始法說會備忘錄</a></p>"
-                if source else ""
-            )
-
+            source_html = f"<p><a href='{self._esc(source)}'>查看原始法說會備忘錄</a></p>" if source else ""
             confidence = self._safe_float(x.get("confidence"), None)
             conf_text = "—" if confidence is None else (f"{confidence * 100:.0f}%" if confidence <= 1 else f"{confidence:.0f}%")
-            name = x.get("name") or x.get("company") or x.get("symbol") or "未知公司"
-            symbol = x.get("symbol") or x.get("code") or ""
-
+            name = x.get("name") or x.get("company") or x.get("company_name") or x.get("symbol") or "未知公司"
+            symbol = x.get("symbol") or x.get("code") or x.get("stock_code") or ""
+            when = x.get("_mail_date") or x.get("event_date") or x.get("eventDate") or x.get("published_date") or x.get("published_at") or x.get("published") or x.get("date") or "日期未提供"
             blocks.append(
-                f"""<div class='research-note'>
-                  <div><strong>{self._esc(x.get('_mail_date', x.get('event_date', '')))}｜{self._esc(name)}（{self._esc(symbol)}）</strong>
-                  <span class='note-meta {signal_class}'>{self._esc(impact)}｜信心 {conf_text}</span></div>
-                  <ul class='news-points'>{point_html}</ul>
-                  {source_html}
-                </div>"""
+                f"<div class='research-note'><div><strong>{self._esc(when)}｜{self._esc(name)}（{self._esc(symbol)}）</strong>"
+                f"<span class='note-meta {signal_class}'>{self._esc(impact)}｜信心 {conf_text}</span></div>"
+                f"<ul class='news-points'>{point_html}</ul>{source_html}</div>"
             )
+        return (
+            "<section><h2>1. 法說會摘要</h2>"
+            f"<p class='muted'>{self._esc(source_note)}</p>"
+            f"<div class='earnings-list'>{''.join(blocks)}</div></section>"
+        )
 
-        return """
-        <section>
-          <h2>1. 法說會摘要</h2>
-          <p class='muted'>前一日 00:00 至目前；每場僅保留最重要的 1～3 個重點。</p>
-          <div class='earnings-list'>%s</div>
-        </section>
-        """ % "".join(blocks)
-
-    # =======================================================================
-    # Themes
-    # =======================================================================
     def _themes_section(self, report: dict[str, Any]) -> str:
         themes = [x for x in report.get("bullish_themes", []) if isinstance(x, dict)]
         themes = sorted(
@@ -1203,38 +1200,59 @@ class EmailAgent:
     # Financials
     # =======================================================================
     def _financial_section(self, report: dict[str, Any]) -> str:
+        """顯示網站已有的財報／營收數據，同時明確標示月份、財報期間與單位。"""
         rows_data = [x for x in report.get("financial_snapshots", []) if isinstance(x, dict)]
         rows_data = sorted(
             rows_data,
-            key=lambda x: self._safe_float(x.get("revenue_yoy"), -999) or -999,
+            key=lambda x: self._safe_float(x.get("revenue_yoy"), -999) if self._safe_float(x.get("revenue_yoy"), None) is not None else -999,
             reverse=True,
         )[:10]
 
-        rows = []
-        for x in rows_data:
-            yoy = self._safe_float(x.get("revenue_yoy"), 0) or 0
-            name_label = self._symbol_label(x.get("symbol", ""), report)
+        def period_label(value: Any) -> str:
+            text = str(value or "").strip()
+            if not text or text.lower() in {"none", "nan", "nat", "null", "unknown"}:
+                return "期間未標示"
+            return text[:16]
+
+        def revenue_yi_yuan(value: Any) -> str:
+            """MOPS 月營收欄位以新臺幣千元表示，轉成新臺幣億元顯示。"""
+            number = self._safe_float(value, None)
+            if number is None:
+                return "—"
+            # 目前專案 financial_snapshots 的 latest_month_revenue 來源是 MOPS 千元欄位。
+            # 1 億元 = 100,000 千元。
+            return f"{number / 100000.0:,.2f}"
+
+        headers = ["公司", "營收月份", "月營收（新臺幣億元）", "營收年增率", "EPS（含財報期間）"]
+        rows: list[list[str]] = []
+        for item in rows_data:
+            yoy_value = self._safe_float(item.get("revenue_yoy"), None)
+            yoy_text = "—" if yoy_value is None else f"{yoy_value:+.2f}%"
+            eps_value = self._safe_float(item.get("eps"), None)
+            eps_text = "—" if eps_value is None else f"{eps_value:.2f}（{period_label(item.get('income_period'))}）"
             rows.append([
-                name_label,
-                x.get("latest_month_revenue", ""),
-                f"{yoy:+.2f}%",
-                x.get("eps", ""),
+                self._symbol_label(item.get("symbol", ""), report),
+                period_label(item.get("revenue_period")),
+                revenue_yi_yuan(item.get("latest_month_revenue")),
+                yoy_text,
+                eps_text,
             ])
 
-        table = self._table(["公司", "最新月營收", "YoY", "EPS"], rows)
+        table = self._table(headers, rows)
         if rows:
-            head = "<tr><th>公司</th><th>最新月營收</th><th>YoY</th><th>EPS</th></tr>"
+            head = "<tr>" + "".join(f"<th>{self._esc(h)}</th>" for h in headers) + "</tr>"
             body = []
             for row in rows:
-                yoy = str(row[2])
+                yoy = row[3]
                 cls = "positive-text" if yoy.startswith("+") and not yoy.startswith("+0.00") else "negative-text" if yoy.startswith("-") else ""
-                body.append(
-                    f"<tr><td>{self._esc(row[0])}</td><td>{self._esc(row[1])}</td><td class='{cls}'><strong>{self._esc(yoy)}</strong></td><td>{self._esc(row[3])}</td></tr>"
-                )
+                cells = []
+                for idx, value in enumerate(row):
+                    css = f" class='{cls}'" if idx == 3 and cls else ""
+                    cells.append(f"<td{css}>{self._esc(value)}</td>")
+                body.append("<tr>" + "".join(cells) + "</tr>")
             table = "<div class='table-wrap'><table><thead>" + head + "</thead><tbody>" + "".join(body) + "</tbody></table></div>"
 
-        # 若結構化財報資料為空，Agent 不應只回報「沒有資料」；
-        # 這裡顯示 Agent 的補充研究結果，或明確告知 Agent 已查詢仍無法驗證。
+        # 若結構化財報資料為空，保留 Agent 已有的補充研究結果。
         agent = report.get("agent_research_notes") or {}
         financial_focus = self._as_list(agent.get("financial_focus")) if isinstance(agent, dict) else []
         actions = agent.get("agent_actions", []) if isinstance(agent, dict) else []
@@ -1248,14 +1266,14 @@ class EmailAgent:
                 f"<li>{self._esc(x)}</li>" for x in financial_focus[:10]
             ) + "</ul></div>"
         elif not rows and queried_financial:
-            table = "<div class='notice'>Agent 已主動查詢財報／營收與相關新聞，但本次仍沒有找到可驗證的結構化數據。</div>"
+            table = "<div class='notice'>Agent 已檢查既有研究資料，但本次沒有找到可呈現的結構化財報／營收數據。</div>"
         elif not rows:
-            table = "<div class='notice'>本次沒有可用的財報／營收數據。正常研究流程會由 Agent 進一步查詢新聞與可用公開資料。</div>"
+            table = "<div class='notice'>目前沒有可用的財報／營收數據。未標示期間的 EPS 不應當成最新季度 EPS。</div>"
 
         return f"""
         <section>
           <h2>⑤ 營收成長重點</h2>
-          <p class='muted'>正文列出目前最值得注意的營收 YoY / EPS 變化；完整財報數據保留於附件。若結構化資料不足，Agent 會先主動補查新聞與公開資料。</p>
+          <p class='muted'>優先呈現本次研究資料已取得的數值，不在 Email 排版階段重新爬取。月營收以新臺幣億元呈現；EPS 會附上原始財報期間，避免把較早一期數字誤當成最新季度。</p>
           {table}
         </section>
         """
@@ -1263,10 +1281,6 @@ class EmailAgent:
     # =======================================================================
     # Model health
     # =======================================================================
-    def _model_section(self, report: dict[str, Any]) -> str:
-        """模型健康度保留於研究 JSON / 附件，不在 Email 正文顯示。"""
-        return ""
-
     def _source_section(self, report: dict[str, Any]) -> str:
         sources = report.get("official_sources", {}) or {}
         source_text = (
@@ -1351,7 +1365,7 @@ a:hover{{text-decoration:underline}}
 <body>
 <div class='container'>
   <h1>AI 台股盤後財報</h1>
-  <div class='muted'>研究日期：{report_date}｜本機 Qwen3 8B + Fugle / TWSE / TPEx / MOPS 證據整合</div>
+  <div class='muted'>研究日期：{report_date}｜{self._esc(engine_label())} + Fugle / TWSE / TPEx / MOPS 證據整合</div>
   <p><strong>研究自選股：</strong>{self._esc('、'.join(map(str, watchlist)))}</p>
 
   {self._digest_html(digest, report)}
@@ -1434,64 +1448,98 @@ a:hover{{text-decoration:underline}}
     # Morning report
     # =======================================================================
     def _morning_news_section(self, report: dict[str, Any]) -> str:
-        """早報新聞：只取前一日 00:00 至目前，摘要轉成 1~3 點並標紅關鍵詞。"""
-        morning = report.get("morning_agent", {}) or {}
-        news = [x for x in (morning.get("news_summary", []) or []) if isinstance(x, dict)]
-        # MorningResearchAgent 已在建立早報時把新聞限制在前一日 00:00～目前；
-        # CNYES Agent 的結構化摘要通常沒有再次帶回 published 欄位，因此這裡不能二次過濾。
-        news = news[:EMAIL_NEWS_MAX]
+        """優先直接呈現財經資訊頁的新聞摘要／重點，不再重新依賴早報 LLM。"""
+        finance = self._load_morning_finance_cache()
+        website_news = [x for x in (finance.get("news", []) or []) if isinstance(x, dict)]
+        from_website = bool(website_news)
+        if from_website:
+            news = website_news[:EMAIL_NEWS_MAX]
+        else:
+            morning = report.get("morning_agent", {}) or {}
+            news = [x for x in (morning.get("news_summary", []) or []) if isinstance(x, dict)][:EMAIL_NEWS_MAX]
+            if not news:
+                cache_news = [x for x in ((report.get("cnyes_news", {}) or {}).get("articles", []) or []) if isinstance(x, dict)]
+                news = self._filter_previous_day_to_now(
+                    cache_news,
+                    ("published_at", "published_time", "published_ts", "published", "date", "created_at", "updated_at"),
+                )[:EMAIL_NEWS_MAX]
 
         if not news:
-            cache_news = [x for x in ((report.get("cnyes_news", {}) or {}).get("articles", []) or []) if isinstance(x, dict)]
-            news = self._filter_previous_day_to_now(
-                cache_news,
-                ("published_at", "published_time", "published_ts", "published", "date", "created_at", "updated_at"),
-            )[:EMAIL_NEWS_MAX]
-            news = [
-                {
-                    "title": x.get("title") or x.get("headline") or "財經事件",
-                    "summary": x.get("summary") or x.get("description") or x.get("content") or "目前只有新聞標題，請查看原文查證。",
-                    "impact": "待查證",
-                    "industries": [],
-                    "evidence": [f"鉅亨新聞：{x.get('title') or x.get('headline') or '財經事件'}"],
-                    "source_links": [str(x.get("url") or x.get("source_url") or "").strip()] if str(x.get("url") or x.get("source_url") or "").strip() else [],
-                    "confidence": 0.20,
-                    "published_at": x.get("published_at") or x.get("published_time") or x.get("published_ts") or x.get("published") or x.get("date") or x.get("created_at"),
-                }
-                for x in news
-            ]
-
-        if not news:
-            return "<div class='notice'>前一日 00:00 至目前沒有可用的鉅亨新聞摘要。</div>"
+            return "<div class='notice'>財經資訊頁快取與早報報告都沒有可用的財經新聞摘要。</div>"
 
         blocks: list[str] = []
-        for x in news:
-            conf = self._safe_float(x.get("confidence"), None)
-            conf_text = "—" if conf is None else (f"{conf * 100:.0f}%" if conf <= 1 else f"{conf:.0f}%")
-            impact = str(x.get("impact") or "待查證")
-            impact_class = "positive-text" if ("利多" in impact or "正" in impact) else "negative-text" if ("利空" in impact or "負" in impact) else "watch-text"
+        digest_html = ""
+        if from_website:
+            digest = finance.get("news_digest", {}) or {}
+            headline = str(digest.get("agent_headline") or digest.get("headline") or "").strip()
+            key_points = digest.get("agent_key_points") or digest.get("key_points") or []
+            if headline:
+                digest_html += f"<div class='research-note'><strong>財經資訊頁｜今日重點</strong><p>{self._highlight_keywords(headline)}</p>"
+                if isinstance(key_points, list) and key_points:
+                    digest_html += "<ul>" + "".join(f"<li>{self._highlight_keywords(str(p))}</li>" for p in key_points[:6] if str(p).strip()) + "</ul>"
+                digest_html += "</div>"
+            updated = str(finance.get("updated_at") or "").strip()
+            source_note = "直接沿用財經資訊頁已整理的新聞摘要、產業／股票標籤與重點，未在寄信時重新生成。"
+            if updated:
+                source_note += f" 快取更新：{updated[:19].replace('T', ' ')}。"
+            digest_html += f"<p class='muted'>{self._esc(source_note)}</p>"
 
-            points = self._summary_points(x.get("summary", ""), max_points=3, max_chars=150)
+        for x in news:
+            title = str(x.get("title") or x.get("headline") or "財經事件")
+            impact = str(x.get("sentiment") or x.get("impact") or x.get("judgement") or "待查證")
+            impact_class = "positive-text" if ("利多" in impact or "正" in impact) else "negative-text" if ("利空" in impact or "負" in impact) else "watch-text"
+            raw_points = x.get("ai_points") or x.get("key_points") or x.get("points")
+            if isinstance(raw_points, str):
+                points = self._summary_points(raw_points, max_points=3, max_chars=150)
+            elif isinstance(raw_points, list):
+                points = [str(p).strip() for p in raw_points if str(p).strip()][:3]
+            else:
+                points = self._summary_points(
+                    x.get("summary") or x.get("ai_summary") or x.get("description") or x.get("content") or "",
+                    max_points=3,
+                    max_chars=150,
+                )
             point_html = "".join(
                 f"<li><span class='key-label'>重點 {i}</span>{self._highlight_keywords(p)}</li>"
                 for i, p in enumerate(points, 1)
-            ) or "<li>目前沒有可用摘要重點。</li>"
+            ) or "<li>網站目前只有新聞標題，請查看原文查證。</li>"
 
-            industries = self._esc("、".join(map(str, x.get("industries") or [])) or "—")
-            links = [str(v).strip() for v in (x.get("source_links") or []) if str(v).strip()]
-            source_html = "　".join(f"<a href='{self._esc(u)}'>來源{i}</a>" for i, u in enumerate(links[:2], 1))
-            evidence = self._esc("；".join(map(str, x.get("evidence") or [])) or "—")
-
+            sectors = x.get("sectors") or x.get("industries") or []
+            stocks = x.get("stocks") or x.get("symbols") or []
+            if not isinstance(sectors, list):
+                sectors = [sectors] if str(sectors).strip() else []
+            if not isinstance(stocks, list):
+                stocks = [stocks] if str(stocks).strip() else []
+            sector_text = self._esc("、".join(str(v) for v in sectors if str(v).strip()) or "—")
+            stock_text = self._esc("、".join(str(v) for v in stocks if str(v).strip()) or "—")
+            links = [str(x.get("url") or x.get("source_url") or "").strip()]
+            links = [u for u in links if u.startswith(("https://", "http://"))]
+            source_html = "　".join(f"<a href='{self._esc(u)}'>查看原文</a>" for u in links[:1])
+            why = str(x.get("why") or "").strip()
+            highlights = x.get("highlights") or []
+            if not isinstance(highlights, list):
+                highlights = [highlights] if str(highlights).strip() else []
+            highlight_html = (
+                f"<p><strong>關鍵字：</strong>{self._esc('、'.join(str(v) for v in highlights[:8] if str(v).strip()))}</p>"
+                if highlights else ""
+            )
+            published = str(x.get("published_at") or x.get("published_ts") or x.get("published") or x.get("date") or "").strip()
+            importance = self._safe_float(x.get("importance"), None)
+            meta = []
+            if published:
+                meta.append(published[:16].replace("T", " "))
+            if importance is not None:
+                meta.append(f"重要度 {importance:.1f}/10")
             blocks.append(
-                f"<div class='research-note'>"
-                f"<div><strong>{self._esc(x.get('title', '財經事件'))}</strong> "
-                f"<span class='note-meta {impact_class}'>{self._esc(impact)}｜信心 {conf_text}</span></div>"
+                f"<div class='research-note'><div><strong>{self._esc(title)}</strong> "
+                f"<span class='note-meta {impact_class}'>{self._esc(impact)}</span></div>"
+                f"{('<p class=\'muted\'>'+self._esc('｜'.join(meta))+'</p>') if meta else ''}"
                 f"<ul class='news-points'>{point_html}</ul>"
-                f"<p><strong>影響產業：</strong>{industries}</p>"
-                f"<p><strong>🔎 證據：</strong>{evidence}</p>"
+                f"<p><strong>影響產業：</strong>{sector_text}　<strong>相關股票：</strong>{stock_text}</p>"
+                f"{highlight_html}{('<p><strong>為什麼重要：</strong>'+self._highlight_keywords(why)+'</p>') if why else ''}"
                 f"{('<p>'+source_html+'</p>') if source_html else ''}</div>"
             )
-        return "<div class='earnings-list'>" + "".join(blocks) + "</div>"
+        return digest_html + "<div class='earnings-list'>" + "".join(blocks) + "</div>"
 
     def build_morning_html(self, report: dict[str, Any]) -> str:
         report_date = self._esc(report.get("report_date", ""))
@@ -1499,6 +1547,12 @@ a:hover{{text-decoration:underline}}
         morning = report.get("morning_agent", {}) or {}
         industries = [x for x in (morning.get("recommended_industries", []) or []) if isinstance(x, dict)]
         stocks = [x for x in (morning.get("recommended_stocks", []) or []) if isinstance(x, dict)]
+        if not industries or not stocks:
+            cache_industries, cache_stocks = self._morning_recommendations_from_finance_cache(report)
+            if not industries:
+                industries = cache_industries
+            if not stocks:
+                stocks = cache_stocks
         watch = [x for x in (morning.get("watch_items", []) or []) if str(x).strip()]
         industry_html = "".join(
             f"<li><strong>{self._esc(x.get('industry',''))}</strong>｜{self._esc(x.get('why',''))}"
@@ -1518,7 +1572,7 @@ a:hover{{text-decoration:underline}}
             )
         watch_html = "<ul>" + "".join(f"<li>{self._esc(x)}</li>" for x in watch[:10]) + "</ul>" if watch else ""
         cache = report.get("cnyes_news", {}) or {}
-        cache_note = "本信內容範圍：前一日 00:00 至目前；新聞與法說會僅呈現此時間窗。"
+        cache_note = "新聞直接沿用財經資訊頁近期快取；法說會若指定時間窗無新項目，會列出網站仍保留的近期摘要，實際日期以每筆資料顯示。"
         return f"""<!doctype html>
 <html lang='zh-Hant'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
 <style>
@@ -1530,88 +1584,102 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
 .positive-text{{color:#dc2626}} .negative-text{{color:#16a34a}} a{{color:#2563eb;text-decoration:none}} .footer{{margin-top:30px;padding-top:14px;border-top:1px solid #e5e7eb;color:#6b7280;font-size:12px}}
 </style></head><body><div class='container'>
 <h1>AI 台股早報</h1>
-<div class='muted'>研究日期：{report_date}｜本機 Qwen3 8B｜前一日 00:00 至目前</div>
+<div class='muted'>研究日期：{report_date}｜{self._esc(engine_label())}｜前一日 00:00 至目前</div>
 <p><strong>研究自選股：</strong>{self._esc('、'.join(map(str, watchlist)))}</p>
 <div class='research-note'><strong>🤖 AI 早報研究助理</strong><p>{self._esc(morning.get('overview','今天早報研究已完成。'))}</p><p class='muted'>{self._esc(cache_note)}</p></div>
 {self._earnings_section(report).replace('二、法說會摘要','1. 法說會摘要')}
 <section><h2>2. 財經新聞摘要</h2>{self._morning_news_section(report)}</section>
-<section><h2>3. Agent 看好的產業類別與股票</h2><h3>看好的產業類別</h3><ul>{industry_html}</ul><h3>看好的股票</h3>{''.join(stock_blocks) or '<div class="notice">本次沒有形成足夠證據的股票觀察名單。</div>'}</section>
+<section><h2>3. Agent 觀察的產業類別與股票</h2><h3>產業觀察</h3><ul>{industry_html}</ul><h3>股票觀察</h3>{''.join(stock_blocks) or '<div class="notice">本次沒有形成足夠證據的股票觀察名單。</div>'}</section>
 {('<section><h2>需要持續追蹤</h2>'+watch_html+'</section>') if watch_html else ''}
-<div class='footer'>新聞在前一晚 23:00 由夜間爬蟲完成；早報只讀本機快取。重大消息請回看原始公告。<br>本報告為研究工具，不構成投資建議。</div>
+<div class='footer'>新聞與法說會優先沿用「財經資訊」頁快取；缺少明確證據的產業或股票不會硬性補入。重大消息請回看原始公告。<br>本報告為研究工具，不構成投資建議。</div>
 </div></body></html>"""
 
     def build_morning_text(self, report: dict[str, Any]) -> str:
+        """純文字替代本文也沿用財經資訊頁快取，與 HTML 內容保持一致。"""
         morning = report.get("morning_agent", {}) or {}
+        finance = self._load_morning_finance_cache()
+        calls, earnings_note = self._morning_earnings_rows(report)
         lines = [
-            f"AI 台股早報｜{report.get('report_date','')}",
-            "研究範圍：前一日 00:00 至目前",
+            f"AI 台股早報｜{report.get('report_date', '')}",
+            "研究範圍：以財經資訊頁快取為優先，日期依每則項目顯示",
             "",
-            "【1. 法說會摘要｜前一日 00:00 至目前】",
+            "【1. 法說會摘要】",
+            earnings_note,
         ]
-
-        calls = [x for x in (report.get("earnings_calls", []) or []) if isinstance(x, dict) and not x.get("error")]
-        calls = self._filter_previous_day_to_now(
-            calls,
-            ("event_date", "eventDate", "published_date", "modified_date", "date", "published_at", "published_time", "published_ts", "published", "created_at"),
-        )
-        if not calls:
-            finance_path = self.output_dir / "finance_info_latest.json"
-            try:
-                if finance_path.exists():
-                    finance = json.loads(finance_path.read_text(encoding="utf-8"))
-                    calls = self._filter_previous_day_to_now(
-                        [x for x in (finance.get("earnings", []) or []) if isinstance(x, dict)],
-                        ("event_date", "eventDate", "published_date", "modified_date", "date", "published_at", "published_time", "published_ts", "published", "created_at"),
-                    )
-            except Exception:
-                calls = []
-
         if calls:
             for x in calls[:8]:
-                summary = x.get("one_line_summary") or x.get("summary") or ""
-                candidates: list[str] = []
-                for key, label, limit in [("financial_highlights","財務",2),("guidance","展望",2),("positive_factors","利多",2),("negative_factors","風險",2)]:
+                name = x.get("name") or x.get("company") or x.get("company_name") or x.get("symbol") or "未知公司"
+                symbol = x.get("symbol") or x.get("code") or x.get("stock_code") or ""
+                when = x.get("_mail_date") or x.get("event_date") or x.get("eventDate") or x.get("published_date") or x.get("published_at") or x.get("published") or x.get("date") or "日期未提供"
+                impact = x.get("impact") or x.get("judgement") or x.get("signal") or x.get("sentiment") or "待查證"
+                lines.append(f"- {when} {name}（{symbol}）｜{impact}")
+                for key, label, limit in [("financial_highlights", "財務", 2), ("guidance", "展望", 2), ("positive_factors", "利多", 2), ("negative_factors", "風險", 2)]:
                     vals = x.get(key) or []
-                    if isinstance(vals, list):
-                        candidates.extend([f"{label}：{str(v).strip()}" for v in vals[:limit] if str(v).strip()])
-                if not candidates:
-                    candidates = self._summary_points(summary, max_points=3, max_chars=150)
-                lines.append(
-                    f"- {x.get('_mail_date', x.get('event_date',''))} "
-                    f"{x.get('name',x.get('symbol'))}（{x.get('symbol','')}）｜{x.get('impact') or x.get('judgement') or '待查證'}"
-                )
-                for p in candidates[:3]:
-                    lines.append(f"  • {p}")
+                    if isinstance(vals, str):
+                        vals = [vals]
+                    for value in vals[:limit] if isinstance(vals, list) else []:
+                        if str(value).strip():
+                            lines.append(f"  • {label}：{str(value).strip()}")
+                summary = x.get("one_line_summary") or x.get("agent_headline") or x.get("summary") or x.get("ai_summary") or ""
+                if str(summary).strip():
+                    lines.append(f"  • 摘要：{str(summary).strip()}")
         else:
-            lines.append("- 前一日 00:00 至目前沒有成功擷取到可用的 Fugle 法說會摘要。")
+            lines.append("- 目前沒有可用的法說會摘要。")
 
-        lines += ["", "【2. 財經新聞摘要｜前一日 00:00 至目前】"]
-        news = [x for x in (morning.get("news_summary", []) or []) if isinstance(x, dict)]
-        news = news[:EMAIL_NEWS_MAX]
-        if not news:
-            raw = [x for x in ((report.get("cnyes_news", {}) or {}).get("articles", []) or []) if isinstance(x, dict)]
-            news = self._filter_previous_day_to_now(raw, ("published_at", "published_time", "published_ts", "published", "date", "created_at", "updated_at"))[:EMAIL_NEWS_MAX]
+        lines += ["", "【2. 財經新聞摘要】"]
+        site_news = [x for x in (finance.get("news", []) or []) if isinstance(x, dict)]
+        news = site_news[:EMAIL_NEWS_MAX] if site_news else [x for x in (morning.get("news_summary", []) or []) if isinstance(x, dict)][:EMAIL_NEWS_MAX]
+        digest = finance.get("news_digest", {}) or {}
+        headline = str(digest.get("agent_headline") or digest.get("headline") or "").strip()
+        if headline:
+            lines.append(f"財經資訊頁今日重點：{headline}")
+            for point in (digest.get("agent_key_points") or digest.get("key_points") or [])[:6]:
+                lines.append(f"  • {point}")
+        updated = str(finance.get("updated_at") or "").strip()
+        if site_news and updated:
+            lines.append(f"資料來源：財經資訊頁快取（更新時間 {updated[:19].replace('T', ' ')}）")
         if news:
             for x in news:
-                lines.append(f"- {x.get('title') or x.get('headline') or '財經事件'}｜{x.get('impact','待查證')}")
-                for p in self._summary_points(x.get("summary") or x.get("description") or x.get("content") or "", max_points=3, max_chars=150):
-                    lines.append(f"  • {p}")
+                title = x.get("title") or x.get("headline") or "財經事件"
+                impact = x.get("sentiment") or x.get("impact") or "待查證"
+                lines.append(f"- {title}｜{impact}")
+                points = x.get("ai_points") or x.get("key_points") or []
+                if isinstance(points, str):
+                    points = self._summary_points(points, max_points=3, max_chars=150)
+                if not isinstance(points, list) or not points:
+                    points = self._summary_points(x.get("summary") or x.get("ai_summary") or x.get("content") or "", max_points=3, max_chars=150)
+                lines.extend(f"  • {point}" for point in points[:3] if str(point).strip())
+                sectors = x.get("sectors") or []
+                stocks = x.get("stocks") or []
+                if sectors or stocks:
+                    lines.append(f"  • 產業：{'、'.join(map(str, sectors if isinstance(sectors, list) else [sectors])) or '—'}；相關股票：{'、'.join(map(str, stocks if isinstance(stocks, list) else [stocks])) or '—'}")
+                if x.get("why"):
+                    lines.append(f"  • 為什麼重要：{x.get('why')}")
+                if x.get("url") or x.get("source_url"):
+                    lines.append(f"  • 原文：{x.get('url') or x.get('source_url')}")
         else:
-            lines.append("- 前一日 00:00 至目前沒有可用的財經新聞摘要。")
+            lines.append("- 財經資訊頁與早報報告都沒有可用的新聞摘要。")
 
-        lines += ["", "【3. Agent 觀察的產業類別與股票】", "", "觀察產業："]
-        for x in (morning.get("recommended_industries", []) or [])[:10]:
-            if isinstance(x, dict):
-                lines.append(f"- {x.get('industry','')}｜{x.get('why','')}")
-        lines += ["", "觀察股票："]
-        for x in (morning.get("recommended_stocks", []) or [])[:12]:
-            if isinstance(x, dict):
-                lines.append(f"- {x.get('name',x.get('symbol'))}（{x.get('symbol')}）｜{x.get('industry','')}｜{x.get('reason','')}")
+        industries = [x for x in (morning.get("recommended_industries", []) or []) if isinstance(x, dict)]
+        stocks = [x for x in (morning.get("recommended_stocks", []) or []) if isinstance(x, dict)]
+        if not industries or not stocks:
+            cache_industries, cache_stocks = self._morning_recommendations_from_finance_cache(report)
+            if not industries:
+                industries = cache_industries
+            if not stocks:
+                stocks = cache_stocks
+        lines += ["", "【3. Agent 觀察的產業類別與股票】", "", "產業觀察："]
+        for x in industries[:10]:
+            lines.append(f"- {x.get('industry','')}｜{x.get('why','')}")
+        if not industries:
+            lines.append("- 財經資訊頁沒有足夠的產業分類／新聞證據可供整理。")
+        lines += ["", "股票觀察："]
+        for x in stocks[:12]:
+            lines.append(f"- {x.get('name',x.get('symbol'))}（{x.get('symbol')}）｜{x.get('industry','')}｜{x.get('reason','')}")
+        if not stocks:
+            lines.append("- 財經資訊頁沒有明確對應到自選股的新聞證據，本次不硬塞股票名單。")
         return "\n".join(lines)
 
-    # =======================================================================
-    # SMTP
-    # =======================================================================
     def _smtp_send_once(self, message: EmailMessage, host: str, port: int, use_ssl: bool) -> list[str]:
         logs: list[str] = []
         context = ssl.create_default_context()

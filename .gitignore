@@ -7,3 +7,14 @@
 # Python generated files
 __pycache__/
 *.py[cod]
+
+# Local data, generated output and ad-hoc backups (not source)
+data/
+output/
+models/
+logs/
+backup_*/
+*.bak*
+*.backup_*
+stock_dashboard_before_*.py
+stock_dashboard.py.backup_*

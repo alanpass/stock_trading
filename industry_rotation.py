@@ -10,7 +10,7 @@ import json
 import os
 import time
 import base64
-from datetime import datetime, timedelta, time as dt_time
+from datetime import datetime, time as dt_time
 from pathlib import Path
 from zoneinfo import ZoneInfo
 from typing import Any
@@ -310,106 +310,6 @@ def _fetch_tpex_market_turnover_month(session: requests.Session, month: pd.Times
         f"TPEx {month.year}-{month.month:02d} 沒有可解析的每日成交金額"
         + (f"；診斷：{details}" if details else "")
     )
-
-def _load_market_turnover_totals(base_dir: Path, trade_dates: pd.Series | pd.DatetimeIndex,
-                                 errors: list[str] | None = None) -> dict[str, float]:
-    """快取上市＋上櫃全市場日成交金額；任何一邊缺值就不產生該日資金流向排名。"""
-    cache_path = base_dir / "data" / "rotation" / "market_turnover.csv"
-    cache_path.parent.mkdir(parents=True, exist_ok=True)
-    columns = ["date", "twse_turnover", "tpex_turnover", "total_turnover"]
-    if cache_path.exists():
-        try:
-            cache = pd.read_csv(cache_path, dtype={"date": str})
-        except Exception:
-            cache = pd.DataFrame(columns=columns)
-    else:
-        cache = pd.DataFrame(columns=columns)
-    for col in columns:
-        if col not in cache.columns:
-            cache[col] = np.nan if col != "date" else ""
-    cache = cache[columns].copy()
-    cache["date"] = cache["date"].astype(str).str.slice(0, 10)
-    cache = cache.drop_duplicates("date", keep="last")
-    cache_map = {str(row["date"]): row for _, row in cache.iterrows()}
-
-    wanted = sorted({
-        pd.Timestamp(d).normalize().strftime("%Y-%m-%d")
-        for d in trade_dates
-        if pd.notna(pd.to_datetime(d, errors="coerce"))
-    })
-    session = requests.Session()
-    session.headers.update({"User-Agent": USER_AGENT, "Accept": "application/json,text/plain,*/*"})
-    changed = False
-
-    missing_twse = [
-        d for d in wanted
-        if not np.isfinite(_parse_number(cache_map.get(d, {}).get("twse_turnover", np.nan)))
-        or _parse_number(cache_map.get(d, {}).get("twse_turnover", np.nan)) <= 0
-    ]
-    for date_text in missing_twse:
-        try:
-            value = _fetch_twse_market_turnover_day(session, pd.Timestamp(date_text))
-            row = cache_map.get(date_text, {"date": date_text, "twse_turnover": np.nan,
-                                            "tpex_turnover": np.nan, "total_turnover": np.nan})
-            row["twse_turnover"] = value
-            cache_map[date_text] = row
-            changed = True
-        except Exception as exc:
-            if errors is not None:
-                errors.append(f"{date_text} TWSE 全市場成交值取得失敗：{type(exc).__name__}: {exc}")
-        # 官方證交所 API 有請求頻率限制，逐日查詢時保留間隔。
-        time.sleep(3.0)
-
-    missing_tpex = [
-        d for d in wanted
-        if not np.isfinite(_parse_number(cache_map.get(d, {}).get("tpex_turnover", np.nan)))
-        or _parse_number(cache_map.get(d, {}).get("tpex_turnover", np.nan)) <= 0
-    ]
-    by_month: dict[str, list[str]] = {}
-    for date_text in missing_tpex:
-        by_month.setdefault(date_text[:7], []).append(date_text)
-    for month_text, date_texts in by_month.items():
-        try:
-            month_map = _fetch_tpex_market_turnover_month(session, pd.Timestamp(month_text + "-01"))
-            for date_text in date_texts:
-                if date_text in month_map:
-                    row = cache_map.get(date_text, {"date": date_text, "twse_turnover": np.nan,
-                                                    "tpex_turnover": np.nan, "total_turnover": np.nan})
-                    row["tpex_turnover"] = month_map[date_text]
-                    cache_map[date_text] = row
-                    changed = True
-                elif errors is not None:
-                    errors.append(f"{date_text} TPEx 月報沒有該交易日成交值")
-        except Exception as exc:
-            if errors is not None:
-                errors.append(f"{month_text} TPEx 全市場成交值取得失敗：{type(exc).__name__}: {exc}")
-        time.sleep(0.8)
-
-    output: dict[str, float] = {}
-    for date_text in wanted:
-        row = cache_map.get(date_text, {})
-        twse_value = _parse_number(row.get("twse_turnover", np.nan))
-        tpex_value = _parse_number(row.get("tpex_turnover", np.nan))
-        total = float(twse_value + tpex_value) if np.isfinite(twse_value) and twse_value > 0 and np.isfinite(tpex_value) and tpex_value > 0 else np.nan
-        if np.isfinite(total) and total > 0:
-            row["date"] = date_text
-            row["total_turnover"] = total
-            cache_map[date_text] = row
-            output[date_text] = total
-
-    if changed or not cache_path.exists():
-        records = []
-        for date_text, row in sorted(cache_map.items()):
-            twse_value = _parse_number(row.get("twse_turnover", np.nan))
-            tpex_value = _parse_number(row.get("tpex_turnover", np.nan))
-            total = float(twse_value + tpex_value) if np.isfinite(twse_value) and twse_value > 0 and np.isfinite(tpex_value) and tpex_value > 0 else np.nan
-            records.append({"date": date_text,
-                            "twse_turnover": twse_value if np.isfinite(twse_value) else None,
-                            "tpex_turnover": tpex_value if np.isfinite(tpex_value) else None,
-                            "total_turnover": total if np.isfinite(total) else None})
-        _atomic_write(cache_path, pd.DataFrame(records, columns=columns).to_csv(index=False))
-    return output
-
 
 def _atomic_write(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)

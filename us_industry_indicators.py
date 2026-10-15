@@ -13,9 +13,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 import math
-import time
 
-import pandas as pd
 import requests
 
 US_MARKET_TZ = ZoneInfo("America/New_York")
@@ -292,7 +290,7 @@ def fetch_us_indicators(symbols: list[str] | tuple[str, ...]) -> list[dict[str, 
     if not unique_symbols:
         return []
     records: dict[str, dict[str, Any]] = {}
-    with ThreadPoolExecutor(max_workers=min(8, len(unique_symbols))) as pool:
+    with ThreadPoolExecutor(max_workers=min(16, len(unique_symbols))) as pool:
         futures = {pool.submit(_fetch_one, symbol): symbol for symbol in unique_symbols}
         for future in as_completed(futures):
             symbol = futures[future]

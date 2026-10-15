@@ -9,11 +9,9 @@ The LLM is never allowed to overwrite the numeric prediction/score.
 from __future__ import annotations
 
 import json
-import os
 from dataclasses import dataclass, asdict
-from datetime import datetime
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -27,12 +25,6 @@ def _safe_float(v, default=np.nan):
         return x if np.isfinite(x) else default
     except Exception:
         return default
-
-
-def _last_close(df):
-    if df is None or df.empty or "close" not in df.columns:
-        return np.nan
-    return _safe_float(df.sort_values("date").iloc[-1]["close"])
 
 
 def _atr(df, n=12):
@@ -290,24 +282,3 @@ class MarketSupervisorAgent:
                 f.write(json.dumps(result, ensure_ascii=False, default=str) + "\n")
         except Exception:
             pass
-
-
-def llm_explain(result: dict[str, Any]) -> str | None:
-    """Backward-compatible local explanation using Ollama/Qwen3; never uses OpenAI."""
-    try:
-        from local_ollama_agent import LocalOllamaAgent
-        context = {
-            "symbol": result.get("symbol"),
-            "market_open": False,
-            "quote": {},
-            "intraday": pd.DataFrame(),
-            "daily": pd.DataFrame(),
-            "entry_result": result.get("entry_result"),
-            "ai_result": result.get("ai_result"),
-            "output_dir": str(Path(result.get("output_dir", "output"))),
-        }
-        agent = LocalOllamaAgent(context, Path(result.get("log_dir", "output/agent_logs")))
-        out = agent.run("請用繁體中文摘要目前 Agent 的量化證據與風險，最多 5 句，不改寫任何數值。")
-        return out.get("content") if isinstance(out, dict) else None
-    except Exception:
-        return None

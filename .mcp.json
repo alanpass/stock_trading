@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "tw-stock-research": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["mcp_server/tw_stock_server.py"],
+      "env": {
+        "PYTHONIOENCODING": "utf-8"
+      }
+    }
+  }
+}

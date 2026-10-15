@@ -17,8 +17,8 @@
 
 兩層設計，確保任何情況都有結果：
 - 規則層（永遠可用）：關鍵句抽取 + 詞庫判斷，不需要網路或 GPU。
-- LLM 層（Ollama Qwen3，可用時才啟動）：重要度前 N 篇由 Qwen3 重寫摘要與判斷；
-  已經摘要過的文章會存在 finance_summary_cache.json，下次更新不重做。
+- AI 層：Claude 排程任務（finance-news-digest skill，finance_digest.py apply）為重要新聞撰寫
+  逐篇重點並存進 finance_summary_cache.json；每次規則更新都會沿用，不必重做。
 """
 from __future__ import annotations
 
@@ -27,17 +27,14 @@ import json
 import os
 import re
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
 from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
-import requests
 
 TAIPEI = ZoneInfo("Asia/Taipei")
-DEFAULT_HOST = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434")
-DEFAULT_MODEL = os.getenv("OLLAMA_MODEL", "qwen3:8b")
 
 # ----------------------------------------------------------------------
 # 詞庫
@@ -170,74 +167,12 @@ def _dedupe_keep_order(items: list[str]) -> list[str]:
 # Agent
 # ----------------------------------------------------------------------
 class FinanceNewsAgent:
-    def __init__(
-        self,
-        base_dir: str | Path = ".",
-        model: str | None = None,
-        host: str | None = None,
-        use_llm: bool | None = None,
-        llm_max_articles: int | None = None,
-        llm_time_budget_sec: int | None = None,
-    ):
+    def __init__(self, base_dir: str | Path = "."):
         self.base = Path(base_dir).resolve()
         self.out_dir = self.base / "output" / "research_reports"
         self.out_dir.mkdir(parents=True, exist_ok=True)
         self.cache_path = self.out_dir / "finance_summary_cache.json"
-        self.model = model or DEFAULT_MODEL
-        self.host = (host or DEFAULT_HOST).rstrip("/")
-        env_llm = os.getenv("FINANCE_USE_LLM", "true").strip().lower() in {"1", "true", "yes", "on"}
-        self.use_llm = env_llm if use_llm is None else bool(use_llm)
-        self.llm_max_articles = int(llm_max_articles if llm_max_articles is not None else os.getenv("FINANCE_LLM_MAX_ARTICLES", "40"))
-        self.llm_time_budget = int(llm_time_budget_sec if llm_time_budget_sec is not None else os.getenv("FINANCE_LLM_TIME_BUDGET_SEC", "600"))
-        self.per_call_timeout = int(os.getenv("FINANCE_LLM_CALL_TIMEOUT", "120"))
-        self.llm_ready: bool | None = None
-        self.llm_note = ""
         self.stats: dict[str, Any] = {}
-
-    # ---------------- LLM 基礎 ----------------
-    def _check_llm(self) -> bool:
-        if self.llm_ready is not None:
-            return self.llm_ready
-        if not self.use_llm:
-            self.llm_ready, self.llm_note = False, "FINANCE_USE_LLM=false，只使用規則層"
-            return False
-        try:
-            r = requests.get(f"{self.host}/api/tags", timeout=4)
-            r.raise_for_status()
-            names = [str(m.get("name") or m.get("model") or "") for m in r.json().get("models", [])]
-            base = self.model.split(":")[0]
-            if not any(n == self.model or n.startswith(base) for n in names):
-                self.llm_ready, self.llm_note = False, f"Ollama 已連線但找不到模型 {self.model}（ollama pull {self.model}）"
-            else:
-                self.llm_ready, self.llm_note = True, "ok"
-        except Exception as exc:
-            self.llm_ready, self.llm_note = False, f"無法連線 Ollama：{type(exc).__name__}"
-        return bool(self.llm_ready)
-
-    def _chat_json(self, system: str, user: str) -> dict[str, Any] | None:
-        payload = {
-            "model": self.model,
-            "stream": False,
-            "format": "json",
-            "think": False,
-            "options": {"temperature": 0.2, "num_ctx": 6144},
-            "messages": [
-                {"role": "system", "content": system},
-                {"role": "user", "content": user + "\n/no_think"},
-            ],
-        }
-        r = requests.post(f"{self.host}/api/chat", json=payload, timeout=self.per_call_timeout)
-        r.raise_for_status()
-        content = str((r.json().get("message") or {}).get("content") or "")
-        content = re.sub(r"<think>.*?</think>", "", content, flags=re.S).strip()
-        m = re.search(r"\{.*\}", content, re.S)
-        if not m:
-            return None
-        try:
-            obj = json.loads(m.group(0))
-            return obj if isinstance(obj, dict) else None
-        except Exception:
-            return None
 
     # ---------------- 快取 ----------------
     def _load_cache(self) -> dict[str, Any]:
@@ -404,20 +339,9 @@ class FinanceNewsAgent:
         out = _dedupe_keep_order(out)[:3]
         return out or cls.detect_sectors(text)
 
-    ARTICLE_SYSTEM = (
-        "你是台股財經研究助理。只能根據使用者提供的新聞內容整理，不可編造任何數字、公司或事件。"
-        "輸出 JSON，欄位：points（1~3 條繁體中文重點，每條 60 字內，保留關鍵數字與公司名）、"
-        "sentiment（利多／利空／中性／混合，指對台股或相關產業的影響）、sectors（最多 3 個，只能從這份清單挑：" + "、".join(SECTOR_KEYWORDS) + "）、"
-        "stocks（新聞明確提到的台股代號字串陣列，沒有就空陣列）、why（一句話說明為什麼值得注意，40 字內）、"
-        "highlights（3~8 個關鍵詞，必須逐字出現在 points 裡，例如數字、公司、事件）。"
-    )
-
-    def _llm_article(self, article: dict[str, Any]) -> dict[str, Any] | None:
+    def normalize_article_ai(self, obj: dict[str, Any], article: dict[str, Any]) -> dict[str, Any] | None:
+        """驗證 Claude 寫出的單篇新聞 AI 重點（points／sentiment／sectors／stocks／why／highlights）。"""
         body = _clean(article.get("content") or article.get("summary") or "")[:2200]
-        user = f"標題：{article.get('title','')}\n發佈：{article.get('published','')}\n分類：{article.get('category','')}\n內容：{body}"
-        obj = self._chat_json(self.ARTICLE_SYSTEM, user)
-        if not obj:
-            return None
         points = [str(x).strip() for x in (obj.get("points") or []) if str(x).strip()][:3]
         if not points:
             return None
@@ -474,48 +398,26 @@ class FinanceNewsAgent:
             ai = self._rule_analysis(a, now)
             a["_rule"] = ai
 
-        # 2) LLM 層：依重要度挑前 N 篇，且略過已經摘要過的
+        # 2) AI 層：沿用 Claude 已寫好的逐篇重點（finance_summary_cache.json）
         cache = self._load_cache()
-        llm_done = llm_cached = llm_fail = 0
-        llm_on = self._check_llm()
-        ranked = sorted(rows, key=lambda x: -x["_rule"]["importance"])
-        budget_hit = False
-        for idx, a in enumerate(ranked):
+        ai_cached = 0
+        for a in rows:
             key = _article_key(a)
-            fp = _fingerprint(a)
             hit = cache.get(key)
-            if hit and hit.get("fp") == fp and hit.get("ai"):
+            # 以 article_id＋標題比對：爬蟲重抓時內文長度可能不同，但仍是同一篇新聞。
+            same = bool(hit and (hit.get("fp") == _fingerprint(a) or hit.get("title") == a.get("title")))
+            if same and hit.get("ai"):
                 a["_llm"] = hit["ai"]
-                llm_cached += 1
-                continue
-            if not llm_on or idx >= self.llm_max_articles:
-                continue
-            if time.time() - t0 > self.llm_time_budget:
-                budget_hit = True
-                continue
-            try:
-                ai = self._llm_article(a)
-            except Exception as exc:
-                ai = None
-                if llm_fail == 0:
-                    print(f"[agent] Qwen3 呼叫失敗（之後同類錯誤不再重複顯示）：{type(exc).__name__}: {exc}", flush=True)
-            if (llm_done + llm_fail) % 5 == 0:
-                print(f"[agent] Qwen3 摘要進度 {llm_done + llm_fail + 1}/{min(self.llm_max_articles, len(ranked))}（已用 {time.time() - t0:.0f} 秒）", flush=True)
-            if ai:
-                a["_llm"] = ai
-                cache[key] = {"fp": fp, "ai": ai, "ts": now.isoformat()}
-                llm_done += 1
-            else:
-                llm_fail += 1
+                ai_cached += 1
 
-        # 3) 合併：LLM 優先、規則補洞
+        # 3) 合併：AI 重點優先、規則補洞
         for a in rows:
             r = a.pop("_rule")
             l = a.pop("_llm", None)
             use = dict(r)
             if l:
                 use.update({k: v for k, v in l.items() if v not in (None, "", [])})
-                use["ai_source"] = "qwen3"
+                use["ai_source"] = l.get("ai_source") or "qwen3"  # 舊快取為 Qwen3 寫的
                 if not l.get("highlights"):
                     use["highlights"] = self.extract_highlights(use["points"], a.get("title", ""), use.get("stocks", []), use.get("sectors", []))
                 use["stocks"] = _dedupe_keep_order(list(use.get("stocks", [])) + list(r.get("stocks", [])))[:8]
@@ -547,23 +449,12 @@ class FinanceNewsAgent:
         rows.sort(key=lambda x: x["importance"], reverse=True)
 
         digest = self._build_digest(rows, now)
-        digest["llm"] = {
-            "enabled": llm_on,
-            "note": self.llm_note,
-            "model": self.model if llm_on else "",
-            "summarized_now": llm_done,
-            "from_cache": llm_cached,
-            "failed": llm_fail,
-            "time_budget_hit": budget_hit,
-        }
+        digest["llm"] = {"source": "Claude 排程任務", "from_cache": ai_cached}
         self.stats = {
             "input": before,
             "after_dedupe": len(rows),
-            "llm_summarized": llm_done,
-            "llm_cached": llm_cached,
-            "llm_failed": llm_fail,
+            "ai_cached": ai_cached,
             "seconds": round(time.time() - t0, 1),
-            "llm_note": self.llm_note,
         }
         return rows, digest
 
@@ -614,26 +505,7 @@ class FinanceNewsAgent:
             "watch_items": [],
             "generated_by": "rule",
         }
-        # LLM 總結（可用時）：把前 25 則重點交給 Qwen3 寫成「今日重點」
-        if self.llm_ready:
-            try:
-                lines = []
-                for a in rows[:25]:
-                    lines.append(f"- [{a.get('sentiment','中性')}]{a.get('title','')}｜{'；'.join((a.get('ai_points') or [])[:2])}")
-                system = (
-                    "你是台股財經早報主編。只能根據提供的新聞條列整理，不可編造。輸出 JSON："
-                    "headline（60 字內總結今天市場焦點）、key_points（5~8 條最重要的事件重點，每條 50 字內）、"
-                    "watch_items（3~5 條接下來要追蹤的事項）、risks（最多 3 條風險）。"
-                )
-                obj = self._chat_json(system, "\n".join(lines))
-                if obj and obj.get("key_points"):
-                    digest["agent_headline"] = str(obj.get("headline") or "").strip()
-                    digest["agent_key_points"] = [str(x).strip() for x in obj.get("key_points", []) if str(x).strip()][:8]
-                    digest["watch_items"] = [str(x).strip() for x in obj.get("watch_items", []) if str(x).strip()][:5]
-                    digest["risks"] = [str(x).strip() for x in obj.get("risks", []) if str(x).strip()][:3]
-                    digest["generated_by"] = "qwen3"
-            except Exception:
-                pass
+        # 「AI 今日重點」由 Claude 排程任務寫入（finance_digest.py apply），並在每次規則更新時沿用。
         return digest
 
     # ---------------- 法說會 ----------------
@@ -791,8 +663,8 @@ class FinanceNewsAgent:
             row["sectors"] = sectors
             row["stocks"] = stocks
             row["highlights"] = highlights
-            row["analysis_source"] = (
-                "Qwen3 法說會 Agent"
+            row["analysis_source"] = row.get("analysis_source") or (
+                "AI 法說會 Agent"
                 if row.get("agent_tool_used")
                 else "正文規則備援"
             )

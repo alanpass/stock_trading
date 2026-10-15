@@ -38,12 +38,12 @@ FUGLE_API_KEY = "你的 Fugle API Key"
 
 ## 5. 本機 AI 與網站的邊界
 
-目前專案的 Qwen3 8B 使用本機 Ollama `127.0.0.1:11434`。因此「部署到 Streamlit Community Cloud」並不會自動把你的本機 Ollama 搬到雲端；網站端若要即時執行 Qwen3 Agent，需要另外提供雲端可連線的 AI endpoint。
+AI 研究由 Windows 電腦上的 Claude 桌面版排程任務完成（見 `CLAUDE_AGENT_ARCHITECTURE.md`），結果發布到 GitHub `finance-data` 分支；網站只讀取已發布的 JSON，不在網頁上即時呼叫任何 LLM。
 
 目前建議：
 
 - Streamlit Cloud：負責網站／Dashboard。
-- Windows 電腦：繼續負責 08:30 早報、14:30 盤後研究、23:00 CNYES 爬蟲與本機 Qwen3。
+- Windows 電腦：負責資料排程（新聞爬蟲、早報／盤後研究包），以及 Claude 研究 Agent 的排程任務。
 
 兩者先分開，可以降低部署複雜度。
 
@@ -99,7 +99,7 @@ Windows 仍然負責：
 
 - CNYES 新聞爬蟲
 - Fugle 法說會
-- Ollama / Qwen3 8B 摘要
+- Claude 研究 Agent 摘要（排程任務）
 - 產生完整 `finance_info_latest.json`
 
 完成後會再產生：
@@ -159,7 +159,7 @@ python scheduled_job_runner.py finance
 output/research_reports/finance_info_public.json
 ```
 
-Cloud 上不需要 Ollama，也不需要本機 CNYES cache。
+Cloud 上不需要任何 LLM，也不需要本機 CNYES cache。
 
 ### 暫時關閉自動發布
 

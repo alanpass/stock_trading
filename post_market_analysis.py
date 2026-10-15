@@ -6,7 +6,7 @@
 2. 再依公司主要業務與產業鏈，建立針對性新聞/事件查詢。
 3. 逐則標示證據層級，不把單一新聞直接視為因果。
 4. 對國際事件、主管/董事談話、財報、接單、供應鏈等內容做交叉驗證。
-5. Qwen3 只做證據統整，不可以自行捏造「原因」或修改量化模型。
+5. 這裡只產出可驗證的證據；文字歸因由 Claude 盤後研究的個股筆記提供，不自行捏造「原因」或修改量化模型。
 """
 from __future__ import annotations
 
@@ -14,7 +14,6 @@ import json
 import re
 from pathlib import Path
 from typing import Any, Iterable
-from datetime import datetime
 
 import numpy as np
 import pandas as pd
@@ -29,7 +28,7 @@ GOOGLE_NEWS_RSS = "https://news.google.com/rss/search"
 
 
 class PostMarketAnalyzer:
-    def __init__(self, base_dir: str | Path = ".", ollama_model: str = "qwen3:8b", ollama_host: str = "http://127.0.0.1:11434"):
+    def __init__(self, base_dir: str | Path = "."):
         self.base = Path(base_dir).resolve()
         self.data_dir = self.base / "data"
         self.output_dir = self.base / "output"
@@ -37,8 +36,6 @@ class PostMarketAnalyzer:
         self.out_dir.mkdir(parents=True, exist_ok=True)
         self.cache_dir = self.data_dir / "post_market_cache"
         self.cache_dir.mkdir(parents=True, exist_ok=True)
-        self.ollama_model = ollama_model
-        self.ollama_host = ollama_host
         self.client = FugleClient()
         import requests
         self.session = requests.Session()
@@ -317,22 +314,6 @@ class PostMarketAnalyzer:
         candidates.sort(key=lambda x: x.get("score",0), reverse=True)
         return candidates[:12]
 
-    def ollama_explain(self, payload: dict[str, Any]) -> dict[str, Any]:
-        try:
-            import ollama
-            client = ollama.Client(host=self.ollama_host)
-            prompt = (
-                "你是台股盤後事件歸因研究 Agent。以下是程式先完成的可驗證資料。\n"
-                "你的任務：用繁體中文解釋『今天這檔股票為何上漲/下跌』，但不得把相關性當因果。\n"
-                "請依序回答：1. 已確認的事件/數據；2. 最可能的 3 個驅動因素；3. 哪些消息尚未被原始資料證實；4. 法人交易是否與價格方向一致；5. 財報/營收是否支持消息；6. 國際/總經因素如何可能傳導到這家公司；7. 供應鏈或同業是否共振；8. 哪些內容可能是市場誇大/反應過度；9. 最終用『高/中/低』信心標示每個原因。\n"
-                "不可自行新增未提供的事實，不可把新聞標題直接當成真相；若缺乏證據，明確寫『待查證』。\n\n" + json.dumps(payload, ensure_ascii=False, default=str)[:50000]
-            )
-            resp = client.chat(model=self.ollama_model, messages=[{"role":"system","content":"完全本機 Research Agent；只使用提供證據；不可修改模型。"},{"role":"user","content":prompt}], options={"temperature":0.1})
-            content = getattr(resp.message, "content", "") or ""
-            return {"available": True, "model": self.ollama_model, "content": content}
-        except Exception as exc:
-            return {"available": False, "error": str(exc)}
-
     def analyze(self, symbol: str, market: str | None = None, industry_symbols: Iterable[str] = ()) -> dict[str, Any]:
         symbol = clean_symbol(symbol)
         if not symbol:
@@ -372,7 +353,6 @@ class PostMarketAnalyzer:
             "reason_candidates": reasons,
             "research_questions": self._query_plan(symbol, profile),
         }
-        payload["ollama_analysis"] = self.ollama_explain(payload)
         out_path = self.out_dir / f"{symbol}_latest.json"
         out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
         return payload

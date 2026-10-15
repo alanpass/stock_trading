@@ -11,7 +11,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-import numpy as np
 import pandas as pd
 import plotly.express as px
 import streamlit as st
@@ -20,6 +19,7 @@ from research_agent import ResearchAgent
 from business_master import business_map_for_symbols, build_business_research_context
 from stock_api import INDUSTRIES, INDUSTRY_OVERRIDES, clean_symbol
 from post_market_analysis import PostMarketAnalyzer
+from stock_notes_ui import render_stock_note_for_symbol
 
 
 def _latest_report(output_dir: Path) -> dict[str, Any] | None:
@@ -141,8 +141,8 @@ def render_market_intelligence(base_dir: Path, output_dir: Path, selected_symbol
         try:
             symbol = clean_symbol(selected_symbol or "")
             industry_code = str(selected_industry or _industry_for_symbol(symbol, base_dir)).zfill(2)
-            with st.spinner("本機 Qwen3 / Research Agent 正在更新市場情報…"):
-                agent = ResearchAgent(base_dir, ollama_model="qwen3:8b")
+            with st.spinner("正在更新市場情報（官方資料、新聞與題材證據）…"):
+                agent = ResearchAgent(base_dir)
                 report = agent.run_daily_research(symbols=[symbol] if symbol else [], sector_codes=[industry_code] if industry_code != "00" else None)
             st.session_state["market_intelligence_report"] = report
         except Exception as exc:
@@ -305,11 +305,11 @@ def render_market_intelligence(base_dir: Path, output_dir: Path, selected_symbol
             with c3:
                 st.caption("盤後使用；盤中可手動查看最近一次研究，不會每 2 秒抓新聞。")
 
-            analyzer = PostMarketAnalyzer(base_dir, ollama_model=st.session_state.get("ollama_model", "qwen3:8b"))
+            analyzer = PostMarketAnalyzer(base_dir)
             if run_post:
                 try:
                     watch = st.session_state.get("watchlist", [selected_symbol])
-                    with st.spinner("本機 Qwen3 正在查核今日漲跌原因：價格／大盤／同業／法人／財報／公告／供應鏈／國際事件…"):
+                    with st.spinner("正在整理今日漲跌證據：價格／大盤／同業／法人／財報／公告／供應鏈／國際事件…"):
                         post = analyzer.analyze(selected_symbol, industry_symbols=watch)
                     st.session_state[f"post_market_{selected_symbol}"] = post
                 except Exception as exc:
@@ -356,12 +356,8 @@ def render_market_intelligence(base_dir: Path, output_dir: Path, selected_symbol
                             verify_rows.append({"消息": n.get("title"), "來源": n.get("source"), "業務相關度": f"{float(n.get('business_relevance',0))*100:.0f}%", "跨來源數": int(n.get("corroboration",0) or 0), "官方匹配": "是" if n.get("official_match") else "否", "查證結果": n.get("verification"), "連結": n.get("link")})
                         st.dataframe(pd.DataFrame(verify_rows), use_container_width=True, hide_index=True)
 
-                with st.expander("Qwen3 盤後歸因摘要", expanded=True):
-                    llm = post.get("ollama_analysis", {}) or {}
-                    if llm.get("available"):
-                        st.markdown(llm.get("content") or "未產生摘要。")
-                    else:
-                        st.warning(llm.get("error", "Qwen3 尚不可用；仍可查看規則式證據。"))
+                with st.expander("Claude 盤後研究筆記", expanded=True):
+                    render_stock_note_for_symbol(base_dir, selected_symbol)
 
                 st.caption("注意：此區是事件歸因研究，不是確定因果判定。單一新聞、缺乏原始公告、與營收/法人/價格反應不一致時，會標示待查證／疑似誇大／市場反應與基本面不一致。")
 

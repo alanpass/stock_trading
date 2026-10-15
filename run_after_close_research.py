@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
-"""AI 台股盤後研究排程入口 v3
+"""AI 台股盤後研究排程入口 v4（Claude 研究 Agent）
 
-這個版本專門修正「研究有跑、但 Email 變成全部 0 筆」的資料鏈問題。
+  python run_after_close_research.py --prepare            # 建立研究包（Windows 排程 14:30 執行）
+  python run_after_close_research.py --finalize [--dry-run]  # 讀入 Claude 研究筆記後保存、寄信、發布
 
 核心流程：
 1. ResearchAgent 先建立原始研究包。
 2. 立刻做一次「官方資料 recovery」：TWSE / TPEx 公告、月營收、財報。
-3. 盤後行情如果缺失，重新向官方日行情端點取得；不把舊日資料冒充今天。
+3. 盤後行情如果缺失，重新向官方日行情端點取得（官方資料尚未更新時每 10 分鐘重試）；不把舊日資料冒充今天。
 4. CNYES 不重新爬網站，優先讀取今日早報已成功建立的夜間快取。
-5. Recovery 完成後，重新交給 Qwen3 8B ResearchOrchestratorAgent。
-   這一步非常重要：Agent 必須看到「真正恢復後的市場、財報、新聞資料」再做摘要。
-6. 覆寫同一天 research JSON / Markdown，再由 EmailAgent 排版寄送。
+5. 研究包寫到 output/claude_jobs/afterclose_<date>/，由 Claude（after-close-research skill）
+   閱讀並查證後寫出 agent_notes.json 與個股研究筆記。
+6. --finalize 驗證筆記、覆寫同一天 research JSON / Markdown，EmailAgent 排版寄送，個股筆記發布到網站。
 
-EmailAgent 只負責呈現與寄送；研究判讀由 ResearchAgent / Qwen3 Agent 負責。
+EmailAgent 只負責呈現與寄送；研究判讀由 Claude 研究 Agent 負責。
 """
 from __future__ import annotations
 
@@ -22,10 +23,8 @@ import os
 import re
 import time
 import traceback
-from datetime import datetime
 from pathlib import Path
 from typing import Any
-from urllib.parse import quote_plus
 
 import numpy as np
 import pandas as pd
@@ -38,10 +37,9 @@ from market_mover_analysis import MarketMoverAnalyzer
 from research_agent import ResearchAgent
 from stock_api import INDUSTRIES, INDUSTRY_OVERRIDES, clean_symbol
 
-try:
-    from agent_research_assistant import ResearchOrchestratorAgent
-except Exception:
-    ResearchOrchestratorAgent = None
+from agent_research_assistant import ResearchToolbox, _merge_cnyes_digest, _normalize as _normalize_agent_notes
+from ai_backend import AGENT_LABEL, AGENT_MODEL, AGENT_STATUS, is_agent_status
+from quality_checks import quality_gate, validate_afterclose
 
 try:
     from cnyes_news_crawler import CnyesNewsCrawler
@@ -74,6 +72,8 @@ TPEX_ANN_URL = f"{TPEX_OPENAPI}/mopsfin_t187ap04_O"
 TPEX_REV_URL = f"{TPEX_OPENAPI}/mopsfin_t187ap05_O"
 TPEX_INCOME_URL = f"{TPEX_OPENAPI}/mopsfin_t187ap06_O_ci"
 TWSE_DAILY_URL = "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
+# OpenAPI 的 STOCK_DAY_ALL 常到隔天才更新；RWD 版本收盤後即有當日資料（回傳 CSV）。
+TWSE_RWD_DAILY_URL = "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY_ALL"
 TPEX_DAILY_URL = "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_daily_close_quotes"
 
 
@@ -230,6 +230,27 @@ def _fetch_json(session: requests.Session, url: str, label: str, attempts: int =
             if attempt < attempts:
                 time.sleep(attempt)
     return [], errors
+
+
+def _fetch_twse_rwd_daily(session: requests.Session, report_date: str) -> tuple[list[dict[str, Any]], list[str]]:
+    """TWSE RWD 當日全市場收盤行情；欄位轉成與 OpenAPI 相同的鍵名。"""
+    import csv
+    import io
+
+    params = {"date": report_date.replace("-", ""), "response": "csv"}
+    try:
+        response = session.get(TWSE_RWD_DAILY_URL, params=params, timeout=30, headers={"User-Agent": "Mozilla/5.0 TaiwanStockResearchAssistant/3.0"})
+        response.raise_for_status()
+        text = response.content.decode("utf-8-sig", errors="replace")
+    except Exception as exc:
+        return [], [f"TWSE RWD: {type(exc).__name__}: {exc}"]
+    keys = {"日期": "Date", "證券代號": "Code", "證券名稱": "Name", "收盤價": "ClosingPrice", "漲跌價差": "Change"}
+    rows: list[dict[str, Any]] = []
+    for rec in csv.DictReader(io.StringIO(text)):
+        row = {keys[k.strip()]: str(v or "").strip().replace(",", "") for k, v in rec.items() if k and k.strip() in keys}
+        if row.get("Code") and row.get("ClosingPrice"):
+            rows.append(row)
+    return rows, ([] if rows else ["TWSE RWD: 沒有可解析的資料列"])
 
 
 def _match_rows(rows: list[dict[str, Any]], symbols: set[str]) -> dict[str, list[dict[str, Any]]]:
@@ -403,13 +424,81 @@ def _load_cnyes_from_morning(report_date: str) -> tuple[dict[str, Any], dict[str
 
 
 def _load_cnyes_cache(report_date: str) -> tuple[dict[str, Any], dict[str, Any], str, list[str]]:
+    """優先讀取網站已分析的財經資訊快取；不因早報缺檔而重新爬新聞。"""
+    errors: list[str] = []
+    finance_path = REPORT_DIR / "finance_info_latest.json"
+
+    # 第一優先：Dashboard「財經資訊」頁已使用的 Agent 分析快取。
+    # news 項目通常已含 summary / ai_points / sectors / stocks / why / highlights。
+    try:
+        if finance_path.exists():
+            finance = json.loads(finance_path.read_text(encoding="utf-8"))
+            news_rows = [x for x in (finance.get("news", []) or []) if isinstance(x, dict)]
+            if news_rows:
+                target_date = pd.Timestamp(report_date).date()
+                start_date = (pd.Timestamp(report_date) - pd.Timedelta(days=1)).date()
+                recent_rows = []
+                cache_dates = set()
+                for row in news_rows:
+                    raw_date = (
+                        row.get("published_at") or row.get("published_ts") or row.get("published")
+                        or row.get("published_time") or row.get("date") or row.get("created_at") or ""
+                    )
+                    parsed = pd.to_datetime(raw_date, errors="coerce") if raw_date else pd.NaT
+                    if not pd.isna(parsed):
+                        item_date = parsed.date()
+                        if not (start_date <= item_date <= target_date):
+                            continue
+                        cache_dates.add(item_date.isoformat())
+                    # 若快取本身在今日／昨日更新而某篇缺日期，保留網站已摘要項目。
+                    recent_rows.append(dict(row))
+
+                if recent_rows:
+                    source_digest = finance.get("news_digest", {}) or {}
+                    digest = dict(source_digest) if isinstance(source_digest, dict) else {}
+                    headline = str(digest.get("agent_headline") or digest.get("headline") or digest.get("overview") or "").strip()
+                    key_points = digest.get("agent_key_points") or digest.get("key_points") or digest.get("key_takeaways") or []
+                    if isinstance(key_points, str):
+                        key_points = [key_points]
+                    if not isinstance(key_points, list):
+                        key_points = []
+                    digest.setdefault("overview", headline or "網站財經資訊快取已包含 Agent 新聞摘要。")
+                    if not digest.get("key_findings"):
+                        digest["key_findings"] = [
+                            {"title": "網站財經資訊重點", "summary": str(point)}
+                            for point in key_points[:12] if str(point).strip()
+                        ]
+                    digest.setdefault("market_drivers", [])
+                    digest.setdefault("watch_topics", [])
+                    digest["reused_from_finance_info_latest"] = True
+
+                    corpus = {
+                        "source_url": "finance_info_latest.json（網站既有財經資訊快取）",
+                        "source_method": "finance_info_latest_cache",
+                        "cache_dates": sorted(cache_dates, reverse=True),
+                        "cache_files": [str(finance_path)],
+                        "article_count": len(recent_rows),
+                        "articles": recent_rows,
+                        "errors": [],
+                        "loaded_from_cache": True,
+                        "updated_at": finance.get("updated_at", ""),
+                        "content_quality": {
+                            "with_content": sum(1 for x in recent_rows if len(str(x.get("content") or "")) >= 320),
+                            "with_summary": sum(1 for x in recent_rows if bool(str(x.get("summary") or x.get("ai_summary") or x.get("ai_points") or "").strip())),
+                        },
+                    }
+                    return corpus, digest, str(finance_path), []
+    except Exception as exc:
+        errors.append(f"讀取網站財經資訊快取失敗：{type(exc).__name__}: {exc}")
+
+    # 第二優先：同日早報的既有快取；僅讀檔，不重新抓網頁。
     corpus, digest, path = _load_cnyes_from_morning(report_date)
     if corpus:
-        return corpus, digest, path, []
+        return corpus, digest, path, errors
 
-    errors: list[str] = []
+    # 第三優先：CnyesNewsCrawler.load_recent_cached 只讀本機已保存的夜間日檔，並不執行 crawl。
     if CnyesNewsCrawler is None:
-        return {}, {}, "", ["CnyesNewsCrawler 模組不可用"]
+        return {}, {}, "", errors + ["CnyesNewsCrawler 模組不可用"]
     try:
         crawler = CnyesNewsCrawler(
             BASE,
@@ -423,11 +512,10 @@ def _load_cnyes_cache(report_date: str) -> tuple[dict[str, Any], dict[str, Any],
         )
         if isinstance(corpus, dict) and corpus.get("articles"):
             return corpus, {}, "cached_nightly_files", errors
-        errors.append("找不到可用 CNYES 夜間日檔")
+        errors.append("網站財經資訊與本機夜間日檔均找不到可用新聞快取")
     except Exception as exc:
-        errors.append(f"讀取 CNYES 夜間快取失敗：{type(exc).__name__}: {exc}")
+        errors.append(f"讀取本機新聞快取失敗：{type(exc).__name__}: {exc}")
     return {}, {}, "", errors
-
 
 # ============================================================================
 # Market recovery
@@ -452,6 +540,11 @@ def _market_recovery(base: Path, watchlist: list[str], report_date: str) -> tupl
     for label, url in sources:
         rows, fetch_errors = _fetch_json(session, url, label, attempts=3)
         errors.extend(fetch_errors)
+        if label == "TWSE" and not any(_date_text(_field(r, ["Date", "date", "資料日期"])) == report_date for r in rows):
+            rwd_rows, rwd_errors = _fetch_twse_rwd_daily(session, report_date)
+            errors.extend(rwd_errors)
+            if rwd_rows:
+                rows = rwd_rows
         for row in rows:
             sym = _row_symbol(row)
             close = _field_float(row, ["ClosingPrice", "收盤價", "Close"])
@@ -500,6 +593,12 @@ def _market_recovery(base: Path, watchlist: list[str], report_date: str) -> tupl
         df["change"] / df["previous_close"] * 100.0,
         0.0,
     )
+    # 與 MarketMoverAnalyzer 相同：只保留 4 碼普通股／ETF，排除權證（6 碼）與異常漲跌幅。
+    watch_codes = {clean_symbol(x) for x in watchlist}
+    df = df[
+        (df["symbol"].astype(str).str.fullmatch(r"\d{4}", na=False) & (df["change_percent"].abs() <= 30))
+        | df["symbol"].isin(watch_codes)
+    ].copy()
     df = analyzer._enrich_industries(df)
     profiles = business_map_for_symbols(
         df["symbol"].astype(str).tolist(),
@@ -580,85 +679,6 @@ def _market_recovery(base: Path, watchlist: list[str], report_date: str) -> tupl
 
 
 # ============================================================================
-# Qwen3 Agent 重新研究
-# ============================================================================
-def _fallback_afterclose_agent(report: dict[str, Any], error: str) -> dict[str, Any]:
-    mm = report.get("market_movers", {}) or {}
-    movers = [x for x in mm.get("movers", []) if isinstance(x, dict)]
-    ups = sorted([x for x in movers if (_safe_float(x.get("today_change_percent"), 0) or 0) > 0], key=lambda x: _safe_float(x.get("today_change_percent"), 0) or 0, reverse=True)[:5]
-    downs = sorted([x for x in movers if (_safe_float(x.get("today_change_percent"), 0) or 0) < 0], key=lambda x: _safe_float(x.get("today_change_percent"), 0) or 0)[:5]
-    financials = sorted(
-        [x for x in report.get("financial_snapshots", []) if isinstance(x, dict)],
-        key=lambda x: _safe_float(x.get("revenue_yoy"), -999) or -999,
-        reverse=True,
-    )[:8]
-    notes: list[dict[str, Any]] = []
-    for x in ups:
-        notes.append({
-            "importance": "high",
-            "type": "market",
-            "symbol": clean_symbol(x.get("symbol")),
-            "title": "今日上漲重點",
-            "note": f"{x.get('name', x.get('symbol'))}（{x.get('symbol')}）今日 {(_safe_float(x.get('today_change_percent'), 0) or 0):+.2f}%；產業／業務為 {x.get('business_group') or x.get('industry_name') or '未分類'}。原因需以新聞與公告進一步交叉查證。",
-            "evidence": [f"官方當日行情 {(_safe_float(x.get('today_change_percent'), 0) or 0):+.2f}%"],
-            "tags": ["市場波動", "利多／原因待查證"],
-            "confidence": 0.45,
-            "follow_up": ["查詢公司公告與近期產業新聞"],
-        })
-    for x in downs:
-        notes.append({
-            "importance": "high",
-            "type": "market",
-            "symbol": clean_symbol(x.get("symbol")),
-            "title": "今日下跌重點",
-            "note": f"{x.get('name', x.get('symbol'))}（{x.get('symbol')}）今日 {(_safe_float(x.get('today_change_percent'), 0) or 0):+.2f}%；產業／業務為 {x.get('business_group') or x.get('industry_name') or '未分類'}。原因需以新聞與公告進一步交叉查證。",
-            "evidence": [f"官方當日行情 {(_safe_float(x.get('today_change_percent'), 0) or 0):+.2f}%"],
-            "tags": ["市場波動", "利空／原因待查證"],
-            "confidence": 0.45,
-            "follow_up": ["查詢公司公告與近期產業新聞"],
-        })
-    return {
-        "agent_status": "fallback_afterclose_recovery",
-        "model": os.getenv("OLLAMA_MODEL", "qwen3:8b"),
-        "generated_at": now_taipei().isoformat(),
-        "overview": "官方行情與財務資料已完成 recovery；本次 Qwen3 深度研究未完成，因此以下僅保留證據層摘要。",
-        "key_takeaways": [
-            f"今日可驗證市場候選 {len(movers)} 筆",
-            f"已恢復自選股財務資料 {len(financials)} 筆",
-            f"CNYES 快取 {int((report.get('cnyes_news', {}) or {}).get('article_count', 0) or 0)} 篇",
-        ],
-        "research_notes": notes,
-        "positive_signals": [f"{x.get('name', x.get('symbol'))}（{x.get('symbol')}）今日 {(_safe_float(x.get('today_change_percent'), 0) or 0):+.2f}%" for x in ups[:3]],
-        "negative_signals": [f"{x.get('name', x.get('symbol'))}（{x.get('symbol')}）今日 {(_safe_float(x.get('today_change_percent'), 0) or 0):+.2f}%" for x in downs[:3]],
-        "watch_items": [f"Agent 未完成自主研究：{error}"],
-        "earnings_digest": "",
-        "financial_focus": [
-            f"{x.get('name', x.get('symbol'))}（{x.get('symbol')}）：營收 YoY {(_safe_float(x.get('revenue_yoy'), 0) or 0):+.2f}%；EPS {x.get('eps', '—')}"
-            for x in financials[:5]
-        ],
-        "model_alert": "",
-        "agent_actions": [],
-        "error": error,
-    }
-
-
-def rerun_qwen_agent(report: dict[str, Any]) -> dict[str, Any]:
-    model = os.getenv("OLLAMA_MODEL", "qwen3:8b")
-    host = os.getenv("OLLAMA_HOST", "http://127.0.0.1:11434")
-    os.environ["AGENT_MAX_TOOL_ROUNDS"] = os.getenv("AFTER_CLOSE_AGENT_MAX_TOOL_ROUNDS", "10")
-    if ResearchOrchestratorAgent is None:
-        return _fallback_afterclose_agent(report, "agent_research_assistant.py 無法匯入 ResearchOrchestratorAgent")
-    try:
-        agent = ResearchOrchestratorAgent(BASE, ollama_host=host, ollama_model=model)
-        notes = agent.run(report)
-        if not isinstance(notes, dict):
-            raise TypeError("ResearchOrchestratorAgent.run() 沒有回傳 dict")
-        return notes
-    except Exception as exc:
-        return _fallback_afterclose_agent(report, f"ResearchOrchestratorAgent 失敗：{type(exc).__name__}: {exc}")
-
-
-# ============================================================================
 # 報告保存
 # ============================================================================
 def save_recovered_report(report: dict[str, Any]) -> None:
@@ -708,12 +728,22 @@ def save_recovered_report(report: dict[str, Any]) -> None:
         key=lambda x: _safe_float(x.get("revenue_yoy"), -999) or -999,
         reverse=True,
     )[:10]
+    # AFTERCLOSE_FINANCIAL_MARKDOWN_PATCH_V1
     for x in financials:
         yoy = _safe_float(x.get("revenue_yoy"), None)
         yoy_text = f"{yoy:+.2f}%" if yoy is not None else "—"
         eps = _safe_float(x.get("eps"), None)
         eps_text = f"{eps:.2f}" if eps is not None else "—"
-        lines.append(f"- **{x.get('name', x.get('symbol'))}（{x.get('symbol')}）**｜營收 YoY {yoy_text}｜EPS {eps_text}")
+        revenue = _safe_float(x.get("latest_month_revenue"), None)
+        # MOPS 月營收欄位是新臺幣千元：100,000 千元 = 1 億元。
+        revenue_text = f"{revenue / 100000.0:,.2f} 億元" if revenue is not None else "—"
+        revenue_period = str(x.get("revenue_period") or "期間未標示")
+        income_period = str(x.get("income_period") or "期間未標示")
+        lines.append(
+            f"- **{x.get('name', x.get('symbol'))}（{x.get('symbol')}）**"
+            f"｜營收月份 {revenue_period}｜月營收 {revenue_text}"
+            f"｜營收 YoY {yoy_text}｜EPS {eps_text}（財報期 {income_period}）"
+        )
 
     lines += ["", "## 五、Agent 深度研究"]
     for n in (notes.get("research_notes", []) or [])[:30]:
@@ -731,32 +761,19 @@ def save_recovered_report(report: dict[str, Any]) -> None:
 # ============================================================================
 # 主流程
 # ============================================================================
-def main() -> int:
-    now = now_taipei()
+JOB_ROOT = BASE / "output" / "claude_jobs"
+STOCK_NOTES_LATEST = REPORT_DIR / "stock_notes_latest.json"
+STOCK_NOTES_PUBLIC = REPORT_DIR / "stock_notes_public.json"
+STOCK_NOTES_REMOTE_PATH = "output/research_reports/stock_notes_public.json"
+
+
+def job_dir(report_date: str) -> Path:
+    return JOB_ROOT / f"afterclose_{report_date}"
+
+
+def build_research_package(now: pd.Timestamp, watchlist: list[str]) -> tuple[dict[str, Any] | None, int]:
+    """步驟 1–2：建立研究包並完成官方資料／行情／CNYES recovery。失敗時回傳 (None, exit_code)。"""
     today = now.strftime("%Y-%m-%d")
-    cutoff = now.normalize() + pd.Timedelta(hours=AFTER_CLOSE_HOUR, minutes=AFTER_CLOSE_MINUTE)
-    watchlist = load_watchlist()
-
-    write_log(today, "=" * 72)
-    write_log(today, "AI TW STOCK AFTER-CLOSE RESEARCH v3")
-    write_log(today, f"BASE={BASE}")
-    write_log(today, f"PYTHON={os.sys.executable}")
-    write_log(today, f"WATCHLIST_COUNT={len(watchlist)}")
-    write_log(today, f"WATCHLIST={','.join(watchlist)}")
-    write_log(today, f"OLLAMA_HOST={os.getenv('OLLAMA_HOST', 'http://127.0.0.1:11434')}")
-    write_log(today, f"OLLAMA_MODEL={os.getenv('OLLAMA_MODEL', 'qwen3:8b')}")
-    write_log(today, f"MARKET_STATUS={market_status_text(now, BASE)}")
-    write_log(today, "CNYES=盤後只讀夜間快取，不重新爬網站")
-
-    if now < cutoff:
-        write_log(today, f"尚未到 {AFTER_CLOSE_HOUR:02d}:{AFTER_CLOSE_MINUTE:02d}，略過研究。")
-        return 0
-
-    if not is_twse_trading_day(now, BASE):
-        write_log(today, "今天非交易日，盤後排程正常結束，不寄送今日行情信件。")
-        write_status(today, "skipped_non_trading_day")
-        return 0
-
     os.environ["AFTER_CLOSE_FAST_MODE"] = "true"
     os.environ["EARNINGS_USE_CACHE"] = "true"
     os.environ["AGENT_MAX_TOOL_ROUNDS"] = os.getenv("AFTER_CLOSE_AGENT_MAX_TOOL_ROUNDS", "10")
@@ -766,12 +783,12 @@ def main() -> int:
     # ------------------------------------------------------------------
     write_log(today, "[1/4] ResearchAgent 建立原始研究包")
     try:
-        base_agent = ResearchAgent(BASE, ollama_model=os.getenv("OLLAMA_MODEL", "qwen3:8b"))
+        base_agent = ResearchAgent(BASE)
         report = base_agent.run_daily_research(symbols=watchlist, sector_codes=["24", "25", "26", "28"])
     except Exception as exc:
         write_log(today, f"ResearchAgent 執行失敗：{type(exc).__name__}: {exc}")
         write_log(today, traceback.format_exc())
-        return 2
+        return None, 2
 
     report["report_type"] = "afterclose"
     report["report_date"] = today
@@ -782,8 +799,32 @@ def main() -> int:
     # ------------------------------------------------------------------
     # 2. 官方資料與 CNYES recovery
     # ------------------------------------------------------------------
-    write_log(today, "[2/4] 官方 TWSE / TPEx 財務與公告 recovery")
-    snapshots, official_diag = _official_financial_recovery(watchlist)
+    write_log(today, "[2/4] 財報／營收資料檢查")
+    # AFTERCLOSE_REUSE_FINANCIAL_DATA_PATCH_V1
+    # ResearchAgent 已整理到足夠的研究財報資料時，直接沿用；避免同一流程重複呼叫官方 API。
+    existing_snapshots = [
+        x for x in (report.get("financial_snapshots", []) or [])
+        if isinstance(x, dict) and str(x.get("symbol", "")).strip()
+        and any(x.get(k) not in (None, "", "nan", "NaN") for k in (
+            "latest_month_revenue", "revenue_yoy", "eps", "statement_revenue", "operating_profit", "net_income"
+        ))
+    ]
+    minimum_coverage = min(len(watchlist), max(5, int((len(watchlist) + 1) * 0.5)))
+    if len(existing_snapshots) >= minimum_coverage:
+        snapshots = existing_snapshots
+        official_diag = {
+            "method": "reuse_existing_research_payload",
+            "network_refresh_skipped": True,
+            "official_sources": report.get("official_sources", {}) or {},
+            "matched_financial_snapshots": len(snapshots),
+            "matched_symbols": sorted({str(x.get("symbol", "")).strip() for x in snapshots}),
+            "official_announcement_evidence": report.get("official_announcements", []) or report.get("official_announcement_evidence", []) or [],
+            "errors": [],
+        }
+        write_log(today, f"FINANCIAL_SOURCE=existing ResearchAgent/site data; snapshots={len(snapshots)}; skip duplicate official API recovery")
+    else:
+        write_log(today, f"FINANCIAL_SOURCE=existing data insufficient ({len(existing_snapshots)}/{len(watchlist)}); run official-data recovery as fallback")
+        snapshots, official_diag = _official_financial_recovery(watchlist)
     report["financial_snapshots"] = snapshots or report.get("financial_snapshots", []) or []
     report["official_sources"] = {
         **(report.get("official_sources", {}) or {}),
@@ -799,6 +840,15 @@ def main() -> int:
 
     write_log(today, "[2/4] 市場行情 recovery")
     market_movers, market_diag = _market_recovery(BASE, watchlist, today)
+    # 官方 STOCK_DAY_ALL 收盤後常延遲更新；資料還沒出來時等待後重試，而不是直接放棄當天報告。
+    retries = int(os.getenv("AFTER_CLOSE_MARKET_RETRIES", "4"))
+    wait_minutes = float(os.getenv("AFTER_CLOSE_MARKET_RETRY_MINUTES", "10"))
+    for attempt in range(1, retries + 1):
+        if market_movers.get("movers") and str(market_movers.get("data_asof", ""))[:10] == today:
+            break
+        write_log(today, f"MARKET_RETRY={attempt}/{retries}：官方今日行情尚未就緒，{wait_minutes:.0f} 分鐘後重試")
+        time.sleep(wait_minutes * 60)
+        market_movers, market_diag = _market_recovery(BASE, watchlist, today)
     report["market_movers"] = market_movers
     report["market_data_recovery"] = market_diag
     write_log(today, f"MARKET_ASOF={market_movers.get('data_asof','')}")
@@ -806,11 +856,11 @@ def main() -> int:
     if not market_movers.get("movers"):
         write_log(today, "ERROR=官方今日行情仍為空，停止寄送，避免空白假報。")
         write_status(today, "error_no_market_data", diagnostics=market_diag)
-        return 4
+        return None, 4
     if str(market_movers.get("data_asof", ""))[:10] != today:
         write_log(today, f"ERROR=market data date {market_movers.get('data_asof')} != report date {today}")
         write_status(today, "error_market_date_mismatch", market_asof=market_movers.get("data_asof"))
-        return 4
+        return None, 4
 
     write_log(today, "[2/4] CNYES 夜間快取 recovery")
     cnyes_news, morning_cnyes_digest, cnyes_path, cnyes_errors = _load_cnyes_cache(today)
@@ -830,16 +880,18 @@ def main() -> int:
         report["official_sources"]["cnyes_news_articles"] = 0
         for err in cnyes_errors:
             write_log(today, f"CNYES_WARNING={err}")
+    report["_morning_cnyes_digest"] = morning_cnyes_digest or {}
+    return report, 0
 
-    # ------------------------------------------------------------------
-    # 3. 恢復完資料後，再交給 Qwen3 做真正的 Agent 研究
-    # ------------------------------------------------------------------
-    write_log(today, "[3/4] Qwen3 8B ResearchOrchestratorAgent 重新研究 recovery 後資料")
-    notes = rerun_qwen_agent(report)
+
+def attach_agent_notes(report: dict[str, Any], notes: dict[str, Any]) -> None:
+    """步驟 3 收尾：把 Claude 研究筆記寫回報告並記錄 log。"""
+    today = str(report.get("report_date", ""))[:10]
+    morning_cnyes_digest = report.pop("_morning_cnyes_digest", {}) or {}
     report["agent_research_notes"] = notes
-    report["ollama_analysis"] = {
-        "available": str(notes.get("agent_status", "")).startswith("qwen3"),
-        "model": notes.get("model", os.getenv("OLLAMA_MODEL", "qwen3:8b")),
+    report["ai_analysis"] = {
+        "available": is_agent_status(notes.get("agent_status")),
+        "model": notes.get("model", AGENT_MODEL),
         "content": notes.get("overview", ""),
         "validation": "post_recovery_agent",
         "agent_status": notes.get("agent_status", ""),
@@ -858,7 +910,6 @@ def main() -> int:
     if not report.get("cnyes_research_digest") and morning_cnyes_digest:
         report["cnyes_research_digest"] = {**morning_cnyes_digest, "reused_from_morning_report": True}
 
-    report["agent_research_notes"] = report.get("agent_research_notes", {}) or {}
     report["agent_research_notes"]["official_recovery_summary"] = {
         "official_financial_snapshots": len(report.get("financial_snapshots", []) or []),
         "official_announcements": len(report.get("official_announcements", []) or []),
@@ -866,9 +917,12 @@ def main() -> int:
         "cnyes_articles": int((report.get("cnyes_news", {}) or {}).get("article_count", 0) or 0),
     }
 
-    # ------------------------------------------------------------------
-    # 4. 保存後再寄送
-    # ------------------------------------------------------------------
+
+def deliver_report(report: dict[str, Any], extra_status: dict[str, Any] | None = None) -> int:
+    """步驟 4：保存報告後寄送 Email。"""
+    today = str(report.get("report_date", ""))[:10]
+    notes = report.get("agent_research_notes", {}) or {}
+    market_movers = report.get("market_movers", {}) or {}
     save_recovered_report(report)
     write_log(today, f"REPORT_JSON={report.get('json_path')}")
     write_log(today, f"REPORT_MD={report.get('markdown_path')}")
@@ -890,7 +944,7 @@ def main() -> int:
 
     write_log(today, "EMAIL_RESULT=" + json.dumps(email_result, ensure_ascii=False, default=str))
     if email_result.get("error") or not email_result.get("sent"):
-        write_status(today, "error_email", email_result=email_result)
+        write_status(today, "error_email", email_result=email_result, **(extra_status or {}))
         return 3
 
     write_status(
@@ -903,11 +957,242 @@ def main() -> int:
         cnyes_articles=int((report.get("cnyes_news", {}) or {}).get("article_count", 0) or 0),
         agent_status=notes.get("agent_status", ""),
         email_sent=bool(email_result.get("sent")),
+        **(extra_status or {}),
     )
     write_log(today, "=" * 72)
     write_log(today, "AI AFTER-CLOSE RESEARCH COMPLETED")
     write_log(today, "=" * 72)
     return 0
+
+
+def _pre_checks(now: pd.Timestamp, watchlist: list[str]) -> int | None:
+    """共同的開頭 log 與時間／交易日檢查；回傳 exit code 代表應該結束。"""
+    today = now.strftime("%Y-%m-%d")
+    cutoff = now.normalize() + pd.Timedelta(hours=AFTER_CLOSE_HOUR, minutes=AFTER_CLOSE_MINUTE)
+    write_log(today, "=" * 72)
+    write_log(today, "AI TW STOCK AFTER-CLOSE RESEARCH v4")
+    write_log(today, f"BASE={BASE}")
+    write_log(today, f"PYTHON={os.sys.executable}")
+    write_log(today, f"WATCHLIST_COUNT={len(watchlist)}")
+    write_log(today, f"WATCHLIST={','.join(watchlist)}")
+    write_log(today, f"AI_AGENT={AGENT_LABEL}")
+    write_log(today, f"MARKET_STATUS={market_status_text(now, BASE)}")
+    write_log(today, "CNYES=盤後只讀夜間快取，不重新爬網站")
+
+    if now < cutoff:
+        write_log(today, f"尚未到 {AFTER_CLOSE_HOUR:02d}:{AFTER_CLOSE_MINUTE:02d}，略過研究。")
+        return 0
+
+    if not is_twse_trading_day(now, BASE):
+        write_log(today, "今天非交易日，盤後排程正常結束，不寄送今日行情信件。")
+        write_status(today, "skipped_non_trading_day")
+        return 0
+    return None
+
+
+# ----------------------------------------------------------------------------
+# Claude 模式：prepare → Claude 撰寫筆記 → finalize
+# ----------------------------------------------------------------------------
+def _fmt_pct(value: Any) -> str:
+    v = _safe_float(value, None)
+    return f"{v:+.2f}%" if v is not None else "—"
+
+
+def build_brief(report: dict[str, Any]) -> str:
+    """給 Claude 先讀的精簡研究包；細節再用 claude_tools.py 查。"""
+    today = str(report.get("report_date", ""))[:10]
+    mm = report.get("market_movers", {}) or {}
+    movers = [x for x in mm.get("movers", []) if isinstance(x, dict)]
+    by_change = sorted(movers, key=lambda x: _safe_float(x.get("today_change_percent"), 0) or 0, reverse=True)
+    watchlist = (report.get("research_scope", {}) or {}).get("watchlist_symbols", []) or []
+    fin = {clean_symbol(x.get("symbol")): x for x in report.get("financial_snapshots", []) or [] if isinstance(x, dict)}
+    mover_map = {clean_symbol(x.get("symbol")): x for x in movers}
+    profiles = report.get("business_profiles", {}) if isinstance(report.get("business_profiles"), dict) else {}
+
+    def mover_line(x: dict[str, Any]) -> str:
+        return (f"- {x.get('name', x.get('symbol'))}（{clean_symbol(x.get('symbol'))}）今日 {_fmt_pct(x.get('today_change_percent'))}"
+                f"｜5日 {_fmt_pct(x.get('ret_5d'))}"
+                f"｜20日 {_fmt_pct(x.get('ret_20d'))}"
+                f"｜{x.get('business_group') or x.get('industry_name') or '未分類'}")
+
+    lines = [f"# 盤後研究包摘要｜{today}", "",
+             f"市場資料日期：{mm.get('data_asof', '')}｜母體 {mm.get('universe_count', 0)} 檔｜候選 {mm.get('candidate_count', 0)} 檔", "",
+             "## 漲幅前 15", *[mover_line(x) for x in by_change[:15]], "",
+             "## 跌幅前 15", *[mover_line(x) for x in list(reversed(by_change))[:15]], "",
+             "## 產業強弱"]
+    for x in (mm.get("industry_summary", []) or [])[:12]:
+        if isinstance(x, dict):
+            lines.append(f"- {x.get('industry_name','')}｜今日平均 {_fmt_pct(x.get('today_avg_change'))}｜漲 {x.get('rising_count',0)} / 跌 {x.get('falling_count',0)}")
+    lines += ["", "## 自選股"]
+    for s in watchlist:
+        s = clean_symbol(s)
+        m = mover_map.get(s, {})
+        f = fin.get(s, {})
+        name = m.get("name") or f.get("name") or (profiles.get(s, {}) or {}).get("name") or s
+        lines.append(f"- {name}（{s}）今日 {_fmt_pct(m.get('today_change_percent'))}｜營收 {f.get('revenue_period','—')} YoY {_fmt_pct(f.get('revenue_yoy'))}｜EPS {f.get('eps','—')}（{f.get('income_period','—')}）")
+    lines += ["", "## 近期法說會"]
+    for x in (report.get("earnings_calls", []) or [])[:15]:
+        if isinstance(x, dict) and not x.get("error"):
+            lines.append(f"- {x.get('name', x.get('symbol'))}（{x.get('symbol')}）{x.get('event_date','')}｜{x.get('impact','待確認')}｜{str(x.get('one_line_summary') or x.get('summary',''))[:120]}")
+    lines += ["", "## 利多題材"]
+    for x in (report.get("bullish_themes", []) or [])[:8]:
+        if isinstance(x, dict):
+            lines.append(f"- {x.get('theme','')}｜強度 {(_safe_float(x.get('strength'),0) or 0):.1f}/100｜{x.get('status','')}")
+    cnyes = report.get("cnyes_news", {}) or {}
+    lines += ["", f"## 鉅亨新聞快取：{int(cnyes.get('article_count', 0) or 0)} 篇（{', '.join(map(str, cnyes.get('cache_dates', []) or []))}）",
+              "用 `get_cnyes_news_batch` 瀏覽、`search_cnyes_news` 深讀。"]
+    return "\n".join(lines) + "\n"
+
+
+def prepare(now: pd.Timestamp, watchlist: list[str]) -> int:
+    today = now.strftime("%Y-%m-%d")
+    early = _pre_checks(now, watchlist)
+    if early is not None:
+        return early
+    report, code = build_research_package(now, watchlist)
+    if report is None:
+        return code
+    d = job_dir(today)
+    d.mkdir(parents=True, exist_ok=True)
+    (d / "package.json").write_text(json.dumps(report, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    (d / "brief.md").write_text(build_brief(report), encoding="utf-8")
+    write_log(today, f"[3/4] 研究包已備妥，等待 Claude 撰寫研究筆記：{d}")
+    write_status(today, "awaiting_claude", job_dir=str(d))
+    print(f"PREPARED={d}")
+    return 0
+
+
+def _clean_stock_notes(raw: Any, report: dict[str, Any]) -> list[dict[str, Any]]:
+    names = {clean_symbol(x.get("symbol")): x.get("name", "") for x in (report.get("market_movers", {}) or {}).get("movers", []) if isinstance(x, dict)}
+
+    def as_list(value: Any, n: int) -> list[str]:
+        return [str(x).strip()[:300] for x in (value if isinstance(value, list) else []) if str(x).strip()][:n]
+
+    out = []
+    for item in raw if isinstance(raw, list) else []:
+        if not isinstance(item, dict):
+            continue
+        symbol = clean_symbol(item.get("symbol"))
+        summary = str(item.get("summary", "")).strip()
+        if not symbol or not summary:
+            continue
+        conf = _safe_float(item.get("confidence"), 0.5) or 0.0
+        out.append({
+            "symbol": symbol,
+            "name": str(item.get("name") or names.get(symbol, "")).strip()[:40],
+            "category": "watchlist" if str(item.get("category", "")).lower() == "watchlist" else "hot",
+            "headline": str(item.get("headline", "")).strip()[:120],
+            "summary": summary[:1500],
+            "positives": as_list(item.get("positives"), 6),
+            "risks": as_list(item.get("risks"), 6),
+            "watch": as_list(item.get("watch"), 6),
+            "evidence": as_list(item.get("evidence"), 8),
+            "source_links": [str(x).strip() for x in (item.get("source_links") or []) if str(x).strip().startswith("http")][:6],
+            "confidence": max(0.0, min(1.0, conf / 100.0 if conf > 1 else conf)),
+        })
+    return out
+
+
+def publish_stock_notes(report_date: str, generated_at: str, stock_notes: list[dict[str, Any]]) -> dict[str, Any]:
+    payload = {
+        "schema_version": 1,
+        "report_type": "stock_notes_public",
+        "report_date": report_date,
+        "generated_at": generated_at,
+        "generated_by": AGENT_LABEL,
+        "disclaimer": "研究筆記僅整理公開資訊與證據，不構成投資建議。",
+        "count": len(stock_notes),
+        "notes": stock_notes,
+    }
+    encoded = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
+    STOCK_NOTES_LATEST.write_text(encoded, encoding="utf-8")
+    STOCK_NOTES_PUBLIC.write_text(encoded, encoding="utf-8")
+    try:
+        from github_publish import publish_json
+        return publish_json(STOCK_NOTES_REMOTE_PATH, encoded, f"data: stock research notes {generated_at}")
+    except Exception as exc:
+        return {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+
+
+def finalize(report_date: str, dry_run: bool = False) -> int:
+    d = job_dir(report_date)
+    package_path, notes_path = d / "package.json", d / "agent_notes.json"
+    if not package_path.exists():
+        write_status(report_date, "error_missing_package", job_dir=str(d))
+        print(f"ERROR: 找不到研究包 {package_path}，請先執行 --prepare")
+        return 5
+    if not notes_path.exists():
+        write_status(report_date, "error_missing_claude_notes", job_dir=str(d))
+        print(f"ERROR: 找不到 Claude 研究筆記 {notes_path}")
+        return 5
+    report = json.loads(package_path.read_text(encoding="utf-8"))
+    try:
+        raw = json.loads(notes_path.read_text(encoding="utf-8"))
+        if not isinstance(raw, dict):
+            raise TypeError("agent_notes.json 必須是 JSON 物件")
+    except Exception as exc:
+        write_status(report_date, "error_invalid_claude_notes", error=str(exc))
+        print(f"ERROR: agent_notes.json 無法解析：{exc}")
+        return 5
+
+    write_log(report_date, "[3/4] 讀入 Claude 研究筆記")
+    blocked = quality_gate(validate_afterclose(report_date),
+                           lambda c: write_status(report_date, "error_quality_check", errors=c["errors"][:30]))
+    if blocked:
+        write_log(report_date, "QUALITY_CHECK=failed；請修正 agent_notes.json 後重新 --finalize")
+        return blocked
+    actions = [x for x in raw.get("agent_actions", []) or [] if isinstance(x, dict)]
+    history = [{"tool": str(x.get("tool", "")), "reason": str(x.get("reason", "")), "result": str(x.get("result", ""))} for x in actions]
+    notes = _normalize_agent_notes(raw, history, AGENT_MODEL)
+    notes["report_date"] = report_date
+    notes["agent_status"] = AGENT_STATUS
+    notes["generated_at"] = str(raw.get("generated_at") or now_taipei().isoformat())
+    claude_digest = raw.get("cnyes_research_digest")
+    if isinstance(claude_digest, dict) and (claude_digest.get("overview") or claude_digest.get("key_findings")):
+        report["cnyes_research_digest"] = {**claude_digest, "agent_status": AGENT_STATUS, "model": AGENT_MODEL}
+    elif str((report.get("cnyes_research_digest") or {}).get("agent_status", "")) == "pending_claude":
+        report.pop("cnyes_research_digest", None)
+    notes = _merge_cnyes_digest(notes, report)
+    if not notes.get("overview") and not notes.get("research_notes"):
+        write_status(report_date, "error_empty_claude_notes")
+        print("ERROR: Claude 研究筆記沒有 overview 與 research_notes")
+        return 5
+    attach_agent_notes(report, notes)
+    if not dry_run:
+        try:
+            ResearchToolbox(BASE)._save_memory(notes)
+        except Exception as exc:
+            write_log(report_date, f"MEMORY_WARNING={type(exc).__name__}: {exc}")
+
+    stock_notes = _clean_stock_notes(raw.get("stock_notes"), report)
+    if dry_run:
+        # 測試模式：不寫 agent memory 以外的正式輸出、不發布、不寄信，只產生預覽。
+        (d / "stock_notes_preview.json").write_text(json.dumps(stock_notes, ensure_ascii=False, indent=2), encoding="utf-8")
+        (d / "email_preview.html").write_text(EmailAgent(BASE).build_html(report), encoding="utf-8")
+        write_log(report_date, f"DRY_RUN stock_notes={len(stock_notes)} preview={d / 'email_preview.html'}")
+        print(f"DRY_RUN_OK stock_notes={len(stock_notes)} research_notes={len(notes.get('research_notes', []) or [])}")
+        print(f"EMAIL_PREVIEW={d / 'email_preview.html'}")
+        return 0
+    publish = publish_stock_notes(report_date, notes["generated_at"], stock_notes)
+    write_log(report_date, f"STOCK_NOTES={len(stock_notes)} PUBLISH=" + json.dumps(publish, ensure_ascii=False, default=str))
+    return deliver_report(report, {"stock_notes": len(stock_notes), "stock_notes_published": bool(publish.get("ok"))})
+
+
+def main(argv: list[str] | None = None) -> int:
+    import argparse
+    parser = argparse.ArgumentParser(description="AI 台股盤後研究")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--prepare", action="store_true", help="只建立研究包，等待 Claude 撰寫研究筆記")
+    mode.add_argument("--finalize", action="store_true", help="讀入 Claude 研究筆記後保存、寄信、發布")
+    parser.add_argument("--date", default="", help="finalize 的報告日期 YYYY-MM-DD（預設今天）")
+    parser.add_argument("--dry-run", action="store_true", help="finalize 測試：只產生 Email／筆記預覽，不寄信、不發布")
+    args = parser.parse_args(argv)
+
+    now = now_taipei()
+    if args.finalize:
+        return finalize(args.date or now.strftime("%Y-%m-%d"), dry_run=args.dry_run)
+    # 沒有參數時（Windows 排程）等同 --prepare。
+    return prepare(now, load_watchlist())
 
 
 if __name__ == "__main__":

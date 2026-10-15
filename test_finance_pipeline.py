@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-"""離線驗證：不連網路、不需要 Ollama。
+"""離線驗證：不連網路。
 
-用假的鉅亨 API 與假的 Ollama 伺服器，驗證
-  多分類滾動爬取 → 去重 → Agent 摘要／畫重點 → finance_info_latest.json 取代舊資料
+用假的鉅亨 API 驗證
+  多分類滾動爬取 → 去重 → 規則摘要／畫重點 → finance_info_latest.json 取代舊資料
+  → Claude 寫回 AI 今日重點與逐篇重點（finance_digest.py apply）→ 下一次規則更新仍保留 Claude 的內容
 執行：python test_finance_pipeline.py
 """
 from __future__ import annotations
@@ -10,9 +11,7 @@ from __future__ import annotations
 import json
 import os
 import tempfile
-import threading
 from datetime import datetime, timedelta
-from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -70,77 +69,65 @@ def fake_get(self, url, params=None, accept_json=False):
 cc.CnyesNewsCrawler._get = fake_get
 
 
-# ---------------- 假的 Ollama ----------------
-class Ollama(BaseHTTPRequestHandler):
-    def log_message(self, *a): pass
-
-    def do_GET(self):
-        body = json.dumps({"models": [{"name": "qwen3:8b"}]}).encode()
-        self.send_response(200); self.send_header("Content-Type", "application/json"); self.end_headers(); self.wfile.write(body)
-
-    def do_POST(self):
-        n = int(self.headers.get("Content-Length", 0))
-        req = json.loads(self.rfile.read(n))
-        system = req["messages"][0]["content"]
-        user = req["messages"][1]["content"]
-        if "主編" in system:
-            out = {"headline": "AI 供應鏈營收強勁，但美股回檔壓抑情緒", "key_points": ["台積電營收年增優於預期", "費半重挫 3%"], "watch_items": ["Fed 談話"], "risks": ["升息疑慮"]}
-        else:
-            out = {"points": ["台積電營收年增 20% 優於預期", "AI 伺服器與先進封裝需求強勁"], "sentiment": "利多", "sectors": ["半導體"], "stocks": ["2330"], "why": "AI 需求帶動營收", "highlights": ["年增 20%", "優於預期", "不在文中的詞"]}
-        body = json.dumps({"message": {"content": json.dumps(out, ensure_ascii=False)}}).encode()
-        self.send_response(200); self.send_header("Content-Type", "application/json"); self.end_headers(); self.wfile.write(body)
-
-
 def main() -> int:
-    srv = HTTPServer(("127.0.0.1", 0), Ollama)
-    threading.Thread(target=srv.serve_forever, daemon=True).start()
-    os.environ["OLLAMA_HOST"] = f"http://127.0.0.1:{srv.server_port}"
-
-    import importlib
-    import finance_agent
-    importlib.reload(finance_agent)
     import run_finance_info_update as run
-    importlib.reload(run)
+    import finance_digest as fd
 
-    ok = True
     with tempfile.TemporaryDirectory() as d:
         base = Path(d)
-        # 假的法說會模組：避免真的連 Fugle
+        reports = base / "output/research_reports"
         r1 = run.update_finance_info(base, watchlist=[])
-        latest = json.loads((base / "output/research_reports/finance_info_latest.json").read_text(encoding="utf-8"))
+        latest = json.loads((reports / "finance_info_latest.json").read_text(encoding="utf-8"))
         print("第 1 次更新：新聞", latest["news_count"], "各分類", latest["crawl"].get("per_category_count"))
-        print("Agent：", latest["agent_stats"])
         dg = latest["news_digest"]
-        print("今日重點：", dg.get("agent_headline") or dg.get("headline"))
         assert latest["news_count"] >= 60, "應該遠多於 2 篇"
         assert "forex" in latest["crawl"]["per_category_count"] and latest["crawl"]["per_category_count"]["forex"] == 0, "不存在的分類應被略過而不是中斷"
         first = latest["news"][0]
         assert first["ai_points"] and first["sentiment"] in {"利多", "利空", "中性", "混合"}
         assert all(h in " ".join(first["ai_points"]) for h in first["highlights"]), "highlights 必須出現在摘要裡"
-        assert dg["generated_by"] == "qwen3"
+        assert dg["generated_by"] == "rule" and first["ai_source"] == "rule"
 
-        files = sorted(p.name for p in (base / "output/research_reports").iterdir())
-        print("輸出檔：", files)
+        files = sorted(p.name for p in reports.iterdir())
         assert "cnyes_news_latest.json" in files and "finance_info_latest.json" in files
         assert not any(n.startswith("finance_info_2") for n in files), "不應再產生一堆時間戳快照"
 
-        # 第 2 次：資料要被取代，且 LLM 摘要走快取
+        # Claude 寫回 AI 今日重點與第一則新聞的逐篇重點
+        fd.BASE, fd.LATEST, fd.JOB_DIR = base, reports / "finance_info_latest.json", base / "output/claude_jobs/finance"
+        assert fd.export() == 0 and (fd.JOB_DIR / "brief.md").exists()
+        notes = {
+            "news": {"headline": "AI 供應鏈營收強勁，但美股回檔壓抑情緒", "key_points": ["台積電營收年增優於預期", "費半重挫 3%"],
+                     "watch_items": ["Fed 談話"], "risks": ["升息疑慮"]},
+            "articles": [{"id": first["article_id"], "points": ["台積電營收年增 20% 優於預期", "AI 伺服器與先進封裝需求強勁"],
+                          "sentiment": "利多", "sectors": ["半導體"], "stocks": ["2330"], "why": "AI 需求帶動營收",
+                          "highlights": ["年增 20%", "優於預期", "不在文中的詞"]}],
+        }
+        notes_path = fd.JOB_DIR / "digest_notes.json"
+        notes_path.write_text(json.dumps(notes, ensure_ascii=False), encoding="utf-8")
+        assert fd.apply(notes_path, publish=False) == 0
+        applied = json.loads((reports / "finance_info_latest.json").read_text(encoding="utf-8"))
+        a1 = next(x for x in applied["news"] if x["article_id"] == first["article_id"])
+        assert applied["news_digest"]["generated_by"] == "claude"
+        assert a1["ai_source"] == "claude" and "不在文中的詞" not in a1["highlights"], "highlights 必須出現在重點裡"
+
+        # 第 2 次：規則層重算，Claude 的今日重點與逐篇重點要保留
         r2 = run.update_finance_info(base, watchlist=[])
-        latest2 = json.loads((base / "output/research_reports/finance_info_latest.json").read_text(encoding="utf-8"))
-        print("第 2 次：LLM 新摘要", latest2["agent_stats"]["llm_summarized"], "快取", latest2["agent_stats"]["llm_cached"])
-        assert latest2["agent_stats"]["llm_cached"] > 0
+        latest2 = json.loads((reports / "finance_info_latest.json").read_text(encoding="utf-8"))
+        a2 = next(x for x in latest2["news"] if x["article_id"] == first["article_id"])
+        print("第 2 次：Claude 重點", latest2["news_digest"].get("generated_by"), "逐篇沿用", latest2["agent_stats"]["ai_cached"])
+        assert latest2["news_digest"]["generated_by"] == "claude"
+        assert a2["ai_source"] == "claude" and latest2["agent_stats"]["ai_cached"] >= 1
         assert latest2["updated_at"] >= latest["updated_at"]
 
         # 第 3 次：爬蟲整個壞掉，要保留上一版而不是變空
         def boom(self, *a, **k): raise RuntimeError("network down")
         cc.CnyesNewsCrawler._get = boom
-        for f in (base / "output/research_reports").glob("cnyes_news_*.json"):
+        for f in reports.glob("cnyes_news_*.json"):
             f.unlink()
         r3 = run.update_finance_info(base, watchlist=[])
-        latest3 = json.loads((base / "output/research_reports/finance_info_latest.json").read_text(encoding="utf-8"))
+        latest3 = json.loads((reports / "finance_info_latest.json").read_text(encoding="utf-8"))
         print("第 3 次（斷網）：新聞", latest3["news_count"], "stale =", latest3["stale"])
         assert latest3["news_count"] >= 60 and latest3["stale"] is True
-    print("ALL OK" if ok else "FAILED")
+    print("ALL OK")
     return 0
 
 

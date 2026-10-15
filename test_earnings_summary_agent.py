@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""離線驗證：法說會 Agent（規則層，不需網路／Ollama）。執行：python test_earnings_summary_agent.py"""
+"""離線驗證：法說會 Agent（規則層，不需網路）。執行：python test_earnings_summary_agent.py"""
 import os, tempfile
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo

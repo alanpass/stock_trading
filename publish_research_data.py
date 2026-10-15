@@ -6,7 +6,10 @@
 不需要本機 .git、git remote 或 git push。
 """
 from __future__ import annotations
-import json, os, sys, urllib.error, urllib.request
+import json
+import os
+import urllib.error
+import urllib.request
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo

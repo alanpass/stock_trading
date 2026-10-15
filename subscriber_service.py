@@ -308,20 +308,3 @@ def subscription_status(base: str | Path = ".") -> dict[str, Any]:
         "emails": [str(x.get("email")) for x in rows],
     }
 
-
-def deactivate_subscriber(base: str | Path, email: str) -> dict[str, Any]:
-    base = Path(base).resolve()
-    clean_email = _clean_email(email)
-    path = base / "data" / "subscribers.json"
-    rows = _load_local(path)
-    changed = False
-
-    for row in rows:
-        if _clean_email(row.get("email")) == clean_email:
-            row["active"] = False
-            row["subscribed"] = False
-            row["updated_at"] = _now_iso()
-            changed = True
-
-    _save_local(path, rows)
-    return {"changed": changed, "email": clean_email}

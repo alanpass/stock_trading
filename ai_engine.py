@@ -6,9 +6,7 @@ import math
 import joblib
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
-from sklearn.metrics import mean_absolute_error, mean_squared_error, accuracy_score, precision_score, recall_score, f1_score
-from sklearn.model_selection import TimeSeriesSplit
+# scikit-learn 載入約 1～2 秒；只在真正訓練時才 import，讓只用 FEATURES／指標工具的網站頁面不被拖慢。
 
 FEATURES = [
     "ret_1","ret_2","ret_3","ret_5","ret_10","ret_20","ret_21","ret_60",
@@ -103,11 +101,17 @@ def add_features(df, benchmark=None):
     return x
 
 
-def _reg(): return RandomForestRegressor(n_estimators=500,max_depth=14,min_samples_leaf=3,max_features=0.75,random_state=42,n_jobs=-1)
-def _clf(): return RandomForestClassifier(n_estimators=500,max_depth=14,min_samples_leaf=3,max_features=0.75,class_weight="balanced",random_state=42,n_jobs=-1)
+def _reg():
+    from sklearn.ensemble import RandomForestRegressor
+    return RandomForestRegressor(n_estimators=500,max_depth=14,min_samples_leaf=3,max_features=0.75,random_state=42,n_jobs=-1)
+def _clf():
+    from sklearn.ensemble import RandomForestClassifier
+    return RandomForestClassifier(n_estimators=500,max_depth=14,min_samples_leaf=3,max_features=0.75,class_weight="balanced",random_state=42,n_jobs=-1)
 
 
 def train(df, selected=None):
+    from sklearn.metrics import mean_absolute_error, mean_squared_error, accuracy_score, precision_score, recall_score, f1_score
+    from sklearn.model_selection import TimeSeriesSplit
     x=df.copy(); x=x[np.isfinite(x[FEATURES].replace([np.inf,-np.inf],np.nan)).all(axis=1)].copy(); x=x.dropna(subset=["target_return","target_price"])
     med=x[FEATURES].median(numeric_only=True); x[FEATURES]=x[FEATURES].fillna(med).fillna(0.0)
     x=x.sort_values(["date","stock_code"]).reset_index(drop=True); X=x[FEATURES]; y=x.target_return.astype(float); yc=x.target_direction.astype(int)

@@ -15,13 +15,11 @@ from __future__ import annotations
 
 import html
 import re
-import time
 from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-import numpy as np
 import pandas as pd
 import requests
 
@@ -429,8 +427,12 @@ def business_map_for_symbols(symbols: Iterable[str], client=None, path: Path | N
         return {}
 
     # 再做一次記憶體層修正，即使網站暫時不可用也不讓已知股票回到 00。
+    # 先篩出要的股票再逐列修正，不對整份全市場主檔做 apply。
     df = df.copy()
     df["symbol"] = df["symbol"].astype(str).map(clean_symbol)
+    df = df[df["symbol"].isin(codes)].copy()
+    if df.empty:
+        return {}
     df["industry"] = df.apply(
         lambda r: KNOWN_INDUSTRY_CODES.get(
             clean_symbol(r.get("symbol", "")),
@@ -442,8 +444,7 @@ def business_map_for_symbols(symbols: Iterable[str], client=None, path: Path | N
     )
     df["industry_name"] = df["industry"].map(lambda x: INDUSTRIES.get(str(x).zfill(2), "其他/未分類"))
 
-    wanted = df[df["symbol"].isin(codes)]
-    return {r["symbol"]: r for r in wanted.to_dict("records")}
+    return {r["symbol"]: r for r in df.to_dict("records")}
 
 
 def profile_for_symbol(symbol: str, path: Path, client=None, force: bool = False) -> dict:
@@ -461,7 +462,3 @@ def profile_for_symbol(symbol: str, path: Path, client=None, force: bool = False
         "source_type": "unavailable",
     })
 
-
-def research_context_for_symbol(symbol: str, path: Path) -> dict:
-    profile = profile_for_symbol(symbol, path, force=False)
-    return build_business_research_context(profile)
