@@ -4218,7 +4218,7 @@ def render_entry_prediction():
     d1.metric("近期支撐", "--" if not np.isfinite(result['support_price']) else f"{result['support_price']:.2f}")
     d2.metric("預期反彈價格", f"{result['predicted_rebound_price']:.2f}")
     d3.metric("ATR(12)", f"{result['atr_price']:.2f}")
-    d4.metric("6K量能比", f"{result['volume_ratio_6']:.2f}x")
+    d4.metric("6K量能比", "資料不足" if result.get("volume_ratio_6") is None else f"{result['volume_ratio_6']:.2f}x")
 
     # 這一區把決策理由直接翻成使用者可讀的分析。
     st.markdown("#### 進場判斷理由")

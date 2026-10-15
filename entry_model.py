@@ -145,7 +145,15 @@ def detect_pattern(bars: pd.DataFrame) -> dict:
     rising, falling = prior > 0.003, prior < -0.003
 
     def big(i):
-        return size[i] >= 0.6 * r[i] and size[i] >= 0.8 * atr
+        if size[i] >= 0.6 * r[i] and size[i] >= 0.8 * atr:
+            return True
+        # 實體比例不夠，但漲跌 ≥ 1 ATR 或 ≥ 3%、且收在振幅上（下）1/3，也算長紅（長黑）
+        if len(c) + i < 1:
+            return False
+        move_abs = abs(c[i] - c[i - 1])
+        pos = (c[i] - l[i]) / r[i] if r[i] > 0 else 0.5
+        large = move_abs >= atr or move_abs / c[i - 1] >= 0.03
+        return large and ((body[i] > 0 and pos >= 2 / 3) or (body[i] < 0 and pos <= 1 / 3))
 
     if len(c) >= 3:
         if all(body[i] > 0 and size[i] >= 0.3 * atr for i in (-3, -2, -1)) and c[-1] > c[-2] > c[-3]:
@@ -161,8 +169,8 @@ def detect_pattern(bars: pd.DataFrame) -> dict:
     if body[-2] > 0 > body[-1] and o[-1] >= c[-2] and c[-1] <= o[-2] and size[-1] > size[-2]:
         return {"name": "空頭吞噬", "score": -0.7, "desc": "黑 K 實體完全包覆前一根紅 K，賣方轉強"}
     if big(-1):
-        return ({"name": "長紅K", "score": 0.6, "desc": "實體大、收在高檔，買盤強勁"} if body[-1] > 0
-                else {"name": "長黑K", "score": -0.6, "desc": "實體大、收在低檔，賣壓沉重"})
+        return ({"name": "長紅K", "score": 0.6, "desc": "實體大或大漲、收在高檔，買盤強勁"} if body[-1] > 0
+                else {"name": "長黑K", "score": -0.6, "desc": "實體大或大跌、收在低檔，賣壓沉重"})
     if lower[-1] >= 2 * max(size[-1], 1e-9) and upper[-1] <= 0.3 * r[-1]:
         return ({"name": "錘子線", "score": 0.5, "desc": "下跌後長下影線，低檔有買盤承接"} if falling
                 else {"name": "上吊線", "score": -0.3, "desc": "上漲後長下影線，留意高檔賣壓"} if rising
@@ -180,6 +188,24 @@ def detect_pattern(bars: pd.DataFrame) -> dict:
         return {"name": "十字線", "score": -0.1 if rising else 0.1 if falling else 0.0, "desc": "多空拉鋸，等待方向" + move_text}
     return ({"name": "小紅K", "score": 0.2, "desc": "收紅但實體未達長紅標準" + move_text} if body[-1] > 0
             else {"name": "小黑K", "score": -0.2, "desc": "收黑但實體未達長黑標準" + move_text})
+
+
+def _gap_note(k5: pd.DataFrame, daily: pd.DataFrame | None) -> str:
+    """今天開盤相對前一日收盤跳空超過 1 個日 ATR 時提醒（日 K 型態只看得到前一天）。"""
+    if daily is None or len(daily) < 15 or k5.empty:
+        return ""
+    d = _clean(daily)
+    today = k5["day"].iloc[-1]
+    prev = d[d["day"] < today]
+    if prev.empty:
+        return ""
+    prev_close = float(prev["close"].iloc[-1])
+    first_open = float(k5[k5["day"] == today]["open"].iloc[0])
+    daily_atr = float((prev["high"] - prev["low"]).tail(14).mean())
+    gap = first_open - prev_close
+    if not np.isfinite(daily_atr) or daily_atr <= 0 or abs(gap) < daily_atr:
+        return ""
+    return f"今日跳空{'開高' if gap > 0 else '開低'} {gap / prev_close * 100:+.1f}%（超過 1 個日 ATR），日 K 型態為前一日結構，參考性降低"
 
 
 def daily_trend(daily: pd.DataFrame | None, price: float) -> dict:
@@ -200,9 +226,9 @@ def daily_trend(daily: pd.DataFrame | None, price: float) -> dict:
         return full if gap > 0.005 else 0 if gap < -0.005 else full / 2
 
     score = vs(m20, 40) + (30 if slope > 0.001 else 0 if slope < -0.001 else 15) + vs(m60, 30)
-    if np.isfinite(m60) and price > m20 > m60 and slope > 0:
+    if np.isfinite(m60) and price > m20 * 1.005 and m20 > m60 and slope > 0:
         state = "多頭排列"
-    elif np.isfinite(m60) and price < m20 < m60 and slope < 0:
+    elif np.isfinite(m60) and price < m20 * 0.995 and m20 < m60 and slope < 0:
         state = "空頭排列"
     else:
         state = "偏多" if score >= 70 else "偏空" if score < 40 else "整理"
@@ -347,6 +373,9 @@ def predict_entry(model, k5, live_price, daily=None, market_open=True):
         reasons.append("趨勢偏多但出現偏空 K 線型態，等待確認")
     if not skill:
         reasons.append("回檔機率模型樣本外未優於歷史頻率，改用歷史回檔頻率")
+    gap_note = _gap_note(x, daily)
+    if gap_note:
+        reasons.append(gap_note)
     if not market_open:
         reasons.append("目前非盤中：以上為依最近收盤結構的下一個交易日參考")
 
@@ -356,7 +385,7 @@ def predict_entry(model, k5, live_price, daily=None, market_open=True):
     reg_skill = bool(getattr(model, "reg_has_skill", False))
     best = max(0.0, c * (1 + low_ret)) if reg_skill else max(0.0, c - 0.5 * atr)
     support = float(min(x["low"].tail(12).min(), c))  # 含收盤競價那一根，支撐不會高於現價
-    vol6 = float(row["vol6"]) if np.isfinite(row["vol6"]) else 1.0
+    vol6 = float(row["vol6"]) if np.isfinite(row["vol6"]) else None  # 開盤不到 6 根時沒有量能比
     return {
         "action": action, "decision_reason": "；".join(reasons), "reference_price": c,
         "best_entry_price": best, "entry_score": score, "confidence": conf, "trend_score": float(trend),
