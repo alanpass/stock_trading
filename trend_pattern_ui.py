@@ -336,10 +336,10 @@ def _render_backtest(base: Path) -> None:
     cols[0].metric("全部概念股平均", f"{bt['all_avg_return_pct']:+.2f}%", f"中位數 {bt['all_median_return_pct']:+.2f}%", delta_color="off")
     if best_c:
         r = rows_c[best_c]
-        cols[1].metric("最賺錢的趨勢狀態", best_c, f"平均 {r['avg_return_pct']:+.2f}%（{r['count']} 檔）", delta_color="off")
+        cols[1].metric("平均最賺錢的趨勢狀態", best_c, f"平均 {r['avg_return_pct']:+.2f}%｜中位數 {r['median_return_pct']:+.2f}%（{r['count']} 檔）", delta_color="off")
     if best_p:
         r = rows_p[best_p]
-        cols[2].metric("最賺錢的型態", best_p, f"平均 {r['avg_return_pct']:+.2f}%（{r['count']} 檔）", delta_color="off")
+        cols[2].metric("平均最賺錢的型態", best_p, f"平均 {r['avg_return_pct']:+.2f}%｜中位數 {r['median_return_pct']:+.2f}%（{r['count']} 檔）", delta_color="off")
     cols[3].metric("全部上漲比例", f"{bt.get('all_win_rate_pct', 0):.0f}%")
 
     def table(items: list[dict], key: str, label: str) -> pd.DataFrame:
