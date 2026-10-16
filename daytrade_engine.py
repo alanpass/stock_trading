@@ -306,7 +306,8 @@ class Engine:
         tk = tick_size(last)
         entry = last + tk if side > 0 else last - tk           # 市價多付 1 個 tick
         stop = max(orl, entry * (1 - MAX_STOP_PCT)) if side > 0 else min(orh, entry * (1 + MAX_STOP_PCT))
-        risk = abs(entry - stop)
+        stop = to_tick(stop, up=side < 0)              # 先對齊升降單位，張數才算得準
+        risk = abs(entry - stop) + tick_size(stop) + entry * (2 * FEE + TAX)  # 含停損滑價 1 tick 與手續費、當沖稅
         if risk <= 0:
             return
         target = entry + side * REWARD_RISK * risk
@@ -326,7 +327,7 @@ class Engine:
         if lots < 1:
             self.log(t, s, "不進場", "持倉總金額已達資金上限（避免違約交割）")
             return
-        p = Position(s, side, lots, round(entry, 2), to_tick(stop, up=side < 0), to_tick(target, up=side > 0), t)
+        p = Position(s, side, lots, round(entry, 2), stop, to_tick(target, up=side > 0), t)
         self.positions.append(p)
         self.traded.add(s)
         self.log(t, s, "進場", f"{'做多' if side > 0 else '做空'} {lots} 張 @ {p.entry}，停損 {p.stop}、停利 {p.target}"
