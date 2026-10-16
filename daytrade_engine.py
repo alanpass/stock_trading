@@ -51,6 +51,7 @@ LIMIT_ENTRY_BUFFER = 0.03     # 距漲跌停 3% 內不進場
 LIMIT_EXIT_BUFFER = 0.015     # 持倉不利方向距漲跌停 1.5% 內立即沖銷
 MAX_GAP = 0.05                # 開盤跳空超過 ±5% 當天不做
 MIN_TURNOVER = 5e8            # 20 日平均成交值至少 5 億
+MIN_ATR_PCT = 3.0             # 14 日平均波動至少 3%：波動太小扣掉成本沒有空間（例如 0050 約 1.5%）
 FEE, TAX = 0.001425, 0.0015   # 手續費（單邊）、當沖證交稅
 OR_END, LAST_ENTRY, FORCE_EXIT = "09:15", "12:30", "13:20"
 
@@ -84,6 +85,8 @@ def eligibility(t: dict) -> dict:
         reasons.append("異常推介股")
     if t.get("isSpecificAbnormally"):
         reasons.append("特殊異常有價證券")
+    if str(t.get("securityType", "01")) != "01":
+        reasons.append("非普通股（ETF／特別股等，不列入當沖）")
     blocked = bool(reasons)
     can_long = not blocked and bool(t.get("canBuyDayTrade"))
     can_short = not blocked and bool(t.get("canDayTrade"))
@@ -135,6 +138,8 @@ def build_plan(client: FugleClient, symbols: list[str]) -> dict:
         elif bear and not bull:
             allow_long = False
         reasons = list(el["reasons"])
+        if atr_pct * 100 < MIN_ATR_PCT:
+            reasons.append(f"波動太小（14 日 ATR {atr_pct * 100:.1f}%，需 ≥ {MIN_ATR_PCT:.0f}%）")
         if turnover < MIN_TURNOVER:
             reasons.append(f"成交值不足（20 日均 {turnover / 1e8:.1f} 億）")
         if close * 1000 > CAPITAL * 0.6:
