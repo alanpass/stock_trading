@@ -48,6 +48,12 @@ MAX_POSITIONS = 3
 DAILY_LOSS_LIMIT = 0.015      # 當日虧損達 1.5% 停止進場
 STOP_PCT = 0.025              # 停損：進場價 −2.5%（做空 +2.5%）
 TARGET_PCT = 0.05             # 停利：進場價 +5%（做空 −5%）
+BREAKEVEN_AT = 0.025          # 賺到 +2.5% 後，停損移到成本（含費用）
+TRAIL_PCT = 0.02              # 之後用移動停損：從進場後最高點回落 2% 出場
+MAX_ABOVE_VWAP = 0.01         # 不追高：進場價最多高於當日 VWAP 1%
+MAX_UP_FROM_PREV = 0.04       # 不追高：比昨收已漲 4% 以上不進場
+MAX_UNIVERSE = 30             # 候選股最多 30 檔（依 20 日成交值排序）
+INDEX = "IX0001"              # 加權指數：大盤在自己的 VWAP 之上才做多
 LIMIT_ENTRY_BUFFER = 0.03     # 距漲跌停 3% 內不進場
 LIMIT_EXIT_BUFFER = 0.015     # 持倉不利方向距漲跌停 1.5% 內立即沖銷
 MAX_GAP = 0.05                # 開盤跳空超過 ±5% 當天不做
@@ -158,7 +164,13 @@ def build_plan(client: FugleClient, symbols: list[str]) -> dict:
             "prev_close": el["prev_close"] or close, "limit_up": el["limit_up"], "limit_down": el["limit_down"],
             "atr_pct": round(atr_pct * 100, 2), "turnover_e": round(turnover / 1e8, 1),
             "daily_trend": trend.get("state"), "pattern": pat.get("pattern_name"), "classification": cls,
+            "themes": list(pat.get("themes") or []),
         })
+    # 候選股太多時，只保留 20 日成交值最大的 MAX_UNIVERSE 檔（流動性好、零股也比較容易成交）
+    ok = sorted([r for r in rows if r.get("tradable")], key=lambda r: -r.get("turnover_e", 0))
+    for r in ok[MAX_UNIVERSE:]:
+        r["tradable"], r["allow_long"], r["allow_short"] = False, False, False
+        r["reasons"] = [f"成交值排名在前 {MAX_UNIVERSE} 名之外"]
     return {"date": date.today().isoformat(), "generated_at": now_tpe().isoformat(timespec="seconds"),
             "capital": CAPITAL, "stocks": rows}
 
@@ -173,6 +185,8 @@ class Position:
     stop: float
     target: float
     opened_at: str
+    peak: float = 0.0
+    themes: tuple = ()
     exit: float | None = None
     closed_at: str | None = None
     exit_reason: str = ""
@@ -191,6 +205,20 @@ class Engine:
     events: list[dict] = field(default_factory=list)
     models: dict = field(default_factory=dict)
     dailies: dict = field(default_factory=dict)
+    market_ok: bool = True
+    market_note: str = ""
+    overrides: dict = field(default_factory=dict)   # Claude 盯盤時寫入：pause_entries／block／close_now／note
+
+    def set_market(self, index_bars: pd.DataFrame) -> None:
+        """大盤濾網：加權指數最新收盤在當日 VWAP 之上才做多。"""
+        if index_bars is None or index_bars.empty:
+            self.market_ok, self.market_note = True, "大盤資料暫缺，不過濾"
+            return
+        v = _vwap(index_bars)
+        last = float(index_bars["close"].iloc[-1])
+        prev = float(index_bars["open"].iloc[0])
+        self.market_ok = last >= v
+        self.market_note = f"加權 {last:,.0f}（VWAP {v:,.0f}，較開盤 {last / prev - 1:+.2%}）{'偏多' if self.market_ok else '轉弱，暫停做多'}"
 
     def log(self, t: str, symbol: str, kind: str, msg: str, **extra):
         if kind in ("不進場", "警示"):  # 同一檔同一個理由只記一次（風險金額這類數字會小幅變動，只比對理由前段）
@@ -234,6 +262,14 @@ class Engine:
         lo = last if low is None else low
         hi = last if high is None else high
         for p in [p for p in self.open_positions() if p.symbol == s]:
+            # 移動停損：賺到 +2.5% 後停損移到成本，之後跟著最高點回落 2%
+            p.peak = max(p.peak or p.entry, hi) if p.side > 0 else min(p.peak or p.entry, lo)
+            if p.side > 0 and p.peak >= p.entry * (1 + BREAKEVEN_AT):
+                be = to_tick(p.entry * (1 + 2 * FEE + TAX), up=True)
+                p.stop = max(p.stop, be, to_tick(p.peak * (1 - TRAIL_PCT), up=False))
+            if s in (self.overrides.get("close_now") or []):
+                self._close(p, last, t, "Claude 盯盤指示出場")
+                continue
             if p.side < 0 and lu and hi >= lu * (1 - LIMIT_EXIT_BUFFER):
                 if locked == "up":
                     self.log(t, s, "警示", "空單遇漲停鎖死，無法回補（真實帳戶需借券／違約風險）")
@@ -245,7 +281,8 @@ class Engine:
                     continue
                 self._close(p, min(last, ld * (1 + LIMIT_EXIT_BUFFER)) if low is not None else last, t, "逼近跌停緊急賣出")
             elif (p.side > 0 and lo <= p.stop) or (p.side < 0 and hi >= p.stop):
-                self._close(p, p.stop if low is not None else last, t, "停損")
+                reason = "移動停損" if (p.stop - p.entry) * p.side >= 0 else "停損"
+                self._close(p, p.stop if low is not None else last, t, reason)
             elif (p.side > 0 and hi >= p.target) or (p.side < 0 and lo <= p.target):
                 self._close(p, p.target if low is not None else last, t, "停利")
             elif t >= FORCE_EXIT:
@@ -267,6 +304,12 @@ class Engine:
             return
         if self.realized <= -CAPITAL * DAILY_LOSS_LIMIT or len(self.open_positions()) >= MAX_POSITIONS:
             return
+        if self.overrides.get("pause_entries"):
+            self.log(t, s, "不進場", f"Claude 盯盤暫停進場（{self.overrides.get('note', '')}）")
+            return
+        if s in (self.overrides.get("block") or []):
+            self.log(t, s, "不進場", f"Claude 盯盤封鎖此股（{self.overrides.get('note', '')}）")
+            return
         today_open = float(bars["open"].iloc[0])
         if pc and abs(today_open / pc - 1) > MAX_GAP:
             self.skipped[s] = f"開盤跳空 {today_open / pc - 1:+.1%}，超過 ±5%"
@@ -284,6 +327,20 @@ class Engine:
         elif info["allow_short"] and close < orl and close < vwap:
             side = -1
         if not side:
+            return
+        if side > 0 and not self.market_ok:
+            self.log(t, s, "不進場", f"突破成立但大盤轉弱（{self.market_note}）")
+            return
+        if side > 0 and last > vwap * (1 + MAX_ABOVE_VWAP):
+            self.log(t, s, "不進場", f"追高：高於 VWAP {last / vwap - 1:.1%}（上限 {MAX_ABOVE_VWAP:.0%}）")
+            return
+        if side > 0 and pc and last > pc * (1 + MAX_UP_FROM_PREV):
+            self.log(t, s, "不進場", f"追高：已比昨收漲 {last / pc - 1:.1%}（上限 {MAX_UP_FROM_PREV:.0%}）")
+            return
+        themes = tuple(info.get("themes") or ())
+        clash = [p.symbol for p in self.open_positions() if set(p.themes) & set(themes)]
+        if themes and clash:
+            self.log(t, s, "不進場", f"同族群已有持倉（{'、'.join(clash)}：{'、'.join(themes)}）")
             return
 
         # 網站的進場模型：日內趨勢分數確認方向
@@ -334,11 +391,11 @@ class Engine:
         if shares < 1:
             self.log(t, s, "不進場", "持倉總金額已達資金上限（避免違約交割）")
             return
-        p = Position(s, side, shares, round(entry, 2), stop, to_tick(target, up=side > 0), t)
+        p = Position(s, side, shares, round(entry, 2), stop, to_tick(target, up=side > 0), t, themes=themes)
         self.positions.append(p)
         self.traded.add(s)
         self.log(t, s, "進場", f"{'做多' if side > 0 else '做空'} {shares:,} 股 @ {p.entry}，停損 {p.stop}、停利 {p.target}"
-                 f"（區間 {orl}～{orh}、VWAP {vwap:.2f}{'、' + model_note if model_note else ''}）",
+                 f"（區間 {orl}～{orh}、VWAP {vwap:.2f}{'、' + model_note if model_note else ''}；{self.market_note}）",
                  side=side, shares=shares, price=p.entry)
 
     def summary(self) -> dict:
@@ -348,6 +405,7 @@ class Engine:
                 "win_rate": round(len(wins) / len(closed) * 100, 1) if closed else None,
                 "pnl": round(self.realized), "pnl_pct": round(self.realized / CAPITAL * 100, 3),
                 "open_positions": len(self.open_positions()),
+                "market": self.market_note, "overrides": self.overrides,
                 "positions": [asdict(p) for p in self.positions], "skipped": self.skipped}
 
     def save(self):
@@ -388,7 +446,7 @@ def replay(day: str | None = None, fast: bool = True) -> dict:
     """重播：進場用 5 分 K 收盤判斷；fast=True 時出場用 1 分 K 高低點觸發（模擬 WebSocket 即時停損），
     fast=False 時只在 5 分 K 收盤檢查出場（舊版、每分鐘輪詢的近似）。"""
     client = FugleClient(wait_on_limit=True)
-    plan = build_plan(client, _watchlist())
+    plan = build_plan(client, _universe())
     day = day or date.today().isoformat()
     engine = Engine(plan, day)
     _prepare(engine, client)
@@ -399,6 +457,7 @@ def replay(day: str | None = None, fast: bool = True) -> dict:
             k5[r["symbol"]] = _bars_today(client.historical_candles(r["symbol"], d, d, "5"))
             if fast:
                 k1[r["symbol"]] = _bars_today(client.historical_candles(r["symbol"], d, d, "1"))
+    idx = _bars_today(client.historical_candles(INDEX, d, d, "5"))
     minutes = sorted({t for b in (k1 or k5).values() for t in b["time"]})
     for m in minutes:
         end = (datetime.strptime(m, "%H:%M") + timedelta(minutes=1 if fast else 5)).strftime("%H:%M")
@@ -409,6 +468,7 @@ def replay(day: str | None = None, fast: bool = True) -> dict:
                     b = bar.iloc[-1]
                     engine.manage(s, end, float(b["close"]), low=float(b["low"]), high=float(b["high"]))
             if end[-1] in "05" and ((datetime.strptime(end, "%H:%M").minute % 5) == 0):
+                engine.set_market(idx[idx["time"] < end])
                 done = k5[s][k5[s]["time"] < end]
                 if not done.empty:
                     if not fast:
@@ -491,7 +551,7 @@ def live() -> dict:
     if not is_twse_trading_day(now, BASE):
         print("今天不是交易日。")
         return {}
-    engine = Engine(build_plan(client, _watchlist()), now.date().isoformat())
+    engine = Engine(build_plan(client, _universe()), now.date().isoformat())
     _prepare(engine, client)
     engine.save()
     tradable = [r for r in engine.plan["stocks"] if r.get("tradable")]
@@ -523,6 +583,18 @@ def live() -> dict:
         if t < "09:00":
             time.sleep(15)
             continue
+        # Claude 盯盤的指示（每次迴圈讀一次檔案）
+        try:
+            ov_path = OUT / engine.day / "claude_overrides.json"
+            engine.overrides = json.loads(ov_path.read_text(encoding="utf-8")) if ov_path.exists() else {}
+        except Exception:
+            pass
+        if engine.overrides.get("close_now"):
+            with lock:
+                for p in engine.open_positions():
+                    if p.symbol in engine.overrides["close_now"]:
+                        last = float((stream.last.get(p.symbol) or {}).get("price") or client.quote(p.symbol).get("lastPrice"))
+                        engine.manage(p.symbol, now.strftime("%H:%M:%S"), last)
         # 備援：WebSocket 斷線時，持倉改用 REST 報價每 15 秒檢查
         if not stream.connected:
             for p in engine.open_positions():
@@ -542,6 +614,11 @@ def live() -> dict:
         bar_key = now.strftime("%H:") + f"{now.minute // 5 * 5:02d}"
         if now.minute % 5 == 0 and now.second >= 3 and bar_key != last_bar and "09:15" <= t < LAST_ENTRY:
             last_bar = bar_key
+            try:
+                idx = _bars_today(client.intraday_candles(INDEX, "5"))
+                engine.set_market(idx[idx["time"] < bar_key])
+            except Exception as exc:
+                engine.market_ok, engine.market_note = True, f"大盤資料失敗（{type(exc).__name__}），不過濾"
             for r in tradable:
                 s = r["symbol"]
                 try:
@@ -570,6 +647,12 @@ def _watchlist() -> list[str]:
     return [str(s) for s in json.loads((BASE / "user_watchlist.json").read_text(encoding="utf-8"))]
 
 
+def _universe() -> list[str]:
+    """候選範圍：自選股＋產業分析的全部概念股（趨勢型態頁的 175 檔）。"""
+    syms = [clean_symbol(x) for x in _watchlist()] + list(_trend_patterns().keys())
+    return list(dict.fromkeys(syms))
+
+
 def main() -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
@@ -582,7 +665,7 @@ def main() -> int:
     rp.add_argument("--slow", action="store_true", help="出場只在 5 分 K 收盤檢查（比較用）")
     ns = ap.parse_args()
     if ns.cmd == "plan":
-        plan = build_plan(FugleClient(wait_on_limit=True), _watchlist())
+        plan = build_plan(FugleClient(wait_on_limit=True), _universe())
         folder = OUT / plan["date"]
         folder.mkdir(parents=True, exist_ok=True)
         (folder / "plan.json").write_text(json.dumps(plan, ensure_ascii=False, indent=2), encoding="utf-8")
