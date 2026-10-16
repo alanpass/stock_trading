@@ -5,7 +5,8 @@
   python daytrade_engine.py live                 # 盤中：WebSocket 即時管理持倉＋每根 5 分 K 判斷進場，寫入 output/daytrade/<日期>/
   python daytrade_engine.py replay [--date D]    # 重播：5 分 K 判斷進場、1 分 K 模擬即時停損（--slow 改回 5 分 K 檢查出場）
 
-策略：開盤區間（09:00～09:15）突破＋當日 VWAP，並用網站的資訊確認方向：
+策略：盤中零股、只做多。開盤區間（09:00～09:15）突破＋當日 VWAP 進場；停利 +5%、停損 −2.5%、13:20 出場。
+並用網站的資訊確認方向：
   日線趨勢（entry_model.daily_trend）、趨勢型態分類（trend_patterns_public.json）、
   進場模型的日內趨勢分數（entry_model.predict_entry）。
 
@@ -45,14 +46,19 @@ CAPITAL = 1_000_000
 RISK_PER_TRADE = 0.005        # 單筆最多虧資金 0.5%
 MAX_POSITIONS = 3
 DAILY_LOSS_LIMIT = 0.015      # 當日虧損達 1.5% 停止進場
-MAX_STOP_PCT = 0.012          # 停損最遠 1.2%
-REWARD_RISK = 2.0
+STOP_PCT = 0.025              # 停損：進場價 −2.5%（做空 +2.5%）
+TARGET_PCT = 0.05             # 停利：進場價 +5%（做空 −5%）
 LIMIT_ENTRY_BUFFER = 0.03     # 距漲跌停 3% 內不進場
 LIMIT_EXIT_BUFFER = 0.015     # 持倉不利方向距漲跌停 1.5% 內立即沖銷
 MAX_GAP = 0.05                # 開盤跳空超過 ±5% 當天不做
 MIN_TURNOVER = 5e8            # 20 日平均成交值至少 5 億
 MIN_ATR_PCT = 3.0             # 14 日平均波動至少 3%：波動太小扣掉成本沒有空間（例如 0050 約 1.5%）
-FEE, TAX = 0.001425, 0.0015   # 手續費（單邊）、當沖證交稅
+# 盤中零股：以「股」為單位，高價股也買得起。
+# 零股一般不適用現股當沖（先賣後買不行；同日買賣各自全額交割、證交稅以一般 0.3% 計），
+# 所以只做多，且持倉總金額不超過資金。實際規定以券商為準。
+FEE, TAX = 0.001425, 0.003    # 手續費（單邊）、證交稅（零股不適用當沖減半，以 0.3% 保守計）
+FEE_MIN = 1                   # 零股手續費每筆最低 1 元（依券商而定）
+ODD_LOT_SLIPPAGE_TICKS = 2    # 零股每分鐘集合競價、掛單較薄，進出各多算 2 個 tick
 OR_END, LAST_ENTRY, FORCE_EXIT = "09:15", "12:30", "13:20"
 
 
@@ -132,7 +138,7 @@ def build_plan(client: FugleClient, symbols: list[str]) -> dict:
         cls = str(pat.get("classification", ""))
         bull = trend.get("state") in ("多頭排列", "偏多") or cls in ("多頭延續／持續創高", "底部反轉候選")
         bear = trend.get("state") in ("空頭排列", "偏空") or cls in ("下降趨勢／弱勢整理", "高檔轉弱／反轉警示")
-        allow_long, allow_short = el["can_long"], el["can_short"]
+        allow_long, allow_short = el["can_long"], False   # 零股不能先賣後買，只做多
         if bull and not bear:
             allow_short = False
         elif bear and not bull:
@@ -142,8 +148,8 @@ def build_plan(client: FugleClient, symbols: list[str]) -> dict:
             reasons.append(f"波動太小（14 日 ATR {atr_pct * 100:.1f}%，需 ≥ {MIN_ATR_PCT:.0f}%）")
         if turnover < MIN_TURNOVER:
             reasons.append(f"成交值不足（20 日均 {turnover / 1e8:.1f} 億）")
-        if close * 1000 > CAPITAL * 0.6:
-            reasons.append(f"一張 {close * 1000 / 1e4:.0f} 萬，超過資金 60%")
+        if not reasons and not (allow_long or allow_short):
+            reasons.append(f"日線{trend.get('state') or ''}／{cls or '型態'}偏空，零股只能做多")
         tradable = not reasons and (allow_long or allow_short)
         rows.append({
             "symbol": s, "name": el["name"], "tradable": tradable, "reasons": reasons,
@@ -162,7 +168,7 @@ def build_plan(client: FugleClient, symbols: list[str]) -> dict:
 class Position:
     symbol: str
     side: int                 # +1 多、-1 空
-    lots: int
+    shares: int               # 零股：股數
     entry: float
     stop: float
     target: float
@@ -204,9 +210,11 @@ class Engine:
             fill = to_tick(price, up=p.side > 0)
         else:                  # 其他出場用市價：對齊升降單位後再差 1 個 tick
             base = to_tick(price, up=p.side < 0)
-            fill = round(base - tick_size(base) if p.side > 0 else base + tick_size(base), 2)
-        gross = (fill - p.entry) * p.side * p.lots * 1000
-        cost = (p.entry + fill) * p.lots * 1000 * FEE + (fill if p.side > 0 else p.entry) * p.lots * 1000 * TAX
+            slip = ODD_LOT_SLIPPAGE_TICKS * tick_size(base)
+            fill = round(base - slip if p.side > 0 else base + slip, 2)
+        gross = (fill - p.entry) * p.side * p.shares
+        cost = max(FEE_MIN, p.entry * p.shares * FEE) + max(FEE_MIN, fill * p.shares * FEE) \
+            + (fill if p.side > 0 else p.entry) * p.shares * TAX
         p.exit, p.closed_at, p.exit_reason, p.pnl = fill, t, reason, round(gross - cost)
         self.realized += p.pnl
         self.log(t, p.symbol, "出場", f"{'多' if p.side > 0 else '空'}單 {reason}，{fill} 沖銷，損益 {p.pnl:+,} 元（含成本）",
@@ -304,13 +312,12 @@ class Engine:
             return
 
         tk = tick_size(last)
-        entry = last + tk if side > 0 else last - tk           # 市價多付 1 個 tick
-        stop = max(orl, entry * (1 - MAX_STOP_PCT)) if side > 0 else min(orh, entry * (1 + MAX_STOP_PCT))
-        stop = to_tick(stop, up=side < 0)              # 先對齊升降單位，張數才算得準
-        risk = abs(entry - stop) + tick_size(stop) + entry * (2 * FEE + TAX)  # 含停損滑價 1 tick 與手續費、當沖稅
+        entry = last + ODD_LOT_SLIPPAGE_TICKS * tk if side > 0 else last - ODD_LOT_SLIPPAGE_TICKS * tk  # 零股多付 2 個 tick
+        stop = to_tick(entry * (1 - side * STOP_PCT), up=side < 0)   # 固定 −2.5%，對齊升降單位
+        risk = abs(entry - stop) + ODD_LOT_SLIPPAGE_TICKS * tick_size(stop) + entry * (2 * FEE + TAX)  # 每股最多虧（含滑價與成本）
         if risk <= 0:
             return
-        target = entry + side * REWARD_RISK * risk
+        target = entry * (1 + side * TARGET_PCT)                       # 固定 +5%
         if side > 0 and lu:
             target = min(target, lu * (1 - LIMIT_EXIT_BUFFER))
         if side < 0 and ld:
@@ -318,21 +325,21 @@ class Engine:
         if abs(target - entry) / entry < 2 * (FEE * 2 + TAX):  # 空間不夠付成本的兩倍
             self.log(t, s, "不進場", "停利空間太小，不夠支付交易成本")
             return
-        lots = int(CAPITAL * RISK_PER_TRADE // (risk * 1000))
-        if lots < 1:
-            self.log(t, s, "不進場", f"一張風險 {risk * 1000:,.0f} 元，超過單筆上限 {CAPITAL * RISK_PER_TRADE:,.0f}")
+        shares = int(CAPITAL * RISK_PER_TRADE // risk)
+        if shares < 1:
+            self.log(t, s, "不進場", f"每股風險 {risk:,.1f} 元，超過單筆上限 {CAPITAL * RISK_PER_TRADE:,.0f}")
             return
-        notional = sum(p.entry * p.lots * 1000 for p in self.open_positions())
-        lots = min(lots, int((CAPITAL - notional) // (entry * 1000)))
-        if lots < 1:
+        notional = sum(p.entry * p.shares for p in self.open_positions())
+        shares = min(shares, int((CAPITAL - notional) // entry))
+        if shares < 1:
             self.log(t, s, "不進場", "持倉總金額已達資金上限（避免違約交割）")
             return
-        p = Position(s, side, lots, round(entry, 2), stop, to_tick(target, up=side > 0), t)
+        p = Position(s, side, shares, round(entry, 2), stop, to_tick(target, up=side > 0), t)
         self.positions.append(p)
         self.traded.add(s)
-        self.log(t, s, "進場", f"{'做多' if side > 0 else '做空'} {lots} 張 @ {p.entry}，停損 {p.stop}、停利 {p.target}"
+        self.log(t, s, "進場", f"{'做多' if side > 0 else '做空'} {shares:,} 股 @ {p.entry}，停損 {p.stop}、停利 {p.target}"
                  f"（區間 {orl}～{orh}、VWAP {vwap:.2f}{'、' + model_note if model_note else ''}）",
-                 side=side, lots=lots, price=p.entry)
+                 side=side, shares=shares, price=p.entry)
 
     def summary(self) -> dict:
         closed = [p for p in self.positions if p.exit is not None]
