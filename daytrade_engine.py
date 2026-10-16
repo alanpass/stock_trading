@@ -2,8 +2,8 @@
 """即時當沖判斷引擎（紙上交易，不連券商、不下真實委託）。
 
   python daytrade_engine.py plan                 # 盤前：資格檢查（處置／注意／不可當沖）＋方向偏好＋關鍵價位
-  python daytrade_engine.py live                 # 盤中：每 60 秒判斷一次，模擬成交寫入 output/daytrade/<日期>/
-  python daytrade_engine.py replay [--date D]    # 用當天 5 分 K 重播一次（檢查規則、盤後檢討）
+  python daytrade_engine.py live                 # 盤中：WebSocket 即時管理持倉＋每根 5 分 K 判斷進場，寫入 output/daytrade/<日期>/
+  python daytrade_engine.py replay [--date D]    # 重播：5 分 K 判斷進場、1 分 K 模擬即時停損（--slow 改回 5 分 K 檢查出場）
 
 策略：開盤區間（09:00～09:15）突破＋當日 VWAP，並用網站的資訊確認方向：
   日線趨勢（entry_model.daily_trend）、趨勢型態分類（trend_patterns_public.json）、
@@ -57,6 +57,13 @@ OR_END, LAST_ENTRY, FORCE_EXIT = "09:15", "12:30", "13:20"
 
 def tick_size(p: float) -> float:
     return 0.01 if p < 10 else 0.05 if p < 50 else 0.1 if p < 100 else 0.5 if p < 500 else 1.0 if p < 1000 else 5.0
+
+
+def to_tick(price: float, up: bool) -> float:
+    """對齊台股升降單位：up=True 往上取、False 往下取。"""
+    tk = tick_size(price)
+    n = price / tk
+    return round((math.ceil(n - 1e-9) if up else math.floor(n + 1e-9)) * tk, 2)
 
 
 def now_tpe() -> datetime:
@@ -175,7 +182,7 @@ class Engine:
     dailies: dict = field(default_factory=dict)
 
     def log(self, t: str, symbol: str, kind: str, msg: str, **extra):
-        if kind == "不進場":  # 同一檔同一個理由只記一次（風險金額這類數字會小幅變動，只比對理由前段）
+        if kind in ("不進場", "警示"):  # 同一檔同一個理由只記一次（風險金額這類數字會小幅變動，只比對理由前段）
             key = re.sub(r"[\d,.\s]+", "", msg.split("（")[0].split("，")[0])
             if self.last_reason.get(symbol) == key:
                 return
@@ -188,8 +195,11 @@ class Engine:
         return [p for p in self.positions if p.exit is None]
 
     def _close(self, p: Position, price: float, t: str, reason: str):
-        tk = tick_size(price)
-        fill = price - tk if p.side > 0 else price + tk   # 市價沖銷多付 1 個 tick
+        if reason == "停利":   # 停利視為掛在停利價的限價單
+            fill = to_tick(price, up=p.side > 0)
+        else:                  # 其他出場用市價：對齊升降單位後再差 1 個 tick
+            base = to_tick(price, up=p.side < 0)
+            fill = round(base - tick_size(base) if p.side > 0 else base + tick_size(base), 2)
         gross = (fill - p.entry) * p.side * p.lots * 1000
         cost = (p.entry + fill) * p.lots * 1000 * FEE + (fill if p.side > 0 else p.entry) * p.lots * 1000 * TAX
         p.exit, p.closed_at, p.exit_reason, p.pnl = fill, t, reason, round(gross - cost)
@@ -197,31 +207,47 @@ class Engine:
         self.log(t, p.symbol, "出場", f"{'多' if p.side > 0 else '空'}單 {reason}，{fill} 沖銷，損益 {p.pnl:+,} 元（含成本）",
                  pnl=p.pnl, price=fill)
 
-    def on_bar(self, s: str, t: str, bars: pd.DataFrame, last: float, vwap: float, locked: str = ""):
-        """bars：今天已完成的 5 分 K（含 time 欄 HH:MM）；last：最新價；vwap：當日均價；locked：'up'/'down'/''。"""
+    def _info(self, s: str) -> dict | None:
         info = next((r for r in self.plan["stocks"] if r["symbol"] == s), None)
-        if not info or not info.get("tradable"):
-            return
-        lu, ld, pc = info["limit_up"], info["limit_down"], info["prev_close"]
+        return info if info and info.get("tradable") else None
 
-        # 1) 持倉管理：漲跌停保護優先於停損
+    def manage(self, s: str, t: str, last: float, locked: str = "", low: float | None = None, high: float | None = None):
+        """持倉管理（快層）：盤中每收到一筆成交就呼叫。重播時 low/high 為 1 分 K 的高低點。
+        漲跌停保護優先於停損。觸價時以觸發價成交（再差 1 個 tick），模擬即時觸發的停損單。"""
+        info = self._info(s)
+        if not info:
+            return
+        lu, ld = info["limit_up"], info["limit_down"]
+        lo = last if low is None else low
+        hi = last if high is None else high
         for p in [p for p in self.open_positions() if p.symbol == s]:
-            if p.side < 0 and lu and last >= lu * (1 - LIMIT_EXIT_BUFFER):
+            if p.side < 0 and lu and hi >= lu * (1 - LIMIT_EXIT_BUFFER):
                 if locked == "up":
                     self.log(t, s, "警示", "空單遇漲停鎖死，無法回補（真實帳戶需借券／違約風險）")
                     continue
-                self._close(p, last, t, "逼近漲停緊急回補")
-            elif p.side > 0 and ld and last <= ld * (1 + LIMIT_EXIT_BUFFER):
+                self._close(p, max(last, lu * (1 - LIMIT_EXIT_BUFFER)) if high is not None else last, t, "逼近漲停緊急回補")
+            elif p.side > 0 and ld and lo <= ld * (1 + LIMIT_EXIT_BUFFER):
                 if locked == "down":
                     self.log(t, s, "警示", "多單遇跌停鎖死，無法賣出（需全額交割）")
                     continue
-                self._close(p, last, t, "逼近跌停緊急賣出")
-            elif (p.side > 0 and last <= p.stop) or (p.side < 0 and last >= p.stop):
-                self._close(p, last, t, "停損")
-            elif (p.side > 0 and last >= p.target) or (p.side < 0 and last <= p.target):
-                self._close(p, last, t, "停利")
+                self._close(p, min(last, ld * (1 + LIMIT_EXIT_BUFFER)) if low is not None else last, t, "逼近跌停緊急賣出")
+            elif (p.side > 0 and lo <= p.stop) or (p.side < 0 and hi >= p.stop):
+                self._close(p, p.stop if low is not None else last, t, "停損")
+            elif (p.side > 0 and hi >= p.target) or (p.side < 0 and lo <= p.target):
+                self._close(p, p.target if low is not None else last, t, "停利")
             elif t >= FORCE_EXIT:
                 self._close(p, last, t, "13:20 時間出場")
+
+    def on_bar(self, s: str, t: str, bars: pd.DataFrame, last: float, vwap: float, locked: str = ""):
+        self.manage(s, t, last, locked)
+        self.try_entry(s, t, bars, last, vwap)
+
+    def try_entry(self, s: str, t: str, bars: pd.DataFrame, last: float, vwap: float):
+        """進場判斷（慢層）：每根 5 分 K 收完後呼叫。bars：今天已收完的 5 分 K（含 time 欄 HH:MM）。"""
+        info = self._info(s)
+        if not info or bars.empty:
+            return
+        lu, ld, pc = info["limit_up"], info["limit_down"], info["prev_close"]
 
         # 2) 進場條件
         if s in self.traded or s in self.skipped or t < OR_END or t >= LAST_ENTRY:
@@ -295,7 +321,7 @@ class Engine:
         if lots < 1:
             self.log(t, s, "不進場", "持倉總金額已達資金上限（避免違約交割）")
             return
-        p = Position(s, side, lots, round(entry, 2), round(stop, 2), round(target, 2), t)
+        p = Position(s, side, lots, round(entry, 2), to_tick(stop, up=side < 0), to_tick(target, up=side > 0), t)
         self.positions.append(p)
         self.traded.add(s)
         self.log(t, s, "進場", f"{'做多' if side > 0 else '做空'} {lots} 張 @ {p.entry}，停損 {p.stop}、停利 {p.target}"
@@ -340,34 +366,113 @@ def _bars_today(df: pd.DataFrame) -> pd.DataFrame:
     return d[(d["time"] >= "09:00") & (d["time"] <= "13:30")].reset_index(drop=True)
 
 
-def replay(day: str | None = None) -> dict:
+def _vwap(done: pd.DataFrame) -> float:
+    vol = float(done["volume"].sum())
+    return float(((done["high"] + done["low"] + done["close"]) / 3 * done["volume"]).sum() / vol) if vol else float(done["close"].iloc[-1])
+
+
+def replay(day: str | None = None, fast: bool = True) -> dict:
+    """重播：進場用 5 分 K 收盤判斷；fast=True 時出場用 1 分 K 高低點觸發（模擬 WebSocket 即時停損），
+    fast=False 時只在 5 分 K 收盤檢查出場（舊版、每分鐘輪詢的近似）。"""
     client = FugleClient(wait_on_limit=True)
     plan = build_plan(client, _watchlist())
     day = day or date.today().isoformat()
     engine = Engine(plan, day)
     _prepare(engine, client)
-    data = {}
+    d = date.fromisoformat(day)
+    k5, k1 = {}, {}
     for r in plan["stocks"]:
         if r.get("tradable"):
-            d = date.fromisoformat(day)
-            data[r["symbol"]] = _bars_today(client.historical_candles(r["symbol"], d, d, "5"))
-    times = sorted({t for b in data.values() for t in b["time"]})
-    for t in times:
-        bar_end = (datetime.strptime(t, "%H:%M") + timedelta(minutes=5)).strftime("%H:%M")
-        for s, bars in data.items():
-            done = bars[bars["time"] <= t]
-            if done.empty:
-                continue
-            pv = ((done["high"] + done["low"] + done["close"]) / 3 * done["volume"]).sum()
-            vwap = float(pv / done["volume"].sum()) if done["volume"].sum() else float(done["close"].iloc[-1])
-            engine.on_bar(s, bar_end, done, float(done["close"].iloc[-1]), vwap)
+            k5[r["symbol"]] = _bars_today(client.historical_candles(r["symbol"], d, d, "5"))
+            if fast:
+                k1[r["symbol"]] = _bars_today(client.historical_candles(r["symbol"], d, d, "1"))
+    minutes = sorted({t for b in (k1 or k5).values() for t in b["time"]})
+    for m in minutes:
+        end = (datetime.strptime(m, "%H:%M") + timedelta(minutes=1 if fast else 5)).strftime("%H:%M")
+        for s in k5:
+            if fast:
+                bar = k1[s][k1[s]["time"] == m]
+                if not bar.empty:
+                    b = bar.iloc[-1]
+                    engine.manage(s, end, float(b["close"]), low=float(b["low"]), high=float(b["high"]))
+            if end[-1] in "05" and ((datetime.strptime(end, "%H:%M").minute % 5) == 0):
+                done = k5[s][k5[s]["time"] < end]
+                if not done.empty:
+                    if not fast:
+                        engine.manage(s, end, float(done["close"].iloc[-1]))
+                    engine.try_entry(s, end, done, float(done["close"].iloc[-1]), _vwap(done))
     for p in engine.open_positions():
-        engine._close(p, float(data[p.symbol]["close"].iloc[-1]), "13:30", "收盤強制出場")
+        engine._close(p, float(k5[p.symbol]["close"].iloc[-1]), "13:30", "收盤強制出場")
     engine.save()
     return engine.summary()
 
 
+class PriceStream:
+    """Fugle WebSocket 成交推播（不佔 REST 每分鐘額度）。斷線自動重連。"""
+    URL = "wss://api.fugle.tw/marketdata/v1.0/stock/streaming"
+
+    def __init__(self, symbols: list[str], on_trade=None):
+        import threading
+        self.symbols, self.on_trade = symbols, on_trade
+        self.last: dict[str, dict] = {}
+        self.connected = False
+        self._stop = False
+        self._thread = threading.Thread(target=self._run, daemon=True)
+
+    def start(self):
+        self._thread.start()
+        for _ in range(100):
+            if self.connected:
+                return True
+            time.sleep(0.1)
+        return self.connected
+
+    def stop(self):
+        self._stop = True
+        try:
+            self._ws.close()
+        except Exception:
+            pass
+
+    def _run(self):
+        import websocket
+        from stock_api import _read_fugle_api_key
+        backoff = 1
+        while not self._stop:
+            def on_open(ws):
+                ws.send(json.dumps({"event": "auth", "data": {"apikey": _read_fugle_api_key()}}))
+
+            def on_message(ws, raw):
+                msg = json.loads(raw)
+                ev = msg.get("event")
+                if ev == "authenticated":
+                    ws.send(json.dumps({"event": "subscribe", "data": {"channel": "trades", "symbols": self.symbols}}))
+                elif ev == "subscribed":
+                    self.connected = True
+                elif ev in ("data", "snapshot") and msg.get("channel") == "trades":
+                    d = msg.get("data") or {}
+                    sym = str(d.get("symbol", ""))
+                    if sym and d.get("price") is not None:
+                        self.last[sym] = d
+                        if self.on_trade and ev == "data":
+                            self.on_trade(sym, d)
+
+            def on_close(ws, *_):
+                self.connected = False
+
+            self._ws = websocket.WebSocketApp(self.URL, on_open=on_open, on_message=on_message, on_close=on_close)
+            self._ws.run_forever(ping_interval=20, ping_timeout=10)
+            self.connected = False
+            if not self._stop:
+                print(f"WebSocket 斷線，{backoff} 秒後重連", flush=True)
+                time.sleep(backoff)
+                backoff = min(backoff * 2, 30)
+
+
 def live() -> dict:
+    """快層：WebSocket 每筆成交即時檢查持倉（停損／停利／漲跌停保護）。
+    慢層：每根 5 分 K 收完後，用 REST 取 K 線與 VWAP 判斷進場（每檔每 5 分鐘 2 次請求）。"""
+    import threading
     client = FugleClient(wait_on_limit=True)
     now = now_tpe()
     if not is_twse_trading_day(now, BASE):
@@ -376,37 +481,74 @@ def live() -> dict:
     engine = Engine(build_plan(client, _watchlist()), now.date().isoformat())
     _prepare(engine, client)
     engine.save()
-    print(json.dumps([{k: r.get(k) for k in ("symbol", "name", "tradable", "allow_long", "allow_short", "reasons")}
-                      for r in engine.plan["stocks"]], ensure_ascii=False, indent=1))
+    tradable = [r for r in engine.plan["stocks"] if r.get("tradable")]
+    print(json.dumps([{k: r.get(k) for k in ("symbol", "name", "allow_long", "allow_short")} for r in tradable],
+                     ensure_ascii=False))
+    lock = threading.Lock()
+
+    def locked_state(r: dict, d: dict) -> str:
+        price, bid, ask = d.get("price"), d.get("bid"), d.get("ask")
+        if r["limit_up"] and price is not None and price >= r["limit_up"] and not ask:
+            return "up"
+        if r["limit_down"] and price is not None and price <= r["limit_down"] and not bid:
+            return "down"
+        return ""
+
+    def on_trade(sym: str, d: dict):
+        if not any(p.symbol == sym for p in engine.open_positions()):
+            return
+        r = next(x for x in tradable if x["symbol"] == sym)
+        with lock:
+            engine.manage(sym, now_tpe().strftime("%H:%M:%S"), float(d["price"]), locked_state(r, d))
+
+    stream = PriceStream([r["symbol"] for r in tradable], on_trade)
+    print("WebSocket 已連線" if stream.start() else "WebSocket 連線失敗，改用 REST 每 15 秒檢查持倉", flush=True)
+    last_bar = ""
     while now_tpe().strftime("%H:%M") <= "13:25":
-        t = now_tpe().strftime("%H:%M")
+        now = now_tpe()
+        t = now.strftime("%H:%M")
         if t < "09:00":
-            time.sleep(20)
+            time.sleep(15)
             continue
-        for r in [r for r in engine.plan["stocks"] if r.get("tradable")]:
-            s = r["symbol"]
+        # 備援：WebSocket 斷線時，持倉改用 REST 報價每 15 秒檢查
+        if not stream.connected:
+            for p in engine.open_positions():
+                try:
+                    q = client.quote(p.symbol)
+                    with lock:
+                        engine.manage(p.symbol, now.strftime("%H:%M:%S"), float(q.get("lastPrice")))
+                except Exception:
+                    pass
+        # 13:20 時間出場（沒有新成交時也要執行）
+        if t >= FORCE_EXIT:
+            with lock:
+                for p in engine.open_positions():
+                    last = float((stream.last.get(p.symbol) or {}).get("price") or client.quote(p.symbol).get("lastPrice"))
+                    engine.manage(p.symbol, t, last)
+        # 慢層：5 分 K 剛收完（整 5 分鐘、過 3 秒以上）才判斷進場
+        bar_key = now.strftime("%H:") + f"{now.minute // 5 * 5:02d}"
+        if now.minute % 5 == 0 and now.second >= 3 and bar_key != last_bar and "09:15" <= t < LAST_ENTRY:
+            last_bar = bar_key
+            for r in tradable:
+                s = r["symbol"]
+                try:
+                    bars = _bars_today(client.intraday_candles(s, "5"))
+                    done = bars[bars["time"] < bar_key]
+                    q = client.quote(s)
+                    last = float((stream.last.get(s) or {}).get("price") or q.get("lastPrice") or done["close"].iloc[-1])
+                    with lock:
+                        engine.try_entry(s, t, done, last, float(q.get("avgPrice") or _vwap(done)))
+                except Exception as exc:
+                    engine.log(t, s, "錯誤", f"{type(exc).__name__}: {exc}")
+            engine.save()
+        time.sleep(1 if stream.connected else 15)
+    with lock:
+        for p in engine.open_positions():
             try:
-                q = client.quote(s)
-                bars = _bars_today(client.intraday_candles(s, "5"))
-                if bars.empty:
-                    continue
-                # 只用已收完的 5 分 K 判斷突破；最新價用即時成交價
-                done = bars[pd.to_datetime(bars["date"]) + pd.Timedelta(minutes=5) <= pd.Timestamp(now_tpe().replace(tzinfo=None))]
-                last = float(q.get("lastPrice") or q.get("closePrice") or bars["close"].iloc[-1])
-                vwap = float(q.get("avgPrice") or last)
-                asks, bids = q.get("asks") or [], q.get("bids") or []
-                locked = ("up" if r["limit_up"] and last >= r["limit_up"] and not asks else
-                          "down" if r["limit_down"] and last <= r["limit_down"] and not bids else "")
-                engine.on_bar(s, t, done if not done.empty else bars.iloc[:0], last, vwap, locked)
-            except Exception as exc:
-                engine.log(t, s, "錯誤", f"{type(exc).__name__}: {exc}")
-        engine.save()
-        time.sleep(max(5, 60 - now_tpe().second))
-    for p in engine.open_positions():
-        try:
-            engine._close(p, float(client.quote(p.symbol).get("lastPrice")), now_tpe().strftime("%H:%M"), "收盤前強制出場")
-        except Exception:
-            pass
+                engine._close(p, float(client.quote(p.symbol).get("lastPrice")), now_tpe().strftime("%H:%M"), "收盤前強制出場")
+            except Exception:
+                pass
+    stream.stop()
     engine.save()
     return engine.summary()
 
@@ -424,6 +566,7 @@ def main() -> int:
     sub.add_parser("live")
     rp = sub.add_parser("replay")
     rp.add_argument("--date")
+    rp.add_argument("--slow", action="store_true", help="出場只在 5 分 K 收盤檢查（比較用）")
     ns = ap.parse_args()
     if ns.cmd == "plan":
         plan = build_plan(FugleClient(wait_on_limit=True), _watchlist())
@@ -434,7 +577,7 @@ def main() -> int:
             side = "多空" if r.get("allow_long") and r.get("allow_short") else "只做多" if r.get("allow_long") else "只做空" if r.get("allow_short") else "不做"
             print(f"{r['symbol']} {r.get('name', ''):6s} {side:4s} {'；'.join(r.get('reasons', []))}")
         return 0
-    result = live() if ns.cmd == "live" else replay(ns.date)
+    result = live() if ns.cmd == "live" else replay(ns.date, fast=not ns.slow)
     print(json.dumps({k: v for k, v in result.items() if k != "positions"}, ensure_ascii=False, indent=2, default=str))
     return 0
 
