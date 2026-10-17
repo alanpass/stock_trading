@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-10-17",
-  "updated_at": "2026-10-17T10:17:55+08:00",
-  "finished_at": "2026-10-17T10:18:12+08:00",
-  "published_at": "2026-10-17T10:18:13+08:00",
+  "updated_at": "2026-10-17T10:21:51+08:00",
+  "finished_at": "2026-10-17T10:22:04+08:00",
+  "published_at": "2026-10-17T10:22:05+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -15,17 +15,17 @@
     "23:00"
   ],
   "stale": false,
-  "news_count": 308,
+  "news_count": 309,
   "earnings_count": 10,
   "news_digest": {
-    "generated_at": "2026-10-17T10:17:55+08:00",
-    "headline": "最近 2 天共整理 308 則財經新聞：利多 103、利空 103、中性 64、混合 38；討論度最高的產業：AI／伺服器、半導體、國際股市。",
+    "generated_at": "2026-10-17T10:21:51+08:00",
+    "headline": "最近 2 天共整理 309 則財經新聞：利多 103、利空 103、中性 64、混合 39；討論度最高的產業：AI／伺服器、半導體、國際股市。",
     "stats": {
-      "total": 308,
+      "total": 309,
       "利多": 103,
       "利空": 103,
       "中性": 64,
-      "混合": 38
+      "混合": 39
     },
     "key_points": [
       {
@@ -160,14 +160,6 @@
         "url": "https://news.cnyes.com/news/id/6631989"
       },
       {
-        "theme": "〈焦點股〉資安商機搭AI高成長趨勢 資服股一片叫好多檔漲停",
-        "reason": "資安與企業AI落地帶動營收創高，資服股成為盤面亮點",
-        "sectors": [
-          "AI／伺服器"
-        ],
-        "url": "https://news.cnyes.com/news/id/6631864"
-      },
-      {
         "theme": "「大賣空」貝瑞加碼做空美股！押注那斯達克與半導體股回檔",
         "reason": "Bain估AI產業到2031年年收需6兆美元，現僅1.8兆，缺口4.2兆恐令資料中心支出失衡。",
         "sectors": [
@@ -176,6 +168,15 @@
           "國際股市"
         ],
         "url": "https://news.cnyes.com/news/id/6631675"
+      },
+      {
+        "theme": "〈熱門股〉中信金周漲9.36%寫新天價 法人看好配息動能提前卡位",
+        "reason": "受到基本面亮眼與籌碼面加持，金融股本周表現搶眼，其中，中信金(2891-TW)單周累計大漲 9.36%，榮登上市金控「漲幅王」寶座。",
+        "sectors": [
+          "金融",
+          "總體經濟"
+        ],
+        "url": "https://news.cnyes.com/news/id/6632455"
       }
     ],
     "bearish": [
@@ -221,7 +222,7 @@
     "sector_heat": [
       {
         "sector": "AI／伺服器",
-        "count": 180,
+        "count": 181,
         "利多": 63,
         "利空": 70,
         "tone": "偏空"
@@ -284,7 +285,7 @@
       },
       {
         "sector": "電動車／車用",
-        "count": 14,
+        "count": 15,
         "利多": 2,
         "利空": 2,
         "tone": "中性"
@@ -321,7 +322,7 @@
     "agent_generated_at": "2026-10-16T23:54:39+08:00"
   },
   "earnings_digest": {
-    "generated_at": "2026-10-17T10:17:55+08:00",
+    "generated_at": "2026-10-17T10:21:51+08:00",
     "days": 5,
     "total": 10,
     "利多": 4,
@@ -562,22 +563,22 @@
   },
   "crawl": {
     "ok": true,
-    "article_count": 308,
+    "article_count": 309,
     "per_category_count": {
-      "headline": 184,
+      "headline": 185,
       "tw_stock": 79,
-      "wd_stock": 211,
+      "wd_stock": 212,
       "forex": 4,
-      "future": 34
+      "future": 35
     },
     "source_method": "api",
-    "reused_from_previous_run": 43,
+    "reused_from_previous_run": 61,
     "window_start": "2026-10-16T00:00:00+08:00",
-    "window_end": "2026-10-17T10:18:12.266647+08:00"
+    "window_end": "2026-10-17T10:22:04.150092+08:00"
   },
   "agent_stats": {
-    "input": 308,
-    "after_dedupe": 308,
+    "input": 309,
+    "after_dedupe": 309,
     "ai_cached": 66,
     "seconds": 0.5,
     "earnings": {
@@ -879,46 +880,6 @@
       "source": "鉅亨網"
     },
     {
-      "article_id": "6631864",
-      "title": "〈焦點股〉資安商機搭AI高成長趨勢 資服股一片叫好多檔漲停",
-      "url": "https://news.cnyes.com/news/id/6631864",
-      "category": "台股新聞",
-      "published": "2026-10-16 10:21:07",
-      "published_ts": "2026-10-16T10:21:07+08:00",
-      "ai_points": [
-        "黃仁勳點名資安是AI下一波應用，驊宏資、華經、智聯服務等資服股漲停",
-        "Gogolook Q3營收3.36億元年增25.7%，創單季新高",
-        "宏碁資訊9月營收15.3億元年增97%，Q3營收38.2億元年增74%"
-      ],
-      "summary": "黃仁勳點名資安是AI下一波應用，驊宏資、華經、智聯服務等資服股漲停；Gogolook Q3營收3.36億元年增25.7%，創單季新高；宏碁資訊9月營收15.3億元年增97%，Q3營收38.2億元年增74%",
-      "sentiment": "利多",
-      "sectors": [
-        "AI／伺服器"
-      ],
-      "stocks": [
-        "6148",
-        "2468",
-        "6751",
-        "6112",
-        "6689",
-        "6902",
-        "6811",
-        "6697"
-      ],
-      "highlights": [
-        "資安",
-        "驊宏資",
-        "Gogolook",
-        "3.36億元",
-        "宏碁資訊",
-        "97%"
-      ],
-      "why": "資安與企業AI落地帶動營收創高，資服股成為盤面亮點",
-      "importance": 8.7,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
       "article_id": "6631917",
       "title": "台灣砸40億美元德州設AI產業園區 助輝達供應鏈赴美設廠",
       "url": "https://news.cnyes.com/news/id/6631917",
@@ -1165,6 +1126,42 @@
       "source": "鉅亨網"
     },
     {
+      "article_id": "6632571",
+      "title": "知名投資人警告特斯拉多頭 勿炒作與SpaceX合併題材",
+      "url": "https://news.cnyes.com/news/id/6632571",
+      "category": "美股雷達",
+      "published": "2026-10-17 10:20:04",
+      "published_ts": "2026-10-17T10:20:04+08:00",
+      "ai_points": [
+        "他估新款Roadster若年售3,000輛、每輛賺10萬美元，2029年僅貢獻EPS 0.06美元，約佔共識1.1%。",
+        "他先前曾警告，合併可能使特斯拉估值下降20%至25%，理由包括股東持股遭到稀釋，以及公司可能面臨企業集團折價。",
+        "Black仍維持審慎展望，理由包括特斯拉2026年本益比高達230倍、分析師持續下修公司至2030年的獲利預估，以及自動駕駛領域的競爭日益激烈。"
+      ],
+      "summary": "他估新款Roadster若年售3,000輛、每輛賺10萬美元，2029年僅貢獻EPS 0.06美元，約佔共識1.1%。；他先前曾警告，合併可能使特斯拉估值下降20%至25%，理由包括股東持股遭到稀釋，以及公司可能面臨企業集團折價。；Black仍維持審慎展望，理由包括特斯拉2026年本益比高達230倍、分析師持續下修公司至2030年的獲利預估，以及自動駕駛領域的競爭日益激烈。",
+      "sentiment": "混合",
+      "sectors": [
+        "電動車／車用",
+        "AI／伺服器"
+      ],
+      "stocks": [],
+      "highlights": [
+        "0.06美元",
+        "1.1%",
+        "230倍",
+        "10萬",
+        "20%",
+        "25%",
+        "EPS",
+        "特斯拉",
+        "下修",
+        "獲利"
+      ],
+      "why": "",
+      "importance": 8.3,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
       "article_id": "6632279",
       "title": "通膨偏熱仍不給升息暗示！「Fed傳聲筒」解析華許10月政策留白",
       "url": "https://news.cnyes.com/news/id/6632279",
@@ -1337,47 +1334,6 @@
       "source": "鉅亨網"
     },
     {
-      "article_id": "6630220",
-      "title": "〈台股開盤〉台積法說行情失靈 金融、光學股接棒領漲 強彈逾500點站回4萬7",
-      "url": "https://news.cnyes.com/news/id/6630220",
-      "category": "台股新聞",
-      "published": "2026-10-16 10:18:19",
-      "published_ts": "2026-10-16T10:18:19+08:00",
-      "ai_points": [
-        "台股16日開高走高，盤中大漲逾530點，最高47,504.44點",
-        "台積電受ADR拖累走弱，聯發科漲逾3%，國巨、鴻海漲逾2%",
-        "油價走揚帶動台塑化逼近漲停，富邦金衝上163元創新高"
-      ],
-      "summary": "台股16日開高走高，盤中大漲逾530點，最高47,504.44點；台積電受ADR拖累走弱，聯發科漲逾3%，國巨、鴻海漲逾2%；油價走揚帶動台塑化逼近漲停，富邦金衝上163元創新高",
-      "sentiment": "利多",
-      "sectors": [
-        "金融",
-        "原物料／能源"
-      ],
-      "stocks": [
-        "2330",
-        "2454",
-        "2327",
-        "2317",
-        "6505",
-        "2881",
-        "2891",
-        "2885"
-      ],
-      "highlights": [
-        "530點",
-        "47,504.44點",
-        "聯發科",
-        "台塑化",
-        "富邦金",
-        "163元"
-      ],
-      "why": "大跌後資金輪動至金融、塑化與光學，台積電法說行情失靈",
-      "importance": 8.0,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
       "article_id": "6632423",
       "title": "鉅亨速報 - Factset 最新調查：台積電(2330-TW)目標價調升至3300元，幅度約3.13%",
       "url": "https://news.cnyes.com/news/id/6632423",
@@ -1456,9 +1412,9 @@
     },
     {
       "article_id": "6632503",
-      "title": "鉅亨速報 - Factset 最新調查：台積電ADRTSM-US的目標價調升至554.5元，幅度約3.64% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：台積電ADRTSM-US的目標價調升至554.5元，幅度約3.64%",
       "url": "https://news.cnyes.com/news/id/6632503",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-17 02:15:34",
       "published_ts": "2026-10-17T02:15:34+08:00",
       "ai_points": [
@@ -1633,6 +1589,46 @@
       "why": "",
       "importance": 7.8,
       "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6631864",
+      "title": "〈焦點股〉資安商機搭AI高成長趨勢 資服股一片叫好多檔漲停",
+      "url": "https://news.cnyes.com/news/id/6631864",
+      "category": "台股新聞",
+      "published": "2026-10-16 10:21:07",
+      "published_ts": "2026-10-16T10:21:07+08:00",
+      "ai_points": [
+        "黃仁勳點名資安是AI下一波應用，驊宏資、華經、智聯服務等資服股漲停",
+        "Gogolook Q3營收3.36億元年增25.7%，創單季新高",
+        "宏碁資訊9月營收15.3億元年增97%，Q3營收38.2億元年增74%"
+      ],
+      "summary": "黃仁勳點名資安是AI下一波應用，驊宏資、華經、智聯服務等資服股漲停；Gogolook Q3營收3.36億元年增25.7%，創單季新高；宏碁資訊9月營收15.3億元年增97%，Q3營收38.2億元年增74%",
+      "sentiment": "利多",
+      "sectors": [
+        "AI／伺服器"
+      ],
+      "stocks": [
+        "6148",
+        "2468",
+        "6751",
+        "6112",
+        "6689",
+        "6902",
+        "6811",
+        "6697"
+      ],
+      "highlights": [
+        "資安",
+        "驊宏資",
+        "Gogolook",
+        "3.36億元",
+        "宏碁資訊",
+        "97%"
+      ],
+      "why": "資安與企業AI落地帶動營收創高，資服股成為盤面亮點",
+      "importance": 7.7,
+      "ai_source": "claude",
       "source": "鉅亨網"
     },
     {
@@ -2438,6 +2434,47 @@
       "source": "鉅亨網"
     },
     {
+      "article_id": "6630220",
+      "title": "〈台股開盤〉台積法說行情失靈 金融、光學股接棒領漲 強彈逾500點站回4萬7",
+      "url": "https://news.cnyes.com/news/id/6630220",
+      "category": "台股新聞",
+      "published": "2026-10-16 10:18:19",
+      "published_ts": "2026-10-16T10:18:19+08:00",
+      "ai_points": [
+        "台股16日開高走高，盤中大漲逾530點，最高47,504.44點",
+        "台積電受ADR拖累走弱，聯發科漲逾3%，國巨、鴻海漲逾2%",
+        "油價走揚帶動台塑化逼近漲停，富邦金衝上163元創新高"
+      ],
+      "summary": "台股16日開高走高，盤中大漲逾530點，最高47,504.44點；台積電受ADR拖累走弱，聯發科漲逾3%，國巨、鴻海漲逾2%；油價走揚帶動台塑化逼近漲停，富邦金衝上163元創新高",
+      "sentiment": "利多",
+      "sectors": [
+        "金融",
+        "原物料／能源"
+      ],
+      "stocks": [
+        "2330",
+        "2454",
+        "2327",
+        "2317",
+        "6505",
+        "2881",
+        "2891",
+        "2885"
+      ],
+      "highlights": [
+        "530點",
+        "47,504.44點",
+        "聯發科",
+        "台塑化",
+        "富邦金",
+        "163元"
+      ],
+      "why": "大跌後資金輪動至金融、塑化與光學，台積電法說行情失靈",
+      "importance": 7.0,
+      "ai_source": "claude",
+      "source": "鉅亨網"
+    },
+    {
       "article_id": "6631858",
       "title": "00985A配2.15元 受益人衝破7.2萬暴增近6成 搶配息今天最後上車",
       "url": "https://news.cnyes.com/news/id/6631858",
@@ -3085,9 +3122,9 @@
     },
     {
       "article_id": "6632465",
-      "title": "鉅亨速報 - Factset 最新調查：AGNC投資AGNC-US的目標價調降至10元，幅度約4.76% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：AGNC投資AGNC-US的目標價調降至10元，幅度約4.76%",
       "url": "https://news.cnyes.com/news/id/6632465",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-17 00:15:29",
       "published_ts": "2026-10-17T00:15:29+08:00",
       "ai_points": [
@@ -3122,9 +3159,9 @@
     },
     {
       "article_id": "6632502",
-      "title": "鉅亨速報 - Factset 最新調查：荷蘭國際集團ING-US的目標價調升至39.75元，幅度約5.38% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：荷蘭國際集團ING-US的目標價調升至39.75元，幅度約5.38%",
       "url": "https://news.cnyes.com/news/id/6632502",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-17 02:15:29",
       "published_ts": "2026-10-17T02:15:29+08:00",
       "ai_points": [
@@ -6009,34 +6046,6 @@
       "source": "鉅亨網"
     },
     {
-      "article_id": "6631844",
-      "title": "〈分析〉不等國會！8州各自告OpenAI 兒童AI安全爭議轉向州級消保執法",
-      "url": "https://news.cnyes.com/news/id/6631844",
-      "category": "美股雷達",
-      "published": "2026-10-16 10:20:09",
-      "published_ts": "2026-10-16T10:20:09+08:00",
-      "ai_points": [
-        "8州14日提告OpenAI，指ChatGPT危害兒童與弱勢者，並誤導家長對產品安全的認知。",
-        "與過去主要由個別家庭提出的過失致死或人身傷害訴訟不同，這次8州分別依據各州消費者保護法等法規提告，將爭議從個案傷害責任擴大至產品安全設計、欺騙性行銷及企業合規責任。",
-        "背景與風險 《NBC新聞》報導，ChatGPT今年夏季全球每月活躍App使用者已超過10億，顯示這項產品的普及程度及其可能影響的使用者規模。"
-      ],
-      "summary": "8州14日提告OpenAI，指ChatGPT危害兒童與弱勢者，並誤導家長對產品安全的認知。；與過去主要由個別家庭提出的過失致死或人身傷害訴訟不同，這次8州分別依據各州消費者保護法等法規提告，將爭議從個案傷害責任擴大至產品安全設計、欺騙性行銷及企業合規責任。；背景與風險 《NBC新聞》報導，ChatGPT今年夏季全球每月活躍App使用者已超過10億，顯示這項產品的普及程度及其可能影響的使用者規模。",
-      "sentiment": "利空",
-      "sectors": [
-        "AI／伺服器",
-        "生技醫療"
-      ],
-      "stocks": [],
-      "highlights": [
-        "10億",
-        "風險"
-      ],
-      "why": "",
-      "importance": 5.3,
-      "ai_source": "rule",
-      "source": "鉅亨網"
-    },
-    {
       "article_id": "6632321",
       "title": "油價通膨難降？PIMCO：全球經濟6至12個月內維持韌性 但要注意3大風險",
       "url": "https://news.cnyes.com/news/id/6632321",
@@ -8170,9 +8179,9 @@
     },
     {
       "article_id": "6632488",
-      "title": "盤中速報 - 英特爾(INTC-US)大跌5.02%，報90.59美元 | 鉅亨網",
+      "title": "盤中速報 - 英特爾(INTC-US)大跌5.02%，報90.59美元",
       "url": "https://news.cnyes.com/news/id/6632488",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-17 01:31:18",
       "published_ts": "2026-10-17T01:31:18+08:00",
       "ai_points": [
@@ -8207,9 +8216,9 @@
     },
     {
       "article_id": "6632490",
-      "title": "盤中速報 - 安謀控股公司(ARM-US)大跌5.01%，報232.53美元 | 鉅亨網",
+      "title": "盤中速報 - 安謀控股公司(ARM-US)大跌5.01%，報232.53美元",
       "url": "https://news.cnyes.com/news/id/6632490",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-17 01:32:34",
       "published_ts": "2026-10-17T01:32:34+08:00",
       "ai_points": [
@@ -8244,9 +8253,9 @@
     },
     {
       "article_id": "6632491",
-      "title": "盤中速報 - 超微半導體(AMD-US)大跌5.01%，報534.07美元 | 鉅亨網",
+      "title": "盤中速報 - 超微半導體(AMD-US)大跌5.01%，報534.07美元",
       "url": "https://news.cnyes.com/news/id/6632491",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-17 01:35:26",
       "published_ts": "2026-10-17T01:35:26+08:00",
       "ai_points": [
@@ -8281,9 +8290,9 @@
     },
     {
       "article_id": "6632501",
-      "title": "盤中速報 - 交易台(TTD-US)大跌5.03%，報12.47美元 | 鉅亨網",
+      "title": "盤中速報 - 交易台(TTD-US)大跌5.03%，報12.47美元",
       "url": "https://news.cnyes.com/news/id/6632501",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-17 02:11:44",
       "published_ts": "2026-10-17T02:11:44+08:00",
       "ai_points": [
@@ -8318,9 +8327,9 @@
     },
     {
       "article_id": "6632516",
-      "title": "盤中速報 - 邁威爾科技(MRVL-US)大跌5.03%，報229.1美元 | 鉅亨網",
+      "title": "盤中速報 - 邁威爾科技(MRVL-US)大跌5.03%，報229.1美元",
       "url": "https://news.cnyes.com/news/id/6632516",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-17 03:03:33",
       "published_ts": "2026-10-17T03:03:33+08:00",
       "ai_points": [
@@ -8355,9 +8364,9 @@
     },
     {
       "article_id": "6632519",
-      "title": "盤中速報 - 甲骨文(ORCL-US)大跌5%，報127.75美元 | 鉅亨網",
+      "title": "盤中速報 - 甲骨文(ORCL-US)大跌5%，報127.75美元",
       "url": "https://news.cnyes.com/news/id/6632519",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-17 03:11:02",
       "published_ts": "2026-10-17T03:11:02+08:00",
       "ai_points": [
@@ -8392,9 +8401,9 @@
     },
     {
       "article_id": "6632520",
-      "title": "盤中速報 - 泰瑞達(TER-US)大跌5.01%，報326美元 | 鉅亨網",
+      "title": "盤中速報 - 泰瑞達(TER-US)大跌5.01%，報326美元",
       "url": "https://news.cnyes.com/news/id/6632520",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-17 03:18:54",
       "published_ts": "2026-10-17T03:18:54+08:00",
       "ai_points": [
@@ -8429,9 +8438,9 @@
     },
     {
       "article_id": "6632521",
-      "title": "盤中速報 - 美光科技(MU-US)大跌5%，報884.66美元 | 鉅亨網",
+      "title": "盤中速報 - 美光科技(MU-US)大跌5%，報884.66美元",
       "url": "https://news.cnyes.com/news/id/6632521",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-17 03:18:59",
       "published_ts": "2026-10-17T03:18:59+08:00",
       "ai_points": [
@@ -8466,9 +8475,9 @@
     },
     {
       "article_id": "6632524",
-      "title": "盤中速報 - 科林研發(LRCX-US)大跌5.01%，報263.55美元 | 鉅亨網",
+      "title": "盤中速報 - 科林研發(LRCX-US)大跌5.01%，報263.55美元",
       "url": "https://news.cnyes.com/news/id/6632524",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-17 03:21:56",
       "published_ts": "2026-10-17T03:21:56+08:00",
       "ai_points": [
@@ -8503,9 +8512,9 @@
     },
     {
       "article_id": "6632525",
-      "title": "盤中速報 - Applovin Corp - Class A(APP-US)大跌5.02%，報265.28美元 | 鉅亨網",
+      "title": "盤中速報 - Applovin Corp - Class A(APP-US)大跌5.02%，報265.28美元",
       "url": "https://news.cnyes.com/news/id/6632525",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-17 03:21:59",
       "published_ts": "2026-10-17T03:21:59+08:00",
       "ai_points": [
@@ -8540,9 +8549,9 @@
     },
     {
       "article_id": "6632526",
-      "title": "盤中速報 - 安可(AMKR-US)大跌5.02%，報41.84美元 | 鉅亨網",
+      "title": "盤中速報 - 安可(AMKR-US)大跌5.02%，報41.84美元",
       "url": "https://news.cnyes.com/news/id/6632526",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-17 03:22:40",
       "published_ts": "2026-10-17T03:22:40+08:00",
       "ai_points": [
@@ -8577,9 +8586,9 @@
     },
     {
       "article_id": "6632539",
-      "title": "盤中速報 - 科磊(KLAC-US)大跌5.04%，報165.67美元 | 鉅亨網",
+      "title": "盤中速報 - 科磊(KLAC-US)大跌5.04%，報165.67美元",
       "url": "https://news.cnyes.com/news/id/6632539",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-17 04:02:35",
       "published_ts": "2026-10-17T04:02:35+08:00",
       "ai_points": [
@@ -8614,9 +8623,9 @@
     },
     {
       "article_id": "6632540",
-      "title": "盤中速報 - 應用材料(AMAT-US)大跌5.1%，報408.08美元 | 鉅亨網",
+      "title": "盤中速報 - 應用材料(AMAT-US)大跌5.1%，報408.08美元",
       "url": "https://news.cnyes.com/news/id/6632540",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-17 04:10:01",
       "published_ts": "2026-10-17T04:10:01+08:00",
       "ai_points": [
@@ -8651,9 +8660,9 @@
     },
     {
       "article_id": "6632543",
-      "title": "盤中速報 - Onto Innovation Inc.(ONTO-US)大跌5.1%，報220.11美元 | 鉅亨網",
+      "title": "盤中速報 - Onto Innovation Inc.(ONTO-US)大跌5.1%，報220.11美元",
       "url": "https://news.cnyes.com/news/id/6632543",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-17 04:13:44",
       "published_ts": "2026-10-17T04:13:44+08:00",
       "ai_points": [
@@ -8683,6 +8692,34 @@
       ],
       "why": "",
       "importance": 4.4,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6631844",
+      "title": "〈分析〉不等國會！8州各自告OpenAI 兒童AI安全爭議轉向州級消保執法",
+      "url": "https://news.cnyes.com/news/id/6631844",
+      "category": "美股雷達",
+      "published": "2026-10-16 10:20:09",
+      "published_ts": "2026-10-16T10:20:09+08:00",
+      "ai_points": [
+        "8州14日提告OpenAI，指ChatGPT危害兒童與弱勢者，並誤導家長對產品安全的認知。",
+        "與過去主要由個別家庭提出的過失致死或人身傷害訴訟不同，這次8州分別依據各州消費者保護法等法規提告，將爭議從個案傷害責任擴大至產品安全設計、欺騙性行銷及企業合規責任。",
+        "背景與風險 《NBC新聞》報導，ChatGPT今年夏季全球每月活躍App使用者已超過10億，顯示這項產品的普及程度及其可能影響的使用者規模。"
+      ],
+      "summary": "8州14日提告OpenAI，指ChatGPT危害兒童與弱勢者，並誤導家長對產品安全的認知。；與過去主要由個別家庭提出的過失致死或人身傷害訴訟不同，這次8州分別依據各州消費者保護法等法規提告，將爭議從個案傷害責任擴大至產品安全設計、欺騙性行銷及企業合規責任。；背景與風險 《NBC新聞》報導，ChatGPT今年夏季全球每月活躍App使用者已超過10億，顯示這項產品的普及程度及其可能影響的使用者規模。",
+      "sentiment": "利空",
+      "sectors": [
+        "AI／伺服器",
+        "生技醫療"
+      ],
+      "stocks": [],
+      "highlights": [
+        "10億",
+        "風險"
+      ],
+      "why": "",
+      "importance": 4.3,
       "ai_source": "rule",
       "source": "鉅亨網"
     },
@@ -9218,9 +9255,9 @@
     },
     {
       "article_id": "6632522",
-      "title": "盤中速報 - 英特格(ENTG-US)大跌5.02%，報139.5美元 | 鉅亨網",
+      "title": "盤中速報 - 英特格(ENTG-US)大跌5.02%，報139.5美元",
       "url": "https://news.cnyes.com/news/id/6632522",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-17 03:19:18",
       "published_ts": "2026-10-17T03:19:18+08:00",
       "ai_points": [
