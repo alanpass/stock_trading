@@ -54,6 +54,16 @@ MAX_ABOVE_VWAP = 0.01         # 不追高：進場價最多高於當日 VWAP 1%
 MAX_UP_FROM_PREV = 0.04       # 不追高：比昨收已漲 4% 以上不進場
 MAX_UNIVERSE = 30             # 候選股最多 30 檔（依 20 日成交值排序）
 INDEX = "IX0001"              # 加權指數：大盤在自己的 VWAP 之上才做多
+
+# 交易模式（2026-10-18 回測結論，見 output/daytrade/strategy_research.md）：
+#   "meanrev"：09:30 時大盤前 30 分鐘跌 > 0.5%，買前 30 分鐘跌 > 4% 且低於 VWAP 1% 以上的股票（跌最深的最多 3 檔），
+#              停損 3%、不設停利、13:20 出場。71 個交易日回測約打平（零股每筆 +0.01%、整股 +0.16%），交易次數少。
+#   "orb"：開盤區間突破（回測零成本也虧，PF 0.58～0.65），只在 meanrev 模式下記錄訊號、不交易。
+STRATEGY = "meanrev"
+MR_TIME = "09:30"             # 用 09:25 以前收完的 5 分 K 判斷
+MR_M30, MR_VWAP, MR_INDEX = -0.04, -0.01, -0.005
+MR_STOP = 0.03
+MR_MAX = 3
 LIMIT_ENTRY_BUFFER = 0.03     # 距漲跌停 3% 內不進場
 LIMIT_EXIT_BUFFER = 0.015     # 持倉不利方向距漲跌停 1.5% 內立即沖銷
 MAX_GAP = 0.05                # 開盤跳空超過 ±5% 當天不做
@@ -154,11 +164,12 @@ def build_plan(client: FugleClient, symbols: list[str]) -> dict:
             reasons.append(f"波動太小（14 日 ATR {atr_pct * 100:.1f}%，需 ≥ {MIN_ATR_PCT:.0f}%）")
         if turnover < MIN_TURNOVER:
             reasons.append(f"成交值不足（20 日均 {turnover / 1e8:.1f} 億）")
+        mr_eligible = not reasons and el["can_long"]          # 跌深反彈不看日線方向，只看交易資格與流動性
         if not reasons and not (allow_long or allow_short):
             reasons.append(f"日線{trend.get('state') or ''}／{cls or '型態'}偏空，零股只能做多")
         tradable = not reasons and (allow_long or allow_short)
         rows.append({
-            "symbol": s, "name": el["name"], "tradable": tradable, "reasons": reasons,
+            "symbol": s, "name": el["name"], "tradable": tradable, "mr_eligible": mr_eligible, "reasons": reasons,
             "allow_long": allow_long and tradable, "allow_short": allow_short and tradable,
             "short_below_flat": el["short_below_flat"],
             "prev_close": el["prev_close"] or close, "limit_up": el["limit_up"], "limit_down": el["limit_down"],
@@ -167,9 +178,9 @@ def build_plan(client: FugleClient, symbols: list[str]) -> dict:
             "themes": list(pat.get("themes") or []),
         })
     # 候選股太多時，只保留 20 日成交值最大的 MAX_UNIVERSE 檔（流動性好、零股也比較容易成交）
-    ok = sorted([r for r in rows if r.get("tradable")], key=lambda r: -r.get("turnover_e", 0))
+    ok = sorted([r for r in rows if r.get("tradable") or r.get("mr_eligible")], key=lambda r: -r.get("turnover_e", 0))
     for r in ok[MAX_UNIVERSE:]:
-        r["tradable"], r["allow_long"], r["allow_short"] = False, False, False
+        r["tradable"], r["mr_eligible"], r["allow_long"], r["allow_short"] = False, False, False, False
         r["reasons"] = [f"成交值排名在前 {MAX_UNIVERSE} 名之外"]
     return {"date": date.today().isoformat(), "generated_at": now_tpe().isoformat(timespec="seconds"),
             "capital": CAPITAL, "stocks": rows}
@@ -187,6 +198,7 @@ class Position:
     opened_at: str
     peak: float = 0.0
     themes: tuple = ()
+    trail: bool = True
     exit: float | None = None
     closed_at: str | None = None
     exit_reason: str = ""
@@ -207,6 +219,7 @@ class Engine:
     dailies: dict = field(default_factory=dict)
     market_ok: bool = True
     market_note: str = ""
+    idx_m30: float = 0.0
     overrides: dict = field(default_factory=dict)   # Claude 盯盤時寫入：pause_entries／block／close_now／note
 
     def set_market(self, index_bars: pd.DataFrame) -> None:
@@ -218,6 +231,7 @@ class Engine:
         last = float(index_bars["close"].iloc[-1])
         prev = float(index_bars["open"].iloc[0])
         self.market_ok = last >= v
+        self.idx_m30 = last / prev - 1
         self.market_note = f"加權 {last:,.0f}（VWAP {v:,.0f}，較開盤 {last / prev - 1:+.2%}）{'偏多' if self.market_ok else '轉弱，暫停做多'}"
 
     def log(self, t: str, symbol: str, kind: str, msg: str, **extra):
@@ -250,7 +264,7 @@ class Engine:
 
     def _info(self, s: str) -> dict | None:
         info = next((r for r in self.plan["stocks"] if r["symbol"] == s), None)
-        return info if info and info.get("tradable") else None
+        return info if info and (info.get("tradable") or info.get("mr_eligible")) else None
 
     def manage(self, s: str, t: str, last: float, locked: str = "", low: float | None = None, high: float | None = None):
         """持倉管理（快層）：盤中每收到一筆成交就呼叫。重播時 low/high 為 1 分 K 的高低點。
@@ -264,7 +278,7 @@ class Engine:
         for p in [p for p in self.open_positions() if p.symbol == s]:
             # 移動停損：賺到 +2.5% 後停損移到成本，之後跟著最高點回落 2%
             p.peak = max(p.peak or p.entry, hi) if p.side > 0 else min(p.peak or p.entry, lo)
-            if p.side > 0 and p.peak >= p.entry * (1 + BREAKEVEN_AT):
+            if p.trail and p.side > 0 and p.peak >= p.entry * (1 + BREAKEVEN_AT):
                 be = to_tick(p.entry * (1 + 2 * FEE + TAX), up=True)
                 p.stop = max(p.stop, be, to_tick(p.peak * (1 - TRAIL_PCT), up=False))
             if s in (self.overrides.get("close_now") or []):
@@ -295,7 +309,7 @@ class Engine:
     def try_entry(self, s: str, t: str, bars: pd.DataFrame, last: float, vwap: float):
         """進場判斷（慢層）：每根 5 分 K 收完後呼叫。bars：今天已收完的 5 分 K（含 time 欄 HH:MM）。"""
         info = self._info(s)
-        if not info or bars.empty:
+        if not info or not info.get("tradable") or bars.empty:
             return
         lu, ld, pc = info["limit_up"], info["limit_down"], info["prev_close"]
 
@@ -368,6 +382,11 @@ class Engine:
             self.log(t, s, "不進場", "平盤下不可放空")
             return
 
+        if STRATEGY != "orb":
+            self.log(t, s, "觀察", f"ORB 突破訊號 {last}（回測顯示會虧，只記錄不交易）")
+            self.skipped[s] = "ORB 只記錄"
+            return
+
         tk = tick_size(last)
         entry = last + ODD_LOT_SLIPPAGE_TICKS * tk if side > 0 else last - ODD_LOT_SLIPPAGE_TICKS * tk  # 零股多付 2 個 tick
         stop = to_tick(entry * (1 - side * STOP_PCT), up=side < 0)   # 固定 −2.5%，對齊升降單位
@@ -398,6 +417,59 @@ class Engine:
                  f"（區間 {orl}～{orh}、VWAP {vwap:.2f}{'、' + model_note if model_note else ''}；{self.market_note}）",
                  side=side, shares=shares, price=p.entry)
 
+    def meanrev_entries(self, t: str, snaps: list) -> None:
+        """跌深反彈：snaps＝[(代號, 已收完的 5 分 K, 最新價, VWAP)]，09:30 呼叫一次。"""
+        if self.overrides.get("pause_entries"):
+            self.log(t, "全部", "不進場", f"Claude 盯盤暫停進場（{self.overrides.get('note', '')}）")
+            return
+        if self.idx_m30 >= MR_INDEX:
+            self.log(t, "大盤", "略過", f"大盤前 30 分鐘 {self.idx_m30:+.2%}，未跌超過 {abs(MR_INDEX):.1%}，今天不做跌深反彈")
+            return
+        cands = []
+        for sym, bars, last, vwap in snaps:
+            info = self._info(sym)
+            if not info or not info.get("mr_eligible") or bars.empty or sym in (self.overrides.get("block") or []):
+                continue
+            o = float(bars["open"].iloc[0])
+            m30, vs = last / o - 1, last / vwap - 1
+            if m30 < MR_M30 and vs < MR_VWAP:
+                cands.append((m30, sym, last, vs, info))
+        if not cands:
+            self.log(t, "全部", "略過", f"大盤前 30 分鐘 {self.idx_m30:+.2%}，但沒有股票符合「跌 >4% 且低於 VWAP 1%」")
+            return
+        cands.sort()
+        held: set = set()
+        for m30, sym, last, vs, info in cands:
+            if len(self.open_positions()) >= MR_MAX:
+                break
+            themes = tuple(info.get("themes") or ())
+            if set(themes) & held:
+                self.log(t, sym, "不進場", f"同族群已有持倉（{'、'.join(themes)}）")
+                continue
+            ld = info["limit_down"]
+            if ld and last <= ld * (1 + LIMIT_ENTRY_BUFFER):
+                self.log(t, sym, "不進場", f"距跌停 {ld} 不到 3%，避免被跌停鎖住")
+                continue
+            tk = tick_size(last)
+            entry = last + ODD_LOT_SLIPPAGE_TICKS * tk
+            stop = to_tick(entry * (1 - MR_STOP), up=False)
+            if ld and stop <= ld * (1 + LIMIT_EXIT_BUFFER):
+                stop = to_tick(ld * (1 + LIMIT_EXIT_BUFFER) + tk, up=True)
+            risk = (entry - stop) + ODD_LOT_SLIPPAGE_TICKS * tick_size(stop) + entry * (2 * FEE + TAX)
+            shares = int(CAPITAL * RISK_PER_TRADE // risk)
+            notional = sum(p.entry * p.shares for p in self.open_positions())
+            shares = min(shares, int((CAPITAL - notional) // entry))
+            if shares < 1:
+                self.log(t, sym, "不進場", "資金或單筆風險上限不足")
+                continue
+            target = to_tick(info["limit_up"] * (1 - LIMIT_EXIT_BUFFER), up=False) if info["limit_up"] else entry * 1.1
+            p = Position(sym, 1, shares, round(entry, 2), stop, target, t, themes=themes, trail=False)
+            self.positions.append(p)
+            self.traded.add(sym)
+            held |= set(themes)
+            self.log(t, sym, "進場", f"跌深反彈 做多 {shares:,} 股 @ {p.entry}，停損 {p.stop}，13:20 出場"
+                     f"（前 30 分 {m30:+.1%}、低於 VWAP {vs:+.1%}；{self.market_note}）", side=1, shares=shares, price=p.entry)
+
     def summary(self) -> dict:
         closed = [p for p in self.positions if p.exit is not None]
         wins = [p for p in closed if p.pnl > 0]
@@ -418,7 +490,7 @@ class Engine:
 
 def _prepare(engine: Engine, client: FugleClient):
     for r in engine.plan["stocks"]:
-        if not r.get("tradable"):
+        if not (r.get("tradable") or r.get("mr_eligible")):
             continue
         s = r["symbol"]
         engine.models[s] = em.load_latest_saved_model(s)
@@ -453,7 +525,7 @@ def replay(day: str | None = None, fast: bool = True) -> dict:
     d = date.fromisoformat(day)
     k5, k1 = {}, {}
     for r in plan["stocks"]:
-        if r.get("tradable"):
+        if r.get("tradable") or r.get("mr_eligible"):
             k5[r["symbol"]] = _bars_today(client.historical_candles(r["symbol"], d, d, "5"))
             if fast:
                 k1[r["symbol"]] = _bars_today(client.historical_candles(r["symbol"], d, d, "1"))
@@ -467,13 +539,19 @@ def replay(day: str | None = None, fast: bool = True) -> dict:
                 if not bar.empty:
                     b = bar.iloc[-1]
                     engine.manage(s, end, float(b["close"]), low=float(b["low"]), high=float(b["high"]))
-            if end[-1] in "05" and ((datetime.strptime(end, "%H:%M").minute % 5) == 0):
-                engine.set_market(idx[idx["time"] < end])
+        if datetime.strptime(end, "%H:%M").minute % 5 == 0:
+            engine.set_market(idx[idx["time"] < end])
+            snaps = []
+            for s in k5:
                 done = k5[s][k5[s]["time"] < end]
-                if not done.empty:
-                    if not fast:
-                        engine.manage(s, end, float(done["close"].iloc[-1]))
-                    engine.try_entry(s, end, done, float(done["close"].iloc[-1]), _vwap(done))
+                if done.empty:
+                    continue
+                if not fast:
+                    engine.manage(s, end, float(done["close"].iloc[-1]))
+                engine.try_entry(s, end, done, float(done["close"].iloc[-1]), _vwap(done))
+                snaps.append((s, done, float(done["close"].iloc[-1]), _vwap(done)))
+            if STRATEGY == "meanrev" and end == MR_TIME:
+                engine.meanrev_entries(end, snaps)
     for p in engine.open_positions():
         engine._close(p, float(k5[p.symbol]["close"].iloc[-1]), "13:30", "收盤強制出場")
     engine.save()
@@ -554,7 +632,7 @@ def live() -> dict:
     engine = Engine(build_plan(client, _universe()), now.date().isoformat())
     _prepare(engine, client)
     engine.save()
-    tradable = [r for r in engine.plan["stocks"] if r.get("tradable")]
+    tradable = [r for r in engine.plan["stocks"] if r.get("tradable") or r.get("mr_eligible")]
     print(json.dumps([{k: r.get(k) for k in ("symbol", "name", "allow_long", "allow_short")} for r in tradable],
                      ensure_ascii=False))
     lock = threading.Lock()
@@ -619,6 +697,7 @@ def live() -> dict:
                 engine.set_market(idx[idx["time"] < bar_key])
             except Exception as exc:
                 engine.market_ok, engine.market_note = True, f"大盤資料失敗（{type(exc).__name__}），不過濾"
+            snaps = []
             for r in tradable:
                 s = r["symbol"]
                 try:
@@ -626,10 +705,15 @@ def live() -> dict:
                     done = bars[bars["time"] < bar_key]
                     q = client.quote(s)
                     last = float((stream.last.get(s) or {}).get("price") or q.get("lastPrice") or done["close"].iloc[-1])
+                    vwap = float(q.get("avgPrice") or _vwap(done))
                     with lock:
-                        engine.try_entry(s, t, done, last, float(q.get("avgPrice") or _vwap(done)))
+                        engine.try_entry(s, t, done, last, vwap)
+                    snaps.append((s, done, last, vwap))
                 except Exception as exc:
                     engine.log(t, s, "錯誤", f"{type(exc).__name__}: {exc}")
+            if STRATEGY == "meanrev" and bar_key == MR_TIME:
+                with lock:
+                    engine.meanrev_entries(t, snaps)
             engine.save()
         time.sleep(1 if stream.connected else 15)
     with lock:
