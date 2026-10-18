@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-10-18",
-  "updated_at": "2026-10-18T13:30:03+08:00",
-  "finished_at": "2026-10-18T13:30:09+08:00",
-  "published_at": "2026-10-18T13:30:09+08:00",
+  "updated_at": "2026-10-18T16:00:03+08:00",
+  "finished_at": "2026-10-18T16:00:09+08:00",
+  "published_at": "2026-10-18T16:00:10+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -15,16 +15,16 @@
     "23:00"
   ],
   "stale": false,
-  "news_count": 109,
+  "news_count": 111,
   "earnings_count": 10,
   "news_digest": {
-    "generated_at": "2026-10-18T13:30:03+08:00",
-    "headline": "最近 2 天共整理 109 則財經新聞：利多 22、利空 39、中性 24、混合 24；討論度最高的產業：AI／伺服器、半導體、國際股市。",
+    "generated_at": "2026-10-18T16:00:03+08:00",
+    "headline": "最近 2 天共整理 111 則財經新聞：利多 22、利空 39、中性 26、混合 24；討論度最高的產業：AI／伺服器、半導體、國際股市。",
     "stats": {
-      "total": 109,
+      "total": 111,
       "利多": 22,
       "利空": 39,
-      "中性": 24,
+      "中性": 26,
       "混合": 24
     },
     "key_points": [
@@ -52,30 +52,6 @@
           "10月升息",
           "47%",
           "12月升息"
-        ]
-      },
-      {
-        "title": "華爾街老將示警：美股早已「內部崩盤」！看好Nike、白銀布局機會",
-        "point": "Larry McDonald稱標普創高但市場內部已崩盤，Lennar跌45%、哈雷跌30%至40%",
-        "sentiment": "利空",
-        "url": "https://news.cnyes.com/news/id/6632555",
-        "highlights": [
-          "內部已崩盤",
-          "CoreWeave",
-          "可轉債",
-          "白銀"
-        ]
-      },
-      {
-        "title": "輝達RTX Spark筆電開賣！大模型暴瘦85% 740億參數塞進22.1GB",
-        "point": "輝達開放Nemotron 3.5 Bolt權重，740億參數從約148GB壓到22.1GB",
-        "sentiment": "中性",
-        "url": "https://news.cnyes.com/news/id/6632633",
-        "highlights": [
-          "Nemotron 3.5 Bolt",
-          "22.1GB",
-          "RTX Spark",
-          "84token/s"
         ]
       },
       {
@@ -117,6 +93,18 @@
         ]
       },
       {
+        "title": "華爾街老將示警：美股早已「內部崩盤」！看好Nike、白銀布局機會",
+        "point": "Larry McDonald稱標普創高但市場內部已崩盤，Lennar跌45%、哈雷跌30%至40%",
+        "sentiment": "利空",
+        "url": "https://news.cnyes.com/news/id/6632555",
+        "highlights": [
+          "內部已崩盤",
+          "CoreWeave",
+          "可轉債",
+          "白銀"
+        ]
+      },
+      {
         "title": "AI陷入「疲勞交易」！投資人厭倦反覆爭論科技承諾 分析師：市場需要營收證明",
         "point": "費半周五連續第八個交易日收黑，創18年來最長連跌紀錄",
         "sentiment": "利空",
@@ -126,6 +114,19 @@
           "18年來最長連跌",
           "AI疲勞交易",
           "10兆美元"
+        ]
+      },
+      {
+        "title": "〈貴金屬盤後〉評估Fed升息訊號 金價周線收黑",
+        "point": "黃金現貨報每盎司4,165.12美元，本週下跌0.7%，市場評估Fed升息可能性",
+        "sentiment": "利空",
+        "url": "https://news.cnyes.com/news/id/6632039",
+        "highlights": [
+          "4,165.12美元",
+          "0.7%",
+          "PPI",
+          "12月升息",
+          "凱投宏觀"
         ]
       }
     ],
@@ -177,16 +178,6 @@
         "url": "https://news.cnyes.com/news/id/6631672"
       },
       {
-        "theme": "華爾街老將示警：美股早已「內部崩盤」！看好Nike、白銀布局機會",
-        "reason": "指數與個股背離加劇，AI融資風險受關注",
-        "sectors": [
-          "國際股市",
-          "總體經濟",
-          "原物料／能源"
-        ],
-        "url": "https://news.cnyes.com/news/id/6632555"
-      },
-      {
         "theme": "AI股最好時光已過 巴克萊示警不再只漲不跌、選股看四條件",
         "reason": "大型投行轉向謹慎，AI題材進入檢視估值階段",
         "sectors": [
@@ -204,6 +195,16 @@
           "原物料／能源"
         ],
         "url": "https://news.cnyes.com/news/id/6632513"
+      },
+      {
+        "theme": "華爾街老將示警：美股早已「內部崩盤」！看好Nike、白銀布局機會",
+        "reason": "指數與個股背離加劇，AI融資風險受關注",
+        "sectors": [
+          "國際股市",
+          "總體經濟",
+          "原物料／能源"
+        ],
+        "url": "https://news.cnyes.com/news/id/6632555"
       }
     ],
     "sector_heat": [
@@ -216,21 +217,21 @@
       },
       {
         "sector": "半導體",
-        "count": 42,
+        "count": 44,
         "利多": 4,
         "利空": 25,
         "tone": "偏空"
       },
       {
         "sector": "國際股市",
-        "count": 24,
+        "count": 25,
         "利多": 1,
         "利空": 18,
         "tone": "偏空"
       },
       {
         "sector": "總體經濟",
-        "count": 17,
+        "count": 18,
         "利多": 0,
         "利空": 6,
         "tone": "偏空"
@@ -265,14 +266,14 @@
       },
       {
         "sector": "電動車／車用",
-        "count": 7,
+        "count": 8,
         "利多": 0,
         "利空": 0,
         "tone": "中性"
       },
       {
         "sector": "綠能／重電",
-        "count": 6,
+        "count": 7,
         "利多": 3,
         "利空": 1,
         "tone": "偏多"
@@ -309,7 +310,7 @@
     "agent_generated_at": "2026-10-18T11:54:47+08:00"
   },
   "earnings_digest": {
-    "generated_at": "2026-10-18T13:30:03+08:00",
+    "generated_at": "2026-10-18T16:00:03+08:00",
     "days": 5,
     "total": 10,
     "利多": 3,
@@ -540,24 +541,24 @@
   },
   "crawl": {
     "ok": true,
-    "article_count": 109,
+    "article_count": 111,
     "per_category_count": {
-      "headline": 73,
+      "headline": 74,
       "tw_stock": 27,
-      "wd_stock": 80,
+      "wd_stock": 82,
       "forex": 1,
       "future": 19
     },
     "source_method": "api",
     "reused_from_previous_run": 19,
     "window_start": "2026-10-17T00:00:00+08:00",
-    "window_end": "2026-10-18T13:30:08.999758+08:00"
+    "window_end": "2026-10-18T16:00:09.304502+08:00"
   },
   "agent_stats": {
-    "input": 109,
-    "after_dedupe": 109,
+    "input": 111,
+    "after_dedupe": 111,
     "ai_cached": 79,
-    "seconds": 0.2,
+    "seconds": 0.3,
     "earnings": {
       "total": 10,
       "ai_cached": 0,
@@ -633,67 +634,6 @@
       ],
       "why": "升息預期升溫是本週科技股賣壓的核心背景",
       "importance": 8.6,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6632555",
-      "title": "華爾街老將示警：美股早已「內部崩盤」！看好Nike、白銀布局機會",
-      "url": "https://news.cnyes.com/news/id/6632555",
-      "category": "美股雷達",
-      "published": "2026-10-17 14:00:07",
-      "published_ts": "2026-10-17T14:00:07+08:00",
-      "ai_points": [
-        "Larry McDonald稱標普創高但市場內部已崩盤，Lennar跌45%、哈雷跌30%至40%",
-        "點名CoreWeave反覆發行可轉債是警訊，類比1999與2021年",
-        "看好白銀，今年白銀跌18%、黃金跌3%，預期Fed轉向寬鬆"
-      ],
-      "summary": "Larry McDonald稱標普創高但市場內部已崩盤，Lennar跌45%、哈雷跌30%至40%；點名CoreWeave反覆發行可轉債是警訊，類比1999與2021年；看好白銀，今年白銀跌18%、黃金跌3%，預期Fed轉向寬鬆",
-      "sentiment": "利空",
-      "sectors": [
-        "國際股市",
-        "總體經濟",
-        "原物料／能源"
-      ],
-      "stocks": [],
-      "highlights": [
-        "內部已崩盤",
-        "CoreWeave",
-        "可轉債",
-        "白銀"
-      ],
-      "why": "指數與個股背離加劇，AI融資風險受關注",
-      "importance": 8.5,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6632633",
-      "title": "輝達RTX Spark筆電開賣！大模型暴瘦85% 740億參數塞進22.1GB",
-      "url": "https://news.cnyes.com/news/id/6632633",
-      "category": "美股雷達",
-      "published": "2026-10-17 13:40:03",
-      "published_ts": "2026-10-17T13:40:03+08:00",
-      "ai_points": [
-        "輝達開放Nemotron 3.5 Bolt權重，740億參數從約148GB壓到22.1GB",
-        "搭載RTX Spark的筆電10月16日全球發售，聯想、微軟新機登場",
-        "128GB版Surface Laptop Ultra跑Bolt約84token/s"
-      ],
-      "summary": "輝達開放Nemotron 3.5 Bolt權重，740億參數從約148GB壓到22.1GB；搭載RTX Spark的筆電10月16日全球發售，聯想、微軟新機登場；128GB版Surface Laptop Ultra跑Bolt約84token/s",
-      "sentiment": "中性",
-      "sectors": [
-        "AI／伺服器",
-        "半導體"
-      ],
-      "stocks": [],
-      "highlights": [
-        "Nemotron 3.5 Bolt",
-        "22.1GB",
-        "RTX Spark",
-        "84token/s"
-      ],
-      "why": "AI推理走向本機端，帶動AI PC硬體需求話題",
-      "importance": 7.9,
       "ai_source": "claude",
       "source": "鉅亨網"
     },
@@ -794,6 +734,37 @@
       "source": "鉅亨網"
     },
     {
+      "article_id": "6632555",
+      "title": "華爾街老將示警：美股早已「內部崩盤」！看好Nike、白銀布局機會",
+      "url": "https://news.cnyes.com/news/id/6632555",
+      "category": "美股雷達",
+      "published": "2026-10-17 14:00:07",
+      "published_ts": "2026-10-17T14:00:07+08:00",
+      "ai_points": [
+        "Larry McDonald稱標普創高但市場內部已崩盤，Lennar跌45%、哈雷跌30%至40%",
+        "點名CoreWeave反覆發行可轉債是警訊，類比1999與2021年",
+        "看好白銀，今年白銀跌18%、黃金跌3%，預期Fed轉向寬鬆"
+      ],
+      "summary": "Larry McDonald稱標普創高但市場內部已崩盤，Lennar跌45%、哈雷跌30%至40%；點名CoreWeave反覆發行可轉債是警訊，類比1999與2021年；看好白銀，今年白銀跌18%、黃金跌3%，預期Fed轉向寬鬆",
+      "sentiment": "利空",
+      "sectors": [
+        "國際股市",
+        "總體經濟",
+        "原物料／能源"
+      ],
+      "stocks": [],
+      "highlights": [
+        "內部已崩盤",
+        "CoreWeave",
+        "可轉債",
+        "白銀"
+      ],
+      "why": "指數與個股背離加劇，AI融資風險受關注",
+      "importance": 7.5,
+      "ai_source": "claude",
+      "source": "鉅亨網"
+    },
+    {
       "article_id": "6632553",
       "title": "AI陷入「疲勞交易」！投資人厭倦反覆爭論科技承諾 分析師：市場需要營收證明",
       "url": "https://news.cnyes.com/news/id/6632553",
@@ -819,37 +790,6 @@
         "10兆美元"
       ],
       "why": "市場評價AI股的標準從投資規模轉向營收證明",
-      "importance": 7.5,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6631936",
-      "title": "川普力挺AI仍有變數！為何「德州州長選戰」被點名是資料中心發展關鍵？",
-      "url": "https://news.cnyes.com/news/id/6631936",
-      "category": "美股雷達",
-      "published": "2026-10-18 08:00:03",
-      "published_ts": "2026-10-18T08:00:03+08:00",
-      "ai_points": [
-        "Evercore稱德州州長選舉是AI與資料中心政策最大風險，Abbott對決Hinojosa",
-        "Kalshi顯示Hinojosa勝選機率約25%，若意外勝選，資料中心建設禁令可能無限期延長",
-        "德州資料中心數量居全美第二，AIQ ETF今年漲25%、標普500漲13%"
-      ],
-      "summary": "Evercore稱德州州長選舉是AI與資料中心政策最大風險，Abbott對決Hinojosa；Kalshi顯示Hinojosa勝選機率約25%，若意外勝選，資料中心建設禁令可能無限期延長；德州資料中心數量居全美第二，AIQ ETF今年漲25%、標普500漲13%",
-      "sentiment": "混合",
-      "sectors": [
-        "AI／伺服器",
-        "地緣／政策"
-      ],
-      "stocks": [],
-      "highlights": [
-        "德州州長選舉",
-        "Hinojosa",
-        "約25%",
-        "建設禁令",
-        "全美第二"
-      ],
-      "why": "州層級政策可能左右美國資料中心建設進度",
       "importance": 7.5,
       "ai_source": "claude",
       "source": "鉅亨網"
@@ -1052,6 +992,36 @@
       "why": "",
       "importance": 7.0,
       "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6632633",
+      "title": "輝達RTX Spark筆電開賣！大模型暴瘦85% 740億參數塞進22.1GB",
+      "url": "https://news.cnyes.com/news/id/6632633",
+      "category": "美股雷達",
+      "published": "2026-10-17 13:40:03",
+      "published_ts": "2026-10-17T13:40:03+08:00",
+      "ai_points": [
+        "輝達開放Nemotron 3.5 Bolt權重，740億參數從約148GB壓到22.1GB",
+        "搭載RTX Spark的筆電10月16日全球發售，聯想、微軟新機登場",
+        "128GB版Surface Laptop Ultra跑Bolt約84token/s"
+      ],
+      "summary": "輝達開放Nemotron 3.5 Bolt權重，740億參數從約148GB壓到22.1GB；搭載RTX Spark的筆電10月16日全球發售，聯想、微軟新機登場；128GB版Surface Laptop Ultra跑Bolt約84token/s",
+      "sentiment": "中性",
+      "sectors": [
+        "AI／伺服器",
+        "半導體"
+      ],
+      "stocks": [],
+      "highlights": [
+        "Nemotron 3.5 Bolt",
+        "22.1GB",
+        "RTX Spark",
+        "84token/s"
+      ],
+      "why": "AI推理走向本機端，帶動AI PC硬體需求話題",
+      "importance": 6.9,
+      "ai_source": "claude",
       "source": "鉅亨網"
     },
     {
@@ -1283,33 +1253,33 @@
       "source": "鉅亨網"
     },
     {
-      "article_id": "6632625",
-      "title": "AI賣壓燒向債市！美債殖利率急跌 華爾街緊盯科技巨頭財報",
-      "url": "https://news.cnyes.com/news/id/6632625",
+      "article_id": "6631936",
+      "title": "川普力挺AI仍有變數！為何「德州州長選戰」被點名是資料中心發展關鍵？",
+      "url": "https://news.cnyes.com/news/id/6631936",
       "category": "美股雷達",
-      "published": "2026-10-17 14:30:03",
-      "published_ts": "2026-10-17T14:30:03+08:00",
+      "published": "2026-10-18 08:00:03",
+      "published_ts": "2026-10-18T08:00:03+08:00",
       "ai_points": [
-        "美債殖利率由5.33%一度降至5.055%，本週漲勢為2月以來最大",
-        "費半連8跌、創2008年來最長連跌，那指本週跌2.4%",
-        "CoreWeave自10月初高點暴跌近30%，高收益債利差擴大"
+        "Evercore稱德州州長選舉是AI與資料中心政策最大風險，Abbott對決Hinojosa",
+        "Kalshi顯示Hinojosa勝選機率約25%，若意外勝選，資料中心建設禁令可能無限期延長",
+        "德州資料中心數量居全美第二，AIQ ETF今年漲25%、標普500漲13%"
       ],
-      "summary": "美債殖利率由5.33%一度降至5.055%，本週漲勢為2月以來最大；費半連8跌、創2008年來最長連跌，那指本週跌2.4%；CoreWeave自10月初高點暴跌近30%，高收益債利差擴大",
-      "sentiment": "利空",
+      "summary": "Evercore稱德州州長選舉是AI與資料中心政策最大風險，Abbott對決Hinojosa；Kalshi顯示Hinojosa勝選機率約25%，若意外勝選，資料中心建設禁令可能無限期延長；德州資料中心數量居全美第二，AIQ ETF今年漲25%、標普500漲13%",
+      "sentiment": "混合",
       "sectors": [
         "AI／伺服器",
-        "半導體",
-        "總體經濟"
+        "地緣／政策"
       ],
       "stocks": [],
       "highlights": [
-        "5.055%",
-        "連8跌",
-        "CoreWeave",
-        "高收益債"
+        "德州州長選舉",
+        "Hinojosa",
+        "約25%",
+        "建設禁令",
+        "全美第二"
       ],
-      "why": "債市開始跟隨AI交易，顯示避險情緒升溫",
-      "importance": 6.4,
+      "why": "州層級政策可能左右美國資料中心建設進度",
+      "importance": 6.5,
       "ai_source": "claude",
       "source": "鉅亨網"
     },
@@ -1770,38 +1740,6 @@
       "source": "鉅亨網"
     },
     {
-      "article_id": "6632471",
-      "title": "雜音淡化回歸基本面 法人看台股：鎖定AI核心供應鏈 搭配金融多元配置",
-      "url": "https://news.cnyes.com/news/id/6632471",
-      "category": "台股新聞",
-      "published": "2026-10-18 08:50:02",
-      "published_ts": "2026-10-18T08:50:02+08:00",
-      "ai_points": [
-        "安聯投信指台灣上市櫃企業2025年獲利創新高，各機構持續上修今、明兩年獲利預估",
-        "建議以AI核心供應鏈為主力：IP／ASIC、先進製程與封測、PCB／CCL、光通訊",
-        "提醒成長股評價已提升，產業分化可能加劇，搭配金融控股做多元配置"
-      ],
-      "summary": "安聯投信指台灣上市櫃企業2025年獲利創新高，各機構持續上修今、明兩年獲利預估；建議以AI核心供應鏈為主力：IP／ASIC、先進製程與封測、PCB／CCL、光通訊；提醒成長股評價已提升，產業分化可能加劇，搭配金融控股做多元配置",
-      "sentiment": "利多",
-      "sectors": [
-        "AI／伺服器",
-        "PCB／載板",
-        "金融"
-      ],
-      "stocks": [],
-      "highlights": [
-        "獲利創新高",
-        "上修",
-        "AI核心供應鏈",
-        "PCB／CCL",
-        "金融控股"
-      ],
-      "why": "投信觀點認為台股獲利基本面仍在上修",
-      "importance": 5.7,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
       "article_id": "6632570",
       "title": "AI資本開支藏「租賃帳單」！大摩估2027年投資規模達1.58兆美元",
       "url": "https://news.cnyes.com/news/id/6632570",
@@ -2004,6 +1942,37 @@
       "source": "鉅亨網"
     },
     {
+      "article_id": "6632625",
+      "title": "AI賣壓燒向債市！美債殖利率急跌 華爾街緊盯科技巨頭財報",
+      "url": "https://news.cnyes.com/news/id/6632625",
+      "category": "美股雷達",
+      "published": "2026-10-17 14:30:03",
+      "published_ts": "2026-10-17T14:30:03+08:00",
+      "ai_points": [
+        "美債殖利率由5.33%一度降至5.055%，本週漲勢為2月以來最大",
+        "費半連8跌、創2008年來最長連跌，那指本週跌2.4%",
+        "CoreWeave自10月初高點暴跌近30%，高收益債利差擴大"
+      ],
+      "summary": "美債殖利率由5.33%一度降至5.055%，本週漲勢為2月以來最大；費半連8跌、創2008年來最長連跌，那指本週跌2.4%；CoreWeave自10月初高點暴跌近30%，高收益債利差擴大",
+      "sentiment": "利空",
+      "sectors": [
+        "AI／伺服器",
+        "半導體",
+        "總體經濟"
+      ],
+      "stocks": [],
+      "highlights": [
+        "5.055%",
+        "連8跌",
+        "CoreWeave",
+        "高收益債"
+      ],
+      "why": "債市開始跟隨AI交易，顯示避險情緒升溫",
+      "importance": 5.4,
+      "ai_source": "claude",
+      "source": "鉅亨網"
+    },
+    {
       "article_id": "6632739",
       "title": "〈友達運動會〉彭双浪：集團朝「類控股」架構轉型 培養小老虎盼成大老虎",
       "url": "https://news.cnyes.com/news/id/6632739",
@@ -2160,74 +2129,6 @@
       ],
       "why": "大立光跨入CPO相關光通訊元件的進度",
       "importance": 5.2,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6632468",
-      "title": "華碩、技嘉、微星強攻OCP峰會 機櫃級液冷與代理式AI成核心技術趨勢",
-      "url": "https://news.cnyes.com/news/id/6632468",
-      "category": "台股新聞",
-      "published": "2026-10-18 09:20:02",
-      "published_ts": "2026-10-18T09:20:02+08:00",
-      "ai_points": [
-        "華碩、技嘉、微星齊登OCP峰會，主打機架級系統、直接液冷與代理式AI運算",
-        "技鋼展出Vera Rubin NVL72平台，配備20.7TB HBM4統一記憶體池",
-        "微星48RU機架整合四台MGX液冷伺服器，最多支援32張RTX PRO 6000"
-      ],
-      "summary": "華碩、技嘉、微星齊登OCP峰會，主打機架級系統、直接液冷與代理式AI運算；技鋼展出Vera Rubin NVL72平台，配備20.7TB HBM4統一記憶體池；微星48RU機架整合四台MGX液冷伺服器，最多支援32張RTX PRO 6000",
-      "sentiment": "利多",
-      "sectors": [
-        "AI／伺服器",
-        "散熱／電源"
-      ],
-      "stocks": [
-        "2357",
-        "2376",
-        "2377"
-      ],
-      "highlights": [
-        "OCP峰會",
-        "直接液冷",
-        "代理式AI",
-        "Vera Rubin NVL72",
-        "20.7TB"
-      ],
-      "why": "台廠伺服器產品走向整櫃與液冷，提升附加價值",
-      "importance": 5.2,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6632662",
-      "title": "〈友達運動會〉彭双浪：AI成長率趨緩不代表泡沫 明年景氣不會差、台股5萬點以上可期",
-      "url": "https://news.cnyes.com/news/id/6632662",
-      "category": "台股新聞",
-      "published": "2026-10-17 15:03:06",
-      "published_ts": "2026-10-17T15:03:06+08:00",
-      "ai_points": [
-        "友達董事長彭双浪稱AI成長率因基期擴大趨緩，但不代表泡沫，是不可逆趨勢",
-        "他預期明年景氣不會比今年差，但手機、電腦仍受記憶體缺貨漲價影響",
-        "彭双浪認為台股有機會挑戰5萬點，甚至更高"
-      ],
-      "summary": "友達董事長彭双浪稱AI成長率因基期擴大趨緩，但不代表泡沫，是不可逆趨勢；他預期明年景氣不會比今年差，但手機、電腦仍受記憶體缺貨漲價影響；彭双浪認為台股有機會挑戰5萬點，甚至更高",
-      "sentiment": "利多",
-      "sectors": [
-        "面板／光電",
-        "AI／伺服器"
-      ],
-      "stocks": [
-        "2409"
-      ],
-      "highlights": [
-        "彭双浪",
-        "不代表泡沫",
-        "不會比今年差",
-        "記憶體缺貨",
-        "5萬點"
-      ],
-      "why": "產業領袖對AI與明年景氣維持樂觀看法",
-      "importance": 5.1,
       "ai_source": "claude",
       "source": "鉅亨網"
     },
@@ -2506,6 +2407,38 @@
       "source": "鉅亨網"
     },
     {
+      "article_id": "6632471",
+      "title": "雜音淡化回歸基本面 法人看台股：鎖定AI核心供應鏈 搭配金融多元配置",
+      "url": "https://news.cnyes.com/news/id/6632471",
+      "category": "台股新聞",
+      "published": "2026-10-18 08:50:02",
+      "published_ts": "2026-10-18T08:50:02+08:00",
+      "ai_points": [
+        "安聯投信指台灣上市櫃企業2025年獲利創新高，各機構持續上修今、明兩年獲利預估",
+        "建議以AI核心供應鏈為主力：IP／ASIC、先進製程與封測、PCB／CCL、光通訊",
+        "提醒成長股評價已提升，產業分化可能加劇，搭配金融控股做多元配置"
+      ],
+      "summary": "安聯投信指台灣上市櫃企業2025年獲利創新高，各機構持續上修今、明兩年獲利預估；建議以AI核心供應鏈為主力：IP／ASIC、先進製程與封測、PCB／CCL、光通訊；提醒成長股評價已提升，產業分化可能加劇，搭配金融控股做多元配置",
+      "sentiment": "利多",
+      "sectors": [
+        "AI／伺服器",
+        "PCB／載板",
+        "金融"
+      ],
+      "stocks": [],
+      "highlights": [
+        "獲利創新高",
+        "上修",
+        "AI核心供應鏈",
+        "PCB／CCL",
+        "金融控股"
+      ],
+      "why": "投信觀點認為台股獲利基本面仍在上修",
+      "importance": 4.7,
+      "ai_source": "claude",
+      "source": "鉅亨網"
+    },
+    {
       "article_id": "6632784",
       "title": "〈友達運動會〉半導體領域相關業務成長快速 彭双浪：目標成為先進封裝重要夥伴",
       "url": "https://news.cnyes.com/news/id/6632784",
@@ -2598,43 +2531,6 @@
         "1兆美元"
       ],
       "why": "海外買盤變化影響美債供需與殖利率",
-      "importance": 4.5,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6631919",
-      "title": "AI 吃電怪獸逼出「二次能源革命」！傳統電網飽和，電力基礎設施迎來十年一遇洗牌巨浪",
-      "url": "https://news.cnyes.com/news/id/6631919",
-      "category": "台股新聞",
-      "published": "2026-10-18 09:10:03",
-      "published_ts": "2026-10-18T09:10:03+08:00",
-      "ai_points": [
-        "AI資料中心用電使電網飽和，機房供電由480V交流轉向800VDC高壓直流",
-        "燃氣機組與SOFC燃料電池成為表後自主發電選項，帶動供料施工一體化",
-        "文章點名華城北美變壓器供不應求、安葆跨足SOFC與微電網"
-      ],
-      "summary": "AI資料中心用電使電網飽和，機房供電由480V交流轉向800VDC高壓直流；燃氣機組與SOFC燃料電池成為表後自主發電選項，帶動供料施工一體化；文章點名華城北美變壓器供不應求、安葆跨足SOFC與微電網",
-      "sentiment": "利多",
-      "sectors": [
-        "綠能／重電",
-        "AI／伺服器"
-      ],
-      "stocks": [
-        "1519",
-        "7792",
-        "1623",
-        "1503",
-        "1504"
-      ],
-      "highlights": [
-        "800VDC",
-        "SOFC",
-        "華城",
-        "變壓器",
-        "安葆"
-      ],
-      "why": "AI用電缺口帶動重電與電力整合需求",
       "importance": 4.5,
       "ai_source": "claude",
       "source": "鉅亨網"
@@ -2910,6 +2806,74 @@
       "source": "鉅亨網"
     },
     {
+      "article_id": "6632468",
+      "title": "華碩、技嘉、微星強攻OCP峰會 機櫃級液冷與代理式AI成核心技術趨勢",
+      "url": "https://news.cnyes.com/news/id/6632468",
+      "category": "台股新聞",
+      "published": "2026-10-18 09:20:02",
+      "published_ts": "2026-10-18T09:20:02+08:00",
+      "ai_points": [
+        "華碩、技嘉、微星齊登OCP峰會，主打機架級系統、直接液冷與代理式AI運算",
+        "技鋼展出Vera Rubin NVL72平台，配備20.7TB HBM4統一記憶體池",
+        "微星48RU機架整合四台MGX液冷伺服器，最多支援32張RTX PRO 6000"
+      ],
+      "summary": "華碩、技嘉、微星齊登OCP峰會，主打機架級系統、直接液冷與代理式AI運算；技鋼展出Vera Rubin NVL72平台，配備20.7TB HBM4統一記憶體池；微星48RU機架整合四台MGX液冷伺服器，最多支援32張RTX PRO 6000",
+      "sentiment": "利多",
+      "sectors": [
+        "AI／伺服器",
+        "散熱／電源"
+      ],
+      "stocks": [
+        "2357",
+        "2376",
+        "2377"
+      ],
+      "highlights": [
+        "OCP峰會",
+        "直接液冷",
+        "代理式AI",
+        "Vera Rubin NVL72",
+        "20.7TB"
+      ],
+      "why": "台廠伺服器產品走向整櫃與液冷，提升附加價值",
+      "importance": 4.2,
+      "ai_source": "claude",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6632662",
+      "title": "〈友達運動會〉彭双浪：AI成長率趨緩不代表泡沫 明年景氣不會差、台股5萬點以上可期",
+      "url": "https://news.cnyes.com/news/id/6632662",
+      "category": "台股新聞",
+      "published": "2026-10-17 15:03:06",
+      "published_ts": "2026-10-17T15:03:06+08:00",
+      "ai_points": [
+        "友達董事長彭双浪稱AI成長率因基期擴大趨緩，但不代表泡沫，是不可逆趨勢",
+        "他預期明年景氣不會比今年差，但手機、電腦仍受記憶體缺貨漲價影響",
+        "彭双浪認為台股有機會挑戰5萬點，甚至更高"
+      ],
+      "summary": "友達董事長彭双浪稱AI成長率因基期擴大趨緩，但不代表泡沫，是不可逆趨勢；他預期明年景氣不會比今年差，但手機、電腦仍受記憶體缺貨漲價影響；彭双浪認為台股有機會挑戰5萬點，甚至更高",
+      "sentiment": "利多",
+      "sectors": [
+        "面板／光電",
+        "AI／伺服器"
+      ],
+      "stocks": [
+        "2409"
+      ],
+      "highlights": [
+        "彭双浪",
+        "不代表泡沫",
+        "不會比今年差",
+        "記憶體缺貨",
+        "5萬點"
+      ],
+      "why": "產業領袖對AI與明年景氣維持樂觀看法",
+      "importance": 4.1,
+      "ai_source": "claude",
+      "source": "鉅亨網"
+    },
+    {
       "article_id": "6632409",
       "title": "工業生產創四年最大年增幅！美國製造業卻未全面回暖",
       "url": "https://news.cnyes.com/news/id/6632409",
@@ -3060,6 +3024,35 @@
       "source": "鉅亨網"
     },
     {
+      "article_id": "6632913",
+      "title": "2029年現記憶體「紅海」？韓國財長：半導體繁榮至少持續至明年",
+      "url": "https://news.cnyes.com/news/id/6632913",
+      "category": "國際政經",
+      "published": "2026-10-18 13:44:15",
+      "published_ts": "2026-10-18T13:44:15+08:00",
+      "ai_points": [
+        "韓國財政部長李炯日（Lee Hyoung-Il）周六（17日）表示，半導體產業的繁榮勢頭至少會持續到2027年。",
+        "「目前我們認為增長至少可以持續到明年，這是因為半導體供需缺口仍然非常大，而且供應端仍在持續擴張。",
+        "該文作者援引兩位專家的觀點，稱預計到2029年半導體將出現大量新增供應，屆時記憶體晶片市場將變成「紅海」。"
+      ],
+      "summary": "韓國財政部長李炯日（Lee Hyoung-Il）周六（17日）表示，半導體產業的繁榮勢頭至少會持續到2027年。；「目前我們認為增長至少可以持續到明年，這是因為半導體供需缺口仍然非常大，而且供應端仍在持續擴張。；該文作者援引兩位專家的觀點，稱預計到2029年半導體將出現大量新增供應，屆時記憶體晶片市場將變成「紅海」。",
+      "sentiment": "中性",
+      "sectors": [
+        "半導體",
+        "國際股市",
+        "總體經濟"
+      ],
+      "stocks": [],
+      "highlights": [
+        "半導體",
+        "晶片"
+      ],
+      "why": "",
+      "importance": 4.0,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
       "article_id": "6632450",
       "title": "電動車加火箭要合體？特斯拉、SpaceX合併押注衝上56%",
       "url": "https://news.cnyes.com/news/id/6632450",
@@ -3185,35 +3178,6 @@
       "source": "鉅亨網"
     },
     {
-      "article_id": "6632691",
-      "title": "日相高市早苗：若國會允許 將親赴中國出席11月APEC峰會",
-      "url": "https://news.cnyes.com/news/id/6632691",
-      "category": "國際政經",
-      "published": "2026-10-17 15:00:03",
-      "published_ts": "2026-10-17T15:00:03+08:00",
-      "ai_points": [
-        "日相高市早苗表示若國會允許，將出席11月18至19日在深圳舉行的APEC峰會",
-        "中日緊張已持續一年，習近平是否與高市會談仍未定",
-        "農相簗和生因醜聞辭職，是高市政府首名因醜聞下台的閣員"
-      ],
-      "summary": "日相高市早苗表示若國會允許，將出席11月18至19日在深圳舉行的APEC峰會；中日緊張已持續一年，習近平是否與高市會談仍未定；農相簗和生因醜聞辭職，是高市政府首名因醜聞下台的閣員",
-      "sentiment": "中性",
-      "sectors": [
-        "地緣／政策"
-      ],
-      "stocks": [],
-      "highlights": [
-        "高市早苗",
-        "深圳",
-        "APEC",
-        "簗和生"
-      ],
-      "why": "APEC峰會是觀察中日關係的窗口",
-      "importance": 3.5,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
       "article_id": "6632793",
       "title": "變壓器擴產卡在絕緣材料，日立能源砸4.79億加元建加拿大新廠",
       "url": "https://news.cnyes.com/news/id/6632793",
@@ -3236,6 +3200,73 @@
         "4.79億",
         "2.1萬",
         "2.7億"
+      ],
+      "why": "",
+      "importance": 3.5,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6631919",
+      "title": "AI 吃電怪獸逼出「二次能源革命」！傳統電網飽和，電力基礎設施迎來十年一遇洗牌巨浪",
+      "url": "https://news.cnyes.com/news/id/6631919",
+      "category": "台股新聞",
+      "published": "2026-10-18 09:10:03",
+      "published_ts": "2026-10-18T09:10:03+08:00",
+      "ai_points": [
+        "AI資料中心用電使電網飽和，機房供電由480V交流轉向800VDC高壓直流",
+        "燃氣機組與SOFC燃料電池成為表後自主發電選項，帶動供料施工一體化",
+        "文章點名華城北美變壓器供不應求、安葆跨足SOFC與微電網"
+      ],
+      "summary": "AI資料中心用電使電網飽和，機房供電由480V交流轉向800VDC高壓直流；燃氣機組與SOFC燃料電池成為表後自主發電選項，帶動供料施工一體化；文章點名華城北美變壓器供不應求、安葆跨足SOFC與微電網",
+      "sentiment": "利多",
+      "sectors": [
+        "綠能／重電",
+        "AI／伺服器"
+      ],
+      "stocks": [
+        "1519",
+        "7792",
+        "1623",
+        "1503",
+        "1504"
+      ],
+      "highlights": [
+        "800VDC",
+        "SOFC",
+        "華城",
+        "變壓器",
+        "安葆"
+      ],
+      "why": "AI用電缺口帶動重電與電力整合需求",
+      "importance": 3.5,
+      "ai_source": "claude",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6632941",
+      "title": "中國擬管制12項太陽能製造技術出口，先啟動登記、涵蓋關鍵設備",
+      "url": "https://news.cnyes.com/news/id/6632941",
+      "category": "國際政經",
+      "published": "2026-10-18 15:30:20",
+      "published_ts": "2026-10-18T15:30:20+08:00",
+      "ai_points": [
+        "2026年10月18日（優分析／產業數據中心報導）⸺ 中國擬收緊太陽能製造技術對外移轉。",
+        "商務部與科技部10月16日公布修訂草案，計畫將多晶矽、矽晶圓及太陽能電池製造相關12項技術，納入禁止或限制出口範圍，並涵蓋承載相關技術的部分關鍵設備。",
+        "未達管制門檻的技術仍可自由出口，未列明的其他太陽能設備原則上不適用此次要求。"
+      ],
+      "summary": "2026年10月18日（優分析／產業數據中心報導）⸺ 中國擬收緊太陽能製造技術對外移轉。；商務部與科技部10月16日公布修訂草案，計畫將多晶矽、矽晶圓及太陽能電池製造相關12項技術，納入禁止或限制出口範圍，並涵蓋承載相關技術的部分關鍵設備。；未達管制門檻的技術仍可自由出口，未列明的其他太陽能設備原則上不適用此次要求。",
+      "sentiment": "中性",
+      "sectors": [
+        "半導體",
+        "綠能／重電",
+        "電動車／車用"
+      ],
+      "stocks": [],
+      "highlights": [
+        "太陽能",
+        "晶圓",
+        "電池"
       ],
       "why": "",
       "importance": 3.5,
@@ -4065,6 +4096,35 @@
         "18天"
       ],
       "why": "期中選舉前白宮人事動盪",
+      "importance": 2.5,
+      "ai_source": "claude",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6632691",
+      "title": "日相高市早苗：若國會允許 將親赴中國出席11月APEC峰會",
+      "url": "https://news.cnyes.com/news/id/6632691",
+      "category": "國際政經",
+      "published": "2026-10-17 15:00:03",
+      "published_ts": "2026-10-17T15:00:03+08:00",
+      "ai_points": [
+        "日相高市早苗表示若國會允許，將出席11月18至19日在深圳舉行的APEC峰會",
+        "中日緊張已持續一年，習近平是否與高市會談仍未定",
+        "農相簗和生因醜聞辭職，是高市政府首名因醜聞下台的閣員"
+      ],
+      "summary": "日相高市早苗表示若國會允許，將出席11月18至19日在深圳舉行的APEC峰會；中日緊張已持續一年，習近平是否與高市會談仍未定；農相簗和生因醜聞辭職，是高市政府首名因醜聞下台的閣員",
+      "sentiment": "中性",
+      "sectors": [
+        "地緣／政策"
+      ],
+      "stocks": [],
+      "highlights": [
+        "高市早苗",
+        "深圳",
+        "APEC",
+        "簗和生"
+      ],
+      "why": "APEC峰會是觀察中日關係的窗口",
       "importance": 2.5,
       "ai_source": "claude",
       "source": "鉅亨網"
