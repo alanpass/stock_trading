@@ -572,7 +572,7 @@ class PriceStream:
 
     def start(self):
         self._thread.start()
-        for _ in range(100):
+        for _ in range(300):          # 開盤前伺服器回應較慢，最多等 30 秒
             if self.connected:
                 return True
             time.sleep(0.1)
@@ -599,7 +599,11 @@ class PriceStream:
                 if ev == "authenticated":
                     ws.send(json.dumps({"event": "subscribe", "data": {"channel": "trades", "symbols": self.symbols}}))
                 elif ev == "subscribed":
+                    if not self.connected:
+                        print(f"[{now_tpe().strftime('%H:%M:%S')}] WebSocket 已連線並訂閱 {len(self.symbols)} 檔", flush=True)
                     self.connected = True
+                elif ev == "error":
+                    print(f"WebSocket 錯誤：{(msg.get('data') or {}).get('message')}", flush=True)
                 elif ev in ("data", "snapshot") and msg.get("channel") == "trades":
                     d = msg.get("data") or {}
                     sym = str(d.get("symbol", ""))
@@ -653,7 +657,8 @@ def live() -> dict:
             engine.manage(sym, now_tpe().strftime("%H:%M:%S"), float(d["price"]), locked_state(r, d))
 
     stream = PriceStream([r["symbol"] for r in tradable], on_trade)
-    print("WebSocket 已連線" if stream.start() else "WebSocket 連線失敗，改用 REST 每 15 秒檢查持倉", flush=True)
+    if not stream.start():
+        print("WebSocket 30 秒內未連上，先用 REST 每 15 秒檢查持倉；連上後自動改用即時推播", flush=True)
     last_bar = ""
     while now_tpe().strftime("%H:%M") <= "13:25":
         now = now_tpe()
