@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-10-19",
-  "updated_at": "2026-10-19T08:05:01+08:00",
-  "finished_at": "2026-10-19T08:05:04+08:00",
-  "published_at": "2026-10-19T08:05:04+08:00",
+  "updated_at": "2026-10-19T08:10:02+08:00",
+  "finished_at": "2026-10-19T08:10:05+08:00",
+  "published_at": "2026-10-19T08:10:05+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -18,7 +18,7 @@
   "news_count": 34,
   "earnings_count": 3,
   "news_digest": {
-    "generated_at": "2026-10-19T08:05:01+08:00",
+    "generated_at": "2026-10-19T08:10:02+08:00",
     "headline": "最近 2 天共整理 34 則財經新聞：利多 10、利空 8、中性 11、混合 5；討論度最高的產業：AI／伺服器、半導體、地緣／政策。",
     "stats": {
       "total": 34,
@@ -328,7 +328,7 @@
     "agent_generated_at": "2026-10-18T23:53:17+08:00"
   },
   "earnings_digest": {
-    "generated_at": "2026-10-19T08:05:01+08:00",
+    "generated_at": "2026-10-19T08:10:02+08:00",
     "days": 5,
     "total": 3,
     "利多": 1,
@@ -479,7 +479,7 @@
     "source_method": "api",
     "reused_from_previous_run": 0,
     "window_start": "2026-10-18T00:00:00+08:00",
-    "window_end": "2026-10-19T08:05:03.892160+08:00"
+    "window_end": "2026-10-19T08:10:05.169597+08:00"
   },
   "agent_stats": {
     "input": 34,
