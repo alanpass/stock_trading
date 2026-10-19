@@ -5,7 +5,7 @@
   python daytrade_engine.py live                 # 盤中：WebSocket 即時管理持倉＋每根 5 分 K 判斷進場，寫入 output/daytrade/<日期>/
   python daytrade_engine.py replay [--date D]    # 重播：5 分 K 判斷進場、1 分 K 模擬即時停損（--slow 改回 5 分 K 檢查出場）
 
-策略：盤中零股、只做多。開盤區間（09:00～09:15）突破＋當日 VWAP 進場；停利 +5%、停損 −2.5%、13:20 出場。
+策略：盤中零股、只做多。開盤區間（09:00～09:15）突破＋當日 VWAP 進場；停利 +5%、停損 −5%、13:20 出場。
 並用網站的資訊確認方向：
   日線趨勢（entry_model.daily_trend）、趨勢型態分類（trend_patterns_public.json）、
   進場模型的日內趨勢分數（entry_model.predict_entry）。
@@ -46,7 +46,7 @@ CAPITAL = 1_000_000
 RISK_PER_TRADE = 0.005        # 單筆最多虧資金 0.5%
 MAX_POSITIONS = 3
 DAILY_LOSS_LIMIT = 0.015      # 當日虧損達 1.5% 停止進場
-STOP_PCT = 0.025              # 停損：進場價 −2.5%（做空 +2.5%）
+STOP_PCT = 0.05               # 停損：進場價 −5%（做空 +5%）；2026-10-19 起由 2.5% 放寬，避免被盤中震盪洗掉
 TARGET_PCT = 0.05             # 停利：進場價 +5%（做空 −5%）
 BREAKEVEN_AT = 0.025          # 賺到 +2.5% 後，停損移到成本（含費用）
 TRAIL_PCT = 0.02              # 之後用移動停損：從進場後最高點回落 2% 出場
@@ -57,12 +57,12 @@ INDEX = "IX0001"              # 加權指數：大盤在自己的 VWAP 之上才
 
 # 交易模式（2026-10-18 回測結論，見 output/daytrade/strategy_research.md）：
 #   "meanrev"：09:30 時大盤前 30 分鐘跌 > 0.5%，買前 30 分鐘跌 > 4% 且低於 VWAP 1% 以上的股票（跌最深的最多 3 檔），
-#              停損 3%、不設停利、13:20 出場。71 個交易日回測約打平（零股每筆 +0.01%、整股 +0.16%），交易次數少。
+#              停損 5%（2026-10-19 起，原 3%）、不設停利、13:20 出場。71 個交易日回測約打平（零股每筆 +0.01%、整股 +0.16%），交易次數少。
 #   "orb"：開盤區間突破（回測零成本也虧，PF 0.58～0.65），只在 meanrev 模式下記錄訊號、不交易。
 STRATEGY = "meanrev"
 MR_TIME = "09:30"             # 用 09:25 以前收完的 5 分 K 判斷
 MR_M30, MR_VWAP, MR_INDEX = -0.04, -0.01, -0.005
-MR_STOP = 0.03
+MR_STOP = 0.05               # 原 3%：10/19 穩懋在當日最低點被洗出場後收高 3%，改 5%
 MR_MAX = 3
 LIMIT_ENTRY_BUFFER = 0.03     # 距漲跌停 3% 內不進場
 LIMIT_EXIT_BUFFER = 0.015     # 持倉不利方向距漲跌停 1.5% 內立即沖銷
@@ -389,7 +389,7 @@ class Engine:
 
         tk = tick_size(last)
         entry = last + ODD_LOT_SLIPPAGE_TICKS * tk if side > 0 else last - ODD_LOT_SLIPPAGE_TICKS * tk  # 零股多付 2 個 tick
-        stop = to_tick(entry * (1 - side * STOP_PCT), up=side < 0)   # 固定 −2.5%，對齊升降單位
+        stop = to_tick(entry * (1 - side * STOP_PCT), up=side < 0)   # 固定 −5%，對齊升降單位
         risk = abs(entry - stop) + ODD_LOT_SLIPPAGE_TICKS * tick_size(stop) + entry * (2 * FEE + TAX)  # 每股最多虧（含滑價與成本）
         if risk <= 0:
             return
