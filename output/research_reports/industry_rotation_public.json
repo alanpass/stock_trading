@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-10-16T15:13:10+08:00",
+  "generated_at": "2026-10-19T08:23:11+08:00",
   "data_asof": "2026-10-16",
   "previous_data_asof": "2026-10-15",
   "previous_previous_data_asof": "2026-10-14",
@@ -165,8 +165,8 @@
       "return_20d": 6.421,
       "return_60d": 42.888,
       "return_ytd": 119.536,
-      "volume": 3731475.0,
-      "traded_value": 12369839625.0,
+      "volume": 3748475.0,
+      "traded_value": 12426194625.0,
       "year_high": false,
       "fresh": true
     },
@@ -362,8 +362,8 @@
       "return_20d": -20.302,
       "return_60d": -63.1,
       "return_ytd": -58.863,
-      "volume": 13391059.0,
-      "traded_value": 24706503855.0,
+      "volume": 13858059.0,
+      "traded_value": 25568118855.0,
       "year_high": false,
       "fresh": true
     },
@@ -721,8 +721,8 @@
           "return_20d": 0.978,
           "return_60d": 6.936,
           "return_ytd": 213.982,
-          "volume": 2767138.0,
-          "traded_value": 14292267770.0,
+          "volume": 2773138.0,
+          "traded_value": 14323257770.0,
           "year_high": false,
           "fresh": true
         },
@@ -753,8 +753,8 @@
           "return_20d": 0.978,
           "return_60d": 6.936,
           "return_ytd": 213.982,
-          "volume": 2767138.0,
-          "traded_value": 14292267770.0,
+          "volume": 2773138.0,
+          "traded_value": 14323257770.0,
           "year_high": false,
           "fresh": true
         },
@@ -3724,8 +3724,8 @@
           "return_20d": 6.421,
           "return_60d": 42.888,
           "return_ytd": 119.536,
-          "volume": 3731475.0,
-          "traded_value": 12369839625.0,
+          "volume": 3748475.0,
+          "traded_value": 12426194625.0,
           "year_high": false,
           "fresh": true
         },
@@ -3756,8 +3756,8 @@
           "return_20d": 6.421,
           "return_60d": 42.888,
           "return_ytd": 119.536,
-          "volume": 3731475.0,
-          "traded_value": 12369839625.0,
+          "volume": 3748475.0,
+          "traded_value": 12426194625.0,
           "year_high": false,
           "fresh": true
         },
@@ -4222,8 +4222,8 @@
           "return_20d": -4.063,
           "return_60d": 15.804,
           "return_ytd": 197.203,
-          "volume": 8617336.0,
-          "traded_value": 36623678000.0,
+          "volume": 8683336.0,
+          "traded_value": 36904178000.0,
           "year_high": false,
           "fresh": true
         },
@@ -5656,8 +5656,8 @@
           "return_20d": 13.345,
           "return_60d": 6.003,
           "return_ytd": 167.864,
-          "volume": 19208037.0,
-          "traded_value": 12888592827.0,
+          "volume": 19278037.0,
+          "traded_value": 12935562827.0,
           "year_high": false,
           "fresh": true
         },
@@ -5733,8 +5733,8 @@
           "return_20d": 13.345,
           "return_60d": 6.003,
           "return_ytd": 167.864,
-          "volume": 19208037.0,
-          "traded_value": 12888592827.0,
+          "volume": 19278037.0,
+          "traded_value": 12935562827.0,
           "year_high": false,
           "fresh": true
         }
@@ -6094,8 +6094,8 @@
           "return_20d": 18.75,
           "return_60d": -11.084,
           "return_ytd": 39.382,
-          "volume": 1581183.0,
-          "traded_value": 2854035315.0,
+          "volume": 1591183.0,
+          "traded_value": 2872085315.0,
           "year_high": false,
           "fresh": true
         },
@@ -8026,8 +8026,8 @@
           "return_20d": -2.096,
           "return_60d": -10.899,
           "return_ytd": 69.782,
-          "volume": 8591796.0,
-          "traded_value": 14047586460.0,
+          "volume": 8631796.0,
+          "traded_value": 14112986460.0,
           "year_high": false,
           "fresh": true
         },
@@ -8056,8 +8056,8 @@
           "return_20d": -0.804,
           "return_60d": -0.135,
           "return_ytd": 3.064,
-          "volume": 598254.0,
-          "traded_value": 221353980.0,
+          "volume": 935254.0,
+          "traded_value": 346043980.0,
           "year_high": false,
           "fresh": true
         },
@@ -8524,8 +8524,8 @@
           "return_20d": 1.468,
           "return_60d": 0.415,
           "return_ytd": 56.129,
-          "volume": 41021035.0,
-          "traded_value": 99270904700.0,
+          "volume": 43046982.0,
+          "traded_value": 104173696440.0,
           "year_high": false,
           "fresh": true
         }
@@ -8541,8 +8541,8 @@
           "return_20d": 1.468,
           "return_60d": 0.415,
           "return_ytd": 56.129,
-          "volume": 41021035.0,
-          "traded_value": 99270904700.0,
+          "volume": 43046982.0,
+          "traded_value": 104173696440.0,
           "year_high": false,
           "fresh": true
         }
@@ -8558,8 +8558,8 @@
           "return_20d": 1.468,
           "return_60d": 0.415,
           "return_ytd": 56.129,
-          "volume": 41021035.0,
-          "traded_value": 99270904700.0,
+          "volume": 43046982.0,
+          "traded_value": 104173696440.0,
           "year_high": false,
           "fresh": true
         }
@@ -9385,8 +9385,8 @@
           "return_20d": 1.852,
           "return_60d": 1.538,
           "return_ytd": 10.368,
-          "volume": 1077566.0,
-          "traded_value": 177798390.0,
+          "volume": 1375566.0,
+          "traded_value": 226968390.0,
           "year_high": false,
           "fresh": true
         },
@@ -9539,8 +9539,8 @@
           "return_20d": 1.852,
           "return_60d": 1.538,
           "return_ytd": 10.368,
-          "volume": 1077566.0,
-          "traded_value": 177798390.0,
+          "volume": 1375566.0,
+          "traded_value": 226968390.0,
           "year_high": false,
           "fresh": true
         },
@@ -9883,8 +9883,8 @@
           "return_20d": -20.302,
           "return_60d": -63.1,
           "return_ytd": -58.863,
-          "volume": 13391059.0,
-          "traded_value": 24706503855.0,
+          "volume": 13858059.0,
+          "traded_value": 25568118855.0,
           "year_high": false,
           "fresh": true
         },
@@ -9988,8 +9988,8 @@
           "return_20d": -3.303,
           "return_60d": -0.617,
           "return_ytd": 18.382,
-          "volume": 9675337.0,
-          "traded_value": 3115458514.0,
+          "volume": 9737337.0,
+          "traded_value": 3135422514.0,
           "year_high": false,
           "fresh": true
         }
@@ -10052,8 +10052,8 @@
           "return_20d": -20.302,
           "return_60d": -63.1,
           "return_ytd": -58.863,
-          "volume": 13391059.0,
-          "traded_value": 24706503855.0,
+          "volume": 13858059.0,
+          "traded_value": 25568118855.0,
           "year_high": false,
           "fresh": true
         },
@@ -10082,8 +10082,8 @@
           "return_20d": -3.303,
           "return_60d": -0.617,
           "return_ytd": 18.382,
-          "volume": 9675337.0,
-          "traded_value": 3115458514.0,
+          "volume": 9737337.0,
+          "traded_value": 3135422514.0,
           "year_high": false,
           "fresh": true
         }
@@ -12961,8 +12961,8 @@
           "return_20d": -13.855,
           "return_60d": -18.692,
           "return_ytd": 54.307,
-          "volume": 751103.0,
-          "traded_value": 3969579355.0,
+          "volume": 754103.0,
+          "traded_value": 3985434355.0,
           "year_high": false,
           "fresh": true
         },
@@ -13085,8 +13085,8 @@
           "return_20d": -13.855,
           "return_60d": -18.692,
           "return_ytd": 54.307,
-          "volume": 751103.0,
-          "traded_value": 3969579355.0,
+          "volume": 754103.0,
+          "traded_value": 3985434355.0,
           "year_high": false,
           "fresh": true
         }
