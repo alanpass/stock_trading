@@ -64,6 +64,12 @@ MR_TIME = "09:30"             # 用 09:25 以前收完的 5 分 K 判斷
 MR_M30, MR_VWAP, MR_INDEX = -0.04, -0.01, -0.005
 MR_STOP = 0.05               # 原 3%：10/19 穩懋在當日最低點被洗出場後收高 3%，改 5%
 MR_MAX = 3
+
+# 模擬帳號的學習模式（2026-10-19 使用者同意）：不實際下單就沒有資料可以學。開啟時
+#   - Claude 盯盤的 pause_entries／block 只記在持倉的 claude_flag，不擋單（事後比對 Claude 的判斷有沒有用）
+#   - ORB 訊號也照常紙上交易（strategy="orb"），和跌深反彈分開統計
+# 不變：處置股／注意股排除、距跌停 3% 不買、單筆最多虧 0.5%、單日虧 1.5% 停止進場；close_now 仍會執行。
+PAPER_LEARNING = True
 LIMIT_ENTRY_BUFFER = 0.03     # 距漲跌停 3% 內不進場
 LIMIT_EXIT_BUFFER = 0.015     # 持倉不利方向距漲跌停 1.5% 內立即沖銷
 MAX_GAP = 0.05                # 開盤跳空超過 ±5% 當天不做
@@ -199,6 +205,8 @@ class Position:
     peak: float = 0.0
     themes: tuple = ()
     trail: bool = True
+    strategy: str = "orb"
+    claude_flag: str = ""     # 進場時 Claude 盯盤是否建議不進場（學習模式下只記錄）
     exit: float | None = None
     closed_at: str | None = None
     exit_reason: str = ""
@@ -316,13 +324,11 @@ class Engine:
         # 2) 進場條件
         if s in self.traded or s in self.skipped or t < OR_END or t >= LAST_ENTRY:
             return
-        if self.realized <= -CAPITAL * DAILY_LOSS_LIMIT or len(self.open_positions()) >= MAX_POSITIONS:
+        if self.realized <= -CAPITAL * DAILY_LOSS_LIMIT or self._count("orb") >= MAX_POSITIONS:
             return
-        if self.overrides.get("pause_entries"):
-            self.log(t, s, "不進場", f"Claude 盯盤暫停進場（{self.overrides.get('note', '')}）")
-            return
-        if s in (self.overrides.get("block") or []):
-            self.log(t, s, "不進場", f"Claude 盯盤封鎖此股（{self.overrides.get('note', '')}）")
+        veto = self._veto(s)
+        if veto and not PAPER_LEARNING:
+            self.log(t, s, "不進場", veto)
             return
         today_open = float(bars["open"].iloc[0])
         if pc and abs(today_open / pc - 1) > MAX_GAP:
@@ -382,7 +388,7 @@ class Engine:
             self.log(t, s, "不進場", "平盤下不可放空")
             return
 
-        if STRATEGY != "orb":
+        if STRATEGY != "orb" and not PAPER_LEARNING:
             self.log(t, s, "觀察", f"ORB 突破訊號 {last}（回測顯示會虧，只記錄不交易）")
             self.skipped[s] = "ORB 只記錄"
             return
@@ -410,16 +416,18 @@ class Engine:
         if shares < 1:
             self.log(t, s, "不進場", "持倉總金額已達資金上限（避免違約交割）")
             return
-        p = Position(s, side, shares, round(entry, 2), stop, to_tick(target, up=side > 0), t, themes=themes)
+        p = Position(s, side, shares, round(entry, 2), stop, to_tick(target, up=side > 0), t, themes=themes,
+                     strategy="orb", claude_flag=veto)
         self.positions.append(p)
         self.traded.add(s)
-        self.log(t, s, "進場", f"{'做多' if side > 0 else '做空'} {shares:,} 股 @ {p.entry}，停損 {p.stop}、停利 {p.target}"
-                 f"（區間 {orl}～{orh}、VWAP {vwap:.2f}{'、' + model_note if model_note else ''}；{self.market_note}）",
+        self.log(t, s, "進場", f"ORB {'做多' if side > 0 else '做空'} {shares:,} 股 @ {p.entry}，停損 {p.stop}、停利 {p.target}"
+                 f"（區間 {orl}～{orh}、VWAP {vwap:.2f}{'、' + model_note if model_note else ''}；{self.market_note}）"
+                 f"{'［學習模式：' + veto + '，照常進場］' if veto else ''}",
                  side=side, shares=shares, price=p.entry)
 
     def meanrev_entries(self, t: str, snaps: list) -> None:
         """跌深反彈：snaps＝[(代號, 已收完的 5 分 K, 最新價, VWAP)]，09:30 呼叫一次。"""
-        if self.overrides.get("pause_entries"):
+        if self.overrides.get("pause_entries") and not PAPER_LEARNING:
             self.log(t, "全部", "不進場", f"Claude 盯盤暫停進場（{self.overrides.get('note', '')}）")
             return
         if self.idx_m30 >= MR_INDEX:
@@ -428,7 +436,9 @@ class Engine:
         cands = []
         for sym, bars, last, vwap in snaps:
             info = self._info(sym)
-            if not info or not info.get("mr_eligible") or bars.empty or sym in (self.overrides.get("block") or []):
+            if not info or not info.get("mr_eligible") or bars.empty:
+                continue
+            if sym in (self.overrides.get("block") or []) and not PAPER_LEARNING:
                 continue
             o = float(bars["open"].iloc[0])
             m30, vs = last / o - 1, last / vwap - 1
@@ -440,7 +450,7 @@ class Engine:
         cands.sort()
         held: set = set()
         for m30, sym, last, vs, info in cands:
-            if len(self.open_positions()) >= MR_MAX:
+            if self._count("meanrev") >= MR_MAX:
                 break
             themes = tuple(info.get("themes") or ())
             if set(themes) & held:
@@ -463,12 +473,33 @@ class Engine:
                 self.log(t, sym, "不進場", "資金或單筆風險上限不足")
                 continue
             target = to_tick(info["limit_up"] * (1 - LIMIT_EXIT_BUFFER), up=False) if info["limit_up"] else entry * 1.1
-            p = Position(sym, 1, shares, round(entry, 2), stop, target, t, themes=themes, trail=False)
+            veto = self._veto(sym)
+            p = Position(sym, 1, shares, round(entry, 2), stop, target, t, themes=themes, trail=False,
+                         strategy="meanrev", claude_flag=veto)
             self.positions.append(p)
             self.traded.add(sym)
             held |= set(themes)
             self.log(t, sym, "進場", f"跌深反彈 做多 {shares:,} 股 @ {p.entry}，停損 {p.stop}，13:20 出場"
-                     f"（前 30 分 {m30:+.1%}、低於 VWAP {vs:+.1%}；{self.market_note}）", side=1, shares=shares, price=p.entry)
+                     f"（前 30 分 {m30:+.1%}、低於 VWAP {vs:+.1%}；{self.market_note}）"
+                     f"{'［學習模式：' + veto + '，照常進場］' if veto else ''}", side=1, shares=shares, price=p.entry)
+
+    def _count(self, strategy: str) -> int:
+        return sum(1 for p in self.open_positions() if p.strategy == strategy)
+
+    def _veto(self, s: str) -> str:
+        """Claude 盯盤目前是否建議不要進這檔；沒有就回傳空字串。"""
+        note = self.overrides.get("note", "")
+        if self.overrides.get("pause_entries"):
+            return f"Claude 建議暫停進場（{note}）"
+        if s in (self.overrides.get("block") or []):
+            return f"Claude 建議封鎖此股（{note}）"
+        return ""
+
+    @staticmethod
+    def _stats(closed: list) -> dict:
+        wins = [p for p in closed if p.pnl > 0]
+        return {"trades": len(closed), "wins": len(wins), "pnl": round(sum(p.pnl for p in closed)),
+                "win_rate": round(len(wins) / len(closed) * 100, 1) if closed else None}
 
     def summary(self) -> dict:
         closed = [p for p in self.positions if p.exit is not None]
@@ -477,7 +508,10 @@ class Engine:
                 "win_rate": round(len(wins) / len(closed) * 100, 1) if closed else None,
                 "pnl": round(self.realized), "pnl_pct": round(self.realized / CAPITAL * 100, 3),
                 "open_positions": len(self.open_positions()),
-                "market": self.market_note, "overrides": self.overrides,
+                "market": self.market_note, "overrides": self.overrides, "paper_learning": PAPER_LEARNING,
+                "by_strategy": {k: self._stats([p for p in closed if p.strategy == k]) for k in ("meanrev", "orb")},
+                "claude_flagged": self._stats([p for p in closed if p.claude_flag]),
+                "claude_unflagged": self._stats([p for p in closed if not p.claude_flag]),
                 "positions": [asdict(p) for p in self.positions], "skipped": self.skipped}
 
     def save(self):
