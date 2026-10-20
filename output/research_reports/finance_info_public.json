@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-10-20",
-  "updated_at": "2026-10-20T08:04:34+08:00",
-  "finished_at": "2026-10-20T08:05:01+08:00",
-  "published_at": "2026-10-20T08:05:01+08:00",
+  "updated_at": "2026-10-20T08:10:02+08:00",
+  "finished_at": "2026-10-20T08:10:14+08:00",
+  "published_at": "2026-10-20T08:10:15+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -18,7 +18,7 @@
   "news_count": 236,
   "earnings_count": 1,
   "news_digest": {
-    "generated_at": "2026-10-20T08:04:34+08:00",
+    "generated_at": "2026-10-20T08:10:02+08:00",
     "headline": "最近 2 天共整理 236 則財經新聞：利多 106、利空 64、中性 39、混合 27；討論度最高的產業：AI／伺服器、半導體、國際股市。",
     "stats": {
       "total": 236,
@@ -204,7 +204,7 @@
         "url": "https://news.cnyes.com/news/id/6633147"
       },
       {
-        "theme": "鉅亨速報 - Factset 最新調查：易速傳真EFX-US的目標價調降至190元，幅度約3.31% | 鉅亨網",
+        "theme": "鉅亨速報 - Factset 最新調查：易速傳真EFX-US的目標價調降至190元，幅度約3.31%",
         "reason": "鉅亨速報 美股預估 鉅亨速報 鉅亨速報 - Factset 最新調查：易速傳真EFX-US的目標價調降至190元，幅度約3.31% 06:15 根據FactSet最新調查…",
         "sectors": [
           "國際股市",
@@ -214,7 +214,7 @@
         "url": "https://news.cnyes.com/news/id/6633843"
       },
       {
-        "theme": "鉅亨速報 - Factset 最新調查：新聞集團NWSA-US的目標價調降至36.5元，幅度約3.95% | 鉅亨網",
+        "theme": "鉅亨速報 - Factset 最新調查：新聞集團NWSA-US的目標價調降至36.5元，幅度約3.95%",
         "reason": "鉅亨速報 美股預估 鉅亨速報 鉅亨速報 - Factset 最新調查：新聞集團NWSA-US的目標價調降至36.5元，幅度約3.95% 06:15 根據FactSet最新調查…",
         "sectors": [
           "國際股市",
@@ -304,7 +304,7 @@
     }
   },
   "earnings_digest": {
-    "generated_at": "2026-10-20T08:04:34+08:00",
+    "generated_at": "2026-10-20T08:10:02+08:00",
     "days": 5,
     "total": 1,
     "利多": 0,
@@ -397,9 +397,9 @@
       "future": 20
     },
     "source_method": "api",
-    "reused_from_previous_run": 37,
+    "reused_from_previous_run": 46,
     "window_start": "2026-10-19T00:00:00+08:00",
-    "window_end": "2026-10-20T08:05:00.971746+08:00"
+    "window_end": "2026-10-20T08:10:14.546205+08:00"
   },
   "agent_stats": {
     "input": 236,
@@ -916,9 +916,9 @@
     },
     {
       "article_id": "6633843",
-      "title": "鉅亨速報 - Factset 最新調查：易速傳真EFX-US的目標價調降至190元，幅度約3.31% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：易速傳真EFX-US的目標價調降至190元，幅度約3.31%",
       "url": "https://news.cnyes.com/news/id/6633843",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-20 06:15:25",
       "published_ts": "2026-10-20T06:15:25+08:00",
       "ai_points": [
@@ -953,9 +953,9 @@
     },
     {
       "article_id": "6633844",
-      "title": "鉅亨速報 - Factset 最新調查：新聞集團NWSA-US的目標價調降至36.5元，幅度約3.95% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：新聞集團NWSA-US的目標價調降至36.5元，幅度約3.95%",
       "url": "https://news.cnyes.com/news/id/6633844",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-20 06:15:30",
       "published_ts": "2026-10-20T06:15:30+08:00",
       "ai_points": [
@@ -1539,9 +1539,9 @@
     },
     {
       "article_id": "6633842",
-      "title": "鉅亨速報 - Factset 最新調查：金田GFI-US的目標價調降至43.32元，幅度約4.16% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：金田GFI-US的目標價調降至43.32元，幅度約4.16%",
       "url": "https://news.cnyes.com/news/id/6633842",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-20 06:15:24",
       "published_ts": "2026-10-20T06:15:24+08:00",
       "ai_points": [
@@ -6666,9 +6666,9 @@
     },
     {
       "article_id": "6633741",
-      "title": "盤中速報 - 亞馬遜(AMZN-US)大漲5.04%，報262.59美元 | 鉅亨網",
+      "title": "盤中速報 - 亞馬遜(AMZN-US)大漲5.04%，報262.59美元",
       "url": "https://news.cnyes.com/news/id/6633741",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-19 23:14:22",
       "published_ts": "2026-10-19T23:14:22+08:00",
       "ai_points": [
@@ -6703,9 +6703,9 @@
     },
     {
       "article_id": "6633744",
-      "title": "盤中速報 - 美光科技(MU-US)大漲5%，報922.8美元 | 鉅亨網",
+      "title": "盤中速報 - 美光科技(MU-US)大漲5%，報922.8美元",
       "url": "https://news.cnyes.com/news/id/6633744",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-19 23:33:58",
       "published_ts": "2026-10-19T23:33:58+08:00",
       "ai_points": [
@@ -6740,9 +6740,9 @@
     },
     {
       "article_id": "6633747",
-      "title": "盤中速報 - 芯源系統(MPWR-US)大漲5.04%，報1271.92美元 | 鉅亨網",
+      "title": "盤中速報 - 芯源系統(MPWR-US)大漲5.04%，報1271.92美元",
       "url": "https://news.cnyes.com/news/id/6633747",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-19 23:40:23",
       "published_ts": "2026-10-19T23:40:23+08:00",
       "ai_points": [
@@ -6843,9 +6843,9 @@
     },
     {
       "article_id": "6633801",
-      "title": "俄羅斯確診5例猴痘病例 | 鉅亨網",
+      "title": "俄羅斯確診5例猴痘病例",
       "url": "https://news.cnyes.com/news/id/6633801",
-      "category": "wd_stock",
+      "category": "國際政經",
       "published": "2026-10-20 05:00:14",
       "published_ts": "2026-10-20T05:00:14+08:00",
       "ai_points": [
@@ -7650,9 +7650,9 @@
     },
     {
       "article_id": "6633738",
-      "title": "盤中速報 - 和康電訊(MTSI-US)大漲5.01%，報275.38美元 | 鉅亨網",
+      "title": "盤中速報 - 和康電訊(MTSI-US)大漲5.01%，報275.38美元",
       "url": "https://news.cnyes.com/news/id/6633738",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-19 23:02:12",
       "published_ts": "2026-10-19T23:02:12+08:00",
       "ai_points": [
@@ -7687,9 +7687,9 @@
     },
     {
       "article_id": "6633745",
-      "title": "盤中速報 - 萊迪思半導體(LSCC-US)大漲5.09%，報108.93美元 | 鉅亨網",
+      "title": "盤中速報 - 萊迪思半導體(LSCC-US)大漲5.09%，報108.93美元",
       "url": "https://news.cnyes.com/news/id/6633745",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-19 23:36:34",
       "published_ts": "2026-10-19T23:36:34+08:00",
       "ai_points": [
