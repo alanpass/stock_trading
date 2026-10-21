@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-10-22",
-  "updated_at": "2026-10-22T07:53:27+08:00",
-  "finished_at": "2026-10-22T07:54:32+08:00",
-  "published_at": "2026-10-22T07:56:13+08:00",
+  "updated_at": "2026-10-22T07:58:33+08:00",
+  "finished_at": "2026-10-22T07:58:58+08:00",
+  "published_at": "2026-10-22T07:58:58+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -18,14 +18,14 @@
   "news_count": 303,
   "earnings_count": 3,
   "news_digest": {
-    "generated_at": "2026-10-22T07:53:27+08:00",
-    "headline": "最近 2 天共整理 303 則財經新聞：利多 161、利空 61、中性 50、混合 31；討論度最高的產業：AI／伺服器、半導體、國際股市。",
+    "generated_at": "2026-10-22T07:58:33+08:00",
+    "headline": "最近 2 天共整理 303 則財經新聞：利多 156、利空 61、中性 51、混合 35；討論度最高的產業：AI／伺服器、半導體、國際股市。",
     "stats": {
       "total": 303,
-      "利多": 161,
+      "利多": 156,
       "利空": 61,
-      "中性": 50,
-      "混合": 31
+      "中性": 51,
+      "混合": 35
     },
     "key_points": [
       {
@@ -42,86 +42,82 @@
       },
       {
         "title": "〈台股盤前要聞〉輝達DSX POD AI工廠6台廠入列合作夥伴、外資終止連十賣",
-        "point": "2.台北股市21日在電子股帶動之下出現強勢反彈，最後一盤交易爆發585億元鉅量，拉抬指數上漲160.56點，終場大盤收在46887.77點，上漲594.84點…",
+        "point": "輝達DSX POD AI工廠納入鴻海、台達電、和碩、廣達、緯創、技嘉，2027年初全球交付",
         "sentiment": "利多",
         "url": "https://news.cnyes.com/news/id/6635367",
         "highlights": [
+          "DSX POD",
+          "2027年初",
           "46887.77點",
-          "160.56點",
-          "594.84點",
-          "585億元",
-          "-20%",
-          "10%"
+          "8380.64億元",
+          "10%至20%",
+          "勞資協議"
         ]
       },
       {
         "title": "〈財報〉特斯拉Q3優預期盤後仍跌 營收大致持平、電動車收入年減3%",
-        "point": "特斯拉Q3營收280.5億美元、EPS 48美分，均優於預估，但核心電動車營收年減3%，盤後股價跌逾2%。",
+        "point": "特斯拉Q3營收280.5億美元、調整後EPS 48美分，均優於預期，盤後仍跌逾2%",
         "sentiment": "混合",
         "url": "https://news.cnyes.com/news/id/6635217",
         "highlights": [
-          "280.5 億美元",
           "280.5億美元",
-          "7.87億美元",
+          "年減3%",
+          "淨利年減29%",
           "37.3億美元",
-          "279 億美元",
-          "營收年減"
+          "自由現金流年減62%",
+          "合併"
         ]
       },
       {
         "title": "〈財報〉科林研發Q1創新高 財測驚喜有限盤後跌逾6%",
-        "point": "科林研發Q1營收82.2億美元、EPS 2.20美元皆優於預期，創下營收與獲利紀錄。",
-        "sentiment": "利多",
+        "point": "科林研發Q1營收82.2億美元、EPS 2.20美元，皆創紀錄並優於預期",
+        "sentiment": "混合",
         "url": "https://news.cnyes.com/news/id/6635444",
         "highlights": [
-          "82.2 億美元",
-          "81.3 億美元",
           "82.2億美元",
-          "2.20 美元",
-          "2.18 美元",
-          "2.20美元"
+          "創紀錄",
+          "86億美元",
+          "盤後跌逾6%",
+          "中國占Q1營收35%"
         ]
       },
       {
         "title": "〈財報〉Meta Q3營收年增26%至646億美元 全年AI資本支出上看1450億美元",
-        "point": "Meta第3季營收646.01億美元、年增26%，淨利98.60億美元、EPS 3.83美元，皆優於預期。",
+        "point": "Meta Q3營收646.01億美元、年增26%，淨利98.60億美元，EPS 3.83美元",
         "sentiment": "利多",
         "url": "https://news.cnyes.com/news/id/6635381",
         "highlights": [
           "646.01億美元",
-          "98.60億美元",
-          "3.83美元",
-          "0.5%",
-          "2.9%",
-          "5.7%"
+          "年增26%",
+          "1350億至1450億美元",
+          "C類普通股",
+          "Muse"
         ]
       },
       {
         "title": "〈財報〉半導體風向球報喜！德儀Q4財測超預期 工業與AI需求同步回溫",
-        "point": "德儀Q4財測優於預期，營收估58億至63億美元、EPS 2.45至2.79美元，顯示工業晶片需求復甦 Q3營收60.6億美元、年增28%，EPS 2.62美元；",
+        "point": "德儀Q3營收60.6億美元、年增28%，EPS 2.62美元，優於預期",
         "sentiment": "利多",
         "url": "https://news.cnyes.com/news/id/6635114",
         "highlights": [
           "60.6億美元",
-          "59.2億美元",
-          "2.79美元",
-          "2.62美元",
-          "63億美元",
-          "30億美元"
+          "年增28%",
+          "58億至63億美元",
+          "資料中心業務",
+          "年增95%"
         ]
       },
       {
         "title": "股價大漲、債券卻跌！SpaceX財報報喜 債市在怕什麼？",
-        "point": "SpaceX財報優於預期，淨利44億美元、營收年增161%，周三股價一度大漲12.44%。",
-        "sentiment": "利多",
+        "point": "SpaceX Q3淨利44億美元，遠高於預估18.8億美元，股價一度大漲12.44%",
+        "sentiment": "混合",
         "url": "https://news.cnyes.com/news/id/6635394",
         "highlights": [
-          "18.8億美元",
-          "12.44%",
           "44億美元",
-          "161%",
-          "優於預期",
-          "營收年增"
+          "12.44%",
+          "264個基點",
+          "CDS",
+          "4500億美元"
         ]
       },
       {
@@ -140,27 +136,17 @@
     "bullish": [
       {
         "theme": "〈台股盤前要聞〉輝達DSX POD AI工廠6台廠入列合作夥伴、外資終止連十賣",
-        "reason": "2.台北股市21日在電子股帶動之下出現強勢反彈，最後一盤交易爆發585億元鉅量，拉抬指數上漲160.56點，終場大盤收在46887.77點，上漲594.84點…",
+        "reason": "AI工廠新架構與外資回補，牽動台廠伺服器供應鏈",
         "sectors": [
           "AI／伺服器",
-          "PCB／載板",
-          "半導體"
+          "半導體",
+          "PCB／載板"
         ],
         "url": "https://news.cnyes.com/news/id/6635367"
       },
       {
-        "theme": "〈財報〉科林研發Q1創新高 財測驚喜有限盤後跌逾6%",
-        "reason": "科林研發Q1營收82.2億美元、EPS 2.20美元皆優於預期，創下營收與獲利紀錄。",
-        "sectors": [
-          "半導體",
-          "AI／伺服器",
-          "記憶體"
-        ],
-        "url": "https://news.cnyes.com/news/id/6635444"
-      },
-      {
         "theme": "〈財報〉Meta Q3營收年增26%至646億美元 全年AI資本支出上看1450億美元",
-        "reason": "Meta第3季營收646.01億美元、年增26%，淨利98.60億美元、EPS 3.83美元，皆優於預期。",
+        "reason": "大型雲端業者續加碼AI資本支出，支撐伺服器需求",
         "sectors": [
           "AI／伺服器"
         ],
@@ -168,13 +154,22 @@
       },
       {
         "theme": "〈財報〉半導體風向球報喜！德儀Q4財測超預期 工業與AI需求同步回溫",
-        "reason": "德儀Q4財測優於預期，營收估58億至63億美元、EPS 2.45至2.79美元，顯示工業晶片需求復甦 Q3營收60.6億美元、年增28%，EPS 2.62美元；",
+        "reason": "類比晶片風向球，顯示工業與資料中心需求回溫",
         "sectors": [
-          "AI／伺服器",
           "半導體",
-          "國際股市"
+          "AI／伺服器"
         ],
         "url": "https://news.cnyes.com/news/id/6635114"
+      },
+      {
+        "theme": "亞股回神！韓股飆近4% AI新兵Elice掛牌次日強攻漲停",
+        "reason": "美超微財報帶動亞股與記憶體股回穩，AI情緒回溫",
+        "sectors": [
+          "記憶體",
+          "AI／伺服器",
+          "國際股市"
+        ],
+        "url": "https://news.cnyes.com/news/id/6634840"
       }
     ],
     "bearish": [
@@ -196,17 +191,7 @@
         "url": "https://news.cnyes.com/news/id/6634623"
       },
       {
-        "theme": "〈貴金屬盤後〉金價從近一周低點反彈 殖利率下降和Fed決議受矚",
-        "reason": "黃金周三反彈，現貨漲0.3%至4137.94美元，期貨收4150美元。",
-        "sectors": [
-          "總體經濟",
-          "原物料／能源",
-          "地緣／政策"
-        ],
-        "url": "https://news.cnyes.com/news/id/6635113"
-      },
-      {
-        "theme": "鉅亨速報 - Factset 最新調查：安納利資本管理NLY-US的目標價調降至22元，幅度約4.35% | 鉅亨網",
+        "theme": "鉅亨速報 - Factset 最新調查：安納利資本管理NLY-US的目標價調降至22元，幅度約4.35%",
         "reason": "鉅亨速報 美股預估 鉅亨速報 鉅亨速報 - Factset 最新調查：安納利資本管理NLY-US的目標價調降至22元，幅度約4.35% 02:15 根據FactSet最新調查…",
         "sectors": [
           "AI／伺服器",
@@ -214,76 +199,86 @@
           "半導體"
         ],
         "url": "https://news.cnyes.com/news/id/6635413"
+      },
+      {
+        "theme": "鉅亨速報 - Factset 最新調查：雅保ALB-US的目標價調降至155元，幅度約3.73%",
+        "reason": "鉅亨速報 美股預估 鉅亨速報 鉅亨速報 - Factset 最新調查：雅保ALB-US的目標價調降至155元，幅度約3.73% 04:15 根據FactSet最新調查…",
+        "sectors": [
+          "國際股市",
+          "AI／伺服器",
+          "半導體"
+        ],
+        "url": "https://news.cnyes.com/news/id/6635442"
       }
     ],
     "sector_heat": [
       {
         "sector": "AI／伺服器",
-        "count": 183,
-        "利多": 112,
-        "利空": 27,
+        "count": 179,
+        "利多": 107,
+        "利空": 28,
         "tone": "偏多"
       },
       {
         "sector": "半導體",
-        "count": 125,
-        "利多": 87,
+        "count": 121,
+        "利多": 83,
         "利空": 15,
         "tone": "偏多"
       },
       {
         "sector": "國際股市",
-        "count": 89,
-        "利多": 62,
+        "count": 85,
+        "利多": 58,
         "利空": 17,
         "tone": "偏多"
       },
       {
         "sector": "原物料／能源",
-        "count": 37,
+        "count": 36,
         "利多": 15,
-        "利空": 13,
+        "利空": 11,
         "tone": "偏多"
       },
       {
         "sector": "地緣／政策",
-        "count": 36,
+        "count": 35,
         "利多": 6,
-        "利空": 16,
+        "利空": 15,
+        "tone": "偏空"
+      },
+      {
+        "sector": "金融",
+        "count": 24,
+        "利多": 6,
+        "利空": 9,
         "tone": "偏空"
       },
       {
         "sector": "匯率",
-        "count": 24,
-        "利多": 13,
+        "count": 23,
+        "利多": 12,
         "利空": 5,
         "tone": "偏多"
       },
       {
-        "sector": "金融",
-        "count": 23,
-        "利多": 6,
-        "利空": 8,
-        "tone": "偏空"
-      },
-      {
         "sector": "總體經濟",
-        "count": 22,
-        "利多": 6,
-        "利空": 10,
+        "count": 21,
+        "利多": 4,
+        "利空": 9,
         "tone": "偏空"
       },
       {
         "sector": "記憶體",
         "count": 18,
-        "利多": 11,
+        "利多": 10,
         "利空": 2,
         "tone": "偏多"
       },
       {
         "sector": "電動車／車用",
-        "count": 17,
-        "利多": 10,
+        "count": 16,
+        "利多": 8,
         "利空": 2,
         "tone": "偏多"
       }
@@ -298,7 +293,7 @@
     "generated_by": "claude",
     "llm": {
       "source": "Claude 排程任務",
-      "from_cache": 69
+      "from_cache": 95
     },
     "agent_headline": "SpaceX、美超微財報點燃AI買氣，費半漲近2%，台股外資終止連10賣、指數反彈594點",
     "agent_key_points": [
@@ -319,7 +314,7 @@
     "agent_generated_at": "2026-10-22T07:56:13+08:00"
   },
   "earnings_digest": {
-    "generated_at": "2026-10-22T07:53:27+08:00",
+    "generated_at": "2026-10-22T07:58:33+08:00",
     "days": 5,
     "total": 3,
     "利多": 1,
@@ -475,14 +470,14 @@
       "future": 39
     },
     "source_method": "api",
-    "reused_from_previous_run": 21,
+    "reused_from_previous_run": 64,
     "window_start": "2026-10-21T00:00:00+08:00",
-    "window_end": "2026-10-22T07:54:31.664797+08:00"
+    "window_end": "2026-10-22T07:58:57.735524+08:00"
   },
   "agent_stats": {
     "input": 303,
     "after_dedupe": 303,
-    "ai_cached": 69,
+    "ai_cached": 95,
     "seconds": 0.5,
     "earnings": {
       "total": 3,
@@ -1520,88 +1515,111 @@
     },
     {
       "article_id": "6635413",
-      "title": "鉅亨速報 - Factset 最新調查：安納利資本管理NLY-US的目標價調降至22元，幅度約4.35% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：安納利資本管理NLY-US的目標價調降至22元，幅度約4.35%",
       "url": "https://news.cnyes.com/news/id/6635413",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-22 02:15:29",
       "published_ts": "2026-10-22T02:15:29+08:00",
       "ai_points": [
-        "FactSet調查11位分析師，安納利資本管理目標價中位數由23元降至22元",
-        "調降幅度4.35%，最高估值25元、最低19元；13位分析師中9位樂觀"
+        "鉅亨速報 美股預估 鉅亨速報 鉅亨速報 - Factset 最新調查：安納利資本管理NLY-US的目標價調降至22元，幅度約4.35% 02:15 根據FactSet最新調查…",
+        "近5日股價上漲4.35%，標普指數下跌1.19%股價漲幅表現優於大盤。",
+        "台韓半導體藏哪些機會 掌握全球財經資訊 下載APP ‌ 文章標籤 美股 NLY 市場預估 目標價 更多 相關行情 台股首頁 我要存股 安納利資本管理 18.01 -1.53 % 更…"
       ],
-      "summary": "FactSet調查11位分析師，安納利資本管理目標價中位數由23元降至22元；調降幅度4.35%，最高估值25元、最低19元；13位分析師中9位樂觀",
+      "summary": "鉅亨速報 美股預估 鉅亨速報 鉅亨速報 - Factset 最新調查：安納利資本管理NLY-US的目標價調降至22元，幅度約4.35% 02:15 根據FactSet最新調查…；近5日股價上漲4.35%，標普指數下跌1.19%股價漲幅表現優於大盤。；台韓半導體藏哪些機會 掌握全球財經資訊 下載APP ‌ 文章標籤 美股 NLY 市場預估 目標價 更多 相關行情 台股首頁 我要存股 安納利資本管理 18.01 -1.53 % 更…",
       "sentiment": "利空",
       "sectors": [
-        "金融",
-        "國際股市"
+        "AI／伺服器",
+        "國際股市",
+        "半導體"
       ],
       "stocks": [],
       "highlights": [
-        "安納利資本管理",
-        "22元",
+        "-1.53 %",
         "4.35%",
-        "9位樂觀"
+        "1.19%",
+        "22元",
+        "半導體",
+        "調降",
+        "上漲",
+        "下跌",
+        "美股",
+        "標普"
       ],
-      "why": "美國不動產抵押REIT目標價小幅下修",
+      "why": "",
       "importance": 8.0,
-      "ai_source": "claude",
+      "ai_source": "rule",
       "source": "鉅亨網"
     },
     {
       "article_id": "6635442",
-      "title": "鉅亨速報 - Factset 最新調查：雅保ALB-US的目標價調降至155元，幅度約3.73% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：雅保ALB-US的目標價調降至155元，幅度約3.73%",
       "url": "https://news.cnyes.com/news/id/6635442",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-22 04:15:29",
       "published_ts": "2026-10-22T04:15:29+08:00",
       "ai_points": [
-        "FactSet調查17位分析師，雅保目標價中位數由161元降至155元、幅度3.73%",
-        "最高估值211元、最低109元；23位分析師中16位樂觀"
+        "鉅亨速報 美股預估 鉅亨速報 鉅亨速報 - Factset 最新調查：雅保ALB-US的目標價調降至155元，幅度約3.73% 04:15 根據FactSet最新調查…",
+        "其中最高估值211元，最低估值109元。",
+        "台韓半導體藏哪些機會 掌握全球財經資訊 下載APP ‌ 文章標籤 美股 ALB 市場預估 目標價 更多 相關行情 台股首頁 我要存股 雅保 94.47 -1.36 % 更多 鉅亨速…"
       ],
-      "summary": "FactSet調查17位分析師，雅保目標價中位數由161元降至155元、幅度3.73%；最高估值211元、最低109元；23位分析師中16位樂觀",
+      "summary": "鉅亨速報 美股預估 鉅亨速報 鉅亨速報 - Factset 最新調查：雅保ALB-US的目標價調降至155元，幅度約3.73% 04:15 根據FactSet最新調查…；其中最高估值211元，最低估值109元。；台韓半導體藏哪些機會 掌握全球財經資訊 下載APP ‌ 文章標籤 美股 ALB 市場預估 目標價 更多 相關行情 台股首頁 我要存股 雅保 94.47 -1.36 % 更多 鉅亨速…",
       "sentiment": "利空",
       "sectors": [
-        "原物料／能源",
-        "電動車／車用"
+        "國際股市",
+        "AI／伺服器",
+        "半導體"
       ],
       "stocks": [],
       "highlights": [
-        "雅保",
-        "155元",
+        "-1.36 %",
         "3.73%",
-        "16位樂觀"
+        "155元",
+        "211元",
+        "109元",
+        "半導體",
+        "調降",
+        "美股"
       ],
-      "why": "鋰礦大廠目標價下修，反映電池材料景氣",
+      "why": "",
       "importance": 8.0,
-      "ai_source": "claude",
+      "ai_source": "rule",
       "source": "鉅亨網"
     },
     {
       "article_id": "6635474",
-      "title": "鉅亨速報 - Factset 最新調查：馬拉松石油MPC-US的目標價調升至478元，幅度約4.6% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：馬拉松石油MPC-US的目標價調升至478元，幅度約4.6%",
       "url": "https://news.cnyes.com/news/id/6635474",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-22 06:15:33",
       "published_ts": "2026-10-22T06:15:33+08:00",
       "ai_points": [
-        "FactSet調查17位分析師，馬拉松石油目標價中位數由457元升至478元",
-        "調升幅度4.6%，最高估值560元、最低297元；22位分析師中11位樂觀"
+        "鉅亨速報 美股預估 鉅亨速報 鉅亨速報 - Factset 最新調查：馬拉松石油MPC-US的目標價調升至478元，幅度約4.6% 06:15 根據FactSet最新調查…",
+        "近5日股價下跌4.6%，標普指數上漲0.5%短期股價無明顯表現。",
+        "台韓半導體藏哪些機會 掌握全球財經資訊 下載APP ‌ 文章標籤 美股 MPC 市場預估 目標價 更多 相關行情 台股首頁 我要存股 馬拉松石油 467.98 -1.49 % 更多…"
       ],
-      "summary": "FactSet調查17位分析師，馬拉松石油目標價中位數由457元升至478元；調升幅度4.6%，最高估值560元、最低297元；22位分析師中11位樂觀",
+      "summary": "鉅亨速報 美股預估 鉅亨速報 鉅亨速報 - Factset 最新調查：馬拉松石油MPC-US的目標價調升至478元，幅度約4.6% 06:15 根據FactSet最新調查…；近5日股價下跌4.6%，標普指數上漲0.5%短期股價無明顯表現。；台韓半導體藏哪些機會 掌握全球財經資訊 下載APP ‌ 文章標籤 美股 MPC 市場預估 目標價 更多 相關行情 台股首頁 我要存股 馬拉松石油 467.98 -1.49 % 更多…",
       "sentiment": "利多",
       "sectors": [
-        "原物料／能源"
+        "AI／伺服器",
+        "國際股市",
+        "半導體"
       ],
       "stocks": [],
       "highlights": [
-        "馬拉松石油",
+        "-1.49 %",
         "478元",
         "4.6%",
-        "11位樂觀"
+        "0.5%",
+        "半導體",
+        "調升",
+        "上漲",
+        "下跌",
+        "美股",
+        "標普"
       ],
-      "why": "高油價環境下煉油股預估上修",
+      "why": "",
       "importance": 8.0,
-      "ai_source": "claude",
+      "ai_source": "rule",
       "source": "鉅亨網"
     },
     {
@@ -2018,31 +2036,39 @@
     },
     {
       "article_id": "6635473",
-      "title": "鉅亨速報 - Factset 最新調查：AT&TT-US的目標價調降至28.5元，幅度約3.39% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：AT&TT-US的目標價調降至28.5元，幅度約3.39%",
       "url": "https://news.cnyes.com/news/id/6635473",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-22 06:15:28",
       "published_ts": "2026-10-22T06:15:28+08:00",
       "ai_points": [
-        "FactSet調查22位分析師，AT&T目標價中位數由29.5元降至28.5元",
-        "調降幅度3.39%；AT&T收21.91元，單日跌6.45%"
+        "鉅亨速報 美股預估 鉅亨速報 鉅亨速報 - Factset 最新調查：AT&TT-US的目標價調降至28.5元，幅度約3.39% 06:15 根據FactSet最新調查…",
+        "近5日股價下跌3.39%，標普指數上漲0.5%短期股價無明顯表現。",
+        "台韓半導體藏哪些機會 掌握全球財經資訊 下載APP ‌ 文章標籤 美股 T 市場預估 目標價 更多 相關行情 台股首頁 我要存股 AT&T 21.91 -6.45 % 更多 盤中速…"
       ],
-      "summary": "FactSet調查22位分析師，AT&T目標價中位數由29.5元降至28.5元；調降幅度3.39%；AT&T收21.91元，單日跌6.45%",
+      "summary": "鉅亨速報 美股預估 鉅亨速報 鉅亨速報 - Factset 最新調查：AT&TT-US的目標價調降至28.5元，幅度約3.39% 06:15 根據FactSet最新調查…；近5日股價下跌3.39%，標普指數上漲0.5%短期股價無明顯表現。；台韓半導體藏哪些機會 掌握全球財經資訊 下載APP ‌ 文章標籤 美股 T 市場預估 目標價 更多 相關行情 台股首頁 我要存股 AT&T 21.91 -6.45 % 更多 盤中速…",
       "sentiment": "利空",
       "sectors": [
-        "網通／光通訊",
-        "國際股市"
+        "AI／伺服器",
+        "國際股市",
+        "半導體"
       ],
       "stocks": [],
       "highlights": [
-        "AT&T",
+        "-6.45 %",
         "28.5元",
         "3.39%",
-        "21.91元"
+        "0.5%",
+        "半導體",
+        "調降",
+        "上漲",
+        "下跌",
+        "美股",
+        "標普"
       ],
-      "why": "財報後股價重挫，分析師下修目標價",
+      "why": "",
       "importance": 7.6,
-      "ai_source": "claude",
+      "ai_source": "rule",
       "source": "鉅亨網"
     },
     {
@@ -2912,9 +2938,9 @@
     },
     {
       "article_id": "6635243",
-      "title": "鉅亨速報 - Factset 最新調查：Westlake CorporationWLK-US的目標價調降至76.5元，幅度約3.16% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：Westlake CorporationWLK-US的目標價調降至76.5元，幅度約3.16%",
       "url": "https://news.cnyes.com/news/id/6635243",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 20:15:23",
       "published_ts": "2026-10-21T20:15:23+08:00",
       "ai_points": [
@@ -2948,9 +2974,9 @@
     },
     {
       "article_id": "6635244",
-      "title": "鉅亨速報 - Factset 最新調查：Dynatrace IncDT-US的目標價調升至65元，幅度約3.17% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：Dynatrace IncDT-US的目標價調升至65元，幅度約3.17%",
       "url": "https://news.cnyes.com/news/id/6635244",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 20:15:25",
       "published_ts": "2026-10-21T20:15:25+08:00",
       "ai_points": [
@@ -2981,9 +3007,9 @@
     },
     {
       "article_id": "6635245",
-      "title": "鉅亨速報 - Factset 最新調查：CoreWeave, Inc. Class ACRWV-US的目標價調降至135.5元，幅度約4.91% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：CoreWeave, Inc. Class ACRWV-US的目標價調降至135.5元，幅度約4.91%",
       "url": "https://news.cnyes.com/news/id/6635245",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 20:15:30",
       "published_ts": "2026-10-21T20:15:30+08:00",
       "ai_points": [
@@ -3018,9 +3044,9 @@
     },
     {
       "article_id": "6635246",
-      "title": "鉅亨速報 - Factset 最新調查：易速傳真EFX-US的目標價調升至200元，幅度約5.26% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：易速傳真EFX-US的目標價調升至200元，幅度約5.26%",
       "url": "https://news.cnyes.com/news/id/6635246",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 20:15:31",
       "published_ts": "2026-10-21T20:15:31+08:00",
       "ai_points": [
@@ -3053,9 +3079,9 @@
     },
     {
       "article_id": "6635248",
-      "title": "鉅亨速報 - Factset 最新調查：SS&C Technologies Holdings IncSSNC-US的目標價調升至98元，幅度約5.38% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：SS&C Technologies Holdings IncSSNC-US的目標價調升至98元，幅度約5.38%",
       "url": "https://news.cnyes.com/news/id/6635248",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 20:15:33",
       "published_ts": "2026-10-21T20:15:33+08:00",
       "ai_points": [
@@ -3090,9 +3116,9 @@
     },
     {
       "article_id": "6635249",
-      "title": "鉅亨速報 - Factset 最新調查：愛迪生國際EIX-US的目標價調升至62元，幅度約3.33% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：愛迪生國際EIX-US的目標價調升至62元，幅度約3.33%",
       "url": "https://news.cnyes.com/news/id/6635249",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 20:15:35",
       "published_ts": "2026-10-21T20:15:35+08:00",
       "ai_points": [
@@ -3127,9 +3153,9 @@
     },
     {
       "article_id": "6635250",
-      "title": "鉅亨速報 - Factset 最新調查：同意不動產ADC-US的目標價調降至76.5元，幅度約5.56% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：同意不動產ADC-US的目標價調降至76.5元，幅度約5.56%",
       "url": "https://news.cnyes.com/news/id/6635250",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 20:15:36",
       "published_ts": "2026-10-21T20:15:36+08:00",
       "ai_points": [
@@ -3164,9 +3190,9 @@
     },
     {
       "article_id": "6635252",
-      "title": "鉅亨速報 - Factset 最新調查：克里夫蘭克里夫CLF-US的目標價調升至14元，幅度約3.7% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：克里夫蘭克里夫CLF-US的目標價調升至14元，幅度約3.7%",
       "url": "https://news.cnyes.com/news/id/6635252",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 20:15:37",
       "published_ts": "2026-10-21T20:15:37+08:00",
       "ai_points": [
@@ -3201,9 +3227,9 @@
     },
     {
       "article_id": "6635255",
-      "title": "鉅亨速報 - Factset 最新調查：孩之寶HAS-US的目標價調升至119元，幅度約3.93% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：孩之寶HAS-US的目標價調升至119元，幅度約3.93%",
       "url": "https://news.cnyes.com/news/id/6635255",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 20:15:40",
       "published_ts": "2026-10-21T20:15:40+08:00",
       "ai_points": [
@@ -3238,9 +3264,9 @@
     },
     {
       "article_id": "6635257",
-      "title": "鉅亨速報 - Factset 最新調查：Nextracker Inc - Class ANXT-US的目標價調降至127元，幅度約6.62% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：Nextracker Inc - Class ANXT-US的目標價調降至127元，幅度約6.62%",
       "url": "https://news.cnyes.com/news/id/6635257",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 20:15:41",
       "published_ts": "2026-10-21T20:15:41+08:00",
       "ai_points": [
@@ -3308,9 +3334,9 @@
     },
     {
       "article_id": "6635342",
-      "title": "鉅亨速報 - Factset 最新調查：FabrinetFN-US的目標價調降至717元，幅度約3.69% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：FabrinetFN-US的目標價調降至717元，幅度約3.69%",
       "url": "https://news.cnyes.com/news/id/6635342",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 22:15:24",
       "published_ts": "2026-10-21T22:15:24+08:00",
       "ai_points": [
@@ -3343,9 +3369,9 @@
     },
     {
       "article_id": "6635343",
-      "title": "鉅亨速報 - Factset 最新調查：網飛NFLX-US的目標價調降至85元，幅度約5.56% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：網飛NFLX-US的目標價調降至85元，幅度約5.56%",
       "url": "https://news.cnyes.com/news/id/6635343",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 22:15:31",
       "published_ts": "2026-10-21T22:15:31+08:00",
       "ai_points": [
@@ -4194,42 +4220,6 @@
       "why": "",
       "importance": 6.5,
       "ai_source": "rule",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6634671",
-      "title": "營收速報 - 2026年10月21日台股大型公司9月營收一覽（新增11家）",
-      "url": "https://news.cnyes.com/news/id/6634671",
-      "category": "台股營收",
-      "published": "2026-10-21 07:55:10",
-      "published_ts": "2026-10-21T07:55:10+08:00",
-      "ai_points": [
-        "資本額50億以上已公布9月營收243家，年增逾25%有92家",
-        "南亞科9月營收450.91億元、年增576.6%",
-        "和碩9月營收2147.53億元、月增143.2%；國喬年增96.8%"
-      ],
-      "summary": "資本額50億以上已公布9月營收243家，年增逾25%有92家；南亞科9月營收450.91億元、年增576.6%；和碩9月營收2147.53億元、月增143.2%；國喬年增96.8%",
-      "sentiment": "利多",
-      "sectors": [
-        "記憶體",
-        "原物料／能源"
-      ],
-      "stocks": [
-        "2408",
-        "4938",
-        "1312"
-      ],
-      "highlights": [
-        "243家",
-        "92家",
-        "南亞科",
-        "576.6%",
-        "和碩",
-        "143.2%"
-      ],
-      "why": "大型公司9月營收普遍成長",
-      "importance": 6.4,
-      "ai_source": "claude",
       "source": "鉅亨網"
     },
     {
@@ -5524,9 +5514,9 @@
     },
     {
       "article_id": "6635347",
-      "title": "澤倫斯基最新表態：願在保留至少75%領土控制權基礎上達成和平協議 | 鉅亨網",
+      "title": "澤倫斯基最新表態：願在保留至少75%領土控制權基礎上達成和平協議",
       "url": "https://news.cnyes.com/news/id/6635347",
-      "category": "wd_stock",
+      "category": "國際政經",
       "published": "2026-10-21 22:28:05",
       "published_ts": "2026-10-21T22:28:05+08:00",
       "ai_points": [
@@ -5546,43 +5536,6 @@
         "75%",
         "突破",
         "美股"
-      ],
-      "why": "",
-      "importance": 5.8,
-      "ai_source": "rule",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6635407",
-      "title": "盤中速報 - 星座能源(CEG-US)大漲5.03%，報271.85美元 | 鉅亨網",
-      "url": "https://news.cnyes.com/news/id/6635407",
-      "category": "anue_live",
-      "published": "2026-10-22 01:55:54",
-      "published_ts": "2026-10-22T01:55:54+08:00",
-      "ai_points": [
-        "鉅亨速報 美股盤中 鉅亨速報 盤中速報 - 星座能源(CEG-US)大漲5.03%…",
-        "美股指數盤中表現 道瓊指數 ：+0.53% S&P 500 指數：+0.7% NASDAQ 指數：+1.23% 費城半導體 指數：+2.14% 星座能源( CEG-US )歷史漲跌…",
-        "台韓半導體藏哪些機會 掌握全球財經資訊 下載APP ‌ 文章標籤 美股 美股盤中 盤中速報 星座能源 更多 相關行情 台股首頁 我要存股 S&P 500 7757.23 +0.58…"
-      ],
-      "summary": "鉅亨速報 美股盤中 鉅亨速報 盤中速報 - 星座能源(CEG-US)大漲5.03%…；美股指數盤中表現 道瓊指數 ：+0.53% S&P 500 指數：+0.7% NASDAQ 指數：+1.23% 費城半導體 指數：+2.14% 星座能源( CEG-US )歷史漲跌…；台韓半導體藏哪些機會 掌握全球財經資訊 下載APP ‌ 文章標籤 美股 美股盤中 盤中速報 星座能源 更多 相關行情 台股首頁 我要存股 S&P 500 7757.23 +0.58…",
-      "sentiment": "利多",
-      "sectors": [
-        "國際股市",
-        "AI／伺服器",
-        "半導體"
-      ],
-      "stocks": [],
-      "highlights": [
-        "+0.53%",
-        "+1.23%",
-        "+2.14%",
-        "5.03%",
-        "+0.7%",
-        "S&P",
-        "半導體",
-        "大漲",
-        "美股",
-        "道瓊"
       ],
       "why": "",
       "importance": 5.8,
@@ -5623,9 +5576,9 @@
     },
     {
       "article_id": "6635428",
-      "title": "盤中速報 - 莫德納(MRNA-US)大漲5.08%，報254.38美元 | 鉅亨網",
+      "title": "盤中速報 - 莫德納(MRNA-US)大漲5.08%，報254.38美元",
       "url": "https://news.cnyes.com/news/id/6635428",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-22 03:47:17",
       "published_ts": "2026-10-22T03:47:17+08:00",
       "ai_points": [
@@ -5931,27 +5884,39 @@
       "source": "鉅亨網"
     },
     {
-      "article_id": "6634672",
-      "title": "營收速報 - 2026年10月21日台股中小型公司9月營收一覽（新增6家）",
-      "url": "https://news.cnyes.com/news/id/6634672",
-      "category": "台股新聞",
-      "published": "2026-10-21 07:55:11",
-      "published_ts": "2026-10-21T07:55:11+08:00",
+      "article_id": "6634671",
+      "title": "營收速報 - 2026年10月21日台股大型公司9月營收一覽（新增11家）",
+      "url": "https://news.cnyes.com/news/id/6634671",
+      "category": "台股營收",
+      "published": "2026-10-21 07:55:10",
+      "published_ts": "2026-10-21T07:55:10+08:00",
       "ai_points": [
-        "本次公布9月營收一覽 截至台北時間2026年10月21日07:55…"
+        "資本額50億以上已公布9月營收243家，年增逾25%有92家",
+        "南亞科9月營收450.91億元、年增576.6%",
+        "和碩9月營收2147.53億元、月增143.2%；國喬年增96.8%"
       ],
-      "summary": "本次公布9月營收一覽 截至台北時間2026年10月21日07:55…",
+      "summary": "資本額50億以上已公布9月營收243家，年增逾25%有92家；南亞科9月營收450.91億元、年增576.6%；和碩9月營收2147.53億元、月增143.2%；國喬年增96.8%",
       "sentiment": "利多",
       "sectors": [
-        "生技醫療"
+        "記憶體",
+        "原物料／能源"
       ],
-      "stocks": [],
+      "stocks": [
+        "2408",
+        "4938",
+        "1312"
+      ],
       "highlights": [
-        "營收"
+        "243家",
+        "92家",
+        "南亞科",
+        "576.6%",
+        "和碩",
+        "143.2%"
       ],
-      "why": "",
+      "why": "大型公司9月營收普遍成長",
       "importance": 5.4,
-      "ai_source": "rule",
+      "ai_source": "claude",
       "source": "鉅亨網"
     },
     {
@@ -7661,9 +7626,9 @@
     },
     {
       "article_id": "6635304",
-      "title": "盤中速報 - 網飛(NFLX-US)大跌6.67%，報64.11美元 | 鉅亨網",
+      "title": "盤中速報 - 網飛(NFLX-US)大跌6.67%，報64.11美元",
       "url": "https://news.cnyes.com/news/id/6635304",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 21:45:02",
       "published_ts": "2026-10-21T21:45:02+08:00",
       "ai_points": [
@@ -7698,9 +7663,9 @@
     },
     {
       "article_id": "6635308",
-      "title": "盤中速報 - 直覺外科(ISRG-US)大跌8.91%，報398.99美元 | 鉅亨網",
+      "title": "盤中速報 - 直覺外科(ISRG-US)大跌8.91%，報398.99美元",
       "url": "https://news.cnyes.com/news/id/6635308",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 21:45:07",
       "published_ts": "2026-10-21T21:45:07+08:00",
       "ai_points": [
@@ -7735,9 +7700,9 @@
     },
     {
       "article_id": "6635309",
-      "title": "盤中速報 - AT&T(T-US)大跌6.32%，報21.94美元 | 鉅亨網",
+      "title": "盤中速報 - AT&T(T-US)大跌6.32%，報21.94美元",
       "url": "https://news.cnyes.com/news/id/6635309",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 21:45:08",
       "published_ts": "2026-10-21T21:45:08+08:00",
       "ai_points": [
@@ -7772,9 +7737,9 @@
     },
     {
       "article_id": "6635310",
-      "title": "盤中速報 - 菲利浦莫里斯國際(PM-US)大跌6.38%，報187.14美元 | 鉅亨網",
+      "title": "盤中速報 - 菲利浦莫里斯國際(PM-US)大跌6.38%，報187.14美元",
       "url": "https://news.cnyes.com/news/id/6635310",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 21:45:10",
       "published_ts": "2026-10-21T21:45:10+08:00",
       "ai_points": [
@@ -7809,9 +7774,9 @@
     },
     {
       "article_id": "6635313",
-      "title": "盤中速報 - 菲利浦莫里斯國際(PM-US)大跌5.56%，報188.78美元 | 鉅亨網",
+      "title": "盤中速報 - 菲利浦莫里斯國際(PM-US)大跌5.56%，報188.78美元",
       "url": "https://news.cnyes.com/news/id/6635313",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 21:45:59",
       "published_ts": "2026-10-21T21:45:59+08:00",
       "ai_points": [
@@ -7846,9 +7811,9 @@
     },
     {
       "article_id": "6635312",
-      "title": "盤中速報 - 網飛(NFLX-US)大跌5.3%，報65.05美元 | 鉅亨網",
+      "title": "盤中速報 - 網飛(NFLX-US)大跌5.3%，報65.05美元",
       "url": "https://news.cnyes.com/news/id/6635312",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 21:45:59",
       "published_ts": "2026-10-21T21:45:59+08:00",
       "ai_points": [
@@ -7883,9 +7848,9 @@
     },
     {
       "article_id": "6635314",
-      "title": "盤中速報 - 超微電腦(SMCI-US)大漲11.73%，報36.28美元 | 鉅亨網",
+      "title": "盤中速報 - 超微電腦(SMCI-US)大漲11.73%，報36.28美元",
       "url": "https://news.cnyes.com/news/id/6635314",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 21:46:01",
       "published_ts": "2026-10-21T21:46:01+08:00",
       "ai_points": [
@@ -7920,9 +7885,9 @@
     },
     {
       "article_id": "6635316",
-      "title": "盤中速報 - 安可(AMKR-US)大漲5.4%，報43.95美元 | 鉅亨網",
+      "title": "盤中速報 - 安可(AMKR-US)大漲5.4%，報43.95美元",
       "url": "https://news.cnyes.com/news/id/6635316",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 21:46:02",
       "published_ts": "2026-10-21T21:46:02+08:00",
       "ai_points": [
@@ -7957,9 +7922,9 @@
     },
     {
       "article_id": "6635315",
-      "title": "盤中速報 - 直覺外科(ISRG-US)大跌6.25%，報410.63美元 | 鉅亨網",
+      "title": "盤中速報 - 直覺外科(ISRG-US)大跌6.25%，報410.63美元",
       "url": "https://news.cnyes.com/news/id/6635315",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 21:46:02",
       "published_ts": "2026-10-21T21:46:02+08:00",
       "ai_points": [
@@ -7994,9 +7959,9 @@
     },
     {
       "article_id": "6635317",
-      "title": "盤中速報 - AT&T(T-US)大跌5.51%，報22.13美元 | 鉅亨網",
+      "title": "盤中速報 - AT&T(T-US)大跌5.51%，報22.13美元",
       "url": "https://news.cnyes.com/news/id/6635317",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 21:47:15",
       "published_ts": "2026-10-21T21:47:15+08:00",
       "ai_points": [
@@ -8031,9 +7996,9 @@
     },
     {
       "article_id": "6635318",
-      "title": "盤中速報 - 超微電腦(SMCI-US)大漲14.34%，報37.13美元 | 鉅亨網",
+      "title": "盤中速報 - 超微電腦(SMCI-US)大漲14.34%，報37.13美元",
       "url": "https://news.cnyes.com/news/id/6635318",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 21:47:17",
       "published_ts": "2026-10-21T21:47:17+08:00",
       "ai_points": [
@@ -8068,9 +8033,9 @@
     },
     {
       "article_id": "6635319",
-      "title": "盤中速報 - 安可(AMKR-US)大漲5.72%，報44.09美元 | 鉅亨網",
+      "title": "盤中速報 - 安可(AMKR-US)大漲5.72%，報44.09美元",
       "url": "https://news.cnyes.com/news/id/6635319",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 21:47:18",
       "published_ts": "2026-10-21T21:47:18+08:00",
       "ai_points": [
@@ -8105,9 +8070,9 @@
     },
     {
       "article_id": "6635321",
-      "title": "盤中速報 - 網飛(NFLX-US)大跌5.02%，報65.25美元 | 鉅亨網",
+      "title": "盤中速報 - 網飛(NFLX-US)大跌5.02%，報65.25美元",
       "url": "https://news.cnyes.com/news/id/6635321",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 21:51:54",
       "published_ts": "2026-10-21T21:51:54+08:00",
       "ai_points": [
@@ -8142,9 +8107,9 @@
     },
     {
       "article_id": "6635337",
-      "title": "盤中速報 - 數據狗(DDOG-US)大漲5.14%，報269.6美元 | 鉅亨網",
+      "title": "盤中速報 - 數據狗(DDOG-US)大漲5.14%，報269.6美元",
       "url": "https://news.cnyes.com/news/id/6635337",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 22:02:43",
       "published_ts": "2026-10-21T22:02:43+08:00",
       "ai_points": [
@@ -8216,9 +8181,9 @@
     },
     {
       "article_id": "6635358",
-      "title": "盤中速報 - 特許通訊(CHTR-US)大跌5.02%，報104.51美元 | 鉅亨網",
+      "title": "盤中速報 - 特許通訊(CHTR-US)大跌5.02%，報104.51美元",
       "url": "https://news.cnyes.com/news/id/6635358",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 22:43:34",
       "published_ts": "2026-10-21T22:43:34+08:00",
       "ai_points": [
@@ -8253,9 +8218,9 @@
     },
     {
       "article_id": "6635369",
-      "title": "盤中速報 - 伊魯米納(ILMN-US)大漲5.01%，報281.35美元 | 鉅亨網",
+      "title": "盤中速報 - 伊魯米納(ILMN-US)大漲5.01%，報281.35美元",
       "url": "https://news.cnyes.com/news/id/6635369",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 23:26:09",
       "published_ts": "2026-10-21T23:26:09+08:00",
       "ai_points": [
@@ -8290,9 +8255,9 @@
     },
     {
       "article_id": "6635371",
-      "title": "盤中速報 - 德康醫療(DXCM-US)大跌5.04%，報81.42美元 | 鉅亨網",
+      "title": "盤中速報 - 德康醫療(DXCM-US)大跌5.04%，報81.42美元",
       "url": "https://news.cnyes.com/news/id/6635371",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 23:33:45",
       "published_ts": "2026-10-21T23:33:45+08:00",
       "ai_points": [
@@ -8327,9 +8292,9 @@
     },
     {
       "article_id": "6635375",
-      "title": "盤中速報 - MongoDB公司(MDB-US)大漲5.1%，報384.84美元 | 鉅亨網",
+      "title": "盤中速報 - MongoDB公司(MDB-US)大漲5.1%，報384.84美元",
       "url": "https://news.cnyes.com/news/id/6635375",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-22 00:05:10",
       "published_ts": "2026-10-22T00:05:10+08:00",
       "ai_points": [
@@ -8364,9 +8329,9 @@
     },
     {
       "article_id": "6635395",
-      "title": "盤中速報 - Crowdstrike控股(CRWD-US)大漲5.01%，報238.75美元 | 鉅亨網",
+      "title": "盤中速報 - Crowdstrike控股(CRWD-US)大漲5.01%，報238.75美元",
       "url": "https://news.cnyes.com/news/id/6635395",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-22 00:54:53",
       "published_ts": "2026-10-22T00:54:53+08:00",
       "ai_points": [
@@ -8388,6 +8353,43 @@
         "+1.28%",
         "5.01%",
         "+2.3%",
+        "S&P",
+        "半導體",
+        "大漲",
+        "美股",
+        "道瓊"
+      ],
+      "why": "",
+      "importance": 4.8,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6635407",
+      "title": "盤中速報 - 星座能源(CEG-US)大漲5.03%，報271.85美元",
+      "url": "https://news.cnyes.com/news/id/6635407",
+      "category": "美股",
+      "published": "2026-10-22 01:55:54",
+      "published_ts": "2026-10-22T01:55:54+08:00",
+      "ai_points": [
+        "鉅亨速報 美股盤中 鉅亨速報 盤中速報 - 星座能源(CEG-US)大漲5.03%…",
+        "美股指數盤中表現 道瓊指數 ：+0.53% S&P 500 指數：+0.7% NASDAQ 指數：+1.23% 費城半導體 指數：+2.14% 星座能源( CEG-US )歷史漲跌…",
+        "台韓半導體藏哪些機會 掌握全球財經資訊 下載APP ‌ 文章標籤 美股 美股盤中 盤中速報 星座能源 更多 相關行情 台股首頁 我要存股 S&P 500 7757.23 +0.58…"
+      ],
+      "summary": "鉅亨速報 美股盤中 鉅亨速報 盤中速報 - 星座能源(CEG-US)大漲5.03%…；美股指數盤中表現 道瓊指數 ：+0.53% S&P 500 指數：+0.7% NASDAQ 指數：+1.23% 費城半導體 指數：+2.14% 星座能源( CEG-US )歷史漲跌…；台韓半導體藏哪些機會 掌握全球財經資訊 下載APP ‌ 文章標籤 美股 美股盤中 盤中速報 星座能源 更多 相關行情 台股首頁 我要存股 S&P 500 7757.23 +0.58…",
+      "sentiment": "利多",
+      "sectors": [
+        "國際股市",
+        "AI／伺服器",
+        "半導體"
+      ],
+      "stocks": [],
+      "highlights": [
+        "+0.53%",
+        "+1.23%",
+        "+2.14%",
+        "5.03%",
+        "+0.7%",
         "S&P",
         "半導體",
         "大漲",
@@ -8696,6 +8698,30 @@
         "回升",
         "重挫",
         "風險"
+      ],
+      "why": "",
+      "importance": 4.4,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6634672",
+      "title": "營收速報 - 2026年10月21日台股中小型公司9月營收一覽（新增6家）",
+      "url": "https://news.cnyes.com/news/id/6634672",
+      "category": "台股新聞",
+      "published": "2026-10-21 07:55:11",
+      "published_ts": "2026-10-21T07:55:11+08:00",
+      "ai_points": [
+        "本次公布9月營收一覽 截至台北時間2026年10月21日07:55…"
+      ],
+      "summary": "本次公布9月營收一覽 截至台北時間2026年10月21日07:55…",
+      "sentiment": "利多",
+      "sectors": [
+        "生技醫療"
+      ],
+      "stocks": [],
+      "highlights": [
+        "營收"
       ],
       "why": "",
       "importance": 4.4,
@@ -9174,9 +9200,9 @@
     },
     {
       "article_id": "6635307",
-      "title": "盤中速報 - 安可(AMKR-US)大漲5.78%，報44.11美元 | 鉅亨網",
+      "title": "盤中速報 - 安可(AMKR-US)大漲5.78%，報44.11美元",
       "url": "https://news.cnyes.com/news/id/6635307",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 21:45:03",
       "published_ts": "2026-10-21T21:45:03+08:00",
       "ai_points": [
@@ -9211,9 +9237,9 @@
     },
     {
       "article_id": "6635305",
-      "title": "盤中速報 - 超微電腦(SMCI-US)大漲12.35%，報36.48美元 | 鉅亨網",
+      "title": "盤中速報 - 超微電腦(SMCI-US)大漲12.35%，報36.48美元",
       "url": "https://news.cnyes.com/news/id/6635305",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 21:45:03",
       "published_ts": "2026-10-21T21:45:03+08:00",
       "ai_points": [
@@ -9248,9 +9274,9 @@
     },
     {
       "article_id": "6635311",
-      "title": "盤中速報 - AT&T(T-US)大跌5.81%，報22.06美元 | 鉅亨網",
+      "title": "盤中速報 - AT&T(T-US)大跌5.81%，報22.06美元",
       "url": "https://news.cnyes.com/news/id/6635311",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 21:45:58",
       "published_ts": "2026-10-21T21:45:58+08:00",
       "ai_points": [
@@ -9283,9 +9309,9 @@
     },
     {
       "article_id": "6635320",
-      "title": "盤中速報 - 直覺外科(ISRG-US)大跌5.19%，報415.27美元 | 鉅亨網",
+      "title": "盤中速報 - 直覺外科(ISRG-US)大跌5.19%，報415.27美元",
       "url": "https://news.cnyes.com/news/id/6635320",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 21:47:25",
       "published_ts": "2026-10-21T21:47:25+08:00",
       "ai_points": [
@@ -9318,9 +9344,9 @@
     },
     {
       "article_id": "6635354",
-      "title": "盤中速報 - Zscaler公司(ZS-US)大漲5.04%，報225.33美元 | 鉅亨網",
+      "title": "盤中速報 - Zscaler公司(ZS-US)大漲5.04%，報225.33美元",
       "url": "https://news.cnyes.com/news/id/6635354",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 22:31:10",
       "published_ts": "2026-10-21T22:31:10+08:00",
       "ai_points": [
