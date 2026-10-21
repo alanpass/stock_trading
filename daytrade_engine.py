@@ -42,7 +42,7 @@ BASE = Path(__file__).resolve().parent
 OUT = BASE / "output" / "daytrade"
 TAIPEI = ZoneInfo("Asia/Taipei")
 
-CAPITAL = 1_000_000
+CAPITAL = 300_000             # 2026-10-21 起：當沖、波段各 30 萬模擬本金
 RISK_PER_TRADE = 0.005        # 單筆最多虧資金 0.5%
 MAX_POSITIONS = 3
 DAILY_LOSS_LIMIT = 0.015      # 當日虧損達 1.5% 停止進場
@@ -351,11 +351,21 @@ class Engine:
         if side > 0 and not self.market_ok:
             self.log(t, s, "不進場", f"突破成立但大盤轉弱（{self.market_note}）")
             return
-        if side > 0 and last > vwap * (1 + MAX_ABOVE_VWAP):
-            self.log(t, s, "不進場", f"追高：高於 VWAP {last / vwap - 1:.1%}（上限 {MAX_ABOVE_VWAP:.0%}）")
+        # 2026-10-21：突破必須是當日新高；衝高被擋、回落後再回到同一價位的「突破」其實是反彈（10/21 奇鋐）
+        prior_high = float(bars["high"].iloc[:-1].max()) if len(bars) > 1 else orh
+        if side > 0 and close < prior_high:
             return
-        if side > 0 and pc and last > pc * (1 + MAX_UP_FROM_PREV):
-            self.log(t, s, "不進場", f"追高：已比昨收漲 {last / pc - 1:.1%}（上限 {MAX_UP_FROM_PREV:.0%}）")
+        # 追高檢查用實際成交價（零股多付 2 個 tick），不是訊號價
+        fill = last + ODD_LOT_SLIPPAGE_TICKS * tick_size(last)
+        if side > 0 and fill > vwap * (1 + MAX_ABOVE_VWAP):
+            self.log(t, s, "不進場", f"追高：成交價高於 VWAP {fill / vwap - 1:.1%}（上限 {MAX_ABOVE_VWAP:.0%}）")
+            return
+        if side > 0 and pc and fill > pc * (1 + MAX_UP_FROM_PREV):
+            self.log(t, s, "不進場", f"追高：成交價已比昨收漲 {fill / pc - 1:.1%}（上限 {MAX_UP_FROM_PREV:.0%}）")
+            return
+        # 同一根 5 分 K 最多進一檔 ORB，避免同一個大盤狀態一次買滿（10/20 三檔同時 09:35 進場）
+        if any(p.strategy == "orb" and p.opened_at == t for p in self.positions):
+            self.log(t, s, "不進場", "這根 5 分 K 已有 ORB 進場，同一時間只進一檔")
             return
         themes = tuple(info.get("themes") or ())
         clash = [p.symbol for p in self.open_positions() if set(p.themes) & set(themes)]
