@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-10-21",
-  "updated_at": "2026-10-21T08:33:16+08:00",
-  "finished_at": "2026-10-21T08:33:32+08:00",
-  "published_at": "2026-10-21T08:34:52+08:00",
+  "updated_at": "2026-10-21T08:37:59+08:00",
+  "finished_at": "2026-10-21T08:38:15+08:00",
+  "published_at": "2026-10-21T08:38:15+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -18,56 +18,51 @@
   "news_count": 288,
   "earnings_count": 2,
   "news_digest": {
-    "generated_at": "2026-10-21T08:33:16+08:00",
-    "headline": "最近 2 天共整理 288 則財經新聞：利多 113、利空 78、中性 54、混合 43；討論度最高的產業：AI／伺服器、半導體、國際股市。",
+    "generated_at": "2026-10-21T08:37:59+08:00",
+    "headline": "最近 2 天共整理 288 則財經新聞：利多 104、利空 79、中性 56、混合 49；討論度最高的產業：AI／伺服器、半導體、國際股市。",
     "stats": {
       "total": 288,
-      "利多": 113,
-      "利空": 78,
-      "中性": 54,
-      "混合": 43
+      "利多": 104,
+      "利空": 79,
+      "中性": 56,
+      "混合": 49
     },
     "key_points": [
       {
         "title": "〈美股盤後〉財報撐盤！道瓊勁揚逾500點 SpaceX盤後跳升逾4%",
-        "point": "Netflix (NFLX-US) 週二下跌 1.66%，收每股 68.69 美元，盤後跳水超5%。",
-        "sentiment": "利空",
+        "point": "道瓊週二漲529.85點至52495.88點，3M上調財測、諾斯洛普格魯曼獲利優於預期撐盤",
+        "sentiment": "混合",
         "url": "https://news.cnyes.com/news/id/6634601",
         "highlights": [
-          "145.75 億美元",
-          "44.04 億美元",
-          "68.69 美元",
-          "30 億美元",
-          "27 億美元",
-          "1.66%"
+          "529.85點",
+          "3M上調財測",
+          "Anthropic算力支出",
+          "台積電ADR漲1.16%",
+          "101.79美元"
         ]
       },
       {
         "title": "〈財報〉Netflix Q3優預期盤後仍跌6% 廣告與營收展望拖累",
-        "point": "Netflix第三季淨利36.6億美元、EPS 0.87美元，營收128.7億美元符合預估，受惠會員數成長與3月漲價。",
-        "sentiment": "利多",
+        "point": "Netflix第三季淨利36.6億美元、EPS 0.87美元優於預期，營收128.7億美元符合預估",
+        "sentiment": "利空",
         "url": "https://news.cnyes.com/news/id/6634623",
         "highlights": [
-          "128.7 億美元",
+          "EPS 0.87美元",
           "128.7億美元",
-          "36.6億美元",
-          "0.87 美元",
-          "0.82 美元",
-          "0.87美元"
+          "約27億美元",
+          "盤後跌6%"
         ]
       },
       {
         "title": "〈財報〉法國暴亂衝擊！家樂福下修全年財測 營業利益估最多受損2億歐元",
-        "point": "家樂福Q3同店銷售額年增2.3%，法國、西班牙、巴西皆成長，電商業務增18%。",
-        "sentiment": "混合",
+        "point": "家樂福第三季同店銷售年增2.3%，電商業務成長18%",
+        "sentiment": "利空",
         "url": "https://news.cnyes.com/news/id/6634603",
         "highlights": [
-          "2.3%",
-          "18%",
-          "17億",
-          "16億",
-          "EPS",
-          "下修"
+          "同店銷售年增2.3%",
+          "法國暴動",
+          "2億歐元",
+          "16億歐元"
         ]
       },
       {
@@ -85,30 +80,25 @@
       },
       {
         "title": "〈財報〉AI業務成最大金雞母！SpaceX營收暴增161% 馬斯克證實討論與特斯拉合併",
-        "point": "SpaceX第3季營收145.8億美元、淨利44億美元，AI業務營收75.6億美元，年增逾八倍。",
+        "point": "SpaceX第3季營收145.8億美元、淨利44億美元，AI業務營收75.6億美元、年增逾八倍",
         "sentiment": "利多",
         "url": "https://news.cnyes.com/news/id/6634615",
         "highlights": [
           "145.8億美元",
           "75.6億美元",
-          "-370億美元",
-          "222億美元",
-          "44億美元",
-          "161%"
+          "330-370億美元",
+          "與特斯拉合併"
         ]
       },
       {
         "title": "提前報喜！美超微初估營收、毛利率雙雙優於預期 盤後大漲近15%",
-        "point": "美超微周二盤後公布初步財報第1季營收預估185-195億美元，優於市場與公司先前預期。",
+        "point": "美超微初估第1季營收185億至195億美元，優於分析師預估152.3億美元",
         "sentiment": "利多",
         "url": "https://news.cnyes.com/news/id/6634616",
         "highlights": [
-          "-195億美元",
-          "-12.5%",
-          "資料中心",
-          "15%",
-          "1季",
-          "財報"
+          "185億至195億美元",
+          "毛利率預估12-12.5%",
+          "大漲近15%"
         ]
       },
       {
@@ -141,14 +131,8 @@
     ],
     "bullish": [
       {
-        "theme": "〈財報〉Netflix Q3優預期盤後仍跌6% 廣告與營收展望拖累",
-        "reason": "Netflix第三季淨利36.6億美元、EPS 0.87美元，營收128.7億美元符合預估，受惠會員數成長與3月漲價。",
-        "sectors": [],
-        "url": "https://news.cnyes.com/news/id/6634623"
-      },
-      {
         "theme": "〈財報〉AI業務成最大金雞母！SpaceX營收暴增161% 馬斯克證實討論與特斯拉合併",
-        "reason": "SpaceX第3季營收145.8億美元、淨利44億美元，AI業務營收75.6億美元，年增逾八倍。",
+        "reason": "AI算力出租需求強勁，直接支撐AI基礎設施需求",
         "sectors": [
           "AI／伺服器",
           "電動車／車用"
@@ -157,7 +141,7 @@
       },
       {
         "theme": "提前報喜！美超微初估營收、毛利率雙雙優於預期 盤後大漲近15%",
-        "reason": "美超微周二盤後公布初步財報第1季營收預估185-195億美元，優於市場與公司先前預期。",
+        "reason": "AI資料中心需求強勁，伺服器供應鏈訂單能見度高",
         "sectors": [
           "AI／伺服器",
           "半導體"
@@ -173,119 +157,123 @@
           "國際股市"
         ],
         "url": "https://news.cnyes.com/news/id/6633852"
+      },
+      {
+        "theme": "高盛再上調AI伺服器展望 點名鴻海、緯穎等供應鏈受惠",
+        "reason": "大型投行上修伺服器市場規模，牽動台廠供應鏈",
+        "sectors": [
+          "AI／伺服器",
+          "PCB／載板",
+          "散熱／電源"
+        ],
+        "url": "https://news.cnyes.com/news/id/6634126"
       }
     ],
     "bearish": [
       {
-        "theme": "〈美股盤後〉財報撐盤！道瓊勁揚逾500點 SpaceX盤後跳升逾4%",
-        "reason": "Netflix (NFLX-US) 週二下跌 1.66%，收每股 68.69 美元，盤後跳水超5%。",
+        "theme": "〈財報〉Netflix Q3優預期盤後仍跌6% 廣告與營收展望拖累",
+        "reason": "獲利優於預期仍被展望下修拖累，反映市場重視成長",
         "sectors": [
-          "AI／伺服器",
-          "國際股市",
-          "半導體"
+          "國際股市"
         ],
-        "url": "https://news.cnyes.com/news/id/6634601"
+        "url": "https://news.cnyes.com/news/id/6634623"
+      },
+      {
+        "theme": "〈財報〉法國暴亂衝擊！家樂福下修全年財測 營業利益估最多受損2億歐元",
+        "reason": "社會動盪打擊歐洲消費與零售獲利",
+        "sectors": [
+          "國際股市",
+          "總體經濟"
+        ],
+        "url": "https://news.cnyes.com/news/id/6634603"
       },
       {
         "theme": "〈貴金屬盤後〉評估Fed升息訊號 金價下滑",
-        "reason": "黃金周二走低，現貨跌0.3%至4125.90美元、12月期貨跌0.4%至4142.60美元。",
+        "reason": "升息預期壓抑無息資產黃金的吸引力",
         "sectors": [
-          "總體經濟",
           "原物料／能源",
-          "地緣／政策"
+          "總體經濟"
         ],
         "url": "https://news.cnyes.com/news/id/6634258"
       },
       {
         "theme": "百名經濟學家全押12月升息！Fed本月料先按兵不動",
-        "reason": "94名受訪經濟學家預期Fed 10月27至28日會議維持3.75%至4%利率不變，12月則將再升息。",
+        "reason": "升息循環延長，影響資金成本與股市評價",
         "sectors": [
-          "總體經濟",
-          "地緣／政策",
-          "AI／伺服器"
+          "總體經濟"
         ],
         "url": "https://news.cnyes.com/news/id/6634486"
-      },
-      {
-        "theme": "AI擴張代價驚人！Anthropic算力承諾支出上看7500億美元",
-        "reason": "Anthropic上半年營收163億美元，年增約15倍；",
-        "sectors": [
-          "AI／伺服器",
-          "半導體",
-          "金融"
-        ],
-        "url": "https://news.cnyes.com/news/id/6634602"
       }
     ],
     "sector_heat": [
       {
         "sector": "AI／伺服器",
-        "count": 175,
-        "利多": 80,
-        "利空": 45,
+        "count": 172,
+        "利多": 73,
+        "利空": 42,
         "tone": "偏多"
       },
       {
         "sector": "半導體",
-        "count": 102,
-        "利多": 53,
-        "利空": 20,
+        "count": 100,
+        "利多": 48,
+        "利空": 18,
         "tone": "偏多"
       },
       {
         "sector": "國際股市",
-        "count": 81,
-        "利多": 29,
-        "利空": 36,
+        "count": 84,
+        "利多": 26,
+        "利空": 38,
         "tone": "偏空"
       },
       {
         "sector": "金融",
         "count": 36,
-        "利多": 13,
+        "利多": 12,
         "利空": 8,
         "tone": "偏多"
       },
       {
         "sector": "地緣／政策",
-        "count": 35,
-        "利多": 13,
-        "利空": 11,
+        "count": 31,
+        "利多": 10,
+        "利空": 9,
         "tone": "偏多"
       },
       {
-        "sector": "總體經濟",
-        "count": 30,
-        "利多": 10,
-        "利空": 12,
-        "tone": "偏空"
-      },
-      {
         "sector": "原物料／能源",
-        "count": 27,
+        "count": 28,
         "利多": 12,
         "利空": 11,
         "tone": "偏多"
       },
       {
+        "sector": "總體經濟",
+        "count": 27,
+        "利多": 5,
+        "利空": 13,
+        "tone": "偏空"
+      },
+      {
         "sector": "記憶體",
-        "count": 25,
+        "count": 27,
         "利多": 7,
         "利空": 10,
         "tone": "偏空"
       },
       {
-        "sector": "PCB／載板",
+        "sector": "生技醫療",
         "count": 23,
-        "利多": 14,
-        "利空": 2,
+        "利多": 9,
+        "利空": 5,
         "tone": "偏多"
       },
       {
-        "sector": "生技醫療",
-        "count": 21,
-        "利多": 9,
-        "利空": 4,
+        "sector": "PCB／載板",
+        "count": 22,
+        "利多": 13,
+        "利空": 2,
         "tone": "偏多"
       }
     ],
@@ -299,7 +287,7 @@
     "generated_by": "claude",
     "llm": {
       "source": "Claude 排程任務",
-      "from_cache": 63
+      "from_cache": 92
     },
     "agent_headline": "美超微、SpaceX財報點燃AI伺服器信心，但台股外資連10賣、台幣重貶，Fed升息與AI融資疑慮仍壓抑科技股",
     "agent_key_points": [
@@ -320,7 +308,7 @@
     "agent_generated_at": "2026-10-21T08:34:52+08:00"
   },
   "earnings_digest": {
-    "generated_at": "2026-10-21T08:33:16+08:00",
+    "generated_at": "2026-10-21T08:37:59+08:00",
     "days": 5,
     "total": 2,
     "利多": 1,
@@ -464,15 +452,15 @@
       "future": 44
     },
     "source_method": "api",
-    "reused_from_previous_run": 21,
+    "reused_from_previous_run": 26,
     "window_start": "2026-10-20T00:00:00+08:00",
-    "window_end": "2026-10-21T08:33:31.639014+08:00"
+    "window_end": "2026-10-21T08:38:14.477094+08:00"
   },
   "agent_stats": {
     "input": 288,
     "after_dedupe": 288,
-    "ai_cached": 63,
-    "seconds": 0.5,
+    "ai_cached": 92,
+    "seconds": 0.4,
     "earnings": {
       "total": 2,
       "ai_cached": 0,
@@ -1520,31 +1508,40 @@
     },
     {
       "article_id": "6634607",
-      "title": "鉅亨速報 - Factset 最新調查：Appfolio Inc - Class AAPPF-US的目標價調升至240元，幅度約3% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：Appfolio Inc - Class AAPPF-US的目標價調升至240元，幅度約3%",
       "url": "https://news.cnyes.com/news/id/6634607",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 04:15:23",
       "published_ts": "2026-10-21T04:15:23+08:00",
       "ai_points": [
-        "FactSet調查7位分析師，Appfolio目標價中位數由233元上修至240元，調升約3%",
-        "11位分析師中9位積極樂觀、2位保持中立"
+        "鉅亨速報 美股預估 鉅亨速報 鉅亨速報 - Factset 最新調查：Appfolio Inc - Class AAPPF-US的目標價調升至240元…",
+        "台韓半導體藏哪些機會 掌握全球財經資訊 下載APP ‌ 文章標籤 美股 APPF 市場預估 目標價 更多 相關行情 台股首頁 我要存股 Appfolio Inc - Class A…",
+        "SpaceX營收暴增161% 馬斯克證實討論與特斯拉合併 ‌ 4. 〈台股盤前要聞〉台灣美光罷工危機升溫、外銷訂單連19紅、股匯雙殺再現 5. 〈財報前瞻〉AI砸錢能回本嗎？"
       ],
-      "summary": "FactSet調查7位分析師，Appfolio目標價中位數由233元上修至240元，調升約3%；11位分析師中9位積極樂觀、2位保持中立",
+      "summary": "鉅亨速報 美股預估 鉅亨速報 鉅亨速報 - Factset 最新調查：Appfolio Inc - Class AAPPF-US的目標價調升至240元…；台韓半導體藏哪些機會 掌握全球財經資訊 下載APP ‌ 文章標籤 美股 APPF 市場預估 目標價 更多 相關行情 台股首頁 我要存股 Appfolio Inc - Class A…；SpaceX營收暴增161% 馬斯克證實討論與特斯拉合併 ‌ 4. 〈台股盤前要聞〉台灣美光罷工危機升溫、外銷訂單連19紅、股匯雙殺再現 5. 〈財報前瞻〉AI砸錢能回本嗎？",
       "sentiment": "利多",
       "sectors": [
-        "國際股市"
+        "國際股市",
+        "AI／伺服器",
+        "半導體"
       ],
       "stocks": [
         "6491"
       ],
       "highlights": [
-        "Appfolio",
         "240元",
-        "9位積極樂觀"
+        "161%",
+        "半導體",
+        "財報",
+        "營收",
+        "調升",
+        "訂單",
+        "美股",
+        "AI"
       ],
-      "why": "美股軟體股目標價小幅上調",
+      "why": "",
       "importance": 8.0,
-      "ai_source": "claude",
+      "ai_source": "rule",
       "source": "鉅亨網"
     },
     {
@@ -1857,9 +1854,9 @@
     },
     {
       "article_id": "6634680",
-      "title": "鉅亨速報 - Factset 最新調查：晶碩(6491-TW)目標價調升至425元，幅度約3.03% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：晶碩(6491-TW)目標價調升至425元，幅度約3.03%",
       "url": "https://news.cnyes.com/news/id/6634680",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-10-21 08:10:19",
       "published_ts": "2026-10-21T08:10:19+08:00",
       "ai_points": [
@@ -6968,9 +6965,9 @@
     },
     {
       "article_id": "6634598",
-      "title": "盤中速報 - 必治妥施貴寶(BMY-US)大漲5.04%，報61.8美元 | 鉅亨網",
+      "title": "盤中速報 - 必治妥施貴寶(BMY-US)大漲5.04%，報61.8美元",
       "url": "https://news.cnyes.com/news/id/6634598",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 03:54:37",
       "published_ts": "2026-10-21T03:54:37+08:00",
       "ai_points": [
@@ -7305,9 +7302,9 @@
     },
     {
       "article_id": "6634565",
-      "title": "盤中速報 - 莫德納(MRNA-US)大漲5.04%，報238.32美元 | 鉅亨網",
+      "title": "盤中速報 - 莫德納(MRNA-US)大漲5.04%，報238.32美元",
       "url": "https://news.cnyes.com/news/id/6634565",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 00:58:14",
       "published_ts": "2026-10-21T00:58:14+08:00",
       "ai_points": [
@@ -7342,9 +7339,9 @@
     },
     {
       "article_id": "6634586",
-      "title": "盤中速報 - MongoDB公司(MDB-US)大漲5.06%，報366.35美元 | 鉅亨網",
+      "title": "盤中速報 - MongoDB公司(MDB-US)大漲5.06%，報366.35美元",
       "url": "https://news.cnyes.com/news/id/6634586",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-21 02:30:38",
       "published_ts": "2026-10-21T02:30:38+08:00",
       "ai_points": [
@@ -8274,30 +8271,6 @@
       ],
       "why": "",
       "importance": 4.3,
-      "ai_source": "rule",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6633891",
-      "title": "法國至少3,000家商鋪遭劫掠 巴黎等多城局部宵禁",
-      "url": "https://news.cnyes.com/news/id/6633891",
-      "category": "國際政經",
-      "published": "2026-10-20 08:36:39",
-      "published_ts": "2026-10-20T08:36:39+08:00",
-      "ai_points": [
-        "法國巴黎等多座城市19日至20日局部宵禁。",
-        "法國政府估計，全國約55萬人參加示威，組織方則稱人數達到80萬。"
-      ],
-      "summary": "法國巴黎等多座城市19日至20日局部宵禁。；法國政府估計，全國約55萬人參加示威，組織方則稱人數達到80萬。",
-      "sentiment": "中性",
-      "sectors": [],
-      "stocks": [],
-      "highlights": [
-        "55萬",
-        "80萬"
-      ],
-      "why": "",
-      "importance": 4.2,
       "ai_source": "rule",
       "source": "鉅亨網"
     },
@@ -9454,6 +9427,30 @@
       ],
       "why": "",
       "importance": 3.4,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6633891",
+      "title": "法國至少3,000家商鋪遭劫掠 巴黎等多城局部宵禁",
+      "url": "https://news.cnyes.com/news/id/6633891",
+      "category": "國際政經",
+      "published": "2026-10-20 08:36:39",
+      "published_ts": "2026-10-20T08:36:39+08:00",
+      "ai_points": [
+        "法國巴黎等多座城市19日至20日局部宵禁。",
+        "法國政府估計，全國約55萬人參加示威，組織方則稱人數達到80萬。"
+      ],
+      "summary": "法國巴黎等多座城市19日至20日局部宵禁。；法國政府估計，全國約55萬人參加示威，組織方則稱人數達到80萬。",
+      "sentiment": "中性",
+      "sectors": [],
+      "stocks": [],
+      "highlights": [
+        "55萬",
+        "80萬"
+      ],
+      "why": "",
+      "importance": 3.2,
       "ai_source": "rule",
       "source": "鉅亨網"
     },
