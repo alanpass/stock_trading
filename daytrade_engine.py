@@ -514,7 +514,7 @@ class Engine:
     def summary(self) -> dict:
         closed = [p for p in self.positions if p.exit is not None]
         wins = [p for p in closed if p.pnl > 0]
-        return {"date": self.day, "trades": len(closed), "wins": len(wins),
+        return {"date": self.day, "capital": CAPITAL, "trades": len(closed), "wins": len(wins),
                 "win_rate": round(len(wins) / len(closed) * 100, 1) if closed else None,
                 "pnl": round(self.realized), "pnl_pct": round(self.realized / CAPITAL * 100, 3),
                 "open_positions": len(self.open_positions()),

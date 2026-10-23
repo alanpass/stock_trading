@@ -137,7 +137,7 @@ def summarize(t: pd.DataFrame, name: str) -> dict:
 
 
 def portfolio(close, px, idx_close, look=10, top=3, k=6, hold=5, slip_pct=0.002, market_filter=True,
-              pick="momentum") -> dict:
+              pick="momentum", trades_out: list | None = None) -> dict:
     """投資組合模擬：每 hold 個交易日換股一次（收盤決定、隔天開盤成交）。
     選股：題材 look 日動能前 top 名 → 成員中站上 20 日線、20 日平均成交值 > 5 億 → 依個股 look 日報酬取前 k 檔，等權。
     market_filter：加權指數收盤在 60 日線之下時空手。成本：換掉的部位收買賣手續費、證交稅 0.3%、滑價 slip_pct（單邊）。"""
@@ -172,6 +172,9 @@ def portfolio(close, px, idx_close, look=10, top=3, k=6, hold=5, slip_pct=0.002,
             pa, pz = o.at[a, s], (o.at[z, s] if z != dates[-1] else close.at[z, s])
             if pd.notna(pa) and pd.notna(pz) and pa > 0:
                 r += w * (pz / pa - 1)
+                if trades_out is not None:   # 每檔每期一筆，保守地每期都扣一次來回成本
+                    trades_out.append({"day": str(a.date()), "symbol": s,
+                                       "net": pz / pa - 1 - 2 * (FEE + slip_pct) - TAX})
         eq *= (1 + r) * (1 - cost)
         curve.append((z, eq, len(new)))
         cur = new
