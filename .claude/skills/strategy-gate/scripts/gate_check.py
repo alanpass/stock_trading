@@ -23,7 +23,8 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
 
-def check(t: pd.DataFrame, hindsight: bool) -> dict:
+def check(t: pd.DataFrame, hindsight: bool, max_dd: float | None = MAX_DD) -> dict:
+    """max_dd=None：不以最大回落判定（使用者明確同意時才用），回落仍會計算與列出。"""
     t = t.sort_values("day").reset_index(drop=True)
     days = sorted(t["day"].unique())
     res = {"trades": int(len(t)), "days": len(days), "checks": []}
@@ -45,7 +46,11 @@ def check(t: pd.DataFrame, hindsight: bool) -> dict:
     daily = t.groupby("day").net.mean()
     eq = daily.cumsum()
     dd = float((eq - eq.cummax()).min())
-    add("最大回落", dd >= MAX_DD, f"{dd:.1f} 個百分點（訊號日平均報酬累加；需 ≥ {MAX_DD}）")
+    if max_dd is None:
+        res["max_dd_pct_points"] = round(dd, 1)
+        res["max_dd_note"] = f"{dd:.1f} 個百分點（訊號日平均報酬累加；本次依使用者要求不列入判定）"
+    else:
+        add("最大回落", dd >= max_dd, f"{dd:.1f} 個百分點（訊號日平均報酬累加；需 ≥ {max_dd}）")
     res["avg_net_pct"] = round(float(t.net.mean()), 3)
     res["win_rate"] = round(float((t.net > 0).mean() * 100), 1)
     passed = all(c["ok"] for c in res["checks"])
@@ -62,6 +67,14 @@ def main() -> int:
     ap.add_argument("--ratio", action="store_true", help="net 欄是比例（0.01＝1%）")
     ap.add_argument("--universe", default="", help="候選股怎麼選（必填說明）")
     ap.add_argument("--hindsight", action="store_true", help="候選股是用今天的名單回測過去")
+    ap.add_argument("--placebo-beat", type=float, default=None,
+                    help="（選用）策略總報酬中位數贏過幾 %% 的隨機對照組合（由回測程式算好傳入）")
+    ap.add_argument("--min-placebo-beat", type=float, default=80.0, help="贏隨機的門檻（預設 80）")
+    ap.add_argument("--start-pass", type=float, default=None,
+                    help="（選用）不同起始日中通過基本條件的比例 %%（由回測程式算好傳入）")
+    ap.add_argument("--min-start-pass", type=float, default=50.0, help="起始日通過比例門檻（預設 50）")
+    ap.add_argument("--max-dd", default=str(MAX_DD),
+                    help=f"最大回落門檻（累加百分點，預設 {MAX_DD}）；none＝不列入判定，只列出（需使用者同意）")
     a = ap.parse_args()
     t = pd.read_csv(a.csv)
     if not {"day", "net"} <= set(t.columns):
@@ -71,7 +84,21 @@ def main() -> int:
         t["net"] = t["net"] * 100
     if not a.universe:
         print("請用 --universe 說明候選股怎麼選（避免事後選股）"); return 2
-    res = check(t, a.hindsight)
+    max_dd = None if str(a.max_dd).lower() in ("none", "off") else float(a.max_dd)
+    res = check(t, a.hindsight, max_dd)
+    res["max_dd_threshold"] = max_dd
+    # 加嚴條件（只有傳入時才檢查，預設行為不變）
+    extra = []
+    if a.placebo_beat is not None:
+        extra.append({"name": "贏隨機對照", "ok": a.placebo_beat >= a.min_placebo_beat,
+                      "detail": f"總報酬中位數贏過 {a.placebo_beat:.0f}% 的隨機組合（需 ≥ {a.min_placebo_beat:.0f}%）"})
+    if a.start_pass is not None:
+        extra.append({"name": "不同起始日穩定", "ok": a.start_pass >= a.min_start_pass,
+                      "detail": f"{a.start_pass:.0f}% 的起始日通過（需 ≥ {a.min_start_pass:.0f}%）"})
+    if extra:
+        res["checks"] += extra
+        if not all(c["ok"] for c in extra):
+            res["verdict"] = "FAIL"
     res.update({"name": a.name, "universe": a.universe, "hindsight": a.hindsight,
                 "checked_at": datetime.now().isoformat(timespec="seconds"), "source": str(a.csv)})
     out = ROOT / "output" / "strategy_gate"
@@ -80,6 +107,8 @@ def main() -> int:
     print(f"{a.name}：{res['verdict']}（{res['trades']} 筆，平均 {res['avg_net_pct']:+.2f}%，勝率 {res['win_rate']}%）")
     for c in res["checks"]:
         print(f"  {'✓' if c['ok'] else '✗'} {c['name']}：{c['detail']}")
+    if res.get("max_dd_note"):
+        print("  － 最大回落：" + res["max_dd_note"])
     if res.get("note"):
         print("  注意：" + res["note"])
     return 0 if res["verdict"] == "PASS" else 1
