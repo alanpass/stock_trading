@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-10-24",
-  "updated_at": "2026-10-24T12:11:45+08:00",
-  "finished_at": "2026-10-24T12:13:25+08:00",
-  "published_at": "2026-10-24T12:15:24+08:00",
+  "updated_at": "2026-10-24T12:16:47+08:00",
+  "finished_at": "2026-10-24T12:16:56+08:00",
+  "published_at": "2026-10-24T12:16:56+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -18,70 +18,61 @@
   "news_count": 263,
   "earnings_count": 14,
   "news_digest": {
-    "generated_at": "2026-10-24T12:11:45+08:00",
-    "headline": "最近 2 天共整理 263 則財經新聞：利多 102、利空 90、中性 23、混合 48；討論度最高的產業：AI／伺服器、半導體、國際股市。",
+    "generated_at": "2026-10-24T12:16:47+08:00",
+    "headline": "最近 2 天共整理 263 則財經新聞：利多 92、利空 91、中性 30、混合 50；討論度最高的產業：AI／伺服器、半導體、國際股市。",
     "stats": {
       "total": 263,
-      "利多": 102,
-      "利空": 90,
-      "中性": 23,
-      "混合": 48
+      "利多": 92,
+      "利空": 91,
+      "中性": 30,
+      "混合": 50
     },
     "key_points": [
       {
         "title": "AI股遭拋售重創資料中心設備商 財報亮眼仍難逃賣壓",
-        "point": "Bloom Energy上季營收年增138%，全年營收上修；",
-        "sentiment": "利多",
+        "point": "Bloom Energy上季營收年增138%並上修全年展望，Comfort Systems未完成訂單達178億美元",
+        "sentiment": "利空",
         "url": "https://news.cnyes.com/news/id/6636978",
         "highlights": [
-          "138%",
-          "122%",
-          "營收年增",
-          "資料中心",
-          "11%",
-          "9%"
+          "Bloom Energy",
+          "年增138%",
+          "178億美元",
+          "Credo"
         ]
       },
       {
         "title": "能否再超車？蘋果市值距輝達僅差420億美元 iPhone Duo與Q4財報成關鍵",
-        "point": "蘋果22日收盤市值5.082兆美元，距輝達市值僅差420億美元。",
+        "point": "蘋果市值5.082兆美元，與輝達僅差420億美元",
         "sentiment": "利多",
         "url": "https://news.cnyes.com/news/id/6636957",
         "highlights": [
-          "1132.3億美元",
-          "348.22美元",
-          "5.082兆",
+          "蘋果",
           "420億美元",
-          "1.98美元",
-          "5.124兆"
+          "iPhone Duo",
+          "11月2日"
         ]
       },
       {
         "title": "輝達分析師示警：2027年規劃中AI資料中心容量恐有45%無法建成",
-        "point": "分析師Goldberg稱，2027年已宣布55GW AI資料中心容量恐僅30GW落地，缺口達45%。",
+        "point": "Seaport分析師估2027年宣布的55GW資料中心僅30GW能落地，缺口45%",
         "sentiment": "利空",
         "url": "https://news.cnyes.com/news/id/6636981",
         "highlights": [
-          "資料中心",
-          "45%",
-          "80%",
-          "56%",
-          "41%",
-          "財報"
+          "55GW",
+          "30GW",
+          "缺口45%",
+          "微軟"
         ]
       },
       {
         "title": "美債殖利率急跌、企業信用風險飆升！前Fed顧問：美國恐已陷衰退！",
-        "point": "前Fed顧問布斯警告，美國經濟恐已陷入衰退，美債反彈與殖利率下滑恐反映經濟放緩。",
+        "point": "前Fed顧問布斯警告美國恐已陷入衰退，官方數據尚未反映",
         "sentiment": "利空",
         "url": "https://news.cnyes.com/news/id/6636970",
         "highlights": [
-          "4.966%",
-          "15.76%",
-          "Fed",
-          "創新高",
-          "新高",
-          "成長"
+          "衰退",
+          "美債殖利率",
+          "信用風險"
         ]
       },
       {
@@ -98,93 +89,89 @@
       },
       {
         "title": "〈貴金屬盤後〉金價摜破4000美元、本周重挫4% 油價漲勢鞏固Fed升息預期",
-        "point": "FedWatch顯示下周按兵不動機率92%，12月升息機率78%。",
+        "point": "黃金現貨跌0.6%至3998.35美元，7月中以來首度跌破4000美元，本週跌4%",
         "sentiment": "利空",
         "url": "https://news.cnyes.com/news/id/6636625",
         "highlights": [
-          "92%",
-          "78%",
-          "Fed",
-          "聯準會",
-          "4%",
+          "3998.35美元",
+          "4000美元",
+          "布蘭特",
           "升息"
         ]
       },
       {
         "title": "美股重點新聞摘要2026年10月24日",
-        "point": "AI基建投資動盪，Neocloud股價重挫、CDS利差飆升，Solidigm撤回IPO Bloom Energy營收年增138%…",
-        "sentiment": "利多",
+        "point": "新雲端業者股價重挫、CDS利差飆升，Meta自由現金流轉負，Solidigm取消IPO",
+        "sentiment": "混合",
         "url": "https://news.cnyes.com/news/id/6636601",
         "highlights": [
-          "138%",
-          "122%",
-          "營收年增",
-          "財報",
-          "營收",
-          "上修"
+          "CDS利差",
+          "Solidigm",
+          "Meta",
+          "iPhone Duo"
         ]
       },
       {
         "title": "今年三度上修財測！資料中心不等電網，Bloom Energy營收年增138%，股價卻為何跌兩成？",
-        "point": "2026年10月23日（優分析／產業數據中心報導）⸺ 燃料電池廠Bloom Energy(BE-US)10月22日公布第三季營收12.36億美元，年增138.1%…",
-        "sentiment": "利多",
+        "point": "Bloom Energy第三季營收12.36億美元年增138.1%，全年財測上修至44億至46億美元",
+        "sentiment": "混合",
         "url": "https://news.cnyes.com/news/id/6636708",
         "highlights": [
           "12.36億美元",
-          "10.3億美元",
-          "138.1%",
-          "9.6億",
-          "4.5%",
-          "34%"
+          "44億至46億美元",
+          "現場供電"
         ]
       }
     ],
     "bullish": [
       {
+        "theme": "能否再超車？蘋果市值距輝達僅差420億美元 iPhone Duo與Q4財報成關鍵",
+        "reason": "蘋果財報與新機銷售牽動台灣蘋概供應鏈",
+        "sectors": [
+          "AI／伺服器"
+        ],
+        "url": "https://news.cnyes.com/news/id/6636957"
+      },
+      {
+        "theme": "玉晶光獲3M參與私募股款已到位持股4.68% 自結9月EPS達3.85元",
+        "reason": "旺季營收高檔，3M入股帶來新領域合作想像",
+        "sectors": [
+          "先進封裝／矽光子"
+        ],
+        "url": "https://news.cnyes.com/news/id/6636653"
+      },
+      {
+        "theme": "聯茂8、9月合賺22.1億元EPS 6.08元超越H1 前3季提前賺逾一股本",
+        "reason": "高階CCL需求強，獲利動能持續升溫",
+        "sectors": [
+          "PCB／載板",
+          "AI／伺服器"
+        ],
+        "url": "https://news.cnyes.com/news/id/6636711"
+      },
+      {
+        "theme": "華爾街最安全的股票 創下疫情崩盤以來最大單日漲幅",
+        "reason": "資金追逐穩定成長的防禦股",
+        "sectors": [
+          "國際股市"
+        ],
+        "url": "https://news.cnyes.com/news/id/6636815"
+      }
+    ],
+    "bearish": [
+      {
         "theme": "AI股遭拋售重創資料中心設備商 財報亮眼仍難逃賣壓",
-        "reason": "Bloom Energy上季營收年增138%，全年營收上修；",
+        "reason": "好財報換不到股價，顯示市場對AI基建評價轉趨保守",
         "sectors": [
           "AI／伺服器",
-          "半導體",
+          "綠能／重電",
           "國際股市"
         ],
         "url": "https://news.cnyes.com/news/id/6636978"
       },
       {
-        "theme": "能否再超車？蘋果市值距輝達僅差420億美元 iPhone Duo與Q4財報成關鍵",
-        "reason": "蘋果22日收盤市值5.082兆美元，距輝達市值僅差420億美元。",
-        "sectors": [
-          "AI／伺服器",
-          "地緣／政策",
-          "記憶體"
-        ],
-        "url": "https://news.cnyes.com/news/id/6636957"
-      },
-      {
-        "theme": "美股重點新聞摘要2026年10月24日",
-        "reason": "AI基建投資動盪，Neocloud股價重挫、CDS利差飆升，Solidigm撤回IPO Bloom Energy營收年增138%…",
-        "sectors": [
-          "AI／伺服器",
-          "半導體",
-          "匯率"
-        ],
-        "url": "https://news.cnyes.com/news/id/6636601"
-      },
-      {
-        "theme": "今年三度上修財測！資料中心不等電網，Bloom Energy營收年增138%，股價卻為何跌兩成？",
-        "reason": "2026年10月23日（優分析／產業數據中心報導）⸺ 燃料電池廠Bloom Energy(BE-US)10月22日公布第三季營收12.36億美元，年增138.1%…",
-        "sectors": [
-          "AI／伺服器",
-          "半導體",
-          "綠能／重電"
-        ],
-        "url": "https://news.cnyes.com/news/id/6636708"
-      }
-    ],
-    "bearish": [
-      {
         "theme": "輝達分析師示警：2027年規劃中AI資料中心容量恐有45%無法建成",
-        "reason": "分析師Goldberg稱，2027年已宣布55GW AI資料中心容量恐僅30GW落地，缺口達45%。",
+        "reason": "資料中心落地延遲可能遞延AI晶片採購",
         "sectors": [
           "AI／伺服器",
           "半導體"
@@ -193,49 +180,37 @@
       },
       {
         "theme": "美債殖利率急跌、企業信用風險飆升！前Fed顧問：美國恐已陷衰退！",
-        "reason": "前Fed顧問布斯警告，美國經濟恐已陷入衰退，美債反彈與殖利率下滑恐反映經濟放緩。",
+        "reason": "債市與信用訊號轉弱，景氣下行風險升高",
         "sectors": [
-          "AI／伺服器",
-          "國際股市",
-          "總體經濟"
+          "總體經濟",
+          "國際股市"
         ],
         "url": "https://news.cnyes.com/news/id/6636970"
       },
       {
         "theme": "〈貴金屬盤後〉金價摜破4000美元、本周重挫4% 油價漲勢鞏固Fed升息預期",
-        "reason": "FedWatch顯示下周按兵不動機率92%，12月升息機率78%。",
+        "reason": "油價與升息預期同步牽動金價與股市評價",
         "sectors": [
-          "總體經濟",
           "原物料／能源",
-          "國際股市"
-        ],
-        "url": "https://news.cnyes.com/news/id/6636625"
-      },
-      {
-        "theme": "〈美股盤後〉Meta重燃AI交易恐慌 費半狂瀉近7% 台積電ADR跌超4.5%",
-        "reason": "美股晶片股重挫，台股ADR同步走弱，影響台股電子權值",
-        "sectors": [
-          "半導體",
-          "AI／伺服器",
           "總體經濟"
         ],
-        "url": "https://news.cnyes.com/news/id/6636334"
+        "url": "https://news.cnyes.com/news/id/6636625"
       }
     ],
     "sector_heat": [
       {
         "sector": "AI／伺服器",
-        "count": 125,
-        "利多": 45,
-        "利空": 44,
-        "tone": "偏多"
+        "count": 117,
+        "利多": 36,
+        "利空": 42,
+        "tone": "偏空"
       },
       {
         "sector": "半導體",
-        "count": 111,
-        "利多": 45,
-        "利空": 40,
-        "tone": "偏多"
+        "count": 100,
+        "利多": 36,
+        "利空": 39,
+        "tone": "偏空"
       },
       {
         "sector": "國際股市",
@@ -246,52 +221,52 @@
       },
       {
         "sector": "原物料／能源",
-        "count": 49,
+        "count": 50,
         "利多": 19,
-        "利空": 21,
+        "利空": 20,
         "tone": "偏空"
       },
       {
         "sector": "總體經濟",
-        "count": 36,
-        "利多": 10,
-        "利空": 19,
+        "count": 33,
+        "利多": 8,
+        "利空": 18,
         "tone": "偏空"
       },
       {
         "sector": "金融",
-        "count": 28,
+        "count": 29,
         "利多": 7,
-        "利空": 10,
+        "利空": 9,
         "tone": "偏空"
       },
       {
         "sector": "地緣／政策",
-        "count": 24,
-        "利多": 5,
+        "count": 23,
+        "利多": 4,
         "利空": 6,
         "tone": "偏空"
       },
       {
         "sector": "記憶體",
         "count": 15,
-        "利多": 9,
+        "利多": 8,
         "利空": 1,
         "tone": "偏多"
       },
       {
         "sector": "匯率",
-        "count": 15,
-        "利多": 9,
-        "利空": 4,
+        "count": 13,
+        "利多": 7,
+        "利空": 3,
         "tone": "偏多"
       },
       {
         "sector": "電動車／車用",
         "count": 11,
-        "利多": 5,
+        "利多": 2,
         "利空": 3,
-        "tone": "偏多"
+        "tone": "偏空"
       }
     ],
     "watch_items": [
@@ -304,7 +279,7 @@
     "generated_by": "claude",
     "llm": {
       "source": "Claude 排程任務",
-      "from_cache": 47
+      "from_cache": 77
     },
     "agent_headline": "AI基建疑慮擴大：資料中心股財報亮眼仍遭賣，新雲端信用風險升；油價破百、金價跌破4000美元",
     "agent_key_points": [
@@ -325,7 +300,7 @@
     "agent_generated_at": "2026-10-24T12:15:24+08:00"
   },
   "earnings_digest": {
-    "generated_at": "2026-10-24T12:11:45+08:00",
+    "generated_at": "2026-10-24T12:16:47+08:00",
     "days": 5,
     "total": 14,
     "利多": 3,
@@ -547,15 +522,15 @@
       "future": 35
     },
     "source_method": "api",
-    "reused_from_previous_run": 56,
+    "reused_from_previous_run": 64,
     "window_start": "2026-10-23T00:00:00+08:00",
-    "window_end": "2026-10-24T12:12:22.461412+08:00"
+    "window_end": "2026-10-24T12:16:55.585546+08:00"
   },
   "agent_stats": {
     "input": 263,
     "after_dedupe": 263,
-    "ai_cached": 47,
-    "seconds": 0.4,
+    "ai_cached": 77,
+    "seconds": 0.5,
     "earnings": {
       "total": 14,
       "ai_cached": 0,
@@ -906,11 +881,7 @@
         "原物料／能源",
         "半導體"
       ],
-      "stocks": [
-        "2330",
-        "3711",
-        "2303"
-      ],
+      "stocks": [],
       "highlights": [
         "100美元",
         "653點",
@@ -1149,33 +1120,6 @@
       "source": "鉅亨網"
     },
     {
-      "article_id": "6636989",
-      "title": "鉅亨速報 - Factset 最新調查：Kinsale Capital Group Inc(KNSL-US)EPS預估上修至21.8元，預估目標價為351.00元",
-      "url": "https://news.cnyes.com/news/id/6636989",
-      "category": "美股",
-      "published": "2026-10-24 06:15:35",
-      "published_ts": "2026-10-24T06:15:35+08:00",
-      "ai_points": [
-        "13位分析師將Kinsale 2026年EPS中位數由21.31元上修至21.8元",
-        "預估目標價351.00美元"
-      ],
-      "summary": "13位分析師將Kinsale 2026年EPS中位數由21.31元上修至21.8元；預估目標價351.00美元",
-      "sentiment": "中性",
-      "sectors": [
-        "金融"
-      ],
-      "stocks": [],
-      "highlights": [
-        "Kinsale",
-        "21.8元",
-        "351.00"
-      ],
-      "why": "美國保險股獲利預估小幅上修",
-      "importance": 7.8,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
       "article_id": "6636359",
       "title": "威騰電子盤後大跌 財報未能扭轉股價頹勢",
       "url": "https://news.cnyes.com/news/id/6636359",
@@ -1249,9 +1193,7 @@
         "半導體",
         "記憶體"
       ],
-      "stocks": [
-        "2330"
-      ],
+      "stocks": [],
       "highlights": [
         "摩根大通",
         "散戶",
@@ -1288,34 +1230,6 @@
         "PCB"
       ],
       "why": "AI排擠效應推升記憶體與PCB報價，壓縮車用毛利",
-      "importance": 7.6,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6636600",
-      "title": "〈紐約匯市〉美元上漲 日元因AI股重挫轉強 法國債務疑慮拖累歐元",
-      "url": "https://news.cnyes.com/news/id/6636600",
-      "category": "外匯",
-      "published": "2026-10-24 06:14:55",
-      "published_ts": "2026-10-24T06:14:55+08:00",
-      "ai_points": [
-        "美元指數漲0.25%至101.82，日元受避險資金流入本週走強",
-        "法國債務風險溢酬升至2011年以來最高，穆迪可能調降評等"
-      ],
-      "summary": "美元指數漲0.25%至101.82，日元受避險資金流入本週走強；法國債務風險溢酬升至2011年以來最高，穆迪可能調降評等",
-      "sentiment": "中性",
-      "sectors": [
-        "匯率",
-        "總體經濟"
-      ],
-      "stocks": [],
-      "highlights": [
-        "101.82",
-        "日元",
-        "法國"
-      ],
-      "why": "避險情緒與歐洲債務疑慮影響匯市",
       "importance": 7.6,
       "ai_source": "claude",
       "source": "鉅亨網"
@@ -2234,9 +2148,9 @@
     },
     {
       "article_id": "6636783",
-      "title": "鉅亨速報 - Factset 最新調查：濱特爾PNR-US的目標價調升至67元，幅度約3.08% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：濱特爾PNR-US的目標價調升至67元，幅度約3.08%",
       "url": "https://news.cnyes.com/news/id/6636783",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-23 20:15:58",
       "published_ts": "2026-10-23T20:15:58+08:00",
       "ai_points": [
@@ -2524,9 +2438,9 @@
     },
     {
       "article_id": "6636942",
-      "title": "鉅亨速報 - Factset 最新調查：普洛斯PLD-US的目標價調降至150元，幅度約3.85% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：普洛斯PLD-US的目標價調降至150元，幅度約3.85%",
       "url": "https://news.cnyes.com/news/id/6636942",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-24 04:15:33",
       "published_ts": "2026-10-24T04:15:33+08:00",
       "ai_points": [
@@ -3194,6 +3108,33 @@
       "source": "鉅亨網"
     },
     {
+      "article_id": "6636989",
+      "title": "鉅亨速報 - Factset 最新調查：Kinsale Capital Group Inc(KNSL-US)EPS預估上修至21.8元，預估目標價為351.00元",
+      "url": "https://news.cnyes.com/news/id/6636989",
+      "category": "美股",
+      "published": "2026-10-24 06:15:35",
+      "published_ts": "2026-10-24T06:15:35+08:00",
+      "ai_points": [
+        "13位分析師將Kinsale 2026年EPS中位數由21.31元上修至21.8元",
+        "預估目標價351.00美元"
+      ],
+      "summary": "13位分析師將Kinsale 2026年EPS中位數由21.31元上修至21.8元；預估目標價351.00美元",
+      "sentiment": "中性",
+      "sectors": [
+        "金融"
+      ],
+      "stocks": [],
+      "highlights": [
+        "Kinsale",
+        "21.8元",
+        "351.00"
+      ],
+      "why": "美國保險股獲利預估小幅上修",
+      "importance": 6.8,
+      "ai_source": "claude",
+      "source": "鉅亨網"
+    },
+    {
       "article_id": "6636820",
       "title": "美光罷工危機解除、外銷訂單連20紅、公股投信四合一拍板 本周大事回顧",
       "url": "https://news.cnyes.com/news/id/6636820",
@@ -3595,6 +3536,34 @@
       "why": "",
       "importance": 6.6,
       "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6636600",
+      "title": "〈紐約匯市〉美元上漲 日元因AI股重挫轉強 法國債務疑慮拖累歐元",
+      "url": "https://news.cnyes.com/news/id/6636600",
+      "category": "外匯",
+      "published": "2026-10-24 06:14:55",
+      "published_ts": "2026-10-24T06:14:55+08:00",
+      "ai_points": [
+        "美元指數漲0.25%至101.82，日元受避險資金流入本週走強",
+        "法國債務風險溢酬升至2011年以來最高，穆迪可能調降評等"
+      ],
+      "summary": "美元指數漲0.25%至101.82，日元受避險資金流入本週走強；法國債務風險溢酬升至2011年以來最高，穆迪可能調降評等",
+      "sentiment": "中性",
+      "sectors": [
+        "匯率",
+        "總體經濟"
+      ],
+      "stocks": [],
+      "highlights": [
+        "101.82",
+        "日元",
+        "法國"
+      ],
+      "why": "避險情緒與歐洲債務疑慮影響匯市",
+      "importance": 6.6,
+      "ai_source": "claude",
       "source": "鉅亨網"
     },
     {
@@ -7704,9 +7673,9 @@
     },
     {
       "article_id": "6636881",
-      "title": "盤中速報 - 響尾蛇能源(FANG-US)大漲5.02%，報207.04美元 | 鉅亨網",
+      "title": "盤中速報 - 響尾蛇能源(FANG-US)大漲5.02%，報207.04美元",
       "url": "https://news.cnyes.com/news/id/6636881",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-23 23:47:05",
       "published_ts": "2026-10-23T23:47:05+08:00",
       "ai_points": [
@@ -7741,9 +7710,9 @@
     },
     {
       "article_id": "6636882",
-      "title": "盤中速報 - 數據狗(DDOG-US)大漲5.02%，報270.68美元 | 鉅亨網",
+      "title": "盤中速報 - 數據狗(DDOG-US)大漲5.02%，報270.68美元",
       "url": "https://news.cnyes.com/news/id/6636882",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-23 23:49:44",
       "published_ts": "2026-10-23T23:49:44+08:00",
       "ai_points": [
@@ -7778,9 +7747,9 @@
     },
     {
       "article_id": "6636887",
-      "title": "盤中速報 - Zscaler公司(ZS-US)大漲5.09%，報249.87美元 | 鉅亨網",
+      "title": "盤中速報 - Zscaler公司(ZS-US)大漲5.09%，報249.87美元",
       "url": "https://news.cnyes.com/news/id/6636887",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-24 00:18:48",
       "published_ts": "2026-10-24T00:18:48+08:00",
       "ai_points": [
@@ -7815,9 +7784,9 @@
     },
     {
       "article_id": "6636900",
-      "title": "盤中速報 - 大都會人壽(MET-US)大跌5.01%，報98.38美元 | 鉅亨網",
+      "title": "盤中速報 - 大都會人壽(MET-US)大跌5.01%，報98.38美元",
       "url": "https://news.cnyes.com/news/id/6636900",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-24 01:17:02",
       "published_ts": "2026-10-24T01:17:02+08:00",
       "ai_points": [
@@ -7852,9 +7821,9 @@
     },
     {
       "article_id": "6636904",
-      "title": "盤中速報 - Verisk Analytics Inc(VRSK-US)大跌5.04%，報193.09美元 | 鉅亨網",
+      "title": "盤中速報 - Verisk Analytics Inc(VRSK-US)大跌5.04%，報193.09美元",
       "url": "https://news.cnyes.com/news/id/6636904",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-24 01:38:06",
       "published_ts": "2026-10-24T01:38:06+08:00",
       "ai_points": [
@@ -7889,9 +7858,9 @@
     },
     {
       "article_id": "6636915",
-      "title": "盤中速報 - 英特格(ENTG-US)大漲5.04%，報134.78美元 | 鉅亨網",
+      "title": "盤中速報 - 英特格(ENTG-US)大漲5.04%，報134.78美元",
       "url": "https://news.cnyes.com/news/id/6636915",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-24 02:14:41",
       "published_ts": "2026-10-24T02:14:41+08:00",
       "ai_points": [
