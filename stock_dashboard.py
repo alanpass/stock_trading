@@ -1140,7 +1140,14 @@ _UX_CSS = """<style>
 .st-key-site_nav_sticky::after{bottom:0;height:1px;background:#e9dcdc;box-shadow:0 0 0 100vw #e9dcdc;opacity:0;transition:opacity .25s ease}
 .ux-scrolled .st-key-site_nav_sticky::after{opacity:1}
 /* 捲動後整條（含延伸的白底）投一層淡陰影，內容像是滑進導覽列下方 */
-[data-testid="stLayoutWrapper"]:has(> .st-key-site_nav_sticky){transition:filter .25s ease}
+[data-testid="stLayoutWrapper"]:has(> .st-key-site_nav_sticky){transition:filter .25s ease,transform .32s cubic-bezier(.2,.7,.2,1)}
+/* 往下捲後收起，滑鼠移到頁首附近再彈出（JS 切換 body.ux-navhide） */
+.ux-navhide [data-testid="stLayoutWrapper"]:has(> .st-key-site_nav_sticky){transform:translateY(calc(-100% - 14px));filter:none}
+#ux-navtab{position:fixed;top:0;left:50%;z-index:991;transform:translate(-50%,-110%);padding:3px 16px 5px;border:1px solid #e9dcdc;border-top:0;
+  border-radius:0 0 12px 12px;background:#fff;color:#8e2b2f;font-size:12px;line-height:1.5;letter-spacing:.5px;white-space:nowrap;cursor:pointer;
+  box-shadow:0 4px 10px -4px rgba(60,20,20,.18);transition:transform .32s cubic-bezier(.2,.7,.2,1)}
+.ux-navhide #ux-navtab{transform:translate(-50%,0)}
+#ux-navtab:hover{color:#fff;background:#8e2b2f;border-color:#8e2b2f}
 .ux-scrolled [data-testid="stLayoutWrapper"]:has(> .st-key-site_nav_sticky){filter:drop-shadow(0 5px 8px rgba(60,20,20,.09))}
 
 /* 換頁淡入 */
@@ -7069,6 +7076,41 @@ _components.html(
           smoothTo(el, el.scrollTop + box.getBoundingClientRect().top - el.getBoundingClientRect().top - 78);
           box.classList.remove("ux-flash"); void box.offsetWidth; box.classList.add("ux-flash");
         }, true);
+      }
+      // 往下捲後導覽列自動收起；滑鼠移到頁首附近（或點頂端小標籤、往上捲）才彈出，離開後再收回
+      if (!w.__siteNavPeekV1) {
+        w.__siteNavPeekV1 = true;
+        const HIDE_AFTER = 160, PEEK_ZONE = 70;
+        let lastY = 0, scrollY = 0, hovering = false, hideTimer = null;
+        const body = d.body;
+        const tab = d.createElement("button");
+        tab.id = "ux-navtab"; tab.type = "button"; tab.innerHTML = "&#9776;&nbsp;選單"; tab.title = "顯示導覽列";
+        body.appendChild(tab);
+        const show = () => { clearTimeout(hideTimer); body.classList.remove("ux-navhide"); };
+        const hideSoon = (ms) => {
+          clearTimeout(hideTimer);
+          hideTimer = setTimeout(function() { if (!hovering && scrollY > HIDE_AFTER) body.classList.add("ux-navhide"); }, ms);
+        };
+        tab.addEventListener("click", show);
+        tab.addEventListener("mouseenter", show);
+        d.addEventListener("scroll", function(event) {
+          const el = event.target === d ? d.scrollingElement : event.target;
+          if (!el || !el.closest || el.closest('[data-testid="stSidebar"]')) return;
+          if (el.scrollHeight <= el.clientHeight + 50) return;
+          scrollY = el.scrollTop;
+          if (scrollY <= HIDE_AFTER) show();
+          else if (scrollY < lastY - 6) show();          // 往上捲（手機沒有滑鼠時也能叫出來）
+          else if (scrollY > lastY + 6 && !hovering) body.classList.add("ux-navhide");
+          lastY = scrollY;
+        }, true);
+        d.addEventListener("mousemove", function(event) {
+          const nav = d.querySelector(".st-key-site_nav_sticky");
+          const navBottom = nav ? nav.getBoundingClientRect().bottom : 0;
+          const near = event.clientY <= PEEK_ZONE || (!body.classList.contains("ux-navhide") && event.clientY <= navBottom + 24);
+          if (near && !hovering) { hovering = true; show(); }
+          else if (!near && hovering) { hovering = false; hideSoon(450); }
+        }, {passive: true});
+        d.addEventListener("mouseleave", function() { if (hovering) { hovering = false; hideSoon(450); } });
       }
     } catch (e) {}
     </script>""",
