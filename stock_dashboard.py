@@ -1134,7 +1134,7 @@ _UX_CSS = """<style>
 [data-testid="stLayoutWrapper"]:has(> .st-key-site_nav_sticky),.st-key-site_nav_sticky{position:sticky;top:0;z-index:990}
 /* 實心白底延伸到整個主畫面寬（不只內容欄），捲動時底下的大標題不會透出來；捲動後只加一條細線與淡陰影 */
 /* 用 box-shadow 向左右延伸（陰影不算可捲動範圍，不會出現橫向捲動），再用 clip-path 裁掉上下 */
-.st-key-site_nav_sticky{position:relative;padding:4px 0}
+.st-key-site_nav_sticky{position:relative;padding:4px 0 14px}
 .st-key-site_nav_sticky::before,.st-key-site_nav_sticky::after{content:"";position:absolute;left:0;right:0;z-index:-1;clip-path:inset(0 -100vw)}
 .st-key-site_nav_sticky::before{top:0;bottom:0;background:#fff;box-shadow:0 0 0 100vw #fff}
 .st-key-site_nav_sticky::after{bottom:0;height:1px;background:#e9dcdc;box-shadow:0 0 0 100vw #e9dcdc;opacity:0;transition:opacity .25s ease}
