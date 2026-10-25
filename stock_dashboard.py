@@ -1132,9 +1132,16 @@ _UX_CSS = """<style>
 /* 導覽列固定在頂端，捲到哪都能換頁 */
 /* Streamlit 1.5x 起容器外面還包一層 stLayoutWrapper，sticky 要加在那一層 */
 [data-testid="stLayoutWrapper"]:has(> .st-key-site_nav_sticky),.st-key-site_nav_sticky{position:sticky;top:0;z-index:990}
-.st-key-site_nav_sticky{background:rgba(255,255,255,.9);
-  -webkit-backdrop-filter:saturate(1.4) blur(10px);backdrop-filter:saturate(1.4) blur(10px);transition:box-shadow .25s ease}
-.ux-scrolled .st-key-site_nav_sticky{box-shadow:0 8px 18px -12px rgba(60,20,20,.35)}
+/* 實心白底延伸到整個主畫面寬（不只內容欄），捲動時底下的大標題不會透出來；捲動後只加一條細線與淡陰影 */
+/* 用 box-shadow 向左右延伸（陰影不算可捲動範圍，不會出現橫向捲動），再用 clip-path 裁掉上下 */
+.st-key-site_nav_sticky{position:relative;padding:4px 0}
+.st-key-site_nav_sticky::before,.st-key-site_nav_sticky::after{content:"";position:absolute;left:0;right:0;z-index:-1;clip-path:inset(0 -100vw)}
+.st-key-site_nav_sticky::before{top:0;bottom:0;background:#fff;box-shadow:0 0 0 100vw #fff}
+.st-key-site_nav_sticky::after{bottom:0;height:1px;background:#e9dcdc;box-shadow:0 0 0 100vw #e9dcdc;opacity:0;transition:opacity .25s ease}
+.ux-scrolled .st-key-site_nav_sticky::after{opacity:1}
+/* 捲動後整條（含延伸的白底）投一層淡陰影，內容像是滑進導覽列下方 */
+[data-testid="stLayoutWrapper"]:has(> .st-key-site_nav_sticky){transition:filter .25s ease}
+.ux-scrolled [data-testid="stLayoutWrapper"]:has(> .st-key-site_nav_sticky){filter:drop-shadow(0 5px 8px rgba(60,20,20,.09))}
 
 /* 換頁淡入 */
 [class*="st-key-page_"]{animation:uxPageIn .5s cubic-bezier(.2,.7,.2,1) backwards}
