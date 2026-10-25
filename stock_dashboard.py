@@ -89,6 +89,7 @@ from auth_service import (authenticate, request_account, create_session_token, v
                          SESSION_COOKIE_NAME, SESSION_TTL_SECONDS)
 from industry_rotation import ROTATION_THEMES, ROTATION_DISPLAY_NAMES, NAME_FALLBACKS, load_published_rotation
 from trend_pattern_ui import render_trend_patterns_workspace
+from trend_pattern_engine import CATEGORY_ORDER as TREND_CATEGORY_ORDER
 from stock_notes_ui import render_stock_notes_workspace, render_stock_note_for_symbol
 from ai_backend import is_agent_status, status_label, AGENT_LABEL
 from us_industry_indicators import US_INDUSTRY_INDICATORS, get_us_indicator_symbols, fetch_us_indicators
@@ -1148,6 +1149,30 @@ _UX_CSS = """<style>
   box-shadow:0 4px 10px -4px rgba(60,20,20,.18);transition:transform .32s cubic-bezier(.2,.7,.2,1)}
 .ux-navhide #ux-navtab{transform:translate(-50%,0)}
 #ux-navtab:hover{color:#fff;background:#8e2b2f;border-color:#8e2b2f}
+
+/* 導覽下拉選單：滑到主題上展開該頁功能，點了直接前往該區塊 */
+.site-nav .nav-item{position:relative;display:flex}
+.nav-drop{position:absolute;top:100%;left:50%;z-index:5;min-width:200px;padding:8px;display:flex;flex-direction:column;gap:1px;text-align:left;
+  background:#fff;border:1px solid #eee3e3;border-radius:12px;box-shadow:0 18px 36px -14px rgba(60,20,20,.28);
+  opacity:0;visibility:hidden;transform:translate(-50%,14px);transition:opacity .18s ease,transform .18s ease,visibility .18s}
+.nav-drop::before{content:"";position:absolute;left:0;right:0;top:-14px;height:14px}
+.nav-item:hover .nav-drop,.nav-item:focus-within .nav-drop{opacity:1;visibility:visible;transform:translate(-50%,8px)}
+.nav-item.nav-closed .nav-drop{opacity:0!important;visibility:hidden!important}
+.nav-drop-hint{font-size:11.5px;color:#9a8f8f;padding:4px 12px 7px;margin-bottom:3px;border-bottom:1px dashed #eadede;white-space:nowrap}
+.nav-drop-link{display:block;padding:7px 12px;border-radius:8px;font-size:13.5px;line-height:1.4;color:#4a4242!important;text-decoration:none!important;
+  white-space:nowrap;transition:background .15s,color .15s,padding-left .15s}
+.nav-drop-link:hover{background:#f8eeee;color:#8e2b2f!important;padding-left:16px}
+/* 最左、最右的主題靠邊對齊，避免中等寬度時下拉選單超出內容欄被裁掉 */
+.site-nav .nav-item:first-child .nav-drop{left:0;transform:translate(0,14px)}
+.site-nav .nav-item:last-child .nav-drop{left:auto;right:0;transform:translate(0,14px)}
+.site-nav .nav-item:first-child:hover .nav-drop,.site-nav .nav-item:first-child:focus-within .nav-drop,
+.site-nav .nav-item:last-child:hover .nav-drop,.site-nav .nav-item:last-child:focus-within .nav-drop{transform:translate(0,8px)}
+@media (hover:none),(max-width:600px){.nav-drop{display:none}}
+/* 跳轉找不到區塊時的提示 */
+#ux-toast{position:fixed;left:50%;bottom:28px;z-index:10000;transform:translate(-50%,16px);opacity:0;pointer-events:none;
+  background:#2b2324;color:#fff;font-size:13.5px;padding:9px 18px;border-radius:999px;box-shadow:0 10px 24px -8px rgba(0,0,0,.35);
+  transition:opacity .25s ease,transform .25s ease}
+#ux-toast.show{opacity:1;transform:translate(-50%,0)}
 .ux-scrolled [data-testid="stLayoutWrapper"]:has(> .st-key-site_nav_sticky){filter:drop-shadow(0 5px 8px rgba(60,20,20,.09))}
 
 /* 換頁淡入 */
@@ -2338,13 +2363,38 @@ SITE_NAV = [
 ]
 
 
+# 導覽下拉選單：每個主題底下的功能。(顯示名稱, 頁面上區塊標題包含的文字, 要切換的分頁標籤)
+# 點選後先切到該頁，等頁面畫完再捲到標題文字相符的區塊（JS 依 data-target 比對標題）。
+SITE_NAV_SUB = {
+    "home": [("五步驟看懂台股", "五步驟看懂台股"), ("關於台股", "關於台股"), ("每日財經資訊", "每日財經資訊"),
+             ("專注台股", "專注台股"), ("聯絡資訊", "聯絡資訊")],
+    "finance": [("AI 今日重點", "AI 今日重點"), ("法說會摘要", "法說會摘要"), ("財經新聞摘要", "財經新聞摘要"),
+                ("名人持股：政治人物", "名人投資人持股", "政治人物"), ("名人持股：投資大師 13F", "名人投資人持股", "投資大師")],
+    "rotation": [("產業族群走勢", "產業族群"), ("產業輪動圖", "產業輪動圖"), ("產業報酬與輪動狀態", "產業報酬與輪動狀態"),
+                 ("美股產業指標股", "美股產業指標股"), ("本週象限變化", "本週象限變化"), ("成分股漲跌前十", "成分股漲跌前十"),
+                 ("輪動解讀與資料限制", "輪動解讀與資料限制")],
+    "strategy": [("股價趨勢", "股價趨勢"), ("技術 K 線", "技術 K 線"), ("成交量", "成交量"), ("進場建議分析", "進場建議分析系統"),
+                 ("大戶 VS 散戶", "大戶 VS 散戶"), ("交易明細", "交易明細"), ("三大法人", "三大法人")],
+    "trend": [("期間統計", "期間統計")] + [(c, c) for c in TREND_CATEGORY_ORDER],
+    "future": [("AI 隔日預測", "AI 隔日預測"), ("市場情報與利多／利空", "市場情報"), ("模型研究 Agent", "模型研究 Agent"),
+               ("AI 個股研究筆記", "AI 個股研究筆記")],
+    "subscribe": [("聯絡資訊", "聯絡資訊"), ("訂閱／聯絡表單", "訂閱／聯絡表單")],
+}
+
+
 def render_site_navigation() -> str:
     """Restore the original HTML navigation appearance while retaining hidden controls for session-safe navigation."""
     current = _get_nav_section()
     links = []
     for key, label, hint in SITE_NAV:
         active = " active" if current == key else ""
-        links.append(f'<a class="site-nav-link{active}" href="?section={key}" target="_self" title="{hint}">{label}</a>')
+        subs = "".join(
+            f'<a class="nav-drop-link" href="?section={key}" target="_self" data-target="{_esc(sub[1])}"'
+            + (f' data-tab="{_esc(sub[2])}"' if len(sub) > 2 else "") + f'>{_esc(sub[0])}</a>'
+            for sub in SITE_NAV_SUB.get(key, [])
+        )
+        drop = f'<div class="nav-drop"><div class="nav-drop-hint">{_esc(hint)}</div>{subs}</div>' if subs else ""
+        links.append(f'<div class="nav-item"><a class="site-nav-link{active}" href="?section={key}" target="_self">{label}</a>{drop}</div>')
     # 包在有 key 的容器裡才能 position:sticky（捲到下方也能直接換頁）
     with st.container(key="site_nav_sticky"):
         st.markdown('<nav translate="no" class="site-nav">' + ''.join(links) + '</nav>', unsafe_allow_html=True)
@@ -7038,8 +7088,79 @@ _components.html(
           if (!button) return;
           event.preventDefault();
           event.stopPropagation();
-          button.click();
+          // 下拉選單的功能項目：記下要捲到的區塊標題；同一頁直接捲，換頁則等新頁面畫完再捲
+          const jumpText = anchor.getAttribute("data-target");
+          const active = d.querySelector(".site-nav-link.active");
+          const samePage = !!active && (active.getAttribute("href") || "").indexOf("section=" + section) >= 0;
+          if (!samePage || !jumpText) button.click();      // 點目前所在頁的主題本身：照舊重新整理該頁
+          if (jumpText) w.__uxJumpTo(jumpText, anchor.getAttribute("data-tab"), samePage ? null : section);
+          // 點完收起下拉；同時移開焦點，否則 :focus-within 會讓選單重新打開、擋住剛捲到的區塊
+          if (anchor.blur) anchor.blur();
+          const item = anchor.closest(".nav-item");
+          if (item) { item.classList.add("nav-closed"); setTimeout(function() { item.classList.remove("nav-closed"); }, 400); }
         }, true);
+
+        // 依標題文字找頁面上的區塊（排除導覽列、頁尾、頁首大標與橫幅），捲到它並閃一下提示位置
+        const TITLES = '.feature-section-title,.finance-card-title,.form-title,.fin-digest h3,.home-copy h2,.home-flow h2,' +
+          '.contact-content h2,.contact-info-card h2,[data-testid="stMain"] h1,[data-testid="stMain"] h2,[data-testid="stMain"] h3';
+        const findTitle = (text) => {
+          for (const el of d.querySelectorAll(TITLES)) {
+            if (el.closest(".site-nav,.site-footer,.content-heading,.page-image-banner")) continue;
+            if ((el.textContent || "").indexOf(text) >= 0 && el.getBoundingClientRect().height > 0) return el;
+          }
+          return null;
+        };
+        // 實際在捲動的容器：通常是 stMain，若它沒有捲軸就用整頁
+        const pageScroller = () => {
+          const m = d.querySelector('[data-testid="stMain"]');
+          return m && m.scrollHeight > m.clientHeight + 1 ? m : d.scrollingElement;
+        };
+        const toast = (msg) => {
+          let t = d.getElementById("ux-toast");
+          if (!t) { t = d.createElement("div"); t.id = "ux-toast"; t.setAttribute("role", "status"); d.body.appendChild(t); }
+          t.textContent = msg; t.classList.add("show");
+          clearTimeout(t.__h); t.__h = setTimeout(function() { t.classList.remove("show"); }, 2600);
+        };
+        let jumpTimer = null;
+        const stopJump = () => { clearInterval(jumpTimer); jumpTimer = null; };
+        // 使用者自己捲動或點別的地方，就放棄等待中的跳轉，避免之後突然被拉走
+        ["wheel", "touchmove", "keydown"].forEach(function(type) { d.addEventListener(type, stopJump, {passive: true}); });
+        w.__uxJumpTo = function(text, tab, targetSection) {
+          stopJump();
+          const started = Date.now();
+          let idle = 0;
+          const go = (el) => {
+            stopJump();
+            const main = pageScroller();
+            const top = main.scrollTop + el.getBoundingClientRect().top - (main === d.scrollingElement ? 0 : main.getBoundingClientRect().top) - 70;
+            const start = main.scrollTop;
+            main.scrollTo({top: top, behavior: "smooth"});
+            setTimeout(function() { if (Math.abs(main.scrollTop - start) < 2 && Math.abs(top - start) > 2) main.scrollTo({top: top}); }, 700);
+            const box = el.closest('[class*="st-key-"]:not([class*="st-key-page_"])') || el;
+            box.classList.remove("ux-flash"); void box.offsetWidth; box.classList.add("ux-flash");
+            if (tab) setTimeout(function() {
+              const t = Array.prototype.find.call(d.querySelectorAll('[role="tab"]'), function(b) { return (b.textContent || "").indexOf(tab) >= 0; });
+              if (t) t.click();
+            }, 250);
+          };
+          jumpTimer = setInterval(function() {
+            const app = d.querySelector(".stApp");
+            const running = app && app.getAttribute("data-test-script-state") === "running";
+            if (running) { idle = 0; return; }
+            idle += 1;
+            if (targetSection) {
+              // 換頁：導覽列的目前頁要先變成目標頁，再連續兩次閒置，畫面才算穩定，避免捲到舊頁面的同名標題
+              const act = d.querySelector(".site-nav-link.active");
+              const arrived = act && (act.getAttribute("href") || "").indexOf("section=" + targetSection) >= 0;
+              if (!arrived) { if (Date.now() - started > 30000) stopJump(); return; }
+              if (idle < 2) return;
+            }
+            const el = findTitle(text);
+            if (el) return go(el);
+            // 頁面已畫完仍找不到（例如該分類目前 0 檔、或需要登入）：停在頁首並提示，不在背景一直等
+            if (idle >= 6) { stopJump(); toast("「" + text + "」目前沒有內容可顯示"); }
+          }, 250);
+        };
       }
       // 回到頂端按鈕、導覽列陰影、操作策略區塊跳轉（只安裝一次）
       if (!w.__siteUxV1) {
@@ -7106,7 +7227,8 @@ _components.html(
         d.addEventListener("mousemove", function(event) {
           const nav = d.querySelector(".st-key-site_nav_sticky");
           const navBottom = nav ? nav.getBoundingClientRect().bottom : 0;
-          const near = event.clientY <= PEEK_ZONE || (!body.classList.contains("ux-navhide") && event.clientY <= navBottom + 24);
+          const inMenu = event.target && event.target.closest && event.target.closest(".st-key-site_nav_sticky");
+          const near = inMenu || event.clientY <= PEEK_ZONE || (!body.classList.contains("ux-navhide") && event.clientY <= navBottom + 24);
           if (near && !hovering) { hovering = true; show(); }
           else if (!near && hovering) { hovering = false; hideSoon(450); }
         }, {passive: true});
