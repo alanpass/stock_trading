@@ -7121,12 +7121,15 @@ _components.html(
           t.textContent = msg; t.classList.add("show");
           clearTimeout(t.__h); t.__h = setTimeout(function() { t.classList.remove("show"); }, 2600);
         };
-        let jumpTimer = null;
+        let jumpTimer = null, settleTimers = [];
         const stopJump = () => { clearInterval(jumpTimer); jumpTimer = null; };
-        // 使用者自己捲動或點別的地方，就放棄等待中的跳轉，避免之後突然被拉走
-        ["wheel", "touchmove", "keydown"].forEach(function(type) { d.addEventListener(type, stopJump, {passive: true}); });
+        const stopSettle = () => { settleTimers.forEach(clearTimeout); settleTimers = []; };
+        // 使用者自己捲動或按鍵，就放棄等待中的跳轉與後續對齊，避免之後突然被拉走
+        ["wheel", "touchmove", "keydown"].forEach(function(type) {
+          d.addEventListener(type, function() { stopJump(); stopSettle(); }, {passive: true});
+        });
         w.__uxJumpTo = function(text, tab, targetSection) {
-          stopJump();
+          stopJump(); stopSettle();
           const started = Date.now();
           let idle = 0;
           const go = (el) => {
@@ -7136,6 +7139,13 @@ _components.html(
             const start = main.scrollTop;
             main.scrollTo({top: top, behavior: "smooth"});
             setTimeout(function() { if (Math.abs(main.scrollTop - start) < 2 && Math.abs(top - start) > 2) main.scrollTo({top: top}); }, 700);
+            // 上方的圖表在捲動後才畫完、把區塊往下推：之後幾秒內位置偏掉就再對齊（使用者自己捲動則停止）
+            [900, 1800, 3000, 4500, 6500].forEach(function(ms) {
+              settleTimers.push(setTimeout(function() {
+                const off = el.getBoundingClientRect().top - (main === d.scrollingElement ? 0 : main.getBoundingClientRect().top) - 70;
+                if (Math.abs(off) > 12) main.scrollTo({top: main.scrollTop + off});
+              }, ms));
+            });
             const box = el.closest('[class*="st-key-"]:not([class*="st-key-page_"])') || el;
             box.classList.remove("ux-flash"); void box.offsetWidth; box.classList.add("ux-flash");
             if (tab) setTimeout(function() {
