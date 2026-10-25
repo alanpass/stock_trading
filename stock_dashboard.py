@@ -93,6 +93,8 @@ from trend_pattern_ui import render_trend_patterns_workspace
 from stock_notes_ui import render_stock_notes_workspace, render_stock_note_for_symbol
 from ai_backend import is_agent_status, status_label, AGENT_LABEL
 from us_industry_indicators import US_INDUSTRY_INDICATORS, get_us_indicator_symbols, fetch_us_indicators
+from celebrity_holdings import POLITICIANS, fetch_all_gurus
+from html import escape as _esc
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
@@ -1817,6 +1819,136 @@ def render_finance_workspace() -> None:
             if st.button(f"顯示更多（再 15 則，尚有 {len(rows) - shown} 則）", key="fin_more"):
                 st.session_state["fin_news_n"] = shown + 15
                 st.rerun()
+
+
+@st.cache_data(ttl=43200, show_spinner=False)
+def _cached_guru_holdings() -> dict:
+    """13F 每季才更新一次；快取 12 小時，SEC 連不上時讀 data/cache 的上一次結果。"""
+    return fetch_all_gurus(cache_path=DATA / "cache" / "celebrity_13f.json")
+
+
+def _fmt_usd(v: float) -> str:
+    return f"${v / 1e9:,.1f}B" if v >= 1e9 else f"${v / 1e6:,.0f}M"
+
+
+def _render_politician_card(p: dict) -> None:
+    color = {"買進": "#c62828", "賣出": "#2e7d32"}
+    rows = "".join(
+        f'<tr><td><span style="color:{color.get(a, "#555")};font-weight:700">{_esc(a)}</span></td>'
+        f'<td>{_esc(t)}</td><td>{_esc(amt)}</td><td>{_esc(d)}</td></tr>'
+        for a, t, amt, d in p["highlights"]
+    )
+    links = "｜".join(
+        f'<a href="{_safe_url(u)}" target="_blank" rel="noopener noreferrer">{_esc(label)} ↗</a>'
+        for label, u in p["sources"]
+    )
+    st.markdown(
+        f'''<div translate="no" class="notranslate celeb-card">
+        <div class="celeb-name">{_esc(p["name"])}<span>{_esc(p["role"])}</span></div>
+        <div class="celeb-asof">資料期間：{_esc(p["as_of"])}</div>
+        <p>{_esc(p["summary"])}</p>
+        <table class="celeb-table"><thead><tr><th>動作</th><th>標的</th><th>申報金額區間</th><th>日期</th></tr></thead>
+        <tbody>{rows}</tbody></table>
+        <div class="celeb-src">原始資料：{links}</div></div>''',
+        unsafe_allow_html=True,
+    )
+
+
+def _render_guru_portfolios() -> None:
+    with st.spinner("讀取 SEC 13F 申報…"):
+        data = _cached_guru_holdings()
+    gurus = [g for g in data.get("gurus", []) if not g.get("error")]
+    failed = [g for g in data.get("gurus", []) if g.get("error")]
+    if not gurus:
+        st.warning("目前無法取得 SEC 13F 資料，請稍後再試。")
+        return
+    if data.get("stale"):
+        st.caption("⚠️ SEC 暫時連不上，顯示上一次取得的資料。")
+
+    tw = [(g, r) for g in gurus for r in g.get("taiwan_rows", [])]
+    if tw:
+        chips = "".join(
+            f'<span class="celeb-chip">{_esc(g["person"].split(" ")[0])}{"（" + r["put_call"] + " 選擇權）" if r["put_call"] else ""}：'
+            f'{r["weight"]:.1f}%（{_esc(r["change"])}）</span>'
+            for g, r in sorted(tw, key=lambda x: x[1]["weight"], reverse=True)
+        )
+        st.markdown(f'<div class="celeb-tw"><b>台積電 ADR（TSM）持有者</b>{chips}</div>', unsafe_allow_html=True)
+
+    names = [g["person"] for g in gurus]
+    pick = st.radio("投資人", names, horizontal=True, key="celeb_guru", label_visibility="collapsed")
+    g = next(x for x in gurus if x["person"] == pick)
+
+    st.caption(f'{g["firm"]}（SEC CIK {g["cik"]}）')
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("前十大集中度", f'{sum(r["weight"] for r in g["top"]):.0f}%')
+    c2.metric("申報持股市值", _fmt_usd(g["total_value"]))
+    c3.metric("持股檔數", f'{g["positions"]}')
+    c4.metric("資料季度", g["period"], help=f'申報日 {g["filed"]}；與前一季 {g["prev_period"]} 比較股數變化')
+
+    top = g["top"]
+    labels = [r["issuer"].title()[:30] + (f' ({r["put_call"]})' if r["put_call"] else "") for r in top]
+    bar_colors = ["#c62828" if r["taiwan"] else "#8e2b2f" if r["change"].startswith(("加碼", "新進")) else "#58758e" for r in top]
+    fig = go.Figure(go.Bar(
+        x=[r["weight"] for r in top][::-1], y=labels[::-1], orientation="h",
+        marker_color=bar_colors[::-1],
+        text=[f'{r["weight"]:.1f}%｜{r["change"]}' for r in top][::-1], textposition="outside",
+        hovertemplate="%{y}<br>占比 %{x:.2f}%<extra></extra>",
+    ))
+    fig.update_layout(
+        height=36 * len(top) + 70, margin=dict(l=10, r=40, t=30, b=10),
+        title=dict(text="前十大持股占比（紅：加碼／新進，藍：減碼／持平）", font=dict(size=13)),
+        xaxis=dict(ticksuffix="%", range=[0, max(r["weight"] for r in top) * 1.35]),
+    )
+    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+
+    table = pd.DataFrame([{
+        "公司": r["issuer"] + (f' ({r["put_call"]})' if r["put_call"] else ""),
+        "占比 %": round(r["weight"], 2),
+        "市值": _fmt_usd(r["value"]),
+        "股數": f'{r["shares"]:,.0f}',
+        "較前一季": r["change"],
+        "台股相關": r["taiwan"],
+    } for r in top])
+    st.dataframe(table, hide_index=True, use_container_width=True)
+
+    buys = "、".join(r["issuer"].title() for r in g["new_buys"]) or "無"
+    sells = "、".join(x["issuer"].title() for x in g["sold_out"]) or "無"
+    st.markdown(
+        f'<div class="info-strip">本季新進：{_esc(buys)}<br>本季出清：{_esc(sells)}<br>'
+        f'<a href="{_safe_url(g["url"])}" target="_blank" rel="noopener noreferrer">SEC EDGAR 原始申報 ↗</a></div>',
+        unsafe_allow_html=True,
+    )
+    if failed:
+        st.caption("暫時無法取得：" + "、".join(f["person"] for f in failed))
+
+
+def render_celebrity_holdings() -> None:
+    """財經資訊頁：名人投資人持股（政治人物財產申報＋投資大師 13F）。"""
+    st.markdown('''<style>
+    .celeb-card{background:#fff;border:1px solid #e7dede;border-left:3px solid var(--site-red,#8e2b2f);border-radius:10px;padding:14px 18px;margin:10px 0 16px}
+    .celeb-name{font-family:Georgia,"Noto Serif TC","Microsoft JhengHei",serif;font-size:19px;color:var(--site-red,#8e2b2f);font-weight:700}
+    .celeb-name span{font-size:12px;color:#7f7676;font-weight:400;margin-left:10px}
+    .celeb-asof,.celeb-src{font-size:12px;color:#7f7676;margin:4px 0 8px}.celeb-card p{font-size:14px;line-height:1.75;margin:6px 0 10px}
+    .celeb-table{width:100%;border-collapse:collapse;font-size:13px}.celeb-table th{background:#f6efef;text-align:left;padding:6px 8px;color:#5b5353}
+    .celeb-table td{border-bottom:1px solid #eee;padding:6px 8px;vertical-align:top}
+    .celeb-src a{color:#0072c6!important;font-weight:700}
+    .celeb-tw{background:#fbf4f4;border:1px solid #ecd6d6;border-radius:10px;padding:10px 13px;margin:6px 0 12px;font-size:13px;line-height:2}
+    .celeb-tw b{color:#8e2b2f;margin-right:10px}.celeb-chip{display:inline-block;background:#fff;border:1px solid #e3cfcf;border-radius:999px;padding:0 10px;margin:0 6px 0 0;white-space:nowrap}
+    @media(max-width:600px){.celeb-table{font-size:12px}.celeb-table th,.celeb-table td{padding:5px 4px}}
+    </style>''', unsafe_allow_html=True)
+    st.markdown('<div class="feature-section-title">名人投資人持股</div>', unsafe_allow_html=True)
+    st.markdown(
+        "<div class='info-strip'>政治人物依美國 OGE／國會 STOCK Act 財產申報整理（只公布金額區間）；"
+        "投資大師依 SEC 13F 季報即時讀取（季底後 45 天內申報，約落後一季，僅含美股多方部位與選擇權）。"
+        "資料僅供參考，不構成投資建議。</div>",
+        unsafe_allow_html=True,
+    )
+    tab_pol, tab_guru = st.tabs(["🏛️ 政治人物（川普、裴洛西）", "📈 投資大師 13F"])
+    with tab_pol:
+        for p in POLITICIANS:
+            _render_politician_card(p)
+    with tab_guru:
+        _render_guru_portfolios()
 
 
 HERO_DRIVE_FOLDER_ID = "1oSa6fv8F7YrVbUmX5UXVs8v0r4sNO9Fy"
@@ -6776,6 +6908,7 @@ elif current_section == "future":
         st.info("請點擊頁面右上角的「登入」或「申請帳號」，開啟左側選單。")
 elif current_section == "finance":
     render_finance_workspace()
+    render_celebrity_holdings()
 elif current_section == "rotation":
     render_rotation_workspace()
 else:
