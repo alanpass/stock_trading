@@ -33,7 +33,6 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 import streamlit as st
 import extra_streamlit_components as stx
-from streamlit_autorefresh import st_autorefresh
 
 
 def _load_cloud_secret_env() -> None:
@@ -1120,6 +1119,103 @@ def _site_header_svg() -> str:
     '''
 
 
+_UX_CSS = """<style>
+/* 重跑時的頂端進度條：超過 0.35 秒才出現，快速更新不會閃 */
+.stApp[data-test-script-state="running"]::before{content:"";position:fixed;top:0;left:0;right:0;height:3px;z-index:1000000;pointer-events:none;
+  background:linear-gradient(90deg,transparent 0,#8e2b2f 30%,#c9837a 50%,#58758e 70%,transparent 100%);background-size:200% 100%;
+  animation:uxBarIn .2s .35s both,uxBar 1.1s linear infinite}
+@keyframes uxBarIn{from{opacity:0}to{opacity:1}}
+@keyframes uxBar{from{background-position:200% 0}to{background-position:-200% 0}}
+/* 重跑時舊內容不要整片變灰閃爍（進度條已經告知正在更新） */
+[data-stale="true"]{opacity:1!important;transition:none!important}
+
+/* 導覽列固定在頂端，捲到哪都能換頁 */
+/* Streamlit 1.5x 起容器外面還包一層 stLayoutWrapper，sticky 要加在那一層 */
+[data-testid="stLayoutWrapper"]:has(> .st-key-site_nav_sticky),.st-key-site_nav_sticky{position:sticky;top:0;z-index:990}
+.st-key-site_nav_sticky{background:rgba(255,255,255,.9);
+  -webkit-backdrop-filter:saturate(1.4) blur(10px);backdrop-filter:saturate(1.4) blur(10px);transition:box-shadow .25s ease}
+.ux-scrolled .st-key-site_nav_sticky{box-shadow:0 8px 18px -12px rgba(60,20,20,.35)}
+
+/* 換頁淡入 */
+[class*="st-key-page_"]{animation:uxPageIn .5s cubic-bezier(.2,.7,.2,1) backwards}
+@keyframes uxPageIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* 首頁：五步驟快速入口 */
+.home-flow{padding:44px 0 30px;text-align:center}
+.home-flow h2{font-family:Georgia,"Noto Serif TC","Microsoft JhengHei",serif;color:var(--site-red,#8e2b2f);font-size:30px;margin:6px 0 8px}
+.home-flow>p{color:#6f6767;font-size:14px;line-height:1.8;margin:0 auto 24px;max-width:640px}
+.flow-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.flow-card{position:relative;display:flex;flex-direction:column;gap:7px;text-align:left;padding:18px 16px 42px;border:1px solid #eee3e3;border-radius:14px;
+  background:#fff;color:#3d3838!important;text-decoration:none!important;box-shadow:0 2px 8px rgba(0,0,0,.03);
+  transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;animation:uxRise .6s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:calc(var(--i) * 90ms + .15s)}
+.flow-card:hover{transform:translateY(-6px);box-shadow:0 16px 32px -10px rgba(142,43,47,.28);border-color:#dcbcbc}
+.flow-step{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#f8eeee;color:var(--site-red,#8e2b2f);font-weight:800;font-size:16px;transition:background .25s,color .25s}
+.flow-card:hover .flow-step{background:var(--site-red,#8e2b2f);color:#fff}
+.flow-card b{font-size:17px;color:var(--site-red,#8e2b2f);letter-spacing:.5px}
+.flow-card small{font-size:12.5px;color:#7a7171;line-height:1.65}
+.flow-go{position:absolute;right:16px;bottom:13px;color:var(--site-red,#8e2b2f);font-weight:800;transition:transform .25s ease}
+.flow-card:hover .flow-go{transform:translateX(6px)}
+@keyframes uxRise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@media(max-width:900px){.flow-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){
+  .flow-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.flow-card{padding:13px 12px 32px;gap:5px}
+  .flow-card b{font-size:15px}.flow-card small{font-size:11.5px}.flow-step{width:26px;height:26px;font-size:13px}.flow-go{bottom:9px;right:12px}
+  .home-flow{padding:28px 0 18px}.home-flow h2{font-size:24px}
+  /* 手機：導覽改成單列、可左右滑，固定在頂端時不佔兩行高度 */
+  .st-key-site_nav_sticky .site-nav{flex-wrap:nowrap!important;justify-content:flex-start!important;overflow-x:auto;gap:20px!important;
+    padding:8px 14px 10px!important;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}
+  .st-key-site_nav_sticky .site-nav::-webkit-scrollbar{display:none}
+  .st-key-site_nav_sticky .site-nav-link{white-space:nowrap;flex:0 0 auto}
+  .jump-bar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}.jump-chip,.jump-label{flex:0 0 auto}
+  #ux-top{right:14px;bottom:18px;width:40px;height:40px}
+}
+
+/* 操作策略：即時狀態與區塊快速跳轉 */
+.jump-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:-4px 0 6px}
+.jump-label{font-size:12px;color:#8a8080;margin-left:4px}
+.jump-chip{cursor:pointer;user-select:none;font-size:12.5px;padding:4px 12px;border-radius:999px;border:1px solid #e6d6d6;background:#fff;color:#5b4f4f!important;
+  text-decoration:none!important;transition:background .2s,color .2s,border-color .2s,transform .2s}
+.jump-chip:hover{background:var(--site-red,#8e2b2f);color:#fff!important;border-color:var(--site-red,#8e2b2f);transform:translateY(-2px)}
+.live-badge{font-size:12px;padding:4px 12px;border-radius:999px;background:#f1f3f5;color:#6b7280;white-space:nowrap}
+.live-badge.on{background:#fdecec;color:#b42318;font-weight:700}
+.live-badge.on::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#e5484d;margin-right:7px;vertical-align:1px;animation:uxPulse 1.6s infinite}
+@keyframes uxPulse{0%{box-shadow:0 0 0 0 rgba(229,72,77,.55)}70%{box-shadow:0 0 0 8px rgba(229,72,77,0)}100%{box-shadow:0 0 0 0 rgba(229,72,77,0)}}
+[class*="st-key-strategy-0"]{scroll-margin-top:78px}
+@keyframes uxFlash{0%{box-shadow:0 0 0 0 rgba(142,43,47,.35)}100%{box-shadow:0 0 0 14px rgba(142,43,47,0)}}
+.ux-flash{animation:uxFlash .9s ease-out}
+
+/* 載入骨架 */
+.skeleton{display:grid;gap:10px;padding:4px 0 14px}
+.skeleton span{display:block;height:14px;border-radius:7px;background:linear-gradient(90deg,#f1ecec 25%,#fbf8f8 50%,#f1ecec 75%);background-size:200% 100%;animation:uxShimmer 1.2s linear infinite}
+.skeleton span:first-child{height:170px;border-radius:12px}.skeleton .short{width:45%}
+@keyframes uxShimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+
+/* 圖表出現時輕微淡入；指標卡與按鈕的互動回饋 */
+[data-testid="stPlotlyChart"]{animation:uxFade .45s ease backwards}
+@keyframes uxFade{from{opacity:0}to{opacity:1}}
+[data-testid="stMetric"]{transition:transform .2s ease}
+[data-testid="stMetric"]:hover{transform:translateY(-2px)}
+.stButton button,.stFormSubmitButton button{transition:transform .12s ease,box-shadow .2s ease}
+.stButton button:active,.stFormSubmitButton button:active{transform:scale(.97)}
+
+/* 回到頂端 */
+#ux-top{position:fixed;right:22px;bottom:26px;width:44px;height:44px;border-radius:50%;border:0;background:#8e2b2f;color:#fff;font-size:20px;
+  box-shadow:0 8px 20px rgba(142,43,47,.35);cursor:pointer;opacity:0;transform:translateY(16px) scale(.9);pointer-events:none;transition:opacity .3s,transform .3s;z-index:9999}
+#ux-top.show{opacity:1;transform:none;pointer-events:auto}
+#ux-top.show:hover{transform:translateY(-3px)}
+
+@media (prefers-reduced-motion: reduce){
+  [class*="st-key-page_"],.flow-card,[data-testid="stPlotlyChart"],.skeleton span,.live-badge.on::before,.ux-flash{animation:none!important}
+  .flow-card:hover,.jump-chip:hover,[data-testid="stMetric"]:hover{transform:none}
+}
+</style>"""
+
+
+def _inject_ux_layer() -> None:
+    """全站互動層：載入進度條、固定導覽、換頁淡入、卡片與骨架動畫、回到頂端。"""
+    st.markdown(_UX_CSS, unsafe_allow_html=True)
+
+
 def render_header_and_search() -> None:
     """依設計文件統一呈現所有頁面的頁首品牌區。"""
     now = taiwan_now()
@@ -1717,12 +1813,17 @@ def _earning_item_html(item: dict, label: str, is_open: bool = False) -> str:
 
 
 def render_finance_workspace() -> None:
-    # 財經頁在瀏覽器開啟期間每分鐘自動 rerun；180 秒資料快取到期後會重新向 GitHub 取最新 JSON。
-    st_autorefresh(interval=60_000, key="finance_data_auto_refresh")
     st.markdown(
         '<div class="content-heading"><div class="eyebrow">DAILY FINANCE</div><h1>財經資訊</h1></div>',
         unsafe_allow_html=True,
     )
+    _render_finance_body()
+
+
+# 財經內容在瀏覽器開啟期間每分鐘自動更新；只重跑這個 fragment，不會整頁重畫或打斷名人持股區的操作。
+# 180 秒資料快取到期後會重新向 GitHub 取最新 JSON。
+@st.fragment(run_every=60)
+def _render_finance_body() -> None:
     cache = _load_finance_info_cache()
     earnings = _recent_earnings_items(days=5)
     news = _recent_news_items(days=2)
@@ -1818,7 +1919,7 @@ def render_finance_workspace() -> None:
         if len(rows) > shown:
             if st.button(f"顯示更多（再 15 則，尚有 {len(rows) - shown} 則）", key="fin_more"):
                 st.session_state["fin_news_n"] = shown + 15
-                st.rerun()
+                st.rerun(scope="fragment")
 
 
 @st.cache_data(ttl=43200, show_spinner=False)
@@ -1972,7 +2073,7 @@ def _hero_local_image_uris() -> list:
     return out
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
+@st.cache_data(ttl=21600, show_spinner=False)
 def _drive_folder_image_urls(folder_id: str) -> list:
     """備援：讀取公開 Google Drive 資料夾內的圖片；失敗時回傳空清單。"""
     import urllib.request
@@ -2036,9 +2137,25 @@ def _render_hero_carousel() -> None:
     st.markdown(f'<div class="hero-carousel">{"".join(slides)}<div class="hero-dots">{"".join(dots)}</div></div>', unsafe_allow_html=True)
 
 
+def _render_home_flow() -> None:
+    """首頁快速入口：照研究流程排成五步，點卡片直接進對應頁面。"""
+    cards = "".join(
+        f'<a class="flow-card" href="?section={key}" target="_self" style="--i:{i}">'
+        f'<span class="flow-step">{i + 1}</span><b>{label}</b><small>{hint[2:]}</small><span class="flow-go">→</span></a>'
+        for i, (key, label, hint) in enumerate(SITE_NAV[1:6])
+    )
+    st.markdown(
+        '<section translate="no" class="home-flow"><div class="eyebrow">HOW TO USE</div>'
+        '<h2>五步驟看懂台股</h2><p>照著順序走：從市場消息找到強勢族群，再深入個股與型態，最後參考 AI 預測。</p>'
+        f'<div class="flow-grid">{cards}</div></section>',
+        unsafe_allow_html=True,
+    )
+
+
 def render_home_workspace() -> None:
     """首頁：依 PDF 的節點節奏，以實際提供的六張台股圖片做視覺主體。"""
     _render_hero_carousel()
+    _render_home_flow()
 
     st.markdown('''
     <section translate="no" class="home-band blush"><div class="home-two-col">
@@ -2195,15 +2312,29 @@ def _set_nav_section(section: str) -> None:
         pass
 
 
+# 導覽順序＝建議的使用流程：先看市場消息，再找強勢族群，接著研究個股、型態，最後看預測。
+SITE_NAV = [
+    ("home", "首頁", "網站導覽"),
+    ("finance", "財經資訊", "① 看市場：今日重點、法說會、新聞、名人持股"),
+    ("rotation", "產業分析", "② 找族群：產業輪動與資金流向"),
+    ("strategy", "操作策略", "③ 選個股：行情、K 線、籌碼、法人"),
+    ("trend", "趨勢型態", "④ 看型態：K 線型態掃描"),
+    ("future", "未來分析", "⑤ 看未來：AI 預測與研究 Agent（需登入）"),
+    ("subscribe", "訂閱系統", "訂閱晨報與聯絡我們"),
+]
+
+
 def render_site_navigation() -> str:
     """Restore the original HTML navigation appearance while retaining hidden controls for session-safe navigation."""
     current = _get_nav_section()
-    nav = [("home", "首頁"), ("strategy", "操作策略"), ("trend", "趨勢型態"), ("future", "未來分析"), ("finance", "財經資訊"), ("rotation", "產業分析"), ("subscribe", "訂閱系統")]
     links = []
-    for key, label in nav:
+    for key, label, hint in SITE_NAV:
         active = " active" if current == key else ""
-        links.append(f'<a class="site-nav-link{active}" href="?section={key}" target="_self">{label}</a>')
-    st.markdown('<nav translate="no" class="site-nav">' + ''.join(links) + '</nav>', unsafe_allow_html=True)
+        links.append(f'<a class="site-nav-link{active}" href="?section={key}" target="_self" title="{hint}">{label}</a>')
+    # 包在有 key 的容器裡才能 position:sticky（捲到下方也能直接換頁）
+    with st.container(key="site_nav_sticky"):
+        st.markdown('<nav translate="no" class="site-nav">' + ''.join(links) + '</nav>', unsafe_allow_html=True)
+    nav = [(key, label) for key, label, _ in SITE_NAV]
     st.markdown(
         '<style>.st-key-site_nav_control{position:fixed!important;left:-10000px!important;top:0!important;width:1px!important;height:1px!important;overflow:hidden!important;opacity:0!important;pointer-events:none!important;z-index:-1!important;}</style>',
         unsafe_allow_html=True,
@@ -2232,6 +2363,21 @@ def _render_footer() -> None:
     </div>
     <div class="footer-bottom">© 2026 台股即時互動式分析系統</div></footer>''', unsafe_allow_html=True)
 
+_JUMP_LABELS = {
+    "strategy-03-trend": "趨勢", "strategy-04-kline": "K 線", "strategy-05-volume": "成交量",
+    "strategy-06-entry": "進場建議", "strategy-07-tdcc": "大戶散戶", "strategy-08-trades": "成交明細",
+    "strategy-09-institutions": "三大法人",
+}
+_LIVE_SECTIONS = {"strategy-03-trend", "strategy-05-volume", "strategy-08-trades"}
+_SKELETON_HTML = '<div class="skeleton"><span></span><span></span><span class="short"></span></div>'
+
+
+def _render_sidebar_watch() -> None:
+    render_pinned_selected()
+    st.markdown('<div class="feature-section-title side-watch-title">自選股即時行情</div>', unsafe_allow_html=True)
+    render_watchlist(compact=True)
+
+
 def render_strategy_workspace() -> None:
     """操作策略頁：維持文件的功能順序；各功能節點使用淺色交錯背景，形成同一套網站視覺。"""
     st.markdown(f'<div class="page-image-banner">{_site_image_html(7, wide=True)}</div>', unsafe_allow_html=True)
@@ -2248,6 +2394,15 @@ def render_strategy_workspace() -> None:
     ]
     # 兩段式：剛切換到這頁或換股票時，先送出全部區塊標題與「載入中」，舊頁面會立刻被替換；
     # 接著才依序抓資料、畫圖，填回各自的位置。盤中自動刷新不顯示「載入中」，避免圖表閃爍。
+    status = (f'<span class="live-badge on">盤中即時更新・每 {REFRESH_INTERVAL} 秒</span>' if REFRESH_INTERVAL
+              else '<span class="live-badge">非交易時段・顯示最近交易日資料</span>')
+    jumps = "".join(
+        f'<a class="jump-chip" data-jump="{key}">{_JUMP_LABELS.get(key, title)}</a>'
+        for key, title, _ in sections
+    )
+    st.markdown(f'<div translate="no" class="jump-bar">{status}<span class="jump-label">跳到</span>{jumps}</div>',
+                unsafe_allow_html=True)
+
     selected = st.session_state.get("selected")
     fresh = st.session_state.get("_strategy_view") != selected
     st.session_state["_strategy_view"] = selected
@@ -2257,18 +2412,20 @@ def render_strategy_workspace() -> None:
         box.markdown(f'<div class="feature-section-title">{title}</div>', unsafe_allow_html=True)
         body = box.empty()
         if fresh:
-            body.caption("資料載入中…")
-        slots.append((body, render))
+            body.markdown(_SKELETON_HTML, unsafe_allow_html=True)
+        slots.append((key, body, render))
+
+    # 每個區塊各自是 fragment：切換期間、勾選法人等互動只重跑該區塊，不會整頁重畫。
+    # 盤中只有即時區塊依秒數自動更新；K 線、籌碼、法人等慢資料不跟著每 5 秒重送圖表。
+    live_every = REFRESH_INTERVAL if not st.session_state.get("ai_busy", False) else None
 
     # 自選股固定在左側欄（Streamlit 側邊欄本身固定、可獨立捲動），不會蓋到右側的分析圖表。
     with st.sidebar:
-        render_pinned_selected()
-        st.markdown('<div class="feature-section-title side-watch-title">自選股即時行情</div>', unsafe_allow_html=True)
-        render_watchlist(compact=True)
+        st.fragment(_render_sidebar_watch, run_every=max(live_every, 15) if live_every else None)()
 
-    for body, render in slots:
+    for key, body, render in slots:
         with body.container():
-            render()
+            st.fragment(render, run_every=live_every if key in _LIVE_SECTIONS else None)()
 
 def render_future_workspace() -> None:
     st.markdown(f'<div class="page-image-banner">{_site_image_html(8, wide=True)}</div>', unsafe_allow_html=True)
@@ -3883,7 +4040,6 @@ def _chart_time_labels(d: pd.DataFrame, daily: bool = False):
 
 def render_trend():
     selected = st.session_state.selected
-    st.subheader("股價趨勢")
     period = st.radio("期間", ["日內", "五日", "近月", "三月", "一年"], horizontal=True, key="period")
     try:
         if period == "日內":
@@ -3930,7 +4086,6 @@ def render_trend():
 def render_kline():
     """互動式技術 K 線：日期簡寫、交易日等距排列，價格與成交量共用時間軸。"""
     selected = st.session_state.selected
-    st.subheader("技術 K 線")
     k_period = st.radio(
         "K 線週期",
         ["日K", "當日 5 分K", "當日 30 分K", "當日 60 分K"],
@@ -4157,7 +4312,6 @@ def render_kline():
 # ============================================================
 def render_volume_snapshot():
     selected = st.session_state.selected
-    st.subheader("成交量概況")
     try:
         if is_market_open_now():
             d = normalize_intraday(get_intraday(selected, "5"))
@@ -4249,7 +4403,6 @@ def get_entry_model(selected: str, training_end_key: str):
 
 def render_entry_prediction():
     selected = st.session_state.selected
-    st.subheader("進場建議分析系統")
 
     try:
         train_end = latest_trading_date(selected)
@@ -4411,7 +4564,6 @@ def render_entry_prediction():
 # ============================================================
 def render_tdcc():
     selected = st.session_state.selected
-    st.subheader("大戶 VS 散戶持有股比率")
     try:
         tdcc = get_tdcc(selected)
         if tdcc.empty:
@@ -4433,7 +4585,6 @@ def render_tdcc():
 # ============================================================
 def render_trades():
     selected = st.session_state.selected
-    st.subheader("交易明細（台灣時間）")
     try:
         td = get_trades(selected)
         if td.empty:
@@ -4463,7 +4614,6 @@ def render_institutions():
     try: info=get_ticker(selected)
     except Exception: info={}
     market=str(info.get("market") or (sr.iloc[0]["market"] if not sr.empty else "TSE"))
-    st.subheader("三大法人 10 交易日買賣超")
     try:
         inst = get_institutions(selected, market)
         if inst.empty:
@@ -6877,6 +7027,42 @@ _components.html(
           button.click();
         }, true);
       }
+      // 回到頂端按鈕、導覽列陰影、操作策略區塊跳轉（只安裝一次）
+      if (!w.__siteUxV1) {
+        w.__siteUxV1 = true;
+        let scroller = null;
+        const mainScroller = () => scroller || d.querySelector('[data-testid="stMain"]') || d.scrollingElement;
+        // 平滑捲動；瀏覽器沒有動（例如分頁在背景、不畫影格）就直接跳過去
+        const smoothTo = (el, top) => {
+          const start = el.scrollTop;
+          el.scrollTo({top: top, behavior: "smooth"});
+          setTimeout(function() { if (Math.abs(el.scrollTop - start) < 2 && Math.abs(top - start) > 2) el.scrollTo({top: top}); }, 700);
+        };
+        const topBtn = d.createElement("button");
+        topBtn.id = "ux-top"; topBtn.type = "button"; topBtn.title = "回到頂端"; topBtn.textContent = "↑";
+        topBtn.addEventListener("click", function() {
+          smoothTo(mainScroller(), 0);
+        });
+        d.body.appendChild(topBtn);
+        d.addEventListener("scroll", function(event) {
+          const el = event.target === d ? d.scrollingElement : event.target;
+          if (!el || !el.closest || el.closest('[data-testid="stSidebar"]')) return;
+          if (el.scrollHeight <= el.clientHeight + 50) return;
+          scroller = el;
+          topBtn.classList.toggle("show", el.scrollTop > 600);
+          d.body.classList.toggle("ux-scrolled", el.scrollTop > 80);
+        }, true);
+        d.addEventListener("click", function(event) {
+          const chip = event.target && event.target.closest ? event.target.closest("[data-jump]") : null;
+          if (!chip) return;
+          const box = d.querySelector(".st-key-" + chip.getAttribute("data-jump"));
+          if (!box) return;
+          event.preventDefault();
+          const el = mainScroller();
+          smoothTo(el, el.scrollTop + box.getBoundingClientRect().top - el.getBoundingClientRect().top - 78);
+          box.classList.remove("ux-flash"); void box.offsetWidth; box.classList.add("ux-flash");
+        }, true);
+      }
     } catch (e) {}
     </script>""",
     height=0,
@@ -6886,6 +7072,7 @@ auth_cookie_manager = stx.CookieManager(key="stock_trading_auth_cookie_manager")
 _restore_auth_from_cookie(auth_cookie_manager)
 _flush_auth_cookie_op(auth_cookie_manager)
 _inject_scroll_reveal()
+_inject_ux_layer()
 render_header_and_search()
 render_auth_header_actions()
 current_section = render_site_navigation()
@@ -6894,29 +7081,33 @@ sync_sidebar_visibility(current_section)
 
 if current_section != "strategy":
     st.session_state["_strategy_view"] = None  # 回到操作策略時重新以兩段式顯示
-if current_section == "home":
-    render_home_workspace()
-elif current_section == "strategy":
-    render_strategy_workspace()
-elif current_section == "trend":
-    render_trend_patterns_workspace(BASE)
-elif current_section == "future":
-    if is_authenticated():
-        render_future_workspace()
+def _render_page(section: str) -> None:
+    if section == "home":
+        render_home_workspace()
+    elif section == "strategy":
+        render_strategy_workspace()
+    elif section == "trend":
+        render_trend_patterns_workspace(BASE)
+    elif section == "future":
+        if is_authenticated():
+            render_future_workspace()
+        else:
+            st.markdown('<div class="content-heading"><h1>未來分析</h1><p>此功能僅限登入使用者。</p></div>', unsafe_allow_html=True)
+            st.info("請點擊頁面右上角的「登入」或「申請帳號」，開啟左側選單。")
+    elif section == "finance":
+        render_finance_workspace()
+        render_celebrity_holdings()
+    elif section == "rotation":
+        render_rotation_workspace()
     else:
-        st.markdown('<div class="content-heading"><h1>未來分析</h1><p>此功能僅限登入使用者。</p></div>', unsafe_allow_html=True)
-        st.info("請點擊頁面右上角的「登入」或「申請帳號」，開啟左側選單。")
-elif current_section == "finance":
-    render_finance_workspace()
-    render_celebrity_holdings()
-elif current_section == "rotation":
-    render_rotation_workspace()
-else:
-    render_subscription_workspace()
+        render_subscription_workspace()
 
-# 盤中自動刷新只用在有即時行情的「操作策略」頁；其他頁面（財經、產業、趨勢、未來分析…）不需要每 5 秒整頁重跑。
-if REFRESH_INTERVAL and current_section == "strategy" and not st.session_state.get("ai_busy", False):
-    st_autorefresh(interval=int(REFRESH_INTERVAL * 1000), key="site_market_live_refresh")
+
+# 頁面內容包一層有 key 的容器：換頁時容器重建、播放淡入動畫；同一頁內重跑不會重播。
+with st.container(key=f"page_{current_section}"):
+    _render_page(current_section)
+
+# 盤中自動更新改由「操作策略」各即時區塊的 fragment（run_every）負責，不再整頁重跑。
 
 # Footer 必須是整個網頁最後一個可見內容。
 _render_footer()
