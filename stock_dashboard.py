@@ -2367,7 +2367,6 @@ def render_subscription_workspace() -> None:
         st.markdown(
             """
             <div class="contact-info-card">
-              <h2>聯絡資訊</h2>
               <p>歡迎針對網站功能、股票資料、AI 分析或每日財經資訊提出問題。</p>
               <div class="contact-item"><span>◎</span><div><b>台灣股市研究</b><small>AI 台股即時互動式分析系統</small></div></div>
               <div class="contact-item"><span>⌕</span><div><b>研究服務</b><small>股票操作策略／未來分析／財經資訊</small></div></div>
