@@ -4850,7 +4850,15 @@ _FOCUS_CSS = """<style>
 .fx-tags .sig,.fx-chips .sig{font-size:12px;padding:1px 9px}
 .fx-chips .sig-none,.fx-chips .sig-wait{font-size:11px}
 .fx-empty{color:#8a8080;font-size:13px;padding:18px 4px}
-.fx-earlier{font-size:11px;color:#9a9090;align-self:center;cursor:help;border-bottom:1px dotted #c9bfbf}
+/* 稍早事件：卡片底部一整列小時間軸，最新的在左；超過 4 則收合 */
+.fx-hist{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-top:2px;padding-top:9px;border-top:1px dashed #eadede}
+.fx-hist-label{font-size:11.5px;font-weight:700;color:#8e2b2f;background:#f6eaea;border-radius:4px;padding:1px 7px;flex:none}
+.fx-ev{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#5b5252;background:#fff;border:1px solid #eee3e3;border-radius:999px;padding:1px 9px 1px 4px;white-space:nowrap}
+.fx-ev time{font-size:11px;font-weight:700;color:#7d7474;background:#f4f0f0;border-radius:999px;padding:0 6px;font-variant-numeric:tabular-nums}
+.fx-ev.bull{border-color:#f2c9c9}.fx-ev.bull b{color:#d23c3c}.fx-ev.bear{border-color:#c4e5d2}.fx-ev.bear b{color:#14874f}
+.fx-ev b{font-weight:700}.fx-ev i{font-style:normal;color:#b3a9a9}
+.fx-more{display:contents}.fx-more summary{list-style:none;cursor:pointer;font-size:11.5px;color:#8e2b2f;font-weight:700;padding:1px 4px}
+.fx-more summary::-webkit-details-marker{display:none}.fx-more[open] summary{display:none}
 @media(max-width:700px){.fx-card{grid-template-columns:1fr 1fr}.fx-card>div:first-child{grid-column:1/-1}.fx-spark{width:110px}}
 </style>"""
 
@@ -4924,15 +4932,23 @@ def render_watch_focus():
         tags = "".join(f'<span class="sig sig-{e["side"]}">{_esc(e["text"])}</span>' for e in c["events"])
         chips = _signal_chips_html(chip_map.get(s["code"]), empty_text="無連續籌碼訊號", pending_text="籌碼計算中…")
         prior = earlier.get(s["code"], [])
+        hist = ""
         if prior:
-            hist = "&#10;".join(f'{p["time"]:%H:%M} ' + "、".join(_esc(e["text"]) for e in p["events"]) for p in prior)
-            tags += f'<span class="fx-earlier" title="{hist}">稍早 {len(prior)} 則</span>'
+            def ev_html(p):
+                side = p["side"] if p["side"] in ("bull", "bear") else ""
+                txt = "<i>・</i>".join(f'<b>{_esc(e["text"])}</b>' for e in p["events"])
+                return f'<span class="fx-ev {side}"><time>{p["time"]:%H:%M}</time>{txt}</span>'
+            shown_prior = "".join(ev_html(p) for p in prior[:4])
+            rest = "".join(ev_html(p) for p in prior[4:])
+            more = (f'<details class="fx-more"><summary>＋展開其餘 {len(prior) - 4} 則</summary>{rest}</details>'
+                    if rest else "")
+            hist = f'<div class="fx-hist"><span class="fx-hist-label">稍早 {len(prior)} 則</span>{shown_prior}{more}</div>'
         items.append(
             f'<div class="fx-item"><div class="fx-time">{t:%H:%M}{new}</div><div class="fx-card">'
             f'<div><div class="fx-name">{_esc(s["name"])}<span>{s["code"]}</span></div><div class="fx-row">{_focus_spark(s, t)}'
             f'<div class="fx-px {cls(pct)}">{c["price"]:,.2f}<small>{"▲" if pct > 0 else "▼" if pct < 0 else ""}{pct:+.2f}%</small>'
             f'<div class="fx-now">現 {s["last"]:,.2f}（{s["pct"]:+.2f}%）</div></div></div></div>'
-            f'<div class="fx-tags">{tags}</div><div class="fx-chips">{chips}</div></div></div>')
+            f'<div class="fx-tags">{tags}</div><div class="fx-chips">{chips}</div>{hist}</div></div>')
     if items:
         more = len(shown) - FOCUS_MAX_CARDS
         tail = f'<div class="fx-empty">還有 {more} 檔較早有事件的股票未顯示</div>' if more > 0 else ""
