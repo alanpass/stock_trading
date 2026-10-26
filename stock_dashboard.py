@@ -2461,7 +2461,7 @@ SITE_NAV = [
 SITE_NAV_SUB = {
     "home": [("五步驟看懂台股", "五步驟看懂台股"), ("關於台股", "關於台股"), ("每日財經資訊", "每日財經資訊"),
              ("專注台股", "專注台股"), ("聯絡資訊", "聯絡資訊")],
-    "finance": [("國際風向球：原油、VIX", "國際風向球"), ("AI 今日重點", "AI 今日重點"), ("法說會摘要", "法說會摘要"), ("財經新聞摘要", "財經新聞摘要"),
+    "finance": [("國際風向球：美股、原油、VIX", "國際風向球"), ("AI 今日重點", "AI 今日重點"), ("法說會摘要", "法說會摘要"), ("財經新聞摘要", "財經新聞摘要"),
                 ("名人持股：政治人物", "名人投資人持股", "政治人物"), ("名人持股：投資大師 13F", "名人投資人持股", "投資大師")],
     "rotation": [("產業族群走勢", "產業族群"), ("產業輪動圖", "產業輪動圖"), ("產業報酬與輪動狀態", "產業報酬與輪動狀態"),
                  ("美股產業指標股", "美股產業指標股"), ("本週象限變化", "本週象限變化"), ("成分股漲跌前十", "成分股漲跌前十"),
@@ -5059,9 +5059,11 @@ def _cached_global_indicator(symbol: str) -> dict:
 
 
 def render_global_markets() -> None:
-    """財經資訊頁：國際風向球（布蘭特原油、VIX）。"""
+    """財經資訊頁：國際風向球（道瓊、那斯達克、費城半導體、布蘭特原油、VIX），每列 3 張。"""
     st.markdown('<div class="feature-section-title">國際風向球</div>', unsafe_allow_html=True)
-    cols = st.columns(len(GLOBAL_INDICATORS), gap="medium")
+    cols = []
+    for start in range(0, len(GLOBAL_INDICATORS), 3):
+        cols += st.columns(3, gap="medium")
     for col, ind in zip(cols, GLOBAL_INDICATORS):
         with col:
             try:

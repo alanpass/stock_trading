@@ -1,4 +1,4 @@
-"""國際風向球：布蘭特原油（BZ=F）與 VIX 恐慌指數（^VIX），資料取自 Yahoo Finance 日線。"""
+"""國際風向球：美股三大指標（道瓊、那斯達克、費城半導體）、布蘭特原油、VIX 恐慌指數，資料取自 Yahoo Finance 日線。"""
 from __future__ import annotations
 
 import requests
@@ -6,6 +6,12 @@ import requests
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36"}
 
 GLOBAL_INDICATORS = [
+    {"symbol": "^DJI", "name": "道瓊工業指數", "unit": "點",
+     "note": "美國 30 家大型藍籌股；反映傳產、金融與整體景氣信心。"},
+    {"symbol": "^IXIC", "name": "那斯達克指數", "unit": "點",
+     "note": "科技股比重高；台股電子權值股常跟著同向波動。"},
+    {"symbol": "^SOX", "name": "費城半導體指數", "unit": "點",
+     "note": "30 檔半導體股；與台積電、IC 設計、記憶體最連動。"},
     {"symbol": "BZ=F", "name": "布蘭特原油", "unit": "美元／桶",
      "note": "油價上漲推升通膨與運輸成本，對塑化、航運有直接影響。"},
     {"symbol": "^VIX", "name": "VIX 恐慌指數", "unit": "點",
