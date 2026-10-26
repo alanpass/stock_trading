@@ -96,6 +96,7 @@ from us_industry_indicators import US_INDUSTRY_INDICATORS, get_us_indicator_symb
 from celebrity_holdings import POLITICIANS, fetch_all_gurus
 import chip_signals
 import stock_features
+import intraday_signals
 from global_markets import GLOBAL_INDICATORS, fetch_indicator, vix_regime
 from html import escape as _esc
 
@@ -2425,7 +2426,7 @@ SITE_NAV_SUB = {
     "rotation": [("產業族群走勢", "產業族群"), ("產業輪動圖", "產業輪動圖"), ("產業報酬與輪動狀態", "產業報酬與輪動狀態"),
                  ("美股產業指標股", "美股產業指標股"), ("本週象限變化", "本週象限變化"), ("成分股漲跌前十", "成分股漲跌前十"),
                  ("輪動解讀與資料限制", "輪動解讀與資料限制")],
-    "strategy": [("個股符合特徵", "個股符合特徵"), ("股價趨勢", "股價趨勢"), ("技術 K 線", "技術 K 線"), ("成交量", "成交量"), ("進場建議分析", "進場建議分析系統"),
+    "strategy": [("自選股盤中焦點", "自選股盤中焦點"), ("個股符合特徵", "個股符合特徵"), ("股價趨勢", "股價趨勢"), ("技術 K 線", "技術 K 線"), ("成交量", "成交量"), ("進場建議分析", "進場建議分析系統"),
                  ("大戶 VS 散戶", "大戶 VS 散戶"), ("交易明細", "交易明細"), ("三大法人", "三大法人")],
     "trend": [("期間統計", "期間統計")] + [(c, c) for c in TREND_CATEGORY_ORDER],
     "future": [("AI 隔日預測", "AI 隔日預測"), ("市場情報與利多／利空", "市場情報"), ("模型研究 Agent", "模型研究 Agent"),
@@ -2480,11 +2481,11 @@ def _render_footer() -> None:
     <div class="footer-bottom">© 2026 台股即時互動式分析系統</div></footer>''', unsafe_allow_html=True)
 
 _JUMP_LABELS = {
-    "strategy-02-chips": "個股特徵", "strategy-03-trend": "趨勢", "strategy-04-kline": "K 線", "strategy-05-volume": "成交量",
+    "strategy-01-focus": "盤中焦點", "strategy-02-chips": "個股特徵", "strategy-03-trend": "趨勢", "strategy-04-kline": "K 線", "strategy-05-volume": "成交量",
     "strategy-06-entry": "進場建議", "strategy-07-tdcc": "大戶散戶", "strategy-08-trades": "成交明細",
     "strategy-09-institutions": "三大法人",
 }
-_LIVE_SECTIONS = {"strategy-03-trend", "strategy-05-volume", "strategy-08-trades"}
+_LIVE_SECTIONS = {"strategy-01-focus", "strategy-03-trend", "strategy-05-volume", "strategy-08-trades"}
 _SKELETON_HTML = '<div class="skeleton"><span></span><span></span><span class="short"></span></div>'
 
 
@@ -2500,6 +2501,7 @@ def render_strategy_workspace() -> None:
     render_strategy_search()
 
     sections = [
+        ("strategy-01-focus", "00｜自選股盤中焦點", render_watch_focus),
         ("strategy-02-chips", "01｜個股符合特徵", render_stock_features),
         ("strategy-03-trend", "02｜股價趨勢", render_trend),
         ("strategy-04-kline", "03｜技術 K 線", render_kline),
@@ -2545,7 +2547,9 @@ def render_strategy_workspace() -> None:
 
     for key, body, render in slots:
         with body.container():
-            st.fragment(render, run_every=live_every if key in _LIVE_SECTIONS else None)()
+            # 盤中焦點每分鐘重畫（資料 2 分鐘換一次）；非交易時段也每分鐘重畫，補抓撞到 Fugle 額度而缺的股票
+            every = 60 if key == "strategy-01-focus" else live_every if key in _LIVE_SECTIONS else None
+            st.fragment(render, run_every=every)()
 
 def render_future_workspace() -> None:
     st.markdown(f'<div class="page-image-banner">{_site_image_html(8, wide=True)}</div>', unsafe_allow_html=True)
@@ -4700,6 +4704,205 @@ def _signal_chips_html(res: dict | None, empty_text: str = "目前沒有連續 3
     if not sigs:
         return f'<span class="sig-none">{empty_text}</span>' if empty_text else ""
     return "".join(f'<span class="sig sig-{s["tone"]}">{_esc(s["text"])}</span>' for s in sigs)
+
+
+# ============================================================
+# 自選股盤中焦點：自選股當日 1 分 K 的價量事件，依時間軸列出
+# ============================================================
+FOCUS_REFRESH_SECONDS = 120   # 23 檔 × 每 2 分鐘一次 ≈ 每分鐘 12 次 Fugle，留額度給其他區塊
+FOCUS_MAX_CARDS = 40
+FOCUS_NEW_MINUTES = 10
+
+
+@st.cache_data(ttl=21600, show_spinner=False, max_entries=256)
+def _focus_daily(code: str, day_iso: str) -> pd.DataFrame:
+    """事件當天以前的日 K（昨收、昨高低、20／60 日高低、20 日均量）。"""
+    day = pd.Timestamp(day_iso)
+    stale = lambda d: d.empty or (day - d["date"].max()).days > 7
+    h = get_history(code, 130)
+    h = h[h["date"] < day] if not h.empty else h
+    if stale(h):
+        # 本機日 K 快取可能停在很久以前（之前補資料時撞到 Fugle 額度），直接抓這段期間
+        try:
+            h = client.historical_candles(code, (day - pd.Timedelta(days=130)).date(), (day - pd.Timedelta(days=1)).date(), "D")
+        except Exception as exc:
+            raise _NoData(code) from exc
+        if not h.empty:
+            h["date"] = pd.to_datetime(h["date"], errors="coerce").dt.tz_localize(None)
+    if stale(h):
+        raise _NoData(code)
+    return h[["date", "open", "high", "low", "close", "volume"]].reset_index(drop=True)
+
+
+@st.cache_data(ttl=900, show_spinner=False, max_entries=256)
+def _focus_minutes(code: str, _bucket: int) -> pd.DataFrame:
+    k = _fetch_intraday(code, "1")
+    if k is None or k.empty:
+        raise _NoData(code)
+    return k
+
+
+def _focus_one(code: str, bucket: int, meta: dict) -> dict | None:
+    try:
+        k = _focus_minutes(code, bucket).copy()
+        k["date"] = k["date"].map(taipei_time)
+        k = k.dropna(subset=["date", "close"]).sort_values("date").reset_index(drop=True)
+        day = k["date"].iloc[-1].normalize()
+        k = k[k["date"] >= day].reset_index(drop=True)
+        daily = _focus_daily(code, day.date().isoformat())
+    except Exception:
+        return None
+    # 昨收優先用行情 API 的參考價（同一天的資料才用），日 K 收盤價只是備援
+    m = meta.get(code, {})
+    ref = m["ref"] if m.get("day") == day.date().isoformat() and pd.notna(m.get("ref")) else float(daily["close"].iloc[-1])
+    lu, ld = m.get("limit_up", np.nan), m.get("limit_down", np.nan)
+    events = intraday_signals.scan(k, ref, daily, lu, ld)
+    last = float(k["close"].iloc[-1])
+    return {"code": code, "name": (m.get("name") if m.get("name") not in (None, "", code) else None) or _local_stock_names().get(code) or code, "day": day.date(),
+            "ref": ref, "last": last, "pct": (last - ref) / ref * 100 if ref else np.nan,
+            "times": k["date"].tolist(), "closes": k["close"].astype(float).tolist(), "events": events}
+
+
+def _focus_feed(watchlist: tuple, meta: dict) -> tuple[list[dict], list[str]]:
+    bucket = int(time.time() // (FOCUS_REFRESH_SECONDS if is_market_open_now() else 900))
+    codes = [clean_symbol(c) for c in watchlist]
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        got = list(pool.map(lambda c: _focus_one(c, bucket, meta), codes))
+    return [g for g in got if g], [c for c, g in zip(codes, got) if not g]
+
+
+def _focus_spark(stock: dict, upto: pd.Timestamp) -> str:
+    """當日走勢小圖：灰色虛線＝昨收，黃色虛線＝事件發生時間；平盤上紅、平盤下綠。"""
+    times, closes, ref = stock["times"], stock["closes"], stock["ref"]
+    w, h, pad = 132, 46, 3
+    t0 = times[0].replace(hour=9, minute=0)
+    span = 270 * 60
+    lo, hi = min(closes + [ref]), max(closes + [ref])
+    rng = (hi - lo) or 1
+    xy = lambda t, v: ((t - t0).total_seconds() / span * w, pad + (hi - v) / rng * (h - 2 * pad))
+    ry = xy(t0, ref)[1]
+    segs, cur, cur_up = [], [], None
+    for t, v in zip(times, closes):
+        x, y = xy(t, v)
+        up = v >= ref
+        if cur_up is not None and up != cur_up:
+            segs.append((cur_up, cur + [(x, y)]))
+            cur = []
+        cur.append((x, y))
+        cur_up = up
+    if cur:
+        segs.append((cur_up, cur))
+    lines = "".join(
+        f'<polyline fill="none" stroke="{"#e04545" if up else "#1a9b5c"}" stroke-width="1.3" '
+        f'points="{" ".join(f"{x:.1f},{y:.1f}" for x, y in pts)}"/>' for up, pts in segs)
+    mx = xy(upto, ref)[0]
+    return (f'<svg class="fx-spark" viewBox="0 0 {w} {h}" preserveAspectRatio="none">'
+            f'<line x1="0" x2="{w}" y1="{ry:.1f}" y2="{ry:.1f}" stroke="#b9b0b0" stroke-dasharray="2 2" stroke-width=".8"/>'
+            f'{lines}<line x1="{mx:.1f}" x2="{mx:.1f}" y1="0" y2="{h}" stroke="#e0a100" stroke-dasharray="2 2" stroke-width="1.2"/></svg>')
+
+
+_FOCUS_CSS = """<style>
+.fx-head{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:12px;color:#7d7474;margin:-6px 0 10px}
+.fx-count b{color:#d23c3c}.fx-count i{font-style:normal;color:#14874f;font-weight:700}
+.fx-feed{position:relative;padding-left:18px;max-height:720px;overflow-y:auto}
+.fx-feed:before{content:"";position:absolute;left:5px;top:6px;bottom:6px;border-left:2px solid #e8c79a}
+.fx-item{position:relative;margin:0 0 12px}
+.fx-time{font-size:13px;font-weight:700;color:#c98a14;margin:0 0 4px;font-variant-numeric:tabular-nums}
+.fx-time:before{content:"";position:absolute;left:-17px;top:4px;width:10px;height:10px;border-radius:50%;background:#e0a100}
+.fx-new{display:inline-block;margin-left:8px;font-size:10px;color:#fff;background:#d23c3c;border-radius:3px;padding:0 5px;vertical-align:1px}
+.fx-card{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:center;
+  background:#fff;border:1px solid #eadfdf;border-radius:8px;padding:10px 12px}
+.fx-name{font-size:17px;font-weight:700;color:#3b3535;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fx-name span{font-size:12px;color:#8d8585;font-weight:400;margin-left:6px}
+.fx-row{display:flex;gap:10px;align-items:center;margin-top:4px}
+.fx-spark{width:132px;height:46px;flex:none}
+.fx-px{font-size:15px;font-weight:800;line-height:1.25;font-variant-numeric:tabular-nums}
+.fx-px small{display:block;font-size:12px;font-weight:700}
+.fx-now{font-size:10.5px;color:#9a9090;margin-top:2px;font-weight:400}
+.fx-up{color:#d23c3c}.fx-down{color:#14874f}.fx-flat{color:#6b6464}
+.fx-tags,.fx-chips{display:flex;flex-wrap:wrap;gap:5px;align-content:center}
+.fx-chips{border-left:1px solid #eee3e3;padding-left:10px;min-height:40px}
+.fx-tags .sig,.fx-chips .sig{font-size:12px;padding:1px 9px}
+.fx-chips .sig-none,.fx-chips .sig-wait{font-size:11px}
+.fx-empty{color:#8a8080;font-size:13px;padding:18px 4px}
+@media(max-width:700px){.fx-card{grid-template-columns:1fr 1fr}.fx-card>div:first-child{grid-column:1/-1}.fx-spark{width:110px}}
+</style>"""
+
+
+def render_watch_focus():
+    """自選股盤中焦點：每 2 分鐘掃描一次自選股的 1 分 K，把剛發生的價量事件依時間列出。"""
+    watchlist = tuple(st.session_state.watchlist)
+    if not watchlist:
+        st.info("自選股是空的，先在左側加入股票。")
+        return
+    meta = {}
+    try:
+        rows, _ = watch_rows(watchlist)
+        for r in rows.to_dict("records"):
+            ref = pd.to_numeric(r.get("price"), errors="coerce") - pd.to_numeric(r.get("change"), errors="coerce")
+            meta[clean_symbol(r["code"])] = {"name": r.get("name"), "day": r.get("data_date"), "ref": float(ref) if pd.notna(ref) else np.nan,
+                                             "limit_up": r.get("limit_up"), "limit_down": r.get("limit_down")}
+    except Exception:
+        pass
+    with st.spinner("掃描自選股盤中事件…"):
+        stocks, failed = _focus_feed(watchlist, meta)
+    chip_map = chip_signals.get_nonblocking(list(watchlist))
+
+    # 同一檔、同一分鐘的事件合成一張卡片
+    cards: dict[tuple, dict] = {}
+    for s in stocks:
+        for e in s["events"]:
+            c = cards.setdefault((e["time"], s["code"]), {"time": e["time"], "stock": s, "price": e["price"], "events": []})
+            c["events"].append(e)
+    cards = sorted(cards.values(), key=lambda c: c["time"], reverse=True)
+    for c in cards:
+        sides = {e["side"] for e in c["events"]}
+        c["side"] = "both" if len(sides) > 1 else sides.pop()
+
+    pick = st.segmented_control("方向", ["全部", "多方", "空方"], default="全部", key="focus_side",
+                                label_visibility="collapsed") or "全部"
+    want = {"全部": None, "多方": "bull", "空方": "bear"}[pick]
+    shown = [c for c in cards if want is None or c["side"] in (want, "both")]
+
+    n_bull = sum(1 for c in cards if c["side"] in ("bull", "both"))
+    n_bear = sum(1 for c in cards if c["side"] in ("bear", "both"))
+    day = max((s["day"] for s in stocks), default=None)
+    live = is_market_open_now()
+    when = (f"盤中・每 {FOCUS_REFRESH_SECONDS // 60} 分鐘更新" if live
+            else f"非交易時段・顯示 {day:%m/%d} 的盤中事件" if day else "目前沒有資料")
+    miss = f'<span>暫時取不到：{"、".join(failed[:6])}{"…" if len(failed) > 6 else ""}</span>' if failed else ""
+    st.markdown(_FOCUS_CSS, unsafe_allow_html=True)
+    st.markdown(f'<div class="fx-head"><span>{when}</span><span class="fx-count">自選股 {len(stocks)} 檔・'
+                f'多方 <b>{n_bull}</b>・空方 <i>{n_bear}</i></span>{miss}</div>', unsafe_allow_html=True)
+
+    now = taiwan_now().tz_localize(None)
+    cls = lambda v: "fx-up" if v > 0 else "fx-down" if v < 0 else "fx-flat"
+    items = []
+    for c in shown[:FOCUS_MAX_CARDS]:
+        s, t = c["stock"], c["time"]
+        pct = (c["price"] - s["ref"]) / s["ref"] * 100
+        new = '<span class="fx-new">NEW</span>' if live and (now - t).total_seconds() <= FOCUS_NEW_MINUTES * 60 else ""
+        tags = "".join(f'<span class="sig sig-{e["side"]}">{_esc(e["text"])}</span>' for e in c["events"])
+        chips = _signal_chips_html(chip_map.get(s["code"]), empty_text="無連續籌碼訊號", pending_text="籌碼計算中…")
+        items.append(
+            f'<div class="fx-item"><div class="fx-time">{t:%H:%M}{new}</div><div class="fx-card">'
+            f'<div><div class="fx-name">{_esc(s["name"])}<span>{s["code"]}</span></div><div class="fx-row">{_focus_spark(s, t)}'
+            f'<div class="fx-px {cls(pct)}">{c["price"]:,.2f}<small>{"▲" if pct > 0 else "▼" if pct < 0 else ""}{pct:+.2f}%</small>'
+            f'<div class="fx-now">現 {s["last"]:,.2f}（{s["pct"]:+.2f}%）</div></div></div></div>'
+            f'<div class="fx-tags">{tags}</div><div class="fx-chips">{chips}</div></div></div>')
+    if items:
+        more = len(shown) - FOCUS_MAX_CARDS
+        tail = f'<div class="fx-empty">還有 {more} 則較早的事件未顯示</div>' if more > 0 else ""
+        st.markdown(f'<div class="fx-feed">{"".join(items)}{tail}</div>', unsafe_allow_html=True)
+    else:
+        st.markdown('<div class="fx-empty">目前還沒有符合條件的事件。</div>', unsafe_allow_html=True)
+
+    with st.expander("判斷依據與門檻"):
+        st.markdown('<div class="sig-table-wrap"><table class="sig-table"><thead><tr><th>事件</th><th>條件</th></tr></thead><tbody>'
+                    + "".join(f"<tr><td><b>{_esc(a)}</b></td><td>{_esc(b)}</td></tr>" for a, b in intraday_signals.RULES)
+                    + "</tbody></table></div>", unsafe_allow_html=True)
+        st.caption("價量事件用 Fugle 當日 1 分 K 計算，百分比以昨收為分母；右側籌碼標籤是前一交易日為止的連續買賣超（外資、投信、主力、融資券）與集保大戶散戶變化。"
+                   "時間是事件第一次成立的那一分鐘，價格是當時價格。只是提醒「正在發生什麼」，不構成投資建議。")
 
 
 _FEAT_CLASS = {"消息面": "news", "籌碼面": "chip", "價量面": "pv", "基本面": "fund", "技術面": "tech"}
