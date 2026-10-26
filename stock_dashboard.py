@@ -98,6 +98,7 @@ import chip_signals
 import stock_features
 import intraday_signals
 import section_ui
+from system_picks_ui import render_system_picks
 from section_ui import section as _sec, section_box as _sec_box
 from global_markets import GLOBAL_INDICATORS, fetch_indicator, vix_regime
 from html import escape as _esc
@@ -2482,7 +2483,7 @@ SITE_NAV_SUB = {
     "strategy": [("自選股盤中焦點", "自選股盤中焦點"), ("個股符合特徵", "個股符合特徵"), ("股價趨勢", "股價趨勢"), ("技術 K 線", "技術 K 線"), ("成交量", "成交量"), ("進場建議分析", "進場建議分析系統"),
                  ("大戶 VS 散戶", "大戶 VS 散戶"), ("交易明細", "交易明細"), ("三大法人", "三大法人")],
     "trend": [("期間統計", "期間統計")] + [(c, c) for c in TREND_CATEGORY_ORDER],
-    "future": [("AI 隔日預測", "AI 隔日預測"), ("市場情報與利多／利空", "市場情報"), ("模型研究 Agent", "模型研究 Agent"),
+    "future": [("最近系統推薦股票", "最近系統推薦股票"), ("AI 隔日預測", "AI 隔日預測"), ("市場情報與利多／利空", "市場情報"), ("模型研究 Agent", "模型研究 Agent"),
                ("AI 個股研究筆記", "AI 個股研究筆記")],
     "subscribe": [("聯絡資訊", "聯絡資訊"), ("訂閱／聯絡表單", "訂閱／聯絡表單")],
 }
@@ -2616,22 +2617,26 @@ def render_future_workspace() -> None:
     st.markdown(f'<div class="page-image-banner">{_site_image_html(8, wide=True)}</div>', unsafe_allow_html=True)
     st.markdown('<div class="content-heading"><div class="eyebrow">FUTURE ANALYSIS</div><h1>未來分析</h1><p>把預測、市場情報與研究 Agent 集中在同一頁，讓操作策略之後的判斷有明確出口。</p></div>', unsafe_allow_html=True)
 
+    with st.container(key="future-00-picks"):
+        st.markdown('<div class="feature-section-title">01｜最近系統推薦股票</div>', unsafe_allow_html=True)
+        render_system_picks(BASE)
+
     with st.container(key="future-01-ai"):
-        st.markdown('<div class="feature-section-title">01｜AI 隔日預測</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">02｜AI 隔日預測</div>', unsafe_allow_html=True)
         render_ai()
 
     with st.container(key="future-02-intelligence"):
-        st.markdown('<div class="feature-section-title">02｜市場情報與利多／利空分析</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">03｜市場情報與利多／利空分析</div>', unsafe_allow_html=True)
         selected = clean_symbol(st.session_state.get("selected", ""))
         industry_code = str(INDUSTRY_OVERRIDES.get(selected, WATCHLIST_INDUSTRY_FALLBACK.get(selected, "00"))).zfill(2)
         render_market_intelligence(BASE, OUTPUT, selected_symbol=selected, selected_industry=industry_code, blocked=st.session_state.get("ai_busy", False))
 
     with st.container(key="future-03-agent"):
-        st.markdown('<div class="feature-section-title">03｜模型研究 Agent</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">04｜模型研究 Agent</div>', unsafe_allow_html=True)
         render_model_research_agent()
 
     with st.container(key="future-04-stock-notes"):
-        st.markdown('<div class="feature-section-title">04｜AI 個股研究筆記</div>', unsafe_allow_html=True)
+        st.markdown('<div class="feature-section-title">05｜AI 個股研究筆記</div>', unsafe_allow_html=True)
         render_stock_notes_workspace(BASE, selected_symbol=clean_symbol(st.session_state.get("selected", "")))
 
 
@@ -5904,7 +5909,7 @@ st.markdown(r"""
 .st-key-strategy-04-kline,.st-key-strategy-05-volume,.st-key-strategy-06-entry,
 .st-key-strategy-07-tdcc,.st-key-strategy-08-trades,.st-key-strategy-09-institutions,
 .st-key-strategy-01-focus,.st-key-strategy-02-chips,
-.st-key-future-01-ai,.st-key-future-02-intelligence,.st-key-future-03-agent,.st-key-future-04-stock-notes{
+.st-key-future-00-picks,.st-key-future-01-ai,.st-key-future-02-intelligence,.st-key-future-03-agent,.st-key-future-04-stock-notes{
   border-radius:14px!important;
   padding:22px 24px 18px!important;
   margin:0 0 14px!important;
@@ -6025,6 +6030,7 @@ section.main>div,.main>div{padding-top:0!important;margin-top:0!important;min-he
 .st-key-strategy-01-focus{background:#fbf1f1!important;}
 .st-key-strategy-02-chips{background:#fffaf7!important;}
 .st-key-future-04-stock-notes{background:#f9f5ef!important;}
+.st-key-future-00-picks{background:#fbf1f1!important;}
 </style>
 """, unsafe_allow_html=True)
 

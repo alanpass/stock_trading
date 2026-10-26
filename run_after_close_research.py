@@ -1175,6 +1175,12 @@ def finalize(report_date: str, dry_run: bool = False) -> int:
         return 0
     publish = publish_stock_notes(report_date, notes["generated_at"], stock_notes)
     write_log(report_date, f"STOCK_NOTES={len(stock_notes)} PUBLISH=" + json.dumps(publish, ensure_ascii=False, default=str))
+    try:  # 網站「未來分析 → 最近系統推薦股票」；失敗不影響寄信
+        import system_picks
+        picks = system_picks.update()
+        write_log(report_date, "SYSTEM_PICKS=" + json.dumps(picks, ensure_ascii=False, default=str))
+    except Exception as exc:
+        write_log(report_date, f"SYSTEM_PICKS_ERROR={type(exc).__name__}: {exc}")
     return deliver_report(report, {"stock_notes": len(stock_notes), "stock_notes_published": bool(publish.get("ok"))})
 
 
