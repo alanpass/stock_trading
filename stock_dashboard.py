@@ -4254,8 +4254,12 @@ const chart = LightweightCharts.createChart(el, {
   grid: {vertLines: {color: '#eef1f4'}, horzLines: {color: '#eef1f4'}},
   crosshair: {mode: LightweightCharts.CrosshairMode.Normal},
   rightPriceScale: {borderColor: '#e2dcdc', scaleMargins: {top: 0.08, bottom: 0.26}},
-  timeScale: {borderColor: '#e2dcdc', timeVisible: !P.daily, secondsVisible: false, rightOffset: 3,
-              minBarSpacing: 0.5},
+  // 左右邊界固定在第一根與最後一根 K 棒：不能縮小到比完整原圖還小，原圖大小時也無法平移，放大後才能左右移動
+  timeScale: {borderColor: '#e2dcdc', timeVisible: !P.daily, secondsVisible: false, rightOffset: 0,
+              fixLeftEdge: true, fixRightEdge: true, minBarSpacing: 0.01},
+  // 價格軸跟著可見範圍自動縮放，不讓拖曳價格軸把圖壓扁
+  handleScale: {mouseWheel: true, pinch: true, axisPressedMouseMove: {time: true, price: false}, axisDoubleClickReset: true},
+  handleScroll: {mouseWheel: false, pressedMouseMove: true, horzTouchDrag: true, vertTouchDrag: false},
   localization: {locale: 'zh-TW',
     timeFormatter: t => typeof t === 'number'
       ? new Date(t * 1000).toISOString().slice(P.daily ? 0 : 5, 16).replace('T', ' ')
@@ -4405,7 +4409,7 @@ def render_kline():
         ma_colors = {5: "#2563eb", 10: "#f59e0b", 20: "#8b5cf6", 60: "#0891b2", 120: "#64748b", 240: "#a16207"}
         mas = [(label, ma_colors[window], d["close"].rolling(window=window, min_periods=window).mean())
                for label, window, _default_on in ma_specs if enabled_ma.get(window)]
-        st.caption("滑鼠移到 K 棒上，左上角顯示當天開高低收、漲跌與成交量；滾輪縮放、按住拖曳平移，按「回到最新」重設。非交易日不占用圖表空間。")
+        st.caption("滑鼠移到 K 棒上，左上角顯示當天開高低收、漲跌與成交量；滾輪放大／縮小（最小就是完整原圖），放大後按住拖曳左右平移，按「回到最新」重設。非交易日不占用圖表空間。")
         st.iframe(_kline_chart_html(d, daily=(k_period == "日K"), mas=mas, reset_version=reset_version), height=640)
     except Exception as e:
         st.error(f"{k_period} 資料取得失敗：{e}")
