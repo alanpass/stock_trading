@@ -1,0 +1,4066 @@
+{
+  "schema_version": 1,
+  "report_type": "system_picks_public",
+  "generated_at": "2026-10-26T22:35:41+08:00",
+  "data_asof": "2026-10-22",
+  "pick_days": [
+    "2026-10-23",
+    "2026-10-22",
+    "2026-10-21",
+    "2026-10-20",
+    "2026-10-19",
+    "2026-10-18",
+    "2026-10-16",
+    "2026-10-15",
+    "2026-10-14",
+    "2026-10-12"
+  ],
+  "summary": {
+    "swing": {
+      "label": "題材波段選股",
+      "count": 0,
+      "avg_ret": null,
+      "win_rate": null
+    },
+    "daytrade": {
+      "label": "當沖候選（可做多）",
+      "count": 104,
+      "avg_ret": -4.55,
+      "win_rate": 15.4
+    },
+    "theme": {
+      "label": "盤後利多題材",
+      "count": 96,
+      "avg_ret": -5.32,
+      "win_rate": 12.5
+    }
+  },
+  "picks": [
+    {
+      "date": "2026-10-23",
+      "symbol": "2303",
+      "name": "聯電",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 50，初步題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 125.5,
+      "last_close": 125.5,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "2330",
+      "name": "台積電",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 50，初步題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 2385.0,
+      "last_close": 2385.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "6515",
+      "name": "穎崴",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 50，初步題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 4795.0,
+      "last_close": 4795.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "7769",
+      "name": "鴻勁",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 50，初步題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 5275.0,
+      "last_close": 5275.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "3006",
+      "name": "晶豪科",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 50，初步題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 234.0,
+      "last_close": 234.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "3661",
+      "name": "世芯-KY",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 50，初步題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 3495.0,
+      "last_close": 3495.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "2327",
+      "name": "國巨*",
+      "source": "theme",
+      "reason": "CCL、高速材料與高階PCB（強度 48，初步題材）",
+      "themes": [
+        "CCL、高速材料與高階PCB"
+      ],
+      "ref_price": 507.0,
+      "last_close": 507.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "2492",
+      "name": "華新科",
+      "source": "theme",
+      "reason": "CCL、高速材料與高階PCB（強度 48，初步題材）",
+      "themes": [
+        "CCL、高速材料與高階PCB"
+      ],
+      "ref_price": 368.0,
+      "last_close": 368.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "3037",
+      "name": "欣興",
+      "source": "theme",
+      "reason": "CCL、高速材料與高階PCB（強度 48，初步題材）",
+      "themes": [
+        "CCL、高速材料與高階PCB"
+      ],
+      "ref_price": 1085.0,
+      "last_close": 1085.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "3044",
+      "name": "健鼎",
+      "source": "theme",
+      "reason": "CCL、高速材料與高階PCB（強度 48，初步題材）",
+      "themes": [
+        "CCL、高速材料與高階PCB"
+      ],
+      "ref_price": 556.0,
+      "last_close": 556.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "3533",
+      "name": "嘉澤",
+      "source": "theme",
+      "reason": "CCL、高速材料與高階PCB（強度 48，初步題材）",
+      "themes": [
+        "CCL、高速材料與高階PCB"
+      ],
+      "ref_price": 1795.0,
+      "last_close": 1795.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "2327",
+      "name": "國巨*",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "被動元件"
+      ],
+      "ref_price": 507.0,
+      "last_close": 507.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "2492",
+      "name": "華新科",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線偏多",
+      "themes": [
+        "被動元件"
+      ],
+      "ref_price": 368.0,
+      "last_close": 368.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "2344",
+      "name": "華邦電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線空頭排列",
+      "themes": [
+        "記憶體／儲存"
+      ],
+      "ref_price": 154.5,
+      "last_close": 154.5,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "2408",
+      "name": "南亞科",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "記憶體／儲存"
+      ],
+      "ref_price": 414.0,
+      "last_close": 414.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "2313",
+      "name": "華通",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線整理",
+      "themes": [
+        "PCB／伺服器板／HDI",
+        "低軌衛星"
+      ],
+      "ref_price": 224.5,
+      "last_close": 224.5,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "2345",
+      "name": "智邦",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "網通／交換器"
+      ],
+      "ref_price": 1775.0,
+      "last_close": 1775.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "2368",
+      "name": "金像電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線整理",
+      "themes": [
+        "PCB／伺服器板／HDI"
+      ],
+      "ref_price": 1115.0,
+      "last_close": 1115.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "2383",
+      "name": "台光電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 5070.0,
+      "last_close": 5070.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "3017",
+      "name": "奇鋐",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "散熱／液冷"
+      ],
+      "ref_price": 3145.0,
+      "last_close": 3145.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "4958",
+      "name": "臻鼎-KY",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "PCB／伺服器板／HDI"
+      ],
+      "ref_price": 567.0,
+      "last_close": 567.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "6669",
+      "name": "緯穎",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線空頭排列",
+      "themes": [
+        "組裝代工／ODM"
+      ],
+      "ref_price": 1840.0,
+      "last_close": 1840.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "3189",
+      "name": "景碩",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線整理",
+      "themes": [
+        "ABF／IC 載板"
+      ],
+      "ref_price": 986.0,
+      "last_close": 986.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "8046",
+      "name": "南電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線整理",
+      "themes": [
+        "ABF／IC 載板"
+      ],
+      "ref_price": 1265.0,
+      "last_close": 1265.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "3105",
+      "name": "穩懋",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "磊晶／化合物半導體"
+      ],
+      "ref_price": 486.0,
+      "last_close": 486.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "3443",
+      "name": "創意",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "ASIC／矽智財"
+      ],
+      "ref_price": 7585.0,
+      "last_close": 7585.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "6213",
+      "name": "聯茂",
+      "source": "daytrade",
+      "reason": "高檔轉弱／反轉警示、上升趨勢、日線多頭排列",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 777.0,
+      "last_close": 777.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-23",
+      "symbol": "3231",
+      "name": "緯創",
+      "source": "daytrade",
+      "reason": "高檔轉弱／反轉警示、頭肩頂、日線多頭排列",
+      "themes": [
+        "組裝代工／ODM"
+      ],
+      "ref_price": 190.0,
+      "last_close": 190.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "2327",
+      "name": "國巨*",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 54，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 507.0,
+      "last_close": 507.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "2492",
+      "name": "華新科",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 54，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 368.0,
+      "last_close": 368.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "3037",
+      "name": "欣興",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 54，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 1085.0,
+      "last_close": 1085.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "3044",
+      "name": "健鼎",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 54，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 556.0,
+      "last_close": 556.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "3533",
+      "name": "嘉澤",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 54，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 1795.0,
+      "last_close": 1795.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "2303",
+      "name": "聯電",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 54，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 125.5,
+      "last_close": 125.5,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "2330",
+      "name": "台積電",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 54，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 2385.0,
+      "last_close": 2385.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "2344",
+      "name": "華邦電",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 54，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 154.5,
+      "last_close": 154.5,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "2408",
+      "name": "南亞科",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 54，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 414.0,
+      "last_close": 414.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "6515",
+      "name": "穎崴",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 54，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 4795.0,
+      "last_close": 4795.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "7769",
+      "name": "鴻勁",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 54，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 5275.0,
+      "last_close": 5275.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "3006",
+      "name": "晶豪科",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 54，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 234.0,
+      "last_close": 234.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "3661",
+      "name": "世芯-KY",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 54，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 3495.0,
+      "last_close": 3495.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "8299",
+      "name": "群聯",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 54，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 1880.0,
+      "last_close": 1880.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "2308",
+      "name": "台達電",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 54，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 1560.0,
+      "last_close": 1560.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "6213",
+      "name": "聯茂",
+      "source": "swing",
+      "reason": "題材 CCL／銅箔基板，20 日動能 +63.0%",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 777.0,
+      "last_close": 777.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "題材波段選股"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "1303",
+      "name": "南亞",
+      "source": "swing",
+      "reason": "題材 CCL／銅箔基板，20 日動能 +34.7%",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 301.0,
+      "last_close": 301.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "題材波段選股"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "3189",
+      "name": "景碩",
+      "source": "swing",
+      "reason": "題材 ABF／IC 載板，20 日動能 +21.4%",
+      "themes": [
+        "ABF／IC 載板"
+      ],
+      "ref_price": 986.0,
+      "last_close": 986.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "題材波段選股"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "4958",
+      "name": "臻鼎-KY",
+      "source": "swing",
+      "reason": "題材 PCB／伺服器板／HDI，20 日動能 +22.2%",
+      "themes": [
+        "PCB／伺服器板／HDI"
+      ],
+      "ref_price": 567.0,
+      "last_close": 567.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "題材波段選股"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "2368",
+      "name": "金像電",
+      "source": "swing",
+      "reason": "題材 PCB／伺服器板／HDI，20 日動能 +17.2%",
+      "themes": [
+        "PCB／伺服器板／HDI"
+      ],
+      "ref_price": 1115.0,
+      "last_close": 1115.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "題材波段選股"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "3715",
+      "name": "定穎投控",
+      "source": "swing",
+      "reason": "題材 PCB／伺服器板／HDI，20 日動能 +13.9%",
+      "themes": [
+        "PCB／伺服器板／HDI"
+      ],
+      "ref_price": 134.5,
+      "last_close": 134.5,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "題材波段選股"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "2327",
+      "name": "國巨*",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "被動元件"
+      ],
+      "ref_price": 507.0,
+      "last_close": 507.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "2492",
+      "name": "華新科",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "被動元件"
+      ],
+      "ref_price": 368.0,
+      "last_close": 368.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "2344",
+      "name": "華邦電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "記憶體／儲存"
+      ],
+      "ref_price": 154.5,
+      "last_close": 154.5,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "2408",
+      "name": "南亞科",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "記憶體／儲存"
+      ],
+      "ref_price": 414.0,
+      "last_close": 414.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "2313",
+      "name": "華通",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "PCB／伺服器板／HDI",
+        "低軌衛星"
+      ],
+      "ref_price": 224.5,
+      "last_close": 224.5,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "2345",
+      "name": "智邦",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "網通／交換器"
+      ],
+      "ref_price": 1775.0,
+      "last_close": 1775.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "2368",
+      "name": "金像電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "PCB／伺服器板／HDI"
+      ],
+      "ref_price": 1115.0,
+      "last_close": 1115.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "2383",
+      "name": "台光電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 5070.0,
+      "last_close": 5070.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "3017",
+      "name": "奇鋐",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線整理",
+      "themes": [
+        "散熱／液冷"
+      ],
+      "ref_price": 3145.0,
+      "last_close": 3145.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "4958",
+      "name": "臻鼎-KY",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "PCB／伺服器板／HDI"
+      ],
+      "ref_price": 567.0,
+      "last_close": 567.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "6669",
+      "name": "緯穎",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線空頭排列",
+      "themes": [
+        "組裝代工／ODM"
+      ],
+      "ref_price": 1840.0,
+      "last_close": 1840.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "3189",
+      "name": "景碩",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "ABF／IC 載板"
+      ],
+      "ref_price": 986.0,
+      "last_close": 986.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "8046",
+      "name": "南電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線整理",
+      "themes": [
+        "ABF／IC 載板"
+      ],
+      "ref_price": 1265.0,
+      "last_close": 1265.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "2449",
+      "name": "京元電子",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "封裝測試"
+      ],
+      "ref_price": 262.5,
+      "last_close": 262.5,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "3105",
+      "name": "穩懋",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "磊晶／化合物半導體"
+      ],
+      "ref_price": 486.0,
+      "last_close": 486.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "3443",
+      "name": "創意",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "ASIC／矽智財"
+      ],
+      "ref_price": 7585.0,
+      "last_close": 7585.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "6213",
+      "name": "聯茂",
+      "source": "daytrade",
+      "reason": "高檔轉弱／反轉警示、上升趨勢、日線多頭排列",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 777.0,
+      "last_close": 777.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "3026",
+      "name": "禾伸堂",
+      "source": "daytrade",
+      "reason": "高檔轉弱／反轉警示、雙頂、日線多頭排列",
+      "themes": [
+        "被動元件"
+      ],
+      "ref_price": 756.0,
+      "last_close": 756.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-22",
+      "symbol": "3231",
+      "name": "緯創",
+      "source": "daytrade",
+      "reason": "高檔轉弱／反轉警示、頭肩頂、日線多頭排列",
+      "themes": [
+        "組裝代工／ODM"
+      ],
+      "ref_price": 190.0,
+      "last_close": 190.0,
+      "last_date": "2026-10-22",
+      "ret_pct": null,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "2492",
+      "name": "華新科",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 53，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 405.5,
+      "last_close": 368.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -9.25,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "2327",
+      "name": "國巨*",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 53，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 542.0,
+      "last_close": 507.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -6.46,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "3661",
+      "name": "世芯-KY",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 54，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 3710.0,
+      "last_close": 3495.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.8,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "3450",
+      "name": "聯鈞",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 54，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 450.0,
+      "last_close": 424.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.78,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "2408",
+      "name": "南亞科",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 54，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 436.5,
+      "last_close": 414.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.15,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "3006",
+      "name": "晶豪科",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 54，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 246.0,
+      "last_close": 234.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.88,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "3044",
+      "name": "健鼎",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 53，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 583.0,
+      "last_close": 556.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.63,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "2308",
+      "name": "台達電",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 53，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 1625.0,
+      "last_close": 1560.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.0,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "6515",
+      "name": "穎崴",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 54，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 4970.0,
+      "last_close": 4795.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -3.52,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "2344",
+      "name": "華邦電",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 54，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 159.5,
+      "last_close": 154.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -3.13,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "8299",
+      "name": "群聯",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 53，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 1930.0,
+      "last_close": 1880.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -2.59,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "2303",
+      "name": "聯電",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 53，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 128.0,
+      "last_close": 125.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.95,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "3374",
+      "name": "精材",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 54，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 470.5,
+      "last_close": 463.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.49,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "2330",
+      "name": "台積電",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 53，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 2420.0,
+      "last_close": 2385.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.45,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "3533",
+      "name": "嘉澤",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 53，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 1820.0,
+      "last_close": 1795.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.37,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "3037",
+      "name": "欣興",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 53，成長題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 1100.0,
+      "last_close": 1085.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.36,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "7769",
+      "name": "鴻勁",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 54，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 5130.0,
+      "last_close": 5275.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 2.83,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "2492",
+      "name": "華新科",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "被動元件"
+      ],
+      "ref_price": 405.5,
+      "last_close": 368.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -9.25,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "2368",
+      "name": "金像電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "PCB／伺服器板／HDI"
+      ],
+      "ref_price": 1195.0,
+      "last_close": 1115.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -6.69,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "2313",
+      "name": "華通",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "PCB／伺服器板／HDI",
+        "低軌衛星"
+      ],
+      "ref_price": 240.5,
+      "last_close": 224.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -6.65,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "2327",
+      "name": "國巨*",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "被動元件"
+      ],
+      "ref_price": 542.0,
+      "last_close": 507.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -6.46,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "1303",
+      "name": "南亞",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 320.5,
+      "last_close": 301.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -6.08,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "8046",
+      "name": "南電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線整理",
+      "themes": [
+        "ABF／IC 載板"
+      ],
+      "ref_price": 1340.0,
+      "last_close": 1265.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.6,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "6213",
+      "name": "聯茂",
+      "source": "daytrade",
+      "reason": "高檔轉弱／反轉警示、上升趨勢、日線多頭排列",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 823.0,
+      "last_close": 777.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.59,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "6274",
+      "name": "台燿",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線整理",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 1500.0,
+      "last_close": 1420.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.33,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "3443",
+      "name": "創意",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "ASIC／矽智財"
+      ],
+      "ref_price": 8000.0,
+      "last_close": 7585.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.19,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "2408",
+      "name": "南亞科",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "記憶體／儲存"
+      ],
+      "ref_price": 436.5,
+      "last_close": 414.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.15,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "2344",
+      "name": "華邦電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "記憶體／儲存"
+      ],
+      "ref_price": 159.5,
+      "last_close": 154.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -3.13,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "3017",
+      "name": "奇鋐",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線整理",
+      "themes": [
+        "散熱／液冷"
+      ],
+      "ref_price": 3235.0,
+      "last_close": 3145.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -2.78,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "3231",
+      "name": "緯創",
+      "source": "daytrade",
+      "reason": "高檔轉弱／反轉警示、頭肩頂、日線偏多",
+      "themes": [
+        "組裝代工／ODM"
+      ],
+      "ref_price": 195.0,
+      "last_close": 190.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -2.56,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "3189",
+      "name": "景碩",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線整理",
+      "themes": [
+        "ABF／IC 載板"
+      ],
+      "ref_price": 1010.0,
+      "last_close": 986.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -2.38,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "2345",
+      "name": "智邦",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏多",
+      "themes": [
+        "網通／交換器"
+      ],
+      "ref_price": 1815.0,
+      "last_close": 1775.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -2.2,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "6669",
+      "name": "緯穎",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線空頭排列",
+      "themes": [
+        "組裝代工／ODM"
+      ],
+      "ref_price": 1880.0,
+      "last_close": 1840.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -2.13,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "4958",
+      "name": "臻鼎-KY",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "PCB／伺服器板／HDI"
+      ],
+      "ref_price": 578.0,
+      "last_close": 567.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.9,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-21",
+      "symbol": "2383",
+      "name": "台光電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 4990.0,
+      "last_close": 5070.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 1.6,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "3661",
+      "name": "世芯-KY",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 52，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 3640.0,
+      "last_close": 3495.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -3.98,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "6515",
+      "name": "穎崴",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 52，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 4960.0,
+      "last_close": 4795.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -3.33,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "2327",
+      "name": "國巨*",
+      "source": "theme",
+      "reason": "CCL、高速材料與高階PCB（強度 51，初步題材）",
+      "themes": [
+        "CCL、高速材料與高階PCB"
+      ],
+      "ref_price": 523.0,
+      "last_close": 507.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -3.06,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "3044",
+      "name": "健鼎",
+      "source": "theme",
+      "reason": "CCL、高速材料與高階PCB（強度 51，初步題材）",
+      "themes": [
+        "CCL、高速材料與高階PCB"
+      ],
+      "ref_price": 567.0,
+      "last_close": 556.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.94,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "2408",
+      "name": "南亞科",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 52，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 422.0,
+      "last_close": 414.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.9,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "3450",
+      "name": "聯鈞",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 52，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 430.5,
+      "last_close": 424.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.51,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "3533",
+      "name": "嘉澤",
+      "source": "theme",
+      "reason": "CCL、高速材料與高階PCB（強度 51，初步題材）",
+      "themes": [
+        "CCL、高速材料與高階PCB"
+      ],
+      "ref_price": 1805.0,
+      "last_close": 1795.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -0.55,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "2492",
+      "name": "華新科",
+      "source": "theme",
+      "reason": "CCL、高速材料與高階PCB（強度 51，初步題材）",
+      "themes": [
+        "CCL、高速材料與高階PCB"
+      ],
+      "ref_price": 369.0,
+      "last_close": 368.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -0.27,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "3006",
+      "name": "晶豪科",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 52，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 231.5,
+      "last_close": 234.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 1.08,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "2344",
+      "name": "華邦電",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 52，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 152.5,
+      "last_close": 154.5,
+      "last_date": "2026-10-22",
+      "ret_pct": 1.31,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "7769",
+      "name": "鴻勁",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 52，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 5205.0,
+      "last_close": 5275.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 1.34,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "3037",
+      "name": "欣興",
+      "source": "theme",
+      "reason": "CCL、高速材料與高階PCB（強度 51，初步題材）",
+      "themes": [
+        "CCL、高速材料與高階PCB"
+      ],
+      "ref_price": 1055.0,
+      "last_close": 1085.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 2.84,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "3374",
+      "name": "精材",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 52，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 428.0,
+      "last_close": 463.5,
+      "last_date": "2026-10-22",
+      "ret_pct": 8.29,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "2345",
+      "name": "智邦",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏多",
+      "themes": [
+        "網通／交換器"
+      ],
+      "ref_price": 1970.0,
+      "last_close": 1775.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -9.9,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "1815",
+      "name": "富喬",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "玻纖布／銅箔"
+      ],
+      "ref_price": 154.0,
+      "last_close": 139.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -9.74,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "6274",
+      "name": "台燿",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 1550.0,
+      "last_close": 1420.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -8.39,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "2313",
+      "name": "華通",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "PCB／伺服器板／HDI",
+        "低軌衛星"
+      ],
+      "ref_price": 243.5,
+      "last_close": 224.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -7.8,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "2368",
+      "name": "金像電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "PCB／伺服器板／HDI"
+      ],
+      "ref_price": 1185.0,
+      "last_close": 1115.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.91,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "3017",
+      "name": "奇鋐",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "散熱／液冷"
+      ],
+      "ref_price": 3325.0,
+      "last_close": 3145.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.41,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "6669",
+      "name": "緯穎",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線空頭排列",
+      "themes": [
+        "組裝代工／ODM"
+      ],
+      "ref_price": 1925.0,
+      "last_close": 1840.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.42,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "8046",
+      "name": "南電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "ABF／IC 載板"
+      ],
+      "ref_price": 1305.0,
+      "last_close": 1265.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -3.07,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "2327",
+      "name": "國巨*",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "被動元件"
+      ],
+      "ref_price": 523.0,
+      "last_close": 507.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -3.06,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "3443",
+      "name": "創意",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "ASIC／矽智財"
+      ],
+      "ref_price": 7745.0,
+      "last_close": 7585.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -2.07,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "2408",
+      "name": "南亞科",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "記憶體／儲存"
+      ],
+      "ref_price": 422.0,
+      "last_close": 414.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.9,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "2492",
+      "name": "華新科",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "被動元件"
+      ],
+      "ref_price": 369.0,
+      "last_close": 368.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -0.27,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "2344",
+      "name": "華邦電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "記憶體／儲存"
+      ],
+      "ref_price": 152.5,
+      "last_close": 154.5,
+      "last_date": "2026-10-22",
+      "ret_pct": 1.31,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "1303",
+      "name": "南亞",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 296.0,
+      "last_close": 301.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 1.69,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "3105",
+      "name": "穩懋",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "磊晶／化合物半導體"
+      ],
+      "ref_price": 475.0,
+      "last_close": 486.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 2.32,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "2383",
+      "name": "台光電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 4945.0,
+      "last_close": 5070.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 2.53,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "4958",
+      "name": "臻鼎-KY",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "PCB／伺服器板／HDI"
+      ],
+      "ref_price": 547.0,
+      "last_close": 567.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 3.66,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "6213",
+      "name": "聯茂",
+      "source": "daytrade",
+      "reason": "高檔轉弱／反轉警示、上升趨勢、日線多頭排列",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 749.0,
+      "last_close": 777.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 3.74,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-20",
+      "symbol": "3189",
+      "name": "景碩",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線偏多",
+      "themes": [
+        "ABF／IC 載板"
+      ],
+      "ref_price": 945.0,
+      "last_close": 986.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 4.34,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "6515",
+      "name": "穎崴",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 55，成長題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 5160.0,
+      "last_close": 4795.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -7.07,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "3661",
+      "name": "世芯-KY",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 55，成長題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 3715.0,
+      "last_close": 3495.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.92,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "2408",
+      "name": "南亞科",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 55，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 436.0,
+      "last_close": 414.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.05,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "2303",
+      "name": "聯電",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 55，成長題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 131.5,
+      "last_close": 125.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.56,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "3450",
+      "name": "聯鈞",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 55，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 444.0,
+      "last_close": 424.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.5,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "7769",
+      "name": "鴻勁",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 55，成長題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 5400.0,
+      "last_close": 5275.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -2.31,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "3006",
+      "name": "晶豪科",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 55，成長題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 239.0,
+      "last_close": 234.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -2.09,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "2330",
+      "name": "台積電",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 55，成長題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 2420.0,
+      "last_close": 2385.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.45,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "2344",
+      "name": "華邦電",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 55，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 155.5,
+      "last_close": 154.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -0.64,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "3374",
+      "name": "精材",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 55，成長題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 438.0,
+      "last_close": 463.5,
+      "last_date": "2026-10-22",
+      "ret_pct": 5.82,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "6274",
+      "name": "台燿",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 1630.0,
+      "last_close": 1420.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -12.88,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "2345",
+      "name": "智邦",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏多",
+      "themes": [
+        "網通／交換器"
+      ],
+      "ref_price": 2005.0,
+      "last_close": 1775.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -11.47,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "2368",
+      "name": "金像電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "PCB／伺服器板／HDI"
+      ],
+      "ref_price": 1250.0,
+      "last_close": 1115.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -10.8,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "1815",
+      "name": "富喬",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "玻纖布／銅箔"
+      ],
+      "ref_price": 154.0,
+      "last_close": 139.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -9.74,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "2313",
+      "name": "華通",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "PCB／伺服器板／HDI",
+        "低軌衛星"
+      ],
+      "ref_price": 248.0,
+      "last_close": 224.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -9.48,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "8046",
+      "name": "南電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "ABF／IC 載板"
+      ],
+      "ref_price": 1380.0,
+      "last_close": 1265.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -8.33,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "3653",
+      "name": "健策",
+      "source": "daytrade",
+      "reason": "高檔轉弱／反轉警示、雙頂、日線多頭排列",
+      "themes": [
+        "散熱／液冷"
+      ],
+      "ref_price": 6560.0,
+      "last_close": 6070.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -7.47,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "3017",
+      "name": "奇鋐",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "散熱／液冷"
+      ],
+      "ref_price": 3320.0,
+      "last_close": 3145.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.27,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "2327",
+      "name": "國巨*",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "被動元件"
+      ],
+      "ref_price": 534.0,
+      "last_close": 507.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.06,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "3443",
+      "name": "創意",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "ASIC／矽智財"
+      ],
+      "ref_price": 7830.0,
+      "last_close": 7585.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -3.13,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "6669",
+      "name": "緯穎",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線空頭排列",
+      "themes": [
+        "組裝代工／ODM"
+      ],
+      "ref_price": 1885.0,
+      "last_close": 1840.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -2.39,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "2059",
+      "name": "川湖",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線空頭排列",
+      "themes": [
+        "滑軌"
+      ],
+      "ref_price": 9920.0,
+      "last_close": 9755.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.66,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "2383",
+      "name": "台光電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 5125.0,
+      "last_close": 5070.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.07,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "1303",
+      "name": "南亞",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 303.5,
+      "last_close": 301.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -0.82,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "2344",
+      "name": "華邦電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "記憶體／儲存"
+      ],
+      "ref_price": 155.5,
+      "last_close": 154.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -0.64,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "2449",
+      "name": "京元電子",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "封裝測試"
+      ],
+      "ref_price": 263.5,
+      "last_close": 262.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -0.38,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "3189",
+      "name": "景碩",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "ABF／IC 載板"
+      ],
+      "ref_price": 982.0,
+      "last_close": 986.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 0.41,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "3105",
+      "name": "穩懋",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "磊晶／化合物半導體"
+      ],
+      "ref_price": 482.0,
+      "last_close": 486.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 0.83,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-19",
+      "symbol": "4958",
+      "name": "臻鼎-KY",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "PCB／伺服器板／HDI"
+      ],
+      "ref_price": 547.0,
+      "last_close": 567.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 3.66,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-18",
+      "symbol": "6274",
+      "name": "台燿",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 1615.0,
+      "last_close": 1420.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -12.07,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-18",
+      "symbol": "2327",
+      "name": "國巨*",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "被動元件"
+      ],
+      "ref_price": 567.0,
+      "last_close": 507.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -10.58,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-18",
+      "symbol": "2368",
+      "name": "金像電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "PCB／伺服器板／HDI"
+      ],
+      "ref_price": 1245.0,
+      "last_close": 1115.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -10.44,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-18",
+      "symbol": "2345",
+      "name": "智邦",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏多",
+      "themes": [
+        "網通／交換器"
+      ],
+      "ref_price": 1980.0,
+      "last_close": 1775.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -10.35,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-18",
+      "symbol": "3653",
+      "name": "健策",
+      "source": "daytrade",
+      "reason": "高檔轉弱／反轉警示、雙頂、日線多頭排列",
+      "themes": [
+        "散熱／液冷"
+      ],
+      "ref_price": 6730.0,
+      "last_close": 6070.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -9.81,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-18",
+      "symbol": "2313",
+      "name": "華通",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "PCB／伺服器板／HDI",
+        "低軌衛星"
+      ],
+      "ref_price": 248.0,
+      "last_close": 224.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -9.48,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-18",
+      "symbol": "2408",
+      "name": "南亞科",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "記憶體／儲存"
+      ],
+      "ref_price": 447.5,
+      "last_close": 414.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -7.49,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-18",
+      "symbol": "8046",
+      "name": "南電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "ABF／IC 載板"
+      ],
+      "ref_price": 1355.0,
+      "last_close": 1265.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -6.64,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-18",
+      "symbol": "3026",
+      "name": "禾伸堂",
+      "source": "daytrade",
+      "reason": "高檔轉弱／反轉警示、雙頂、日線偏多",
+      "themes": [
+        "被動元件"
+      ],
+      "ref_price": 806.0,
+      "last_close": 756.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -6.2,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-18",
+      "symbol": "3017",
+      "name": "奇鋐",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "散熱／液冷"
+      ],
+      "ref_price": 3315.0,
+      "last_close": 3145.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.13,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-18",
+      "symbol": "2449",
+      "name": "京元電子",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "封裝測試"
+      ],
+      "ref_price": 275.0,
+      "last_close": 262.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.55,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-18",
+      "symbol": "2344",
+      "name": "華邦電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "記憶體／儲存"
+      ],
+      "ref_price": 161.5,
+      "last_close": 154.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.33,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-18",
+      "symbol": "3105",
+      "name": "穩懋",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "磊晶／化合物半導體"
+      ],
+      "ref_price": 501.0,
+      "last_close": 486.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -2.99,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-18",
+      "symbol": "1303",
+      "name": "南亞",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 307.0,
+      "last_close": 301.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.95,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-18",
+      "symbol": "2383",
+      "name": "台光電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 5165.0,
+      "last_close": 5070.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.84,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-18",
+      "symbol": "3189",
+      "name": "景碩",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "ABF／IC 載板"
+      ],
+      "ref_price": 1000.0,
+      "last_close": 986.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.4,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-18",
+      "symbol": "3443",
+      "name": "創意",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "ASIC／矽智財"
+      ],
+      "ref_price": 7480.0,
+      "last_close": 7585.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 1.4,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-18",
+      "symbol": "4958",
+      "name": "臻鼎-KY",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "PCB／伺服器板／HDI"
+      ],
+      "ref_price": 557.0,
+      "last_close": 567.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 1.8,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "2327",
+      "name": "國巨*",
+      "source": "theme",
+      "reason": "CCL、高速材料與高階PCB（強度 48，初步題材）",
+      "themes": [
+        "CCL、高速材料與高階PCB"
+      ],
+      "ref_price": 567.0,
+      "last_close": 507.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -10.58,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "2408",
+      "name": "南亞科",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 48，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 447.5,
+      "last_close": 414.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -7.49,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "3450",
+      "name": "聯鈞",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 48，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 457.0,
+      "last_close": 424.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -7.22,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "2492",
+      "name": "華新科",
+      "source": "theme",
+      "reason": "CCL、高速材料與高階PCB（強度 48，初步題材）",
+      "themes": [
+        "CCL、高速材料與高階PCB"
+      ],
+      "ref_price": 395.0,
+      "last_close": 368.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -6.84,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "2303",
+      "name": "聯電",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 48，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 133.0,
+      "last_close": 125.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.64,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "3661",
+      "name": "世芯-KY",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 48，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 3685.0,
+      "last_close": 3495.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.16,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "3044",
+      "name": "健鼎",
+      "source": "theme",
+      "reason": "CCL、高速材料與高階PCB（強度 48，初步題材）",
+      "themes": [
+        "CCL、高速材料與高階PCB"
+      ],
+      "ref_price": 584.0,
+      "last_close": 556.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.79,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "2308",
+      "name": "台達電",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 48，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 1635.0,
+      "last_close": 1560.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.59,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "2344",
+      "name": "華邦電",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 48，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 161.5,
+      "last_close": 154.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.33,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "3006",
+      "name": "晶豪科",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 48，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 244.5,
+      "last_close": 234.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.29,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "2330",
+      "name": "台積電",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 48，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 2420.0,
+      "last_close": 2385.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.45,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "3533",
+      "name": "嘉澤",
+      "source": "theme",
+      "reason": "CCL、高速材料與高階PCB（強度 48，初步題材）",
+      "themes": [
+        "CCL、高速材料與高階PCB"
+      ],
+      "ref_price": 1805.0,
+      "last_close": 1795.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -0.55,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "8299",
+      "name": "群聯",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 48，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 1890.0,
+      "last_close": 1880.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -0.53,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "3037",
+      "name": "欣興",
+      "source": "theme",
+      "reason": "CCL、高速材料與高階PCB（強度 48，初步題材）",
+      "themes": [
+        "CCL、高速材料與高階PCB"
+      ],
+      "ref_price": 1090.0,
+      "last_close": 1085.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -0.46,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "6274",
+      "name": "台燿",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 1615.0,
+      "last_close": 1420.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -12.07,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "6187",
+      "name": "萬潤",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "先進封裝設備"
+      ],
+      "ref_price": 1410.0,
+      "last_close": 1260.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -10.64,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "2327",
+      "name": "國巨*",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "被動元件"
+      ],
+      "ref_price": 567.0,
+      "last_close": 507.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -10.58,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "2368",
+      "name": "金像電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線多頭排列",
+      "themes": [
+        "PCB／伺服器板／HDI"
+      ],
+      "ref_price": 1245.0,
+      "last_close": 1115.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -10.44,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "2345",
+      "name": "智邦",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏多",
+      "themes": [
+        "網通／交換器"
+      ],
+      "ref_price": 1980.0,
+      "last_close": 1775.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -10.35,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "3653",
+      "name": "健策",
+      "source": "daytrade",
+      "reason": "高檔轉弱／反轉警示、雙頂、日線多頭排列",
+      "themes": [
+        "散熱／液冷"
+      ],
+      "ref_price": 6730.0,
+      "last_close": 6070.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -9.81,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "3624",
+      "name": "光頡",
+      "source": "daytrade",
+      "reason": "高檔轉弱／反轉警示、上升趨勢、日線多頭排列",
+      "themes": [
+        "被動元件"
+      ],
+      "ref_price": 149.5,
+      "last_close": 135.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -9.7,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "3529",
+      "name": "力旺",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "ASIC／矽智財"
+      ],
+      "ref_price": 2750.0,
+      "last_close": 2485.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -9.64,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "6239",
+      "name": "力成",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "封裝測試"
+      ],
+      "ref_price": 274.0,
+      "last_close": 248.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -9.49,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "2313",
+      "name": "華通",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線整理",
+      "themes": [
+        "PCB／伺服器板／HDI",
+        "低軌衛星"
+      ],
+      "ref_price": 248.0,
+      "last_close": 224.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -9.48,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "6257",
+      "name": "矽格",
+      "source": "daytrade",
+      "reason": "多頭延續／持續創高、上升趨勢、日線多頭排列",
+      "themes": [
+        "封裝測試"
+      ],
+      "ref_price": 252.0,
+      "last_close": 232.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -7.94,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "2408",
+      "name": "南亞科",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "記憶體／儲存"
+      ],
+      "ref_price": 447.5,
+      "last_close": 414.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -7.49,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "6515",
+      "name": "穎崴",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線空頭排列",
+      "themes": [
+        "測試介面／設備"
+      ],
+      "ref_price": 5160.0,
+      "last_close": 4795.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -7.07,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "8046",
+      "name": "南電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "ABF／IC 載板"
+      ],
+      "ref_price": 1355.0,
+      "last_close": 1265.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -6.64,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "3026",
+      "name": "禾伸堂",
+      "source": "daytrade",
+      "reason": "高檔轉弱／反轉警示、雙頂、日線多頭排列",
+      "themes": [
+        "被動元件"
+      ],
+      "ref_price": 806.0,
+      "last_close": 756.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -6.2,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "2303",
+      "name": "聯電",
+      "source": "daytrade",
+      "reason": "日線整理",
+      "themes": [],
+      "ref_price": 133.0,
+      "last_close": 125.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.64,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "3017",
+      "name": "奇鋐",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "散熱／液冷"
+      ],
+      "ref_price": 3315.0,
+      "last_close": 3145.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.13,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "3264",
+      "name": "欣銓",
+      "source": "daytrade",
+      "reason": "高檔轉弱／反轉警示、上升三角形、日線多頭排列",
+      "themes": [
+        "封裝測試"
+      ],
+      "ref_price": 258.5,
+      "last_close": 246.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.64,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "3324",
+      "name": "雙鴻",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "散熱／液冷"
+      ],
+      "ref_price": 1425.0,
+      "last_close": 1360.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.56,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "2449",
+      "name": "京元電子",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "封裝測試"
+      ],
+      "ref_price": 275.0,
+      "last_close": 262.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.55,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "2344",
+      "name": "華邦電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "記憶體／儲存"
+      ],
+      "ref_price": 161.5,
+      "last_close": 154.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.33,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "3105",
+      "name": "穩懋",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "磊晶／化合物半導體"
+      ],
+      "ref_price": 501.0,
+      "last_close": 486.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -2.99,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "1303",
+      "name": "南亞",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 307.0,
+      "last_close": 301.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.95,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "2383",
+      "name": "台光電",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "CCL／銅箔基板"
+      ],
+      "ref_price": 5165.0,
+      "last_close": 5070.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.84,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "3189",
+      "name": "景碩",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底突破、日線多頭排列",
+      "themes": [
+        "ABF／IC 載板"
+      ],
+      "ref_price": 1000.0,
+      "last_close": 986.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.4,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "2360",
+      "name": "致茂",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線偏空",
+      "themes": [
+        "測試介面／設備"
+      ],
+      "ref_price": 2000.0,
+      "last_close": 1980.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.0,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "8996",
+      "name": "高力",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "散熱／液冷"
+      ],
+      "ref_price": 1570.0,
+      "last_close": 1560.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -0.64,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "3443",
+      "name": "創意",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "ASIC／矽智財"
+      ],
+      "ref_price": 7480.0,
+      "last_close": 7585.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 1.4,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "4958",
+      "name": "臻鼎-KY",
+      "source": "daytrade",
+      "reason": "底部反轉候選、雙底、日線整理",
+      "themes": [
+        "PCB／伺服器板／HDI"
+      ],
+      "ref_price": 557.0,
+      "last_close": 567.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 1.8,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-16",
+      "symbol": "3374",
+      "name": "精材",
+      "source": "daytrade",
+      "reason": "整理待突破、箱型整理、日線整理",
+      "themes": [
+        "封裝測試"
+      ],
+      "ref_price": 433.5,
+      "last_close": 463.5,
+      "last_date": "2026-10-22",
+      "ret_pct": 6.92,
+      "source_label": "當沖候選（可做多）"
+    },
+    {
+      "date": "2026-10-15",
+      "symbol": "2327",
+      "name": "國巨*",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 45，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 573.0,
+      "last_close": 507.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -11.52,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-15",
+      "symbol": "3450",
+      "name": "聯鈞",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 45，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 467.5,
+      "last_close": 424.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -9.3,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-15",
+      "symbol": "2492",
+      "name": "華新科",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 45，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 405.5,
+      "last_close": 368.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -9.25,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-15",
+      "symbol": "2303",
+      "name": "聯電",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 45，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 133.5,
+      "last_close": 125.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.99,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-15",
+      "symbol": "2408",
+      "name": "南亞科",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 45，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 439.5,
+      "last_close": 414.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.8,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-15",
+      "symbol": "3661",
+      "name": "世芯-KY",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 45，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 3705.0,
+      "last_close": 3495.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.67,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-15",
+      "symbol": "6515",
+      "name": "穎崴",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 44，初步題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 5055.0,
+      "last_close": 4795.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.14,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-15",
+      "symbol": "3044",
+      "name": "健鼎",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 45，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 586.0,
+      "last_close": 556.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.12,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-15",
+      "symbol": "2308",
+      "name": "台達電",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 45，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 1630.0,
+      "last_close": 1560.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.29,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-15",
+      "symbol": "2330",
+      "name": "台積電",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 45，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 2440.0,
+      "last_close": 2385.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -2.25,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-15",
+      "symbol": "3533",
+      "name": "嘉澤",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 45，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 1815.0,
+      "last_close": 1795.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -1.1,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-15",
+      "symbol": "2344",
+      "name": "華邦電",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 45，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 155.0,
+      "last_close": 154.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -0.32,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-15",
+      "symbol": "3037",
+      "name": "欣興",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 45，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 1075.0,
+      "last_close": 1085.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 0.93,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-15",
+      "symbol": "7769",
+      "name": "鴻勁",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 44，初步題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 5225.0,
+      "last_close": 5275.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 0.96,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-15",
+      "symbol": "3006",
+      "name": "晶豪科",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 45，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 229.0,
+      "last_close": 234.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 2.18,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-15",
+      "symbol": "3374",
+      "name": "精材",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 44，初步題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 452.5,
+      "last_close": 463.5,
+      "last_date": "2026-10-22",
+      "ret_pct": 2.43,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-15",
+      "symbol": "8299",
+      "name": "群聯",
+      "source": "theme",
+      "reason": "AI伺服器與資料中心擴建（強度 45，初步題材）",
+      "themes": [
+        "AI伺服器與資料中心擴建"
+      ],
+      "ref_price": 1830.0,
+      "last_close": 1880.0,
+      "last_date": "2026-10-22",
+      "ret_pct": 2.73,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-14",
+      "symbol": "3450",
+      "name": "聯鈞",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 47，初步題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 500.0,
+      "last_close": 424.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -15.2,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-14",
+      "symbol": "6515",
+      "name": "穎崴",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 47，初步題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 5615.0,
+      "last_close": 4795.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -14.6,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-14",
+      "symbol": "2408",
+      "name": "南亞科",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 47，初步題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 480.5,
+      "last_close": 414.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -13.84,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-14",
+      "symbol": "2303",
+      "name": "聯電",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 45，初步題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 142.0,
+      "last_close": 125.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -11.62,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-14",
+      "symbol": "3661",
+      "name": "世芯-KY",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 47，初步題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 3940.0,
+      "last_close": 3495.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -11.29,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-14",
+      "symbol": "7769",
+      "name": "鴻勁",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 47，初步題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 5780.0,
+      "last_close": 5275.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -8.74,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-14",
+      "symbol": "3374",
+      "name": "精材",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 47，初步題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 499.0,
+      "last_close": 463.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -7.11,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-14",
+      "symbol": "2344",
+      "name": "華邦電",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 47，初步題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 165.0,
+      "last_close": 154.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -6.36,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-14",
+      "symbol": "3006",
+      "name": "晶豪科",
+      "source": "theme",
+      "reason": "先進封裝、Chiplet與HBM（強度 47，初步題材）",
+      "themes": [
+        "先進封裝、Chiplet與HBM"
+      ],
+      "ref_price": 247.0,
+      "last_close": 234.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -5.26,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-14",
+      "symbol": "2330",
+      "name": "台積電",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 45，初步題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 2490.0,
+      "last_close": 2385.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.22,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-12",
+      "symbol": "2408",
+      "name": "南亞科",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 44，初步題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 527.0,
+      "last_close": 414.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -21.44,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-12",
+      "symbol": "3661",
+      "name": "世芯-KY",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 44，初步題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 4395.0,
+      "last_close": 3495.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -20.48,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-12",
+      "symbol": "6515",
+      "name": "穎崴",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 44，初步題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 6025.0,
+      "last_close": 4795.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -20.41,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-12",
+      "symbol": "2327",
+      "name": "國巨*",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 44，初步題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 636.0,
+      "last_close": 507.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -20.28,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-12",
+      "symbol": "7769",
+      "name": "鴻勁",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 44，初步題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 6490.0,
+      "last_close": 5275.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -18.72,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-12",
+      "symbol": "2308",
+      "name": "台達電",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 44，初步題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 1900.0,
+      "last_close": 1560.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -17.89,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-12",
+      "symbol": "2303",
+      "name": "聯電",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 44，初步題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 145.5,
+      "last_close": 125.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -13.75,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-12",
+      "symbol": "3037",
+      "name": "欣興",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 44，初步題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 1255.0,
+      "last_close": 1085.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -13.55,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-12",
+      "symbol": "2492",
+      "name": "華新科",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 44，初步題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 418.0,
+      "last_close": 368.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -11.96,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-12",
+      "symbol": "2344",
+      "name": "華邦電",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 44，初步題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 174.0,
+      "last_close": 154.5,
+      "last_date": "2026-10-22",
+      "ret_pct": -11.21,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-12",
+      "symbol": "3006",
+      "name": "晶豪科",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 44，初步題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 260.5,
+      "last_close": 234.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -10.17,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-12",
+      "symbol": "8299",
+      "name": "群聯",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 44，初步題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 2055.0,
+      "last_close": 1880.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -8.52,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-12",
+      "symbol": "2330",
+      "name": "台積電",
+      "source": "theme",
+      "reason": "先進製程與AI ASIC（強度 44，初步題材）",
+      "themes": [
+        "先進製程與AI ASIC"
+      ],
+      "ref_price": 2540.0,
+      "last_close": 2385.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -6.1,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-12",
+      "symbol": "3533",
+      "name": "嘉澤",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 44，初步題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 1880.0,
+      "last_close": 1795.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -4.52,
+      "source_label": "盤後利多題材"
+    },
+    {
+      "date": "2026-10-12",
+      "symbol": "3044",
+      "name": "健鼎",
+      "source": "theme",
+      "reason": "AI／邊緣AI／Physical AI（強度 44，初步題材）",
+      "themes": [
+        "AI／邊緣AI／Physical AI"
+      ],
+      "ref_price": 579.0,
+      "last_close": 556.0,
+      "last_date": "2026-10-22",
+      "ret_pct": -3.97,
+      "source_label": "盤後利多題材"
+    }
+  ],
+  "disclaimer": "系統篩選的觀察名單，目前沒有任何策略通過上線驗證（strategy-gate），不構成投資建議。"
+}
