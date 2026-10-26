@@ -1156,16 +1156,41 @@ _UX_CSS = """<style>
 
 /* 導覽下拉選單：滑到主題上展開該頁功能，點了直接前往該區塊 */
 .site-nav .nav-item{position:relative;display:flex}
-.nav-drop{position:absolute;top:100%;left:50%;z-index:5;min-width:200px;padding:8px;display:flex;flex-direction:column;gap:1px;text-align:left;
-  background:#fff;border:1px solid #eee3e3;border-radius:12px;box-shadow:0 18px 36px -14px rgba(60,20,20,.28);
-  opacity:0;visibility:hidden;transform:translate(-50%,14px);transition:opacity .18s ease,transform .18s ease,visibility .18s}
+.nav-drop{position:absolute;top:100%;left:50%;z-index:5;min-width:300px;padding:0;display:block;text-align:left;overflow:hidden;
+  background:#fff;border:1px solid #ecdcdc;border-radius:16px;
+  box-shadow:0 24px 48px -18px rgba(70,20,24,.35),0 2px 6px rgba(70,20,24,.06);
+  opacity:0;visibility:hidden;transform:translate(-50%,14px);transition:opacity .2s ease,transform .2s ease,visibility .2s}
 .nav-drop::before{content:"";position:absolute;left:0;right:0;top:-14px;height:14px}
 .nav-item:hover .nav-drop,.nav-item:focus-within .nav-drop{opacity:1;visibility:visible;transform:translate(-50%,8px)}
 .nav-item.nav-closed .nav-drop{opacity:0!important;visibility:hidden!important}
-.nav-drop-hint{font-size:11.5px;color:#9a8f8f;padding:4px 12px 7px;margin-bottom:3px;border-bottom:1px dashed #eadede;white-space:nowrap}
-.nav-drop-link{display:block;padding:7px 12px;border-radius:8px;font-size:13.5px;line-height:1.4;color:#4a4242!important;text-decoration:none!important;
-  white-space:nowrap;transition:background .15s,color .15s,padding-left .15s}
-.nav-drop-link:hover{background:#f8eeee;color:#8e2b2f!important;padding-left:16px}
+/* 標頭：主題名稱＋說明，酒紅漸層底 */
+.nav-drop-head{position:relative;padding:16px 20px 14px;background:linear-gradient(135deg,#8e2b2f 0%,#b0464b 100%);color:#fff}
+.nav-drop-head:after{content:"";position:absolute;right:-28px;top:-34px;width:110px;height:110px;border-radius:50%;
+  background:rgba(255,255,255,.08)}
+.nav-drop-title{display:flex;align-items:center;gap:9px;font-family:Georgia,"Noto Serif TC","Microsoft JhengHei",serif;
+  font-size:21px;font-weight:700;letter-spacing:1.5px;line-height:1.2;white-space:nowrap}
+.nav-drop-step{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;
+  background:#fff;color:#8e2b2f;font-family:Arial,sans-serif;font-size:13px;font-weight:800;letter-spacing:0;flex:none}
+.nav-drop-hint{margin-top:6px;font-size:12.5px;color:rgba(255,255,255,.86);letter-spacing:.4px;white-space:nowrap}
+/* 功能清單：編號＋名稱，項目多時排兩欄 */
+.nav-drop-list{display:grid;grid-template-columns:1fr;gap:2px;padding:10px}
+.nav-drop-list.two-col{grid-template-columns:1fr 1fr;min-width:430px}
+.nav-drop-link{position:relative;display:flex;align-items:center;gap:11px;padding:10px 14px;border-radius:10px;
+  font-size:15.5px;font-weight:600;line-height:1.35;color:#3b3434!important;text-decoration:none!important;white-space:nowrap;
+  transition:background .15s,color .15s,transform .15s}
+.nav-drop-num{flex:none;min-width:26px;height:22px;border-radius:6px;background:#f6eaea;color:#a0484c;font-family:Arial,sans-serif;
+  font-size:11.5px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;transition:background .15s,color .15s}
+.nav-drop-text{flex:1}
+.nav-drop-arrow{color:#8e2b2f;font-size:14px;opacity:0;transform:translateX(-6px);transition:opacity .15s,transform .15s}
+.nav-drop-link:hover{background:#fbf1f1;color:#8e2b2f!important;transform:translateX(2px)}
+.nav-drop-link:hover .nav-drop-num{background:#8e2b2f;color:#fff}
+.nav-drop-link:hover .nav-drop-arrow{opacity:1;transform:none}
+/* 上方主題名稱：放大、加粗 */
+.site-nav .site-nav-link{font-size:16.5px!important;font-weight:600;letter-spacing:1px!important;color:#4a4242!important}
+.site-nav .site-nav-link:hover,.site-nav .site-nav-link.active{color:var(--site-red)!important}
+.site-nav .site-nav-link.active{font-weight:800}
+@media(max-width:900px){.site-nav .site-nav-link{font-size:15px!important}}
+@media(max-width:600px){.site-nav .site-nav-link{font-size:13.5px!important}}
 /* 最左、最右的主題靠邊對齊，避免中等寬度時下拉選單超出內容欄被裁掉 */
 .site-nav .nav-item:first-child .nav-drop{left:0;transform:translate(0,14px)}
 .site-nav .nav-item:last-child .nav-drop{left:auto;right:0;transform:translate(0,14px)}
@@ -2441,12 +2466,21 @@ def render_site_navigation() -> str:
     links = []
     for key, label, hint in SITE_NAV:
         active = " active" if current == key else ""
+        items = SITE_NAV_SUB.get(key, [])
         subs = "".join(
             f'<a class="nav-drop-link" href="?section={key}" target="_self" data-target="{_esc(sub[1])}"'
-            + (f' data-tab="{_esc(sub[2])}"' if len(sub) > 2 else "") + f'>{_esc(sub[0])}</a>'
-            for sub in SITE_NAV_SUB.get(key, [])
+            + (f' data-tab="{_esc(sub[2])}"' if len(sub) > 2 else "")
+            + f'><span class="nav-drop-num">{i:02d}</span><span class="nav-drop-text">{_esc(sub[0])}</span>'
+              '<span class="nav-drop-arrow">→</span></a>'
+            for i, sub in enumerate(items, 1)
         )
-        drop = f'<div class="nav-drop"><div class="nav-drop-hint">{_esc(hint)}</div>{subs}</div>' if subs else ""
+        # 說明開頭的 ①～⑤ 拆成標題旁的步驟圓章
+        step = "①②③④⑤".find(hint[:1]) + 1
+        badge = f'<span class="nav-drop-step">{step}</span>' if step else ""
+        text = hint[1:].lstrip() if step else hint
+        drop = (f'<div class="nav-drop"><div class="nav-drop-head"><div class="nav-drop-title">{badge}{_esc(label)}</div>'
+                f'<div class="nav-drop-hint">{_esc(text)}</div></div>'
+                f'<div class="nav-drop-list{" two-col" if len(items) > 6 else ""}">{subs}</div></div>') if subs else ""
         links.append(f'<div class="nav-item"><a class="site-nav-link{active}" href="?section={key}" target="_self">{label}</a>{drop}</div>')
     # 包在有 key 的容器裡才能 position:sticky（捲到下方也能直接換頁）
     with st.container(key="site_nav_sticky"):
