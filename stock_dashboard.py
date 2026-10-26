@@ -1035,6 +1035,19 @@ footer:not(.site-footer){display:none!important;}
 .contact-info-card{background:#fff;color:#4a4545;padding:6px 0;min-height:360px}.contact-info-card h2{font-family:Georgia,"Noto Serif TC","Microsoft JhengHei",serif;font-size:28px;color:var(--site-red);font-weight:500;margin:0 0 10px}.contact-info-card p{color:#777;font-size:12px;line-height:1.8;max-width:470px}.contact-item{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid #e2dada}.contact-item span{color:var(--site-red);font-size:18px;line-height:1}.contact-item b{display:block;font-size:12px;margin-bottom:3px;color:#4a4545}.contact-item small{display:block;color:#8c8585;font-size:11px;line-height:1.6}.form-title{margin-top:0;font-size:21px}.subscribe-note{margin:8px 0 12px;color:var(--site-red);font-size:12px;line-height:1.6}.stFormSubmitButton>button{background:#252525!important;color:#fff!important;border-color:#252525!important;border-radius:16px!important;padding:6px 22px!important}.site-footer{background:var(--site-footer);color:#eee;margin:34px 0 0;padding:0 0 0;width:100%}.footer-inner{width:100%;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:50px;padding:38px 42px 30px}.footer-contact,.footer-form-note{padding:4px 0}.footer-title{font-family:Georgia,"Noto Serif TC","Microsoft JhengHei",serif;color:#d68f8f;font-size:16px;margin-bottom:8px}.footer-contact p,.footer-form-note p{color:#bdbdbd;font-size:11px;line-height:1.8;margin:0 0 10px}.footer-small{color:#8f8f8f;font-size:10px;line-height:1.8}.footer-form-note a{color:#d7a2a2!important;text-decoration:none!important;font-size:11px}.footer-bottom{border-top:1px solid rgba(255,255,255,.08);text-align:center;padding:14px 12px 18px;color:#777;font-size:9px;letter-spacing:.5px}
 @media(max-width:900px){.main .block-container{padding-left:16px!important;padding-right:16px!important}.site-nav{gap:18px}.home-band,.site-footer,.contact-band{margin-left:0;margin-right:0}.home-band{padding:42px 22px}.home-two-col,.home-two-col.reverse-on-mobile{grid-template-columns:1fr;gap:28px}.home-copy{max-width:none}.footer-inner{padding:30px 22px;grid-template-columns:1fr;gap:24px}}
 @media(max-width:600px){.main .block-container{padding-left:10px!important;padding-right:10px!important}.brand-name{font-size:17px}.site-nav{gap:14px 18px;padding-bottom:10px}.site-nav-link{font-size:11px}.hero-visual{height:220px;margin-bottom:0}.page-image-banner{height:150px;margin-bottom:18px}.page-image-title{left:18px;bottom:18px;font-size:24px}.home-band,.site-footer,.contact-band{margin-left:0;margin-right:0}.home-band{padding:28px 16px}.home-copy h2,.content-heading h1{font-size:26px}.home-image-grid.three-grid{grid-template-columns:1fr 1fr 1fr}.home-image-grid.six-grid{grid-template-columns:1fr 1fr}.home-image-grid.three-grid>div{height:108px}.home-image-grid.six-grid>div{height:96px}.small-visual{height:128px}.feature-section-title{font-size:18px}.footer-inner{padding:26px 18px}}
+/* 聯絡資訊：字放大、每一項做成卡片，信箱與電話可直接點 */
+.contact-info-card h2{font-size:32px!important;margin-bottom:12px!important}
+.contact-info-card p{font-size:15.5px!important;color:#5f5757!important;line-height:1.9!important;max-width:520px!important;margin-bottom:14px!important}
+.contact-item{gap:16px!important;align-items:center!important;padding:14px 16px!important;margin:0 0 10px;border:1px solid #eedcdc!important;border-radius:12px;background:#fdf8f8}
+.contact-item span{flex:none;width:42px;height:42px;border-radius:50%;background:var(--site-red);color:#fff!important;font-size:20px!important;
+  display:inline-flex;align-items:center;justify-content:center;box-shadow:0 4px 10px -5px rgba(142,43,47,.7)}
+.contact-item b{font-size:13.5px!important;color:#8c7f7f!important;font-weight:600;letter-spacing:.5px;margin-bottom:2px!important}
+.contact-item small{font-size:17px!important;color:#2f2a2a!important;font-weight:700;line-height:1.5!important;overflow-wrap:anywhere}
+.contact-item small a{color:var(--site-red)!important;text-decoration:none!important;border-bottom:1px solid rgba(142,43,47,.3)}
+.contact-item small a:hover{border-bottom-color:var(--site-red)}
+.contact-content h2{font-size:34px!important}
+.contact-content p{font-size:16.5px!important;line-height:1.9!important;color:#eee!important}
+.contact-link{font-size:16px!important;font-weight:700}
 </style>''', unsafe_allow_html=True)
 
 
@@ -2357,8 +2370,8 @@ def render_subscription_workspace() -> None:
               <p>歡迎針對網站功能、股票資料、AI 分析或每日財經資訊提出問題。</p>
               <div class="contact-item"><span>◎</span><div><b>台灣股市研究</b><small>AI 台股即時互動式分析系統</small></div></div>
               <div class="contact-item"><span>⌕</span><div><b>研究服務</b><small>股票操作策略／未來分析／財經資訊</small></div></div>
-              <div class="contact-item"><span>✉</span><div><b>電子郵件</b><small>a1113359@mail.nuk.edu.tw</small></div></div>
-              <div class="contact-item"><span>◎</span><div><b>聯絡電話</b><small>+886-907-611-728</small></div></div>
+              <div class="contact-item"><span>✉</span><div><b>電子郵件</b><small><a href="mailto:a1113359@mail.nuk.edu.tw">a1113359@mail.nuk.edu.tw</a></small></div></div>
+              <div class="contact-item"><span>☏</span><div><b>聯絡電話</b><small><a href="tel:+886907611728">+886-907-611-728</a></small></div></div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -5882,7 +5895,7 @@ st.markdown(r"""
 /* 頁尾：字體明顯放大，但仍保留設計稿的深色收尾 */
 .footer-title{font-size:20px!important;}
 .footer-contact p,.footer-form-note p{font-size:13px!important;line-height:1.9!important;}
-.footer-small{font-size:12px!important;line-height:1.9!important;}
+.footer-small{font-size:14px!important;line-height:1.9!important;color:#c4b8b8!important;}
 .footer-form-note a{font-size:13px!important;}
 .footer-bottom{font-size:11px!important;padding:16px 12px 20px!important;}
 
