@@ -4805,6 +4805,7 @@ _FOCUS_CSS = """<style>
 .fx-tags .sig,.fx-chips .sig{font-size:12px;padding:1px 9px}
 .fx-chips .sig-none,.fx-chips .sig-wait{font-size:11px}
 .fx-empty{color:#8a8080;font-size:13px;padding:18px 4px}
+.fx-earlier{font-size:11px;color:#9a9090;align-self:center;cursor:help;border-bottom:1px dotted #c9bfbf}
 @media(max-width:700px){.fx-card{grid-template-columns:1fr 1fr}.fx-card>div:first-child{grid-column:1/-1}.fx-spark{width:110px}}
 </style>"""
 
@@ -4842,10 +4843,23 @@ def render_watch_focus():
     pick = st.segmented_control("方向", ["全部", "多方", "空方"], default="全部", key="focus_side",
                                 label_visibility="collapsed") or "全部"
     want = {"全部": None, "多方": "bull", "空方": "bear"}[pick]
-    shown = [c for c in cards if want is None or c["side"] in (want, "both")]
+    # 每檔只留最新一張卡片：新事件出現時覆蓋同一檔較早的卡片，較早的事件收在「稍早」提示裡
+    shown, earlier = [], {}
+    for c in cards:
+        if want is not None and c["side"] not in (want, "both"):
+            continue
+        code = c["stock"]["code"]
+        if code in earlier:
+            earlier[code].append(c)
+        else:
+            earlier[code] = []
+            shown.append(c)
 
-    n_bull = sum(1 for c in cards if c["side"] in ("bull", "both"))
-    n_bear = sum(1 for c in cards if c["side"] in ("bear", "both"))
+    latest = {}
+    for c in cards:
+        latest.setdefault(c["stock"]["code"], c)
+    n_bull = sum(1 for c in latest.values() if c["side"] in ("bull", "both"))
+    n_bear = sum(1 for c in latest.values() if c["side"] in ("bear", "both"))
     day = max((s["day"] for s in stocks), default=None)
     live = is_market_open_now()
     when = (f"盤中・每 {FOCUS_REFRESH_SECONDS // 60} 分鐘更新" if live
@@ -4853,7 +4867,7 @@ def render_watch_focus():
     miss = f'<span>暫時取不到：{"、".join(failed[:6])}{"…" if len(failed) > 6 else ""}</span>' if failed else ""
     st.markdown(_FOCUS_CSS, unsafe_allow_html=True)
     st.markdown(f'<div class="fx-head"><span>{when}</span><span class="fx-count">自選股 {len(stocks)} 檔・'
-                f'多方 <b>{n_bull}</b>・空方 <i>{n_bear}</i></span>{miss}</div>', unsafe_allow_html=True)
+                f'最新偏多 <b>{n_bull}</b> 檔・偏空 <i>{n_bear}</i> 檔</span>{miss}</div>', unsafe_allow_html=True)
 
     now = taiwan_now().tz_localize(None)
     cls = lambda v: "fx-up" if v > 0 else "fx-down" if v < 0 else "fx-flat"
@@ -4864,6 +4878,10 @@ def render_watch_focus():
         new = '<span class="fx-new">NEW</span>' if live and (now - t).total_seconds() <= FOCUS_NEW_MINUTES * 60 else ""
         tags = "".join(f'<span class="sig sig-{e["side"]}">{_esc(e["text"])}</span>' for e in c["events"])
         chips = _signal_chips_html(chip_map.get(s["code"]), empty_text="無連續籌碼訊號", pending_text="籌碼計算中…")
+        prior = earlier.get(s["code"], [])
+        if prior:
+            hist = "&#10;".join(f'{p["time"]:%H:%M} ' + "、".join(_esc(e["text"]) for e in p["events"]) for p in prior)
+            tags += f'<span class="fx-earlier" title="{hist}">稍早 {len(prior)} 則</span>'
         items.append(
             f'<div class="fx-item"><div class="fx-time">{t:%H:%M}{new}</div><div class="fx-card">'
             f'<div><div class="fx-name">{_esc(s["name"])}<span>{s["code"]}</span></div><div class="fx-row">{_focus_spark(s, t)}'
@@ -4872,7 +4890,7 @@ def render_watch_focus():
             f'<div class="fx-tags">{tags}</div><div class="fx-chips">{chips}</div></div></div>')
     if items:
         more = len(shown) - FOCUS_MAX_CARDS
-        tail = f'<div class="fx-empty">還有 {more} 則較早的事件未顯示</div>' if more > 0 else ""
+        tail = f'<div class="fx-empty">還有 {more} 檔較早有事件的股票未顯示</div>' if more > 0 else ""
         st.markdown(f'<div class="fx-feed">{"".join(items)}{tail}</div>', unsafe_allow_html=True)
     else:
         st.markdown('<div class="fx-empty">目前還沒有符合條件的事件。</div>', unsafe_allow_html=True)
