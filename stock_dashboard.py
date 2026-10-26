@@ -2542,11 +2542,6 @@ def _render_footer() -> None:
     </div>
     <div class="footer-bottom">© 2026 台股即時互動式分析系統</div></footer>''', unsafe_allow_html=True)
 
-_JUMP_LABELS = {
-    "strategy-01-focus": "盤中焦點", "strategy-02-chips": "個股特徵", "strategy-03-trend": "趨勢", "strategy-04-kline": "K 線", "strategy-05-volume": "成交量",
-    "strategy-06-entry": "進場建議", "strategy-07-tdcc": "大戶散戶", "strategy-08-trades": "成交明細",
-    "strategy-09-institutions": "三大法人",
-}
 _LIVE_SECTIONS = {"strategy-01-focus", "strategy-03-trend", "strategy-05-volume", "strategy-08-trades"}
 _SKELETON_HTML = '<div class="skeleton"><span></span><span></span><span class="short"></span></div>'
 
@@ -2575,15 +2570,6 @@ def render_strategy_workspace() -> None:
     ]
     # 兩段式：剛切換到這頁或換股票時，先送出全部區塊標題與「載入中」，舊頁面會立刻被替換；
     # 接著才依序抓資料、畫圖，填回各自的位置。盤中自動刷新不顯示「載入中」，避免圖表閃爍。
-    status = (f'<span class="live-badge on">盤中即時更新・每 {REFRESH_INTERVAL} 秒</span>' if REFRESH_INTERVAL
-              else '<span class="live-badge">非交易時段・顯示最近交易日資料</span>')
-    jumps = "".join(
-        f'<a class="jump-chip" data-jump="{key}">{_JUMP_LABELS.get(key, title)}</a>'
-        for key, title, _ in sections
-    )
-    st.markdown(f'<div translate="no" class="jump-bar">{status}<span class="jump-label">跳到</span>{jumps}</div>',
-                unsafe_allow_html=True)
-
     selected = st.session_state.get("selected")
     fresh = st.session_state.get("_strategy_view") != selected
     st.session_state["_strategy_view"] = selected
