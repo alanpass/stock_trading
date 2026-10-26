@@ -4210,6 +4210,92 @@ def render_trend():
 # ============================================================
 # Technical K
 # ============================================================
+
+# Canvas 繪圖的 K 線（TradingView Lightweight Charts）：十字游標移動不需重畫整張 SVG，大量 K 棒也順。
+_LWC_URL = "https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.3/dist/lightweight-charts.standalone.production.js"
+
+
+def _kline_chart_html(d: pd.DataFrame, daily: bool, mas: list, reset_version: int = 0) -> str:
+    stamps = pd.to_datetime(d["date"], errors="coerce")
+    if daily:
+        times = stamps.dt.strftime("%Y-%m-%d").tolist()
+        vol_div, vol_unit = 1000, "張"     # 日 K 成交量單位是股
+    else:
+        # 圖表時間以 UTC 顯示，直接把台北時間當成 UTC 秒數傳入，畫面上就是台北時間
+        times = [int((t.tz_localize(None) if t.tzinfo else t).timestamp()) for t in stamps]
+        vol_div, vol_unit = 1, "張"
+    o, h, l, c, v = (d[k].astype(float).tolist() for k in ("open", "high", "low", "close", "volume"))
+    prev = [np.nan] + c[:-1]
+    bars = [{"time": t, "open": a, "high": b, "low": e, "close": f, "prev": None if np.isnan(pc) else pc,
+             "vol": round(x / vol_div)} for t, a, b, e, f, pc, x in zip(times, o, h, l, c, prev, v)]
+    lines = [{"label": label, "color": color,
+              "data": [{"time": t, "value": round(float(y), 4)} for t, y in zip(times, ys) if pd.notna(y)]}
+             for label, color, ys in mas]
+    payload = json.dumps({"bars": bars, "mas": lines, "daily": daily, "unit": vol_unit, "v": reset_version},
+                         ensure_ascii=False)
+    return """<!doctype html><html><head><meta charset="utf-8">
+<style>
+html,body{margin:0;height:100%;background:#fff;font-family:Arial,"Microsoft JhengHei",sans-serif}
+#wrap{position:relative;height:100%}#chart{position:absolute;inset:0}
+#legend{position:absolute;left:8px;top:6px;z-index:3;font-size:12.5px;line-height:1.55;color:#3e3a3a;
+  background:rgba(255,255,255,.86);padding:3px 8px;border-radius:6px;pointer-events:none;font-variant-numeric:tabular-nums}
+#legend b{font-weight:700}#legend .up{color:#e04545}#legend .dn{color:#14935a}#legend .ma{margin-right:10px}
+#err{display:none;padding:20px;color:#a33;font-size:13px}
+</style></head><body><div id="wrap"><div id="chart"></div><div id="legend"></div><div id="err">K 線圖元件載入失敗，請重新整理頁面。</div></div>
+<script src="__LWC__"></script>
+<script>
+const P = __DATA__;
+if (!window.LightweightCharts) { document.getElementById('err').style.display = 'block'; }
+else {
+const el = document.getElementById('chart'), lg = document.getElementById('legend');
+const chart = LightweightCharts.createChart(el, {
+  autoSize: true,
+  layout: {background: {color: '#ffffff'}, textColor: '#5b5555', fontSize: 11},
+  grid: {vertLines: {color: '#eef1f4'}, horzLines: {color: '#eef1f4'}},
+  crosshair: {mode: LightweightCharts.CrosshairMode.Normal},
+  rightPriceScale: {borderColor: '#e2dcdc', scaleMargins: {top: 0.08, bottom: 0.26}},
+  timeScale: {borderColor: '#e2dcdc', timeVisible: !P.daily, secondsVisible: false, rightOffset: 3,
+              minBarSpacing: 0.5},
+  localization: {locale: 'zh-TW',
+    timeFormatter: t => typeof t === 'number'
+      ? new Date(t * 1000).toISOString().slice(P.daily ? 0 : 5, 16).replace('T', ' ')
+      : (typeof t === 'string' ? t : `${t.year}-${String(t.month).padStart(2,'0')}-${String(t.day).padStart(2,'0')}`)},
+});
+const candle = chart.addCandlestickSeries({upColor: '#ef4444', downColor: '#10b981', borderUpColor: '#ef4444',
+  borderDownColor: '#10b981', wickUpColor: '#ef4444', wickDownColor: '#10b981', priceLineVisible: false});
+candle.setData(P.bars.map(b => ({time: b.time, open: b.open, high: b.high, low: b.low, close: b.close})));
+const vol = chart.addHistogramSeries({priceScaleId: 'vol', priceFormat: {type: 'volume'}, lastValueVisible: false,
+  priceLineVisible: false});
+chart.priceScale('vol').applyOptions({scaleMargins: {top: 0.78, bottom: 0}});
+vol.setData(P.bars.map(b => ({time: b.time, value: b.vol, color: b.close >= b.open ? 'rgba(239,68,68,.55)' : 'rgba(16,185,129,.55)'})));
+const maSeries = P.mas.map(m => {
+  const s = chart.addLineSeries({color: m.color, lineWidth: 1.4, priceLineVisible: false, lastValueVisible: false,
+    crosshairMarkerVisible: false});
+  s.setData(m.data);
+  return {m, s, map: new Map(m.data.map(x => [String(x.time), x.value]))};
+});
+const byTime = new Map(P.bars.map(b => [String(b.time), b]));
+const fmt = x => x == null ? '--' : x.toLocaleString('zh-TW', {maximumFractionDigits: 2});
+const key = t => typeof t === 'object' && t ? `${t.year}-${String(t.month).padStart(2,'0')}-${String(t.day).padStart(2,'0')}` : String(t);
+function show(b) {
+  if (!b) return;
+  const ch = b.prev == null ? null : b.close - b.prev, pct = ch == null ? null : ch / b.prev * 100;
+  const cls = ch > 0 ? 'up' : ch < 0 ? 'dn' : '';
+  const when = typeof b.time === 'number' ? new Date(b.time * 1000).toISOString().slice(5, 16).replace('T', ' ') : b.time;
+  const mas = maSeries.map(x => { const v = x.map.get(String(b.time));
+    return v == null ? '' : `<span class="ma" style="color:${x.m.color}">${x.m.label} ${fmt(v)}</span>`; }).join('');
+  lg.innerHTML = `<b>${when}</b>　開 ${fmt(b.open)}　高 ${fmt(b.high)}　低 ${fmt(b.low)}　收 <b class="${cls}">${fmt(b.close)}</b>`
+    + (ch == null ? '' : `　<span class="${cls}">${ch > 0 ? '▲' : ch < 0 ? '▼' : ''}${fmt(Math.abs(ch))}（${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%）</span>`)
+    + `　量 ${fmt(b.vol)} ${P.unit}` + (mas ? `<br>${mas}` : '');
+}
+const last = P.bars[P.bars.length - 1];
+show(last);
+chart.subscribeCrosshairMove(p => show(p && p.time !== undefined ? byTime.get(key(p.time)) : last));
+chart.timeScale().fitContent();
+}
+</script></body></html>""".replace("__LWC__", _LWC_URL).replace("__DATA__", payload)
+
+
 def render_kline():
     """互動式技術 K 線：日期簡寫、交易日等距排列，價格與成交量共用時間軸。"""
     selected = st.session_state.selected
@@ -4302,9 +4388,6 @@ def render_kline():
             d["volume"] = 0
         d["volume"] = d["volume"].fillna(0).clip(lower=0)
 
-        chart_x, display_labels = _chart_time_labels(d, daily=(k_period == "日K"))
-        tickvals, ticktext = _sample_axis_ticks(chart_x, display_labels, max_ticks=9)
-
         ma_specs = [
             ("MA5", 5, True), ("MA10", 10, False), ("MA20", 20, True),
             ("MA60", 60, True), ("MA120", 120, False), ("MA240", 240, False),
@@ -4319,118 +4402,11 @@ def render_kline():
                     key=f"technical_ma_{selected}_{k_period}_{history_period}_{label}",
                 )
 
-        # 沒有圖內主標題／子圖標題，讓 K 棒與 X 軸有更大的可用空間。
-        fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.035,
-                            row_heights=[0.76, 0.24])
-        fig.add_trace(
-            go.Candlestick(
-                x=chart_x,
-                open=d["open"],
-                high=d["high"],
-                low=d["low"],
-                close=d["close"],
-                name="K 線",
-                increasing_line_color="#ef4444",
-                decreasing_line_color="#10b981",
-                increasing_fillcolor="#ef4444",
-                decreasing_fillcolor="#10b981",
-            ),
-            row=1,
-            col=1,
-        )
-
         ma_colors = {5: "#2563eb", 10: "#f59e0b", 20: "#8b5cf6", 60: "#0891b2", 120: "#64748b", 240: "#a16207"}
-        for label, window, _default_on in ma_specs:
-            if enabled_ma.get(window):
-                ma = d["close"].rolling(window=window, min_periods=window).mean()
-                fig.add_trace(
-                    go.Scatter(
-                        x=chart_x,
-                        y=ma,
-                        mode="lines",
-                        name=label,
-                        line=dict(width=1.4, color=ma_colors[window]),
-                        connectgaps=False,
-                    ),
-                    row=1,
-                    col=1,
-                )
-
-        volume_colors = [
-            "#ef4444" if close >= open_ else "#10b981"
-            for open_, close in zip(d["open"], d["close"])
-        ]
-        fig.add_trace(
-            go.Bar(
-                x=chart_x,
-                y=d["volume"],
-                name="成交量",
-                marker_color=volume_colors,
-                hovertemplate="%{x}<br>成交量 %{y:,.0f}<extra></extra>",
-            ),
-            row=2,
-            col=1,
-        )
-
-        fig.update_layout(
-            width=1400,
-            height=760,
-            autosize=False,
-            margin=dict(l=38, r=45, t=28, b=36),
-            hovermode="x unified",
-            dragmode="zoom",
-            showlegend=True,
-            legend=dict(orientation="h", yanchor="bottom", y=1.0, xanchor="left", x=0),
-            uirevision=f"{selected}-{k_period}-{history_period}-{reset_version}",
-            bargap=0.18,
-        )
-        for row_no in (1, 2):
-            fig.update_xaxes(
-                type="category",
-                categoryorder="array",
-                categoryarray=chart_x,
-                tickmode="array",
-                tickvals=tickvals,
-                ticktext=ticktext,
-                range=[-0.5, len(chart_x) - 0.5],
-                minallowed=-0.5,
-                maxallowed=len(chart_x) - 0.5,
-                showgrid=True,
-                gridcolor="#e6eaee",
-                rangeslider_visible=False,
-                row=row_no,
-                col=1,
-            )
-        # 限制座標軸不得超出完整 K 線原始視圖，避免縮小到原圖之外或未放大就平移。
-        price_low = float(d["low"].min())
-        price_high = float(d["high"].max())
-        price_pad = max((price_high - price_low) * 0.04, abs(price_high) * 0.005, 0.01)
-        price_range = [price_low - price_pad, price_high + price_pad]
-        volume_top = max(float(d["volume"].max()), 1.0) * 1.08
-        volume_range = [0.0, volume_top]
-        fig.update_yaxes(
-            range=price_range, minallowed=price_range[0], maxallowed=price_range[1],
-            showgrid=True, gridcolor="#e6eaee", row=1, col=1,
-        )
-        fig.update_yaxes(
-            range=volume_range, minallowed=volume_range[0], maxallowed=volume_range[1],
-            showgrid=True, gridcolor="#e6eaee", row=2, col=1,
-        )
-
-        st.caption("操作：滑鼠滾輪放大／縮小；雙擊重設回完整原圖，也可按「回到最新」。放大後切換工具列平移工具可移動視窗；原始大小時軸範圍鎖定，不能任意位移或縮小到原圖以外。畫布固定 1400×760，非交易日不占用圖表空間。")
-        st.plotly_chart(
-            fig,
-            use_container_width=False,
-            key=f"kline_v2_{selected}_{k_period}_{history_period}_{reset_version}",
-            config={
-                "scrollZoom": True,
-                "doubleClick": "reset",
-                "displaylogo": False,
-                "responsive": False,
-                "displayModeBar": True,
-                "modeBarButtonsToRemove": ["zoomOut2d", "autoScale2d", "resetScale2d"],
-            },
-        )
+        mas = [(label, ma_colors[window], d["close"].rolling(window=window, min_periods=window).mean())
+               for label, window, _default_on in ma_specs if enabled_ma.get(window)]
+        st.caption("滑鼠移到 K 棒上，左上角顯示當天開高低收、漲跌與成交量；滾輪縮放、按住拖曳平移，按「回到最新」重設。非交易日不占用圖表空間。")
+        st.iframe(_kline_chart_html(d, daily=(k_period == "日K"), mas=mas, reset_version=reset_version), height=640)
     except Exception as e:
         st.error(f"{k_period} 資料取得失敗：{e}")
 

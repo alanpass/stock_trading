@@ -57,6 +57,11 @@ def verify_password(password: str, record: Any) -> bool:
         return False
 
 
+def _in_secrets(email: str) -> bool:
+    record = _users().get(str(email or "").strip().lower())
+    return isinstance(record, str) and bool(record)
+
+
 def _account_login_allowed(email: str) -> bool:
     """既有帳號維持原行為；由申請流程建立的新帳號需通過資料庫啟用時間檢查。"""
     try:
@@ -65,13 +70,15 @@ def _account_login_allowed(email: str) -> bool:
             return True
         state = account_provisioning.account_login_state(email)
         if state.get("error"):
-            return False
+            # 資料庫連不上（例如 Supabase 免費方案閒置自動暫停）時，Secrets 內的既有帳號照常登入；
+            # 只有資料庫申請的新帳號 fail-closed。
+            return _in_secrets(email)
         if state.get("found"):
             return bool(state.get("allowed"))
         return True
     except Exception:
         # 資料庫已參與帳號啟用流程時採 fail-closed，避免繞過 5 分鐘啟用延遲。
-        return not bool(os.getenv("ACCOUNT_DB_URL", "").strip() and os.getenv("ACCOUNT_DB_SERVICE_ROLE_KEY", "").strip())
+        return _in_secrets(email) or not bool(os.getenv("ACCOUNT_DB_URL", "").strip() and os.getenv("ACCOUNT_DB_SERVICE_ROLE_KEY", "").strip())
 
 
 def _credential_record(email: str) -> str | None:
