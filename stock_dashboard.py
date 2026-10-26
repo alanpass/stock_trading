@@ -94,6 +94,9 @@ from stock_notes_ui import render_stock_notes_workspace, render_stock_note_for_s
 from ai_backend import is_agent_status, status_label, AGENT_LABEL
 from us_industry_indicators import US_INDUSTRY_INDICATORS, get_us_indicator_symbols, fetch_us_indicators
 from celebrity_holdings import POLITICIANS, fetch_all_gurus
+import chip_signals
+import stock_features
+from global_markets import GLOBAL_INDICATORS, fetch_indicator, vix_regime
 from html import escape as _esc
 
 
@@ -1237,6 +1240,54 @@ _UX_CSS = """<style>
 .stButton button,.stFormSubmitButton button{transition:transform .12s ease,box-shadow .2s ease}
 .stButton button:active,.stFormSubmitButton button:active{transform:scale(.97)}
 
+/* 籌碼訊號：看多紅、看空綠 */
+.sig-row{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 12px}
+.sig{display:inline-block;font-size:13px;font-weight:700;line-height:1.5;padding:2px 11px;border-radius:999px;border:1px solid;white-space:nowrap}
+.sig-bull{color:#d23c3c;background:#fdeeee;border-color:#f2c3c3}
+.sig-bear{color:#14874f;background:#e8f6ee;border-color:#bde3cd}
+.sig-flat{color:#6b6464;background:#f3f1f1;border-color:#e2dcdc}
+.sig-none,.sig-wait{font-size:12.5px;color:#8a8080}
+.sig-wait{animation:uxFade 1s ease-in-out infinite alternate}
+.wc-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;position:relative;z-index:1;pointer-events:none}
+/* Streamlit 的 markdown 區塊底部有 -1rem 邊距；自選股卡片多了一列訊號後會被吃進卡片底邊，這裡歸零讓卡片依內容長高 */
+body .stApp.stApp [class*="st-key-wc_"] [data-testid="stMarkdownContainer"]:has(> .wc-info){margin-bottom:0!important}
+.wc-chips:empty{display:none}
+.wc-chips .sig{font-size:10.5px;padding:0 6px}
+.wc-chips .sig-wait{font-size:10.5px}
+.sig-table-wrap{overflow-x:auto}
+.sig-table{width:100%;border-collapse:collapse;font-size:14px}
+.sig-table th{text-align:left;font-weight:700;color:#6b6464;background:#faf6f6;padding:8px 10px;border-bottom:1px solid #eadede;white-space:nowrap}
+.sig-table td{padding:8px 10px;border-bottom:1px solid #f1eaea;font-variant-numeric:tabular-nums}
+.sig-t-bull{color:#d23c3c;font-weight:700}.sig-t-bear{color:#14874f;font-weight:700}.sig-t-flat,.sig-muted{color:#8a8080}
+
+/* 個股符合特徵：依類別上色（籌碼橘、價量黃、基本藍、技術紫、消息紅），圓點＝偏多紅／偏空綠 */
+.feat-grid{display:grid;grid-template-columns:72px 1fr;gap:14px 16px;align-items:start;margin:4px 0 10px}
+.feat-cat{font-size:14px;font-weight:700;color:#7a7171;padding-top:5px}
+.feat-tags{display:flex;flex-wrap:wrap;gap:8px}
+.feat{display:inline-flex;align-items:center;gap:5px;font-size:14px;font-weight:700;line-height:1.5;padding:3px 13px;border-radius:999px;border:1.5px solid;white-space:nowrap;cursor:help}
+.feat-news{color:#b4372f;background:#fdf0ef;border-color:#efc4c0}
+.feat-chip{color:#b5651d;background:#fdf4ea;border-color:#ecc9a3}
+.feat-pv{color:#94750a;background:#fcf8e6;border-color:#e6d68f}
+.feat-fund{color:#1f6aa5;background:#eef5fb;border-color:#b5d2ea}
+.feat-tech{color:#6a4fb3;background:#f3f0fb;border-color:#cfc3ee}
+.feat-t-bull::before,.feat-t-bear::before,.feat-dot{content:"";display:inline-block;width:7px;height:7px;border-radius:50%}
+.feat-t-bull::before,.feat-dot.bull{background:#d23c3c}
+.feat-t-bear::before,.feat-dot.bear{background:#14874f}
+.feat-none{font-size:14px;color:#8a8080;padding-top:5px}
+.feat-why td:nth-child(-n+2){white-space:nowrap}
+.feat-legend{font-size:12.5px;color:#8a8080;margin:2px 0 8px;display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px}
+@media (max-width:640px){.feat-grid{grid-template-columns:1fr;gap:6px}.feat-cat{padding-top:8px}.feat{font-size:13px;padding:2px 11px}}
+
+/* 國際風向球卡片 */
+.gm-card{border:1px solid #eee3e3;border-radius:12px;padding:14px 16px 8px;background:#fff}
+.gm-head{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.gm-head b{font-size:15px;color:#3d3838}
+.gm-val{font-size:28px;font-weight:800;color:#2b2626;font-variant-numeric:tabular-nums;margin-top:4px}
+.gm-val small{font-size:12px;font-weight:500;color:#8a8080;margin-left:6px}
+.gm-chg{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+.gm-note{font-size:12.5px;color:#7a7171;margin-top:6px;line-height:1.6}
+.gm-asof{font-size:11.5px;color:#a29999;margin-top:2px}
+
 /* 回到頂端 */
 #ux-top{position:fixed;right:22px;bottom:26px;width:44px;height:44px;border-radius:50%;border:0;background:#8e2b2f;color:#fff;font-size:20px;
   box-shadow:0 8px 20px rgba(142,43,47,.35);cursor:pointer;opacity:0;transform:translateY(16px) scale(.9);pointer-events:none;transition:opacity .3s,transform .3s;z-index:9999}
@@ -1856,6 +1907,7 @@ def render_finance_workspace() -> None:
         '<div class="content-heading"><div class="eyebrow">DAILY FINANCE</div><h1>財經資訊</h1></div>',
         unsafe_allow_html=True,
     )
+    render_global_markets()
     _render_finance_body()
 
 
@@ -2368,12 +2420,12 @@ SITE_NAV = [
 SITE_NAV_SUB = {
     "home": [("五步驟看懂台股", "五步驟看懂台股"), ("關於台股", "關於台股"), ("每日財經資訊", "每日財經資訊"),
              ("專注台股", "專注台股"), ("聯絡資訊", "聯絡資訊")],
-    "finance": [("AI 今日重點", "AI 今日重點"), ("法說會摘要", "法說會摘要"), ("財經新聞摘要", "財經新聞摘要"),
+    "finance": [("國際風向球：原油、VIX", "國際風向球"), ("AI 今日重點", "AI 今日重點"), ("法說會摘要", "法說會摘要"), ("財經新聞摘要", "財經新聞摘要"),
                 ("名人持股：政治人物", "名人投資人持股", "政治人物"), ("名人持股：投資大師 13F", "名人投資人持股", "投資大師")],
     "rotation": [("產業族群走勢", "產業族群"), ("產業輪動圖", "產業輪動圖"), ("產業報酬與輪動狀態", "產業報酬與輪動狀態"),
                  ("美股產業指標股", "美股產業指標股"), ("本週象限變化", "本週象限變化"), ("成分股漲跌前十", "成分股漲跌前十"),
                  ("輪動解讀與資料限制", "輪動解讀與資料限制")],
-    "strategy": [("股價趨勢", "股價趨勢"), ("技術 K 線", "技術 K 線"), ("成交量", "成交量"), ("進場建議分析", "進場建議分析系統"),
+    "strategy": [("個股符合特徵", "個股符合特徵"), ("股價趨勢", "股價趨勢"), ("技術 K 線", "技術 K 線"), ("成交量", "成交量"), ("進場建議分析", "進場建議分析系統"),
                  ("大戶 VS 散戶", "大戶 VS 散戶"), ("交易明細", "交易明細"), ("三大法人", "三大法人")],
     "trend": [("期間統計", "期間統計")] + [(c, c) for c in TREND_CATEGORY_ORDER],
     "future": [("AI 隔日預測", "AI 隔日預測"), ("市場情報與利多／利空", "市場情報"), ("模型研究 Agent", "模型研究 Agent"),
@@ -2428,7 +2480,7 @@ def _render_footer() -> None:
     <div class="footer-bottom">© 2026 台股即時互動式分析系統</div></footer>''', unsafe_allow_html=True)
 
 _JUMP_LABELS = {
-    "strategy-03-trend": "趨勢", "strategy-04-kline": "K 線", "strategy-05-volume": "成交量",
+    "strategy-02-chips": "個股特徵", "strategy-03-trend": "趨勢", "strategy-04-kline": "K 線", "strategy-05-volume": "成交量",
     "strategy-06-entry": "進場建議", "strategy-07-tdcc": "大戶散戶", "strategy-08-trades": "成交明細",
     "strategy-09-institutions": "三大法人",
 }
@@ -2448,13 +2500,14 @@ def render_strategy_workspace() -> None:
     render_strategy_search()
 
     sections = [
-        ("strategy-03-trend", "01｜股價趨勢", render_trend),
-        ("strategy-04-kline", "02｜技術 K 線", render_kline),
-        ("strategy-05-volume", "03｜成交量", render_volume_snapshot),
-        ("strategy-06-entry", "04｜進場建議分析系統", render_entry_prediction),
-        ("strategy-07-tdcc", "05｜大戶 VS 散戶持有股比率", render_tdcc),
-        ("strategy-08-trades", "06｜交易明細（台灣時間）", render_trades),
-        ("strategy-09-institutions", "07｜三大法人 10 交易日買賣超", render_institutions),
+        ("strategy-02-chips", "01｜個股符合特徵", render_stock_features),
+        ("strategy-03-trend", "02｜股價趨勢", render_trend),
+        ("strategy-04-kline", "03｜技術 K 線", render_kline),
+        ("strategy-05-volume", "04｜成交量", render_volume_snapshot),
+        ("strategy-06-entry", "05｜進場建議分析系統", render_entry_prediction),
+        ("strategy-07-tdcc", "06｜大戶 VS 散戶持有股比率", render_tdcc),
+        ("strategy-08-trades", "07｜交易明細（台灣時間）", render_trades),
+        ("strategy-09-institutions", "08｜三大法人 10 交易日買賣超", render_institutions),
     ]
     # 兩段式：剛切換到這頁或換股票時，先送出全部區塊標題與「載入中」，舊頁面會立刻被替換；
     # 接著才依序抓資料、畫圖，填回各自的位置。盤中自動刷新不顯示「載入中」，避免圖表閃爍。
@@ -2484,8 +2537,11 @@ def render_strategy_workspace() -> None:
     live_every = REFRESH_INTERVAL if not st.session_state.get("ai_busy", False) else None
 
     # 自選股固定在左側欄（Streamlit 側邊欄本身固定、可獨立捲動），不會蓋到右側的分析圖表。
+    # 自選股的籌碼訊號在背景計算；還有沒算完的就每 5 秒重畫側欄一次，算好就自動出現
+    chips_pending = any(v is None for v in chip_signals.get_nonblocking(st.session_state.watchlist).values())
+    side_every = max(live_every, 15) if live_every else (5 if chips_pending else None)
     with st.sidebar:
-        st.fragment(_render_sidebar_watch, run_every=max(live_every, 15) if live_every else None)()
+        st.fragment(_render_sidebar_watch, run_every=side_every)()
 
     for key, body, render in slots:
         with body.container():
@@ -3882,6 +3938,7 @@ def _watch_remove(code: str) -> None:
 
 def render_watchlist(compact: bool = False):
     rows, errors = watch_rows(tuple(st.session_state.watchlist))
+    chip_map = chip_signals.get_nonblocking(st.session_state.watchlist) if compact else {}
     if not compact:
         st.subheader("自選股即時行情")
     if not rows.empty and "data_date" in rows.columns:
@@ -3971,7 +4028,9 @@ def render_watchlist(compact: bool = False):
                                 f"<span class='wc-price' style='color:{vcolor}'>{price_txt}</span>"
                                 f"<span style='color:{vcolor}'>{ch_txt}</span>"
                                 f"<span style='color:{vcolor}'>{cp_txt}</span>"
-                                "</div></div>",
+                                "</div>"
+                                f"<div class='wc-chips'>{_signal_chips_html(chip_map.get(clean_symbol(r['code'])), empty_text='', pending_text='籌碼計算中…')}</div>"
+                                "</div>",
                                 unsafe_allow_html=True,
                             )
                             if st.button("\u200b", key=f"watch_select_{r['code']}_{idx}", help=f"選取 {r['name']}（{r['code']}）", use_container_width=True):
@@ -4626,6 +4685,156 @@ def render_entry_prediction():
 # ============================================================
 # Big vs retail
 # ============================================================
+# ============================================================
+# Chip signals - 外資／投信／主力連買連賣、融資融券增減、大戶散戶（看多紅、看空綠）
+# ============================================================
+_SIG_WORDS = {"foreign": ("買超", "賣超"), "trust": ("買超", "賣超"), "main": ("買超", "賣超"),
+              "margin": ("增加", "減少"), "short": ("增加", "減少")}
+_SIG_BULL_WHEN_UP = {"foreign": True, "trust": True, "main": True, "margin": True, "short": False}
+
+
+def _signal_chips_html(res: dict | None, empty_text: str = "目前沒有連續 3 日以上的籌碼訊號", pending_text: str = "籌碼計算中…") -> str:
+    if res is None:
+        return f'<span class="sig-wait">{pending_text}</span>' if pending_text else ""
+    sigs = res.get("signals") or []
+    if not sigs:
+        return f'<span class="sig-none">{empty_text}</span>' if empty_text else ""
+    return "".join(f'<span class="sig sig-{s["tone"]}">{_esc(s["text"])}</span>' for s in sigs)
+
+
+_FEAT_CLASS = {"消息面": "news", "籌碼面": "chip", "價量面": "pv", "基本面": "fund", "技術面": "tech"}
+
+
+@st.cache_data(ttl=900, show_spinner=False, max_entries=128)
+def _cached_stock_features(code: str) -> dict:
+    tickers = get_all_tickers()
+    hit = tickers.loc[tickers["symbol"] == code, "name"] if "symbol" in tickers.columns else pd.Series(dtype=str)
+    return stock_features.compute(
+        code, get_history(code, 420), name=str(hit.iloc[0]) if len(hit) else "",
+        news=_recent_news_items(days=2), earnings=_recent_earnings_items(days=5),
+        chips=chip_signals.get_blocking(code, timeout=90),
+    )
+
+
+def render_stock_features():
+    """個股符合特徵：消息面／籌碼面／價量面／基本面／技術面標籤；滑過標籤看判斷依據，下方附籌碼明細。"""
+    selected = st.session_state.selected
+    with st.spinner("整理個股特徵…（第一次約 10～30 秒）"):
+        try:
+            res = _cached_stock_features(selected)
+        except Exception as exc:
+            st.warning(f"個股特徵暫時取不到：{type(exc).__name__}")
+            return
+    rows = []
+    for cat, tags in res["groups"].items():
+        cls = _FEAT_CLASS[cat]
+        chips = "".join(f'<span class="feat feat-{cls} feat-t-{t["tone"]}" title="{_esc(t["why"])}">{_esc(t["text"])}</span>'
+                        for t in tags) or '<span class="feat-none">無</span>'
+        rows.append(f'<div class="feat-cat">{cat}</div><div class="feat-tags">{chips}</div>')
+    asof = res.get("asof") or "—"
+    st.markdown(f'<div class="feat-grid">{"".join(rows)}</div>'
+                f'<div class="feat-legend"><span><span class="feat-dot bull"></span> 偏多</span><span><span class="feat-dot bear"></span> 偏空</span>'
+                f'<span>沒有圓點＝中性</span><span>全市場資料：{asof} 收盤</span><span>滑鼠移到標籤上可看判斷依據</span></div>', unsafe_allow_html=True)
+    with st.expander("判斷依據與門檻"):
+        lines = [f'<tr><td>{cat}</td><td><b>{_esc(t["text"])}</b></td><td>{_esc(t["why"])}</td></tr>'
+                 for cat, tags in res["groups"].items() for t in tags]
+        if lines:
+            st.markdown('<div class="sig-table-wrap"><table class="sig-table feat-why"><thead><tr><th>類別</th><th>特徵</th><th>依據</th></tr></thead>'
+                        f'<tbody>{"".join(lines)}</tbody></table></div>', unsafe_allow_html=True)
+        st.caption(f"熱門＝買賣超金額、成交金額或當沖金額為全市場股票前 {stock_features.HOT_RANK} 名（不含 ETF）。"
+                   f"高當沖比 ≥ {stock_features.DAYTRADE_RATIO:.0%}、高融資＝融資使用率 ≥ {stock_features.MARGIN_USAGE:.0%}、"
+                   f"外資高持股 ≥ {stock_features.FOREIGN_HOLD:.0f}%、主力大買賣超 ≥ 成交量 {stock_features.MAIN_FORCE_SHARE:.0%}、"
+                   f"大戶（≥400 張）／散戶（≤50 張）持股週變化 ≥ {stock_features.HOLDER_CHANGE} 個百分點。"
+                   f"週／月強勢＝5 日／20 日漲跌 ≥ {stock_features.WEEK_STRONG:.0f}%／{stock_features.MONTH_STRONG:.0f}%；"
+                   f"營收高成長＝最新月營收年增 ≥ {stock_features.REVENUE_GROWTH:.0f}%；高本益比 ≥ {stock_features.PE_HIGH:.0f} 倍、"
+                   f"高股息＝殖利率 ≥ {stock_features.YIELD_HIGH:.0f}%；連續配息＝最近 {stock_features.DIVIDEND_YEARS} 年每年配息；"
+                   "大股本 ≥ 100 億。週線／月線／季線＝5／20／60 日均線。"
+                   "資料：TWSE／TPEx 收盤行情、三大法人、當沖、融資、外資持股、本益比、月營收、公司基本資料、處置注意公告，"
+                   "富邦 e-broker 主力進出、TDCC 集保、Yahoo Finance 配息、鉅亨新聞與 Fugle 法說會。不構成投資建議。")
+    with st.expander("籌碼明細：外資／投信／主力／融資融券連續天數"):
+        render_chip_signals(show_chips=False)
+
+
+def render_chip_signals(show_chips: bool = True):
+    selected = st.session_state.selected
+    with st.spinner("計算籌碼訊號…（第一次約 5～20 秒）"):
+        res = chip_signals.get_blocking(selected, timeout=90)
+    if res is None:
+        st.warning("籌碼資料暫時取不到，請稍後再試。")
+        return
+    if show_chips:
+        st.markdown(f'<div class="sig-row">{_signal_chips_html(res)}</div>', unsafe_allow_html=True)
+
+    trs = []
+    for r in res["rows"]:
+        up_word, down_word = _SIG_WORDS[r["key"]]
+        v, s = r["latest"], r["streak"]
+        if v is None or v != v:
+            trs.append(f'<tr><td>{r["label"]}</td><td colspan="2" class="sig-muted">沒有資料</td></tr>')
+            continue
+        tone = "flat" if v == 0 else ("bull" if (v > 0) == _SIG_BULL_WHEN_UP[r["key"]] else "bear")
+        latest = "持平" if v == 0 else f'{up_word if v > 0 else down_word} {abs(v):,.0f} {r["unit"]}'
+        streak = "—" if s == 0 else f'連續 {abs(s)} 日{up_word if s > 0 else down_word}'
+        trs.append(f'<tr><td>{r["label"]}</td><td class="sig-t-{tone}">{latest}</td><td class="sig-t-{tone}">{streak}</td></tr>')
+    h = res.get("holder")
+    if h:
+        tone = "bull" if h["d_big"] > 0 > h["d_retail"] else "bear" if h["d_big"] < 0 < h["d_retail"] else "flat"
+        trs.append(
+            f'<tr><td>大戶／散戶</td><td class="sig-t-{tone}">大戶 {h["big_pct"]:.2f}%（{h["d_big"]:+.2f}）・散戶 {h["retail_pct"]:.2f}%（{h["d_retail"]:+.2f}）</td>'
+            f'<td class="sig-muted">集保 {h["prev"][4:6]}/{h["prev"][6:]} → {h["asof"][4:6]}/{h["asof"][6:]}</td></tr>')
+    asof = next((r["asof"] for r in res["rows"] if r.get("asof")), "")
+    st.markdown(
+        f'<div class="sig-table-wrap"><table class="sig-table"><thead><tr><th>項目</th><th>最新一日（{asof}）</th><th>連續天數</th></tr></thead>'
+        f'<tbody>{"".join(trs)}</tbody></table></div>',
+        unsafe_allow_html=True,
+    )
+    st.caption("紅字＝看多、綠字＝看空；連續 3 日以上才列為上方訊號（最多往回看 10 個交易日）。融資增視為散戶看多、融券增視為看空。"
+               "主力＝前 15 大買超券商合計減前 15 大賣超券商合計；大戶 ≥400 張、散戶 ≤50 張，比較最近兩週集保資料。"
+               "資料：TWSE／TPEx 三大法人與融資融券、富邦 e-broker 主力進出、TDCC 集保。")
+
+
+@st.cache_data(ttl=900, show_spinner=False)
+def _cached_global_indicator(symbol: str) -> dict:
+    return fetch_indicator(symbol)
+
+
+def render_global_markets() -> None:
+    """財經資訊頁：國際風向球（布蘭特原油、VIX）。"""
+    st.markdown('<div class="feature-section-title">國際風向球</div>', unsafe_allow_html=True)
+    cols = st.columns(len(GLOBAL_INDICATORS), gap="medium")
+    for col, ind in zip(cols, GLOBAL_INDICATORS):
+        with col:
+            try:
+                d = _cached_global_indicator(ind["symbol"])
+            except Exception as exc:
+                st.warning(f'{ind["name"]}資料暫時取不到：{type(exc).__name__}')
+                continue
+            chg, pct = d.get("change"), d.get("change_pct")
+            color = "#d23c3c" if (chg or 0) > 0 else "#14874f" if (chg or 0) < 0 else "#6b6464"
+            chg_txt = "—" if chg is None else f"{chg:+.2f}（{pct:+.2f}%）"
+            badge = ""
+            if ind["symbol"] == "^VIX":
+                word, tone = vix_regime(d["last"])
+                badge = f'<span class="sig sig-{tone}">{word}</span>'
+            asof = pd.Timestamp(d["asof"], unit="s", tz="UTC").tz_convert("Asia/Taipei").strftime("%m/%d %H:%M")
+            st.markdown(
+                f'<div class="gm-card"><div class="gm-head"><b>{ind["name"]}</b>{badge}</div>'
+                f'<div class="gm-val">{d["last"]:,.2f}<small>{ind["unit"]}</small></div>'
+                f'<div class="gm-chg" style="color:{color}">{chg_txt}</div>'
+                f'<div class="gm-note">{ind["note"]}</div><div class="gm-asof">更新：{asof}（台灣時間）・Yahoo Finance</div></div>',
+                unsafe_allow_html=True,
+            )
+            hist = d.get("history") or []
+            if hist:
+                xs = [pd.Timestamp(t, unit="s") for t, _ in hist]
+                ys = [v for _, v in hist]
+                fig = go.Figure(go.Scatter(x=xs, y=ys, mode="lines", line=dict(width=2, color="#8e2b2f"),
+                                           hovertemplate="%{x|%m/%d}　%{y:,.2f}<extra></extra>"))
+                fig.update_layout(height=150, margin=dict(l=8, r=8, t=6, b=6), showlegend=False,
+                                  xaxis=dict(showgrid=False, tickformat="%m/%d"), yaxis=dict(showgrid=True, gridcolor="#eee"))
+                st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False}, key=f"gm_{ind['symbol']}")
+
+
 def render_tdcc():
     selected = st.session_state.selected
     try:
