@@ -1,6 +1,6 @@
 ---
 name: pipeline-health
-description: 台股研究流程的維運 Agent。檢查早報、盤後研究、財經新聞、法說會、網站發布與 Windows 排程的狀態，診斷問題並自動修復可安全重跑的步驟；會寄信的步驟不自動重跑。由排程任務每天 10:30 與 20:30 觸發，也可在使用者問「今天流程正常嗎」時執行。
+description: 台股研究流程的維運 Agent。檢查早報、盤後研究、財經新聞、法說會、網站發布、帳號資料庫與 Windows 排程的狀態，診斷問題並自動修復可安全重跑的步驟；會寄信的步驟不自動重跑。由排程任務每天 10:30 與 20:30 觸發，也可在使用者問「今天流程正常嗎」時執行。
 ---
 
 # 研究流程健康檢查
@@ -25,6 +25,7 @@ description: 台股研究流程的維運 Agent。檢查早報、盤後研究、�
 | 盤後研究包建立失敗（`error_no_market_data`、Windows `child_failed`） | 交易日 18:00 前：`python run_after_close_research.py --prepare` | — |
 | 盤後研究或早報 `awaiting_claude`／`notes_written` 但沒寄出 | **不要自動執行 --finalize**（避免重複寄信或晚寄）；在回報中列出，交給使用者決定 | 自動寄信 |
 | Email 寄送失敗（`error_email`、`email_failed`） | 讀狀態檔與 log 找原因（SMTP 驗證、網路） | 自動重寄 |
+| 帳號資料庫連不上（`account_db` 的 problem） | 用 Supabase MCP `get_project`（id `nenkywrmsqjbblzxngbj`）看狀態；`INACTIVE`（閒置自動暫停）就呼叫 `restore_project`，等到 `ACTIVE_HEALTHY` 再檢查一次 | 刪除或改動專案設定 |
 | Windows 排程狀態停在 `running` 超過 2 小時 | 檢查是否還有 python 程序在跑：`powershell -NoProfile -Command "Get-Process python -ErrorAction SilentlyContinue \| Select-Object Id,StartTime,Path"` | 結束任何程序 |
 
 每次修復後再呼叫一次 `pipeline_status` 確認問題消失；同一個步驟最多重試 1 次。
@@ -34,6 +35,6 @@ description: 台股研究流程的維運 Agent。檢查早報、盤後研究、�
 
 用條列回報：
 - 整體：健康／有問題（幾項）
-- 每個流程一行：早報、盤後研究、財經新聞、法說會、網站發布 → 狀態與時間
+- 每個流程一行：早報、盤後研究、財經新聞、法說會、網站發布、帳號資料庫 → 狀態與時間
 - 已自動修復的項目（做了什麼、結果）
 - 需要使用者處理的項目（原因與建議做法）

@@ -10,7 +10,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
+import time
+import tomllib
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -125,6 +128,44 @@ def windows_jobs(day: str) -> dict[str, Any]:
     return out
 
 
+def _secret(name: str) -> str:
+    """環境變數 → 本機 .streamlit/secrets.toml（帳號資料庫設定只放在 secrets）。"""
+    value = os.getenv(name, "").strip()
+    if value:
+        return value
+    try:
+        return str(tomllib.loads((BASE / ".streamlit" / "secrets.toml").read_text(encoding="utf-8")).get(name, "")).strip()
+    except (OSError, ValueError):
+        return ""
+
+
+def account_db_status() -> dict[str, Any]:
+    """查一次網站帳號資料庫（Supabase）。
+
+    Supabase 免費專案閒置約 7 天會自動暫停，暫停後網站登入會失敗（2026-10-26 發生過）；
+    健康檢查每天兩次真的查詢一筆資料，順便讓專案保持活躍。
+    """
+    import requests
+    from account_provisioning import _normalize_project_url
+
+    url, key = _secret("ACCOUNT_DB_URL"), _secret("ACCOUNT_DB_SERVICE_ROLE_KEY")
+    if not (url and key):
+        return {"configured": False, "problems": []}
+    url = _normalize_project_url(url)   # secrets 裡的網址可能帶 /rest/v1/
+    start = time.monotonic()
+    try:
+        r = requests.get(f"{url}/rest/v1/account_requests", params={"select": "email", "limit": "1"},
+                         headers={"apikey": key, "Authorization": "Bearer " + key}, timeout=15)
+        ok, err = r.status_code == 200, None if r.status_code == 200 else f"HTTP {r.status_code}"
+    except requests.RequestException as exc:
+        ok, err = False, type(exc).__name__
+    out = {"configured": True, "ok": ok, "ms": round((time.monotonic() - start) * 1000)}
+    if err:
+        out["error"] = err
+    out["problems"] = [] if ok else [f"帳號資料庫連不上（{err}），網站無法登入新帳號；可能是 Supabase 專案被自動暫停"]
+    return out
+
+
 def pipeline_status(day: str | None = None) -> dict[str, Any]:
     day = day or _now().strftime("%Y-%m-%d")
     report = {
@@ -134,8 +175,9 @@ def pipeline_status(day: str | None = None) -> dict[str, Any]:
         "afterclose": afterclose_status(day),
         "finance": finance_status(),
         "windows_jobs": windows_jobs(day),
+        "account_db": account_db_status(),
     }
-    report["problems"] = [f"{k}: {p}" for k in ("morning", "afterclose", "finance") for p in report[k]["problems"]]
+    report["problems"] = [f"{k}: {p}" for k in ("morning", "afterclose", "finance", "account_db") for p in report[k]["problems"]]
     report["healthy"] = not report["problems"]
     return report
 
