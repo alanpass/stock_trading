@@ -12,6 +12,8 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
+
+from section_ui import section as _sec
 from plotly.subplots import make_subplots
 
 from stock_api import FugleClient, clean_symbol
@@ -320,7 +322,7 @@ def _render_live_chart(symbol: str) -> None:
 def _render_backtest(base: Path) -> None:
     """第 80～41 個交易日前那 40 根日 K：各趨勢分類的股票在期間內平均漲跌（排程每天產生 trend_pattern_backtest.json）。"""
     bt = load_trend_backtest(base)
-    st.markdown('<div class="feature-section-title">期間統計｜第 80～41 個交易日前，各趨勢型態的平均漲跌</div>', unsafe_allow_html=True)
+    _sec('期間統計｜第 80～41 個交易日前，各趨勢型態的平均漲跌')
     if bt.get("report_type") != "trend_pattern_window_stats" or not bt.get("by_classification"):
         st.info("尚未產生期間統計；下一次趨勢型態排程執行後會出現。")
         return
@@ -410,7 +412,7 @@ def render_trend_patterns_workspace(base_dir: str | Path) -> None:
         for col, label in zip(metric_cols, CATEGORY_ORDER[start_index:start_index + 4]):
             col.metric(label, int(counts.get(label, 0)))
     _render_backtest(base)
-    st.divider()
+    _sec("篩選條件")
 
     all_themes = sorted({theme for items in frame["themes"].tolist() if isinstance(items, list) for theme in items})
     selected_themes = st.multiselect("篩選產業主題（預設全部）", all_themes, default=all_themes, key="trend_pattern_theme_filter_v1")
@@ -431,7 +433,7 @@ def render_trend_patterns_workspace(base_dir: str | Path) -> None:
         section = frame[frame["classification"] == category]
         if section.empty:
             continue
-        st.markdown(f'<div class="feature-section-title">{category}｜{len(section)} 檔</div>', unsafe_allow_html=True)
+        _sec(f'{category}｜{len(section)} 檔')
         explanations = {
             "底部反轉候選": "常見於跌深後轉穩、雙底／倒頭肩／圓底等結構；仍須觀察壓力突破與成交量。",
             "多頭延續／持續創高": "價格趨勢偏多或突破短期壓力；需留意追高風險及突破失敗。",

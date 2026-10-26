@@ -97,6 +97,8 @@ from celebrity_holdings import POLITICIANS, fetch_all_gurus
 import chip_signals
 import stock_features
 import intraday_signals
+import section_ui
+from section_ui import section as _sec, section_box as _sec_box
 from global_markets import GLOBAL_INDICATORS, fetch_indicator, vix_regime
 from html import escape as _esc
 
@@ -1944,7 +1946,8 @@ def render_finance_workspace() -> None:
         '<div class="content-heading"><div class="eyebrow">DAILY FINANCE</div><h1>財經資訊</h1></div>',
         unsafe_allow_html=True,
     )
-    render_global_markets()
+    with _sec_box("fin-global"):
+        render_global_markets()
     _render_finance_body()
 
 
@@ -1975,12 +1978,13 @@ def _render_finance_body() -> None:
         unsafe_allow_html=True,
     )
 
-    _render_news_digest(cache.get("news_digest") or {}, len(news))
+    with _sec_box("fin-digest", tone=1):
+        _render_news_digest(cache.get("news_digest") or {}, len(news))
 
     left, right = st.columns([1, 1.45], gap="large")
 
     # ---------------- 法說會 ----------------
-    with left:
+    with left, _sec_box("fin-earnings", tone=2):
         st.markdown('<div class="finance-card-title">法說會摘要</div>', unsafe_allow_html=True)
         # 摘要標題以實際顯示的五日清單重算，避免舊快取仍寫著「最近 2 天」或顯示過期筆數。
         earnings_counts = {"利多": 0, "利空": 0, "中性": 0, "混合": 0}
@@ -2012,7 +2016,7 @@ def _render_finance_body() -> None:
             st.markdown(f'<div translate="no" class="notranslate">{html_items}</div>', unsafe_allow_html=True)
 
     # ---------------- 新聞 ----------------
-    with right:
+    with right, _sec_box("fin-news", tone=3):
         st.markdown('<div class="finance-card-title">財經新聞摘要</div>', unsafe_allow_html=True)
         if not news:
             st.info("最近 2 天目前沒有可用的財經新聞；請確認 08:10 等排程是否有執行（output/scheduler_logs）。")
@@ -2888,10 +2892,7 @@ def _render_published_rotation(payload: dict) -> None:
         "相對動能": "相對動能指數",
     }
     chart_metric_label = chart_metric_labels[sort_by]
-    st.markdown(
-        f'<div class="feature-section-title">01｜產業族群{chart_metric_label}</div>',
-        unsafe_allow_html=True,
-    )
+    _sec(f'01｜產業族群{chart_metric_label}')
     metric_is_index = sort_by in ("相對強弱", "相對動能")
 
     if sort_by == "族群平均漲跌幅":
@@ -3281,7 +3282,7 @@ def _render_published_rotation(payload: dict) -> None:
             "兩張圖左側均顯示產業族群名稱；紅色代表高於基準、綠色代表低於基準。美股行情快取 15 分鐘，且部分美股為供應鏈代理，並非完全相同的純標的。"
         )
 
-    st.markdown('<div class="feature-section-title">02｜產業輪動圖</div>', unsafe_allow_html=True)
+    _sec('02｜產業輪動圖')
     st.caption("每條線代表主題相對加權指數的軌跡，每 5 個交易日取一點。RS 高於 100 代表相對強弱高於自身 50 日均值；動能高於 100 代表較 10 個交易日前增強。預設顯示 1 個月與「領先」象限。固定 1400×760 畫布：滑鼠滾輪縮放、雙擊重設；放大後可切換工具列平移，原始大小時不能平移出界，縮小不會超出原始視圖。")
     quadrant_options = ["領先", "轉弱", "改善", "落後", "全選"]
     quadrant_filter = st.radio(
@@ -3415,7 +3416,7 @@ def _render_published_rotation(payload: dict) -> None:
         "該群仍會列在下方報酬表及成分股分類名單。"
     )
 
-    st.markdown('<div class="feature-section-title">03｜產業報酬與輪動狀態</div>', unsafe_allow_html=True)
+    _sec('03｜產業報酬與輪動狀態')
     fields = {"族群平均漲跌幅": "today_return", "前一日平均漲跌幅": "yesterday_return",
               "近 20 日": "return_20d", "近 5 日": "return_5d", "今日": "today_return",
               "相對強弱": "relative_strength", "相對動能": "relative_momentum"}
@@ -3520,7 +3521,7 @@ def _render_published_rotation(payload: dict) -> None:
             else:
                 st.info("此主題目前沒有設定代表概念股。")
 
-    st.markdown('<div class="feature-section-title">04｜美股產業指標股資訊</div>', unsafe_allow_html=True)
+    _sec('04｜美股產業指標股資訊')
     st.caption(
         "依台股供應鏈子產業整理美股上市指標公司，顯示最新可取得價格與當日漲跌幅。"
         "美股價格與日期來自 Yahoo Finance；每一筆以來源回傳的美東交易日期為準。"
@@ -3593,7 +3594,7 @@ def _render_published_rotation(payload: dict) -> None:
     else:
         st.info("所選產業目前沒有設定美股對照指標。")
 
-    st.markdown('<div class="feature-section-title">05｜本週象限變化</div>', unsafe_allow_html=True)
+    _sec('05｜本週象限變化')
     changes = payload.get("quadrant_changes") or []
     if changes:
         changes_df = pd.DataFrame(changes).rename(columns={"name": "產業主題", "from": "前一象限", "to": "目前象限"})
@@ -3603,7 +3604,7 @@ def _render_published_rotation(payload: dict) -> None:
     else:
         st.caption("目前沒有可用的象限轉換紀錄，或輪動方向尚未跨越象限。")
 
-    st.markdown('<div class="feature-section-title">06｜成分股漲跌前十</div>', unsafe_allow_html=True)
+    _sec('06｜成分股漲跌前十')
     upcol, downcol = st.columns(2)
     for col, data_key, label in [(upcol, "gainers", "漲幅前十"), (downcol, "losers", "跌幅前十")]:
         with col:
@@ -3619,7 +3620,7 @@ def _render_published_rotation(payload: dict) -> None:
                 hide_index=True,
             )
 
-    st.markdown('<div class="feature-section-title">07｜輪動解讀與資料限制</div>', unsafe_allow_html=True)
+    _sec('07｜輪動解讀與資料限制')
     st.markdown("""
     <div class="rotation-quadrants">
       <div class="rotation-leading"><strong>領先｜右上</strong><br>相對大盤偏強，動能持續增強。</div>
@@ -3779,7 +3780,7 @@ def render_rotation_workspace() -> None:
     m3.metric("改善象限", f"{int(counts.get('改善', 0))} 群")
     m4.metric("落後／轉弱", f"{int(counts.get('落後', 0) + counts.get('轉弱', 0))} 群")
 
-    st.markdown('<div class="feature-section-title">01｜產業輪動圖</div>', unsafe_allow_html=True)
+    _sec('01｜產業輪動圖')
     st.caption("每條線代表一個主題的相對強弱軌跡；尾端是最新位置。X、Y 軸的 100 為中線。滑鼠移到線上可查看日期與數值。")
     fig = go.Figure()
     quadrant_colors = {
@@ -3852,7 +3853,7 @@ def render_rotation_workspace() -> None:
         },
     )
 
-    st.markdown('<div class="feature-section-title">02｜族群績效與輪動狀態</div>', unsafe_allow_html=True)
+    _sec('02｜族群績效與輪動狀態')
     sort_by = st.selectbox(
         "排序方式",
         ["近 20 日報酬", "近 5 日報酬", "今日／最近交易日", "相對強弱", "相對動能"],
@@ -3876,7 +3877,7 @@ def render_rotation_workspace() -> None:
         hide_index=True,
     )
 
-    st.markdown('<div class="feature-section-title">03｜四象限判讀</div>', unsafe_allow_html=True)
+    _sec('03｜四象限判讀')
     st.markdown("""
     <div class="rotation-quadrants">
       <div class="rotation-leading"><strong>領先｜右上</strong><br>相對大盤偏強，而且相對動能仍在增強。</div>
@@ -5878,7 +5879,8 @@ st.markdown(r"""
 .st-key-strategy-01-watchlist,.st-key-strategy-02-selected,.st-key-strategy-03-trend,
 .st-key-strategy-04-kline,.st-key-strategy-05-volume,.st-key-strategy-06-entry,
 .st-key-strategy-07-tdcc,.st-key-strategy-08-trades,.st-key-strategy-09-institutions,
-.st-key-future-01-ai,.st-key-future-02-intelligence,.st-key-future-03-agent{
+.st-key-strategy-01-focus,.st-key-strategy-02-chips,
+.st-key-future-01-ai,.st-key-future-02-intelligence,.st-key-future-03-agent,.st-key-future-04-stock-notes{
   border-radius:14px!important;
   padding:22px 24px 18px!important;
   margin:0 0 14px!important;
@@ -5996,6 +5998,9 @@ section.main>div,.main>div{padding-top:0!important;margin-top:0!important;min-he
 .st-key-future-01-ai{background:#f4f6fa!important;}
 .st-key-future-02-intelligence{background:#fbf5f5!important;}
 .st-key-future-03-agent{background:#f5f7f4!important;}
+.st-key-strategy-01-focus{background:#fbf1f1!important;}
+.st-key-strategy-02-chips{background:#fffaf7!important;}
+.st-key-future-04-stock-notes{background:#f9f5ef!important;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -7731,6 +7736,15 @@ sync_sidebar_visibility(current_section)
 if current_section != "strategy":
     st.session_state["_strategy_view"] = None  # 回到操作策略時重新以兩段式顯示
 def _render_page(section: str) -> None:
+    section_ui.reset()
+    st.markdown(section_ui.CSS, unsafe_allow_html=True)
+    try:
+        _render_page_body(section)
+    finally:
+        section_ui.section_end()
+
+
+def _render_page_body(section: str) -> None:
     if section == "home":
         render_home_workspace()
     elif section == "strategy":
@@ -7745,7 +7759,8 @@ def _render_page(section: str) -> None:
             st.info("請點擊頁面右上角的「登入」或「申請帳號」，開啟左側選單。")
     elif section == "finance":
         render_finance_workspace()
-        render_celebrity_holdings()
+        with _sec_box("fin-celebrity"):
+            render_celebrity_holdings()
     elif section == "rotation":
         render_rotation_workspace()
     else:
