@@ -98,7 +98,7 @@ import chip_signals
 import stock_features
 import intraday_signals
 import section_ui
-from system_picks_ui import render_system_picks
+from future_picks_ui import render_system_picks  # 模組改名過：雲端只改子模組時不會重新載入
 from section_ui import section as _sec, section_box as _sec_box
 from global_markets import GLOBAL_INDICATORS, fetch_indicator, vix_regime
 from html import escape as _esc
