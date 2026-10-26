@@ -4830,11 +4830,14 @@ _FOCUS_CSS = """<style>
 .fx-head{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:12px;color:#7d7474;margin:-6px 0 10px}
 .fx-count b{color:#d23c3c}.fx-count i{font-style:normal;color:#14874f;font-weight:700}
 .fx-feed{position:relative;padding-left:18px;max-height:720px;overflow-y:auto}
-.fx-feed:before{content:"";position:absolute;left:5px;top:6px;bottom:6px;border-left:2px solid #e8c79a}
+.fx-feed:before{content:"";position:absolute;left:5px;top:6px;bottom:6px;border-left:2px solid #e6caca}
 .fx-item{position:relative;margin:0 0 12px}
-.fx-time{font-size:13px;font-weight:700;color:#c98a14;margin:0 0 4px;font-variant-numeric:tabular-nums}
-.fx-time:before{content:"";position:absolute;left:-17px;top:4px;width:10px;height:10px;border-radius:50%;background:#e0a100}
-.fx-new{display:inline-block;margin-left:8px;font-size:10px;color:#fff;background:#d23c3c;border-radius:3px;padding:0 5px;vertical-align:1px}
+.fx-time{display:inline-flex;align-items:center;gap:6px;margin:0 0 6px;padding:3px 11px 3px 8px;border-radius:7px;
+  background:#8e2b2f;color:#fff;font-size:16px;font-weight:800;letter-spacing:.5px;font-variant-numeric:tabular-nums;
+  box-shadow:0 3px 8px -4px rgba(142,43,47,.7)}
+.fx-time svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round}
+.fx-time:before{content:"";position:absolute;left:-18px;top:9px;width:12px;height:12px;border-radius:50%;background:#8e2b2f;box-shadow:0 0 0 3px #fbe9e9}
+.fx-new{display:inline-block;margin-left:2px;font-size:10.5px;font-weight:800;color:#8e2b2f;background:#fff;border-radius:4px;padding:0 5px}
 .fx-card{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:center;
   background:#fff;border:1px solid #eadfdf;border-radius:8px;padding:10px 12px}
 .fx-name{font-size:17px;font-weight:700;color:#3b3535;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -4854,13 +4857,17 @@ _FOCUS_CSS = """<style>
 .fx-hist{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-top:2px;padding-top:9px;border-top:1px dashed #eadede}
 .fx-hist-label{font-size:11.5px;font-weight:700;color:#8e2b2f;background:#f6eaea;border-radius:4px;padding:1px 7px;flex:none}
 .fx-ev{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#5b5252;background:#fff;border:1px solid #eee3e3;border-radius:999px;padding:1px 9px 1px 4px;white-space:nowrap}
-.fx-ev time{font-size:11px;font-weight:700;color:#7d7474;background:#f4f0f0;border-radius:999px;padding:0 6px;font-variant-numeric:tabular-nums}
+.fx-ev time{font-size:12px;font-weight:800;color:#fff;background:#6b5d5d;border-radius:999px;padding:1px 7px;font-variant-numeric:tabular-nums}
+.fx-ev.bull time{background:#c94848}.fx-ev.bear time{background:#1f8a57}
 .fx-ev.bull{border-color:#f2c9c9}.fx-ev.bull b{color:#d23c3c}.fx-ev.bear{border-color:#c4e5d2}.fx-ev.bear b{color:#14874f}
 .fx-ev b{font-weight:700}.fx-ev i{font-style:normal;color:#b3a9a9}
 .fx-more{display:contents}.fx-more summary{list-style:none;cursor:pointer;font-size:11.5px;color:#8e2b2f;font-weight:700;padding:1px 4px}
 .fx-more summary::-webkit-details-marker{display:none}.fx-more[open] summary{display:none}
 @media(max-width:700px){.fx-card{grid-template-columns:1fr 1fr}.fx-card>div:first-child{grid-column:1/-1}.fx-spark{width:110px}}
 </style>"""
+
+
+_CLOCK_SVG = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'
 
 
 def render_watch_focus():
@@ -4944,7 +4951,7 @@ def render_watch_focus():
                     if rest else "")
             hist = f'<div class="fx-hist"><span class="fx-hist-label">稍早 {len(prior)} 則</span>{shown_prior}{more}</div>'
         items.append(
-            f'<div class="fx-item"><div class="fx-time">{t:%H:%M}{new}</div><div class="fx-card">'
+            f'<div class="fx-item"><div class="fx-time">{_CLOCK_SVG}{t:%H:%M}{new}</div><div class="fx-card">'
             f'<div><div class="fx-name">{_esc(s["name"])}<span>{s["code"]}</span></div><div class="fx-row">{_focus_spark(s, t)}'
             f'<div class="fx-px {cls(pct)}">{c["price"]:,.2f}<small>{"▲" if pct > 0 else "▼" if pct < 0 else ""}{pct:+.2f}%</small>'
             f'<div class="fx-now">現 {s["last"]:,.2f}（{s["pct"]:+.2f}%）</div></div></div></div>'
