@@ -6,6 +6,8 @@
   MK_99_<n>.stk    第 n 個群組的股票（UTF-16，一行一檔：|>代號=2330|>商品名稱=台積電|>語音=0|>新聞=0|>警示=0|>）
   StampLog.ini     gsn＝最後一次自選股時間戳記
 三竹開著時會隨時改寫這些檔案並上傳雲端，所以只在三竹沒開時寫入；開著就跳過、留待下次。
+注意（2026-10-26 實測）：三竹登入時會從雲端下載自選股覆蓋這些檔案，改 gsn 也沒用，所以這個工具實際上
+無法讓自選股生效；三竹也不接受程式送出的滑鼠／鍵盤操作。目前改成每天寄 Email（system_picks.send_email）。
 每次寫入前把原檔備份到 MitakeGU\\USER\\MK\\backup_<時間>\\。
 
   python mitake_watchlist.py [--dry-run]
@@ -81,7 +83,7 @@ def sync(dry_run: bool = False) -> dict:
     shutil.copytree(acct, backup)
     _write_utf16(stk, lines)
     _write_utf16(titles_path, new_titles)
-    # 時間戳記改成現在，讓三竹把本機版本視為最新、啟動後上傳而不是被雲端舊版蓋掉
+    # 時間戳記改成現在（實測三竹登入仍會用雲端版本覆蓋）
     (acct / "StampLog.ini").write_text(f"[MiscInfo]\r\ngsn={datetime.now():%Y%m%d%H%M%S}\r\n", encoding="ascii", newline="")
     STATE.write_text(json.dumps({"pending": False, "date": day, "synced_at": datetime.now().isoformat(timespec="seconds"),
                                  "backup": str(backup), **result}, ensure_ascii=False), encoding="utf-8")
