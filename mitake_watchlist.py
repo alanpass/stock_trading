@@ -61,7 +61,7 @@ def picks() -> tuple[str, list[tuple[str, str]]]:
     return latest.get("date") or "", out
 
 
-def sync(dry_run: bool = False) -> dict:
+def sync(dry_run: bool = False, allow_running: bool = False) -> dict:
     day, stocks = picks()
     if not stocks:
         return {"ok": False, "reason": "沒有推薦股票"}
@@ -74,7 +74,7 @@ def sync(dry_run: bool = False) -> dict:
     result = {"date": day, "count": len(stocks), "stocks": [c for c, _ in stocks]}
     if dry_run:
         return {"ok": True, "dry_run": True, **result}
-    if mitake_running():
+    if mitake_running() and not allow_running:
         STATE.write_text(json.dumps({"pending": True, "date": day, "checked_at": datetime.now().isoformat(timespec="seconds")},
                                     ensure_ascii=False), encoding="utf-8")
         return {"ok": False, "pending": True, "reason": "三竹股市開著，等關閉後再寫入", **result}
@@ -95,7 +95,9 @@ def main() -> int:
         sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="系統推薦股票寫入三竹自選股群組四（AI）")
     ap.add_argument("--dry-run", action="store_true")
-    print(json.dumps(sync(ap.parse_args().dry_run), ensure_ascii=False))
+    ap.add_argument("--allow-running", action="store_true", help="三竹開著也寫入（測試用）")
+    ns = ap.parse_args()
+    print(json.dumps(sync(ns.dry_run, ns.allow_running), ensure_ascii=False))
     return 0
 
 
