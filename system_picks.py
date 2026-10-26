@@ -278,14 +278,92 @@ def update(limit: int = 8, publish: bool = True) -> dict:
     return result
 
 
+EMAIL_STATE = REPORTS / "system_picks_email_state.json"
+
+
+def _email_html(data: dict) -> tuple[str, str]:
+    from html import escape
+
+    latest = data["latest"]
+    parts, codes = [], []
+    for key, label in HORIZONS.items():
+        rows = [p for p in latest["picks"] if p["horizon"] == key]
+        codes += [p["symbol"] for p in rows if p["symbol"] not in codes]
+        cards = []
+        for i, p in enumerate(rows, 1):
+            why = "".join(f'<li><b style="color:#8e2b2f">{escape(r["cat"])}</b>　{escape(r["text"])}</li>' for r in p["reasons"])
+            r20 = "" if p.get("r20") is None else f"・近 20 日 {p['r20']:+.1f}%"
+            cards.append(f'<div style="border:1px solid #eadfdf;border-radius:10px;padding:12px 14px;margin:0 0 10px">'
+                         f'<div style="font-size:17px;font-weight:700;color:#2f2a2a">{i}. {escape(p["name"])} '
+                         f'<span style="color:#8d8585;font-size:13px">{escape(p["symbol"])}</span></div>'
+                         f'<div style="font-size:13px;color:#7d7474;margin:2px 0 6px">收盤 {p["close"]:,.2f}{r20}　{escape("、".join(p.get("themes") or []))}</div>'
+                         f'<ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.7;color:#3b3434">{why}</ul></div>')
+        parts.append(f'<h2 style="font-size:19px;color:#8e2b2f;border-bottom:2px solid #8e2b2f;padding-bottom:4px">{label}（{len(rows)} 檔）</h2>'
+                     + ("".join(cards) or "<p>今天沒有股票符合條件。</p>"))
+    track = []
+    for s in data["summary"].values():
+        if s["count"]:
+            track.append(f'{s["label"]}：推薦後平均 {s["avg_ret"]:+.2f}%，上漲比例 {s["win_rate"]:.0f}%（{s["count"]} 筆）')
+    code_line = " ".join(codes)
+    html = ('<div style="font-family:Arial,&quot;Microsoft JhengHei&quot;,sans-serif;max-width:720px">'
+            f'<p style="font-size:14px;color:#5b5252">依 {latest["date"]} 收盤篩選的系統推薦股票。</p>'
+            f'<div style="background:#fbf1f1;border-radius:8px;padding:10px 12px;margin:0 0 14px">'
+            f'<div style="font-size:13px;color:#8e2b2f;font-weight:700">加入三竹自選股用的代號（{len(codes)} 檔）</div>'
+            f'<div style="font-size:16px;font-weight:700;letter-spacing:.5px;margin-top:4px">{code_line}</div></div>'
+            + "".join(parts)
+            + (f'<h2 style="font-size:17px;color:#6f2024">過去推薦追蹤</h2><p style="font-size:14px">{"<br>".join(track)}</p>' if track else "")
+            + f'<p style="font-size:12px;color:#8d8585;margin-top:16px">{escape(data["disclaimer"])}<br>網站：https://tpe-stock-dashboard.streamlit.app/?section=future</p></div>')
+    lines = [f"[{HORIZONS[p['horizon']]}] {p['symbol']} {p['name']}：" + "；".join(r["text"] for r in p["reasons"][:4])
+             for p in latest["picks"]]
+    text = "\n".join([f"{latest['date']} 系統推薦股票", f"三竹自選股代號：{code_line}", ""] + lines)
+    return html, text
+
+
+def send_email(force: bool = False) -> dict:
+    """把最新名單寄給 PICKS_EMAIL_RECIPIENT（預設＝EmailAgent 的收件者）；同一天只寄一次。"""
+    from email.message import EmailMessage
+    from email.utils import formataddr
+    import os
+    from email_agent import EmailAgent
+
+    data = _read(PUBLIC_PATH, {}) or {}
+    latest = data.get("latest") or {}
+    if not latest.get("picks"):
+        return {"sent": False, "reason": "沒有推薦名單"}
+    sent = _read(EMAIL_STATE, {}) or {}
+    if not force and sent.get("date") == latest["date"]:
+        return {"sent": False, "skipped": True, "reason": f"{latest['date']} 已寄過"}
+    agent = EmailAgent(BASE)
+    if not agent.status().get("configured"):
+        return {"sent": False, "error": "Email 尚未設定"}
+    to_addr = (agent.env.get("PICKS_EMAIL_RECIPIENT") or os.getenv("PICKS_EMAIL_RECIPIENT") or agent.config.recipient).strip()
+    html, text = _email_html(data)
+    n_swing = sum(p["horizon"] == "swing" for p in latest["picks"])
+    msg = EmailMessage()
+    msg["Subject"] = f"【系統推薦】{latest['date']} 波段 {n_swing} 檔、長期 {len(latest['picks']) - n_swing} 檔"
+    msg["From"] = formataddr((agent.config.display_name, agent.config.sender))
+    msg["To"] = to_addr
+    msg.set_content(text, charset="utf-8")
+    msg.add_alternative(html, subtype="html", charset="utf-8")
+    agent._smtp_send(msg)
+    EMAIL_STATE.write_text(json.dumps({"date": latest["date"], "recipient": to_addr,
+                                       "sent_at": datetime.now(TAIPEI).isoformat(timespec="seconds")}, ensure_ascii=False), encoding="utf-8")
+    return {"sent": True, "recipient": to_addr, "date": latest["date"]}
+
+
 def main() -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="波段／長期系統推薦股票與看多原因，發布到網站")
     ap.add_argument("--limit", type=int, default=8, help="波段、長期各列幾檔")
     ap.add_argument("--no-publish", action="store_true")
+    ap.add_argument("--email-only", action="store_true", help="不重新篩選，只把現有名單寄出（同一天已寄過要加 --force）")
+    ap.add_argument("--force", action="store_true")
     ns = ap.parse_args()
-    print(json.dumps(update(ns.limit, publish=not ns.no_publish), ensure_ascii=False, default=str))
+    if not ns.email_only:
+        print(json.dumps(update(ns.limit, publish=not ns.no_publish), ensure_ascii=False, default=str))
+    print(json.dumps(send_email(force=ns.force) if ns.email_only or not ns.no_publish else {"sent": False, "reason": "--no-publish 不寄信"},
+                     ensure_ascii=False, default=str))
     return 0
 
 

@@ -1179,6 +1179,8 @@ def finalize(report_date: str, dry_run: bool = False) -> int:
         import system_picks
         picks = system_picks.update()
         write_log(report_date, "SYSTEM_PICKS=" + json.dumps(picks, ensure_ascii=False, default=str))
+        mail = system_picks.send_email()
+        write_log(report_date, "SYSTEM_PICKS_EMAIL=" + json.dumps(mail, ensure_ascii=False, default=str))
     except Exception as exc:
         write_log(report_date, f"SYSTEM_PICKS_ERROR={type(exc).__name__}: {exc}")
     return deliver_report(report, {"stock_notes": len(stock_notes), "stock_notes_published": bool(publish.get("ok"))})
