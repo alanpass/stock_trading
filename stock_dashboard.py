@@ -1185,12 +1185,23 @@ _UX_CSS = """<style>
 .nav-drop-link:hover{background:#fbf1f1;color:#8e2b2f!important;transform:translateX(2px)}
 .nav-drop-link:hover .nav-drop-num{background:#8e2b2f;color:#fff}
 .nav-drop-link:hover .nav-drop-arrow{opacity:1;transform:none}
-/* 上方主題名稱：放大、加粗 */
-.site-nav .site-nav-link{font-size:16.5px!important;font-weight:600;letter-spacing:1px!important;color:#4a4242!important}
-.site-nav .site-nav-link:hover,.site-nav .site-nav-link.active{color:var(--site-red)!important}
-.site-nav .site-nav-link.active{font-weight:800}
-@media(max-width:900px){.site-nav .site-nav-link{font-size:15px!important}}
-@media(max-width:600px){.site-nav .site-nav-link{font-size:13.5px!important}}
+/* 上方主題列：膠囊式分段按鈕，目前頁面為酒紅實心，滑過浮起 */
+.st-key-site_nav_sticky .site-nav{width:fit-content;max-width:100%;margin:6px auto 0;gap:4px!important;padding:5px!important;
+  background:linear-gradient(180deg,#fdf8f8,#f7eeee);border:1px solid #eedfdf;border-radius:999px;
+  box-shadow:inset 0 1px 0 #fff,0 6px 18px -12px rgba(110,30,36,.35)}
+.site-nav .site-nav-link{display:inline-flex;align-items:center;gap:7px;padding:9px 19px!important;border-radius:999px;
+  font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif!important;font-size:16px!important;font-weight:700;letter-spacing:1.2px!important;
+  color:#5a4f4f!important;transition:background .18s ease,color .18s ease,box-shadow .18s ease,transform .18s ease}
+.site-nav .site-nav-link::after{display:none}
+.site-nav .nav-ico{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;opacity:.75}
+.site-nav .site-nav-link:hover{background:#fff;color:var(--site-red)!important;box-shadow:0 4px 12px -6px rgba(110,30,36,.45);transform:translateY(-1px)}
+.site-nav .site-nav-link.active{background:linear-gradient(135deg,#8e2b2f,#b0464b);color:#fff!important;font-weight:800;
+  box-shadow:0 6px 14px -6px rgba(142,43,47,.75)}
+.site-nav .site-nav-link.active .nav-ico{opacity:1}
+.site-nav .site-nav-link.active:hover{transform:none}
+@media(max-width:900px){.site-nav .site-nav-link{font-size:14.5px!important;padding:8px 13px!important}.site-nav .nav-ico{width:15px;height:15px}}
+@media(max-width:600px){.st-key-site_nav_sticky .site-nav{border-radius:16px;margin-top:2px}
+  .site-nav .site-nav-link{font-size:13.5px!important;padding:7px 11px!important;gap:5px}.site-nav .nav-ico{display:none}}
 /* 最左、最右的主題靠邊對齊，避免中等寬度時下拉選單超出內容欄被裁掉 */
 .site-nav .nav-item:first-child .nav-drop{left:0;transform:translate(0,14px)}
 .site-nav .nav-item:last-child .nav-drop{left:auto;right:0;transform:translate(0,14px)}
@@ -2460,6 +2471,18 @@ SITE_NAV_SUB = {
 }
 
 
+# 主題列小圖示（線條 SVG，顏色跟著文字）
+_NAV_ICONS = {
+    "home": '<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+    "finance": '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h10M7 17h6"/>',
+    "rotation": '<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>',
+    "strategy": '<path d="M4 20V4"/><path d="M4 20h16"/><path d="M8 16v-5M12 16V8M16 16v-3"/>',
+    "trend": '<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+    "future": '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 17l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/>',
+    "subscribe": '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+}
+
+
 def render_site_navigation() -> str:
     """Restore the original HTML navigation appearance while retaining hidden controls for session-safe navigation."""
     current = _get_nav_section()
@@ -2481,7 +2504,8 @@ def render_site_navigation() -> str:
         drop = (f'<div class="nav-drop"><div class="nav-drop-head"><div class="nav-drop-title">{badge}{_esc(label)}</div>'
                 f'<div class="nav-drop-hint">{_esc(text)}</div></div>'
                 f'<div class="nav-drop-list{" two-col" if len(items) > 6 else ""}">{subs}</div></div>') if subs else ""
-        links.append(f'<div class="nav-item"><a class="site-nav-link{active}" href="?section={key}" target="_self">{label}</a>{drop}</div>')
+        icon = f'<svg class="nav-ico" viewBox="0 0 24 24">{_NAV_ICONS.get(key, "")}</svg>'
+        links.append(f'<div class="nav-item"><a class="site-nav-link{active}" href="?section={key}" target="_self">{icon}{label}</a>{drop}</div>')
     # 包在有 key 的容器裡才能 position:sticky（捲到下方也能直接換頁）
     with st.container(key="site_nav_sticky"):
         st.markdown('<nav translate="no" class="site-nav">' + ''.join(links) + '</nav>', unsafe_allow_html=True)
