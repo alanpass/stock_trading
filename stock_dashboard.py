@@ -438,6 +438,16 @@ def _watch_rows(watchlist_key, _bucket):
         name = x.get("name") or x.get("stockName") or x.get("securityName") or code
         limit_up = pd.to_numeric(x.get("limitUpPrice", x.get("limitUp", np.nan)), errors="coerce")
         limit_down = pd.to_numeric(x.get("limitDownPrice", x.get("limitDown", np.nan)), errors="coerce")
+        # Fugle 的 quote／snapshot 沒有漲跌停價：依參考價推算，並以 Fugle 的漲跌停旗標為準。
+        # 漲跌停因檔位取整，漲跌幅常只有 9.8x%，只看「≥9.95%」會漏掉（2026-10-27 台燿跌停、上銀漲停都沒亮）。
+        if (pd.isna(limit_up) or pd.isna(limit_down)) and pd.notna(prev):
+            calc_up, calc_down = intraday_signals.limit_prices(float(prev))
+            limit_up = calc_up if pd.isna(limit_up) else limit_up
+            limit_down = calc_down if pd.isna(limit_down) else limit_down
+        if pd.notna(p) and x.get("isLimitUpPrice") is True:
+            limit_up = p
+        if pd.notna(p) and x.get("isLimitDownPrice") is True:
+            limit_down = p
         row_date = x.get("date") or x.get("dataDate") or x.get("asOfDate")
         try:
             row_date = pd.to_datetime(row_date, errors="coerce").date().isoformat() if pd.notna(pd.to_datetime(row_date, errors="coerce")) else ""
@@ -4066,8 +4076,8 @@ def render_watchlist(compact: bool = False):
                     lup = pd.to_numeric(r.get("limit_up"), errors="coerce")
                     ldn = pd.to_numeric(r.get("limit_down"), errors="coerce")
 
-                    limit_up = pd.notna(price) and pd.notna(lup) and abs(float(price)-float(lup)) < 1e-9
-                    limit_down = pd.notna(price) and pd.notna(ldn) and abs(float(price)-float(ldn)) < 1e-9
+                    limit_up = pd.notna(price) and pd.notna(lup) and abs(float(price)-float(lup)) < 1e-6
+                    limit_down = pd.notna(price) and pd.notna(ldn) and abs(float(price)-float(ldn)) < 1e-6
                     if not limit_up and not limit_down:
                         limit_up = pd.notna(cp) and cp >= 9.95
                         limit_down = pd.notna(cp) and cp <= -9.95
