@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-10-27",
-  "updated_at": "2026-10-27T07:51:58+08:00",
-  "finished_at": "2026-10-27T07:52:14+08:00",
-  "published_at": "2026-10-27T07:52:14+08:00",
+  "updated_at": "2026-10-27T08:10:03+08:00",
+  "finished_at": "2026-10-27T08:10:11+08:00",
+  "published_at": "2026-10-27T08:10:11+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -15,15 +15,15 @@
     "23:00"
   ],
   "stale": false,
-  "news_count": 130,
+  "news_count": 132,
   "earnings_count": 1,
   "news_digest": {
-    "generated_at": "2026-10-27T07:51:58+08:00",
-    "headline": "最近 2 天共整理 130 則財經新聞：利多 56、利空 39、中性 17、混合 18；討論度最高的產業：AI／伺服器、國際股市、半導體。",
+    "generated_at": "2026-10-27T08:10:03+08:00",
+    "headline": "最近 2 天共整理 132 則財經新聞：利多 57、利空 40、中性 17、混合 18；討論度最高的產業：AI／伺服器、國際股市、半導體。",
     "stats": {
-      "total": 130,
-      "利多": 56,
-      "利空": 39,
+      "total": 132,
+      "利多": 57,
+      "利空": 40,
       "中性": 17,
       "混合": 18
     },
@@ -224,30 +224,30 @@
     "sector_heat": [
       {
         "sector": "AI／伺服器",
-        "count": 86,
-        "利多": 39,
+        "count": 87,
+        "利多": 40,
         "利空": 23,
         "tone": "偏多"
       },
       {
         "sector": "國際股市",
-        "count": 56,
-        "利多": 28,
+        "count": 57,
+        "利多": 29,
         "利空": 18,
         "tone": "偏多"
       },
       {
         "sector": "半導體",
-        "count": 51,
-        "利多": 27,
+        "count": 52,
+        "利多": 28,
         "利空": 9,
         "tone": "偏多"
       },
       {
         "sector": "總體經濟",
-        "count": 16,
+        "count": 17,
         "利多": 5,
-        "利空": 8,
+        "利空": 9,
         "tone": "偏空"
       },
       {
@@ -258,24 +258,24 @@
         "tone": "中性"
       },
       {
-        "sector": "金融",
-        "count": 12,
-        "利多": 3,
-        "利空": 4,
-        "tone": "偏空"
-      },
-      {
         "sector": "原物料／能源",
-        "count": 12,
+        "count": 13,
         "利多": 2,
-        "利空": 7,
+        "利空": 8,
         "tone": "偏空"
       },
       {
         "sector": "地緣／政策",
-        "count": 12,
+        "count": 13,
         "利多": 1,
-        "利空": 7,
+        "利空": 8,
+        "tone": "偏空"
+      },
+      {
+        "sector": "金融",
+        "count": 12,
+        "利多": 3,
+        "利空": 4,
         "tone": "偏空"
       },
       {
@@ -324,7 +324,7 @@
     "agent_generated_at": "2026-10-26T23:54:44+08:00"
   },
   "earnings_digest": {
-    "generated_at": "2026-10-27T07:51:58+08:00",
+    "generated_at": "2026-10-27T08:10:03+08:00",
     "days": 5,
     "total": 1,
     "利多": 0,
@@ -392,22 +392,22 @@
   },
   "crawl": {
     "ok": true,
-    "article_count": 130,
+    "article_count": 132,
     "per_category_count": {
-      "headline": 74,
+      "headline": 76,
       "tw_stock": 16,
-      "wd_stock": 111,
+      "wd_stock": 113,
       "forex": 1,
-      "future": 24
+      "future": 25
     },
     "source_method": "api",
-    "reused_from_previous_run": 19,
+    "reused_from_previous_run": 36,
     "window_start": "2026-10-26T00:00:00+08:00",
-    "window_end": "2026-10-27T07:52:13.805466+08:00"
+    "window_end": "2026-10-27T08:10:11.238476+08:00"
   },
   "agent_stats": {
-    "input": 130,
-    "after_dedupe": 130,
+    "input": 132,
+    "after_dedupe": 132,
     "ai_cached": 41,
     "seconds": 0.2,
     "earnings": {
@@ -803,9 +803,9 @@
     },
     {
       "article_id": "6637994",
-      "title": "鉅亨速報 - Factset 最新調查：Host旅館及度假村HST-US的目標價調升至26.5元，幅度約3.92% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：Host旅館及度假村HST-US的目標價調升至26.5元，幅度約3.92%",
       "url": "https://news.cnyes.com/news/id/6637994",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-27 06:15:22",
       "published_ts": "2026-10-27T06:15:22+08:00",
       "ai_points": [
@@ -839,9 +839,9 @@
     },
     {
       "article_id": "6637998",
-      "title": "鉅亨速報 - Factset 最新調查：Cencora Inc.COR-US的目標價調升至381.5元，幅度約4.52% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：Cencora Inc.COR-US的目標價調升至381.5元，幅度約4.52%",
       "url": "https://news.cnyes.com/news/id/6637998",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-27 06:15:30",
       "published_ts": "2026-10-27T06:15:30+08:00",
       "ai_points": [
@@ -864,6 +864,36 @@
         "半導體",
         "調升",
         "美股"
+      ],
+      "why": "",
+      "importance": 8.0,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6638033",
+      "title": "「債券投資人已代勞！」 穆迪首席經濟學家連兩月示警：Fed升息將是一個「錯誤」",
+      "url": "https://news.cnyes.com/news/id/6638033",
+      "category": "美股雷達",
+      "published": "2026-10-27 08:03:09",
+      "published_ts": "2026-10-27T08:03:09+08:00",
+      "ai_points": [
+        "穆迪首席經濟學家Mark Zandi反對Fed今年剩下兩次會議再升息，稱此舉「將是錯誤的」。",
+        "面對Fed今年剩下兩次會議及市場對再次升息的預期，穆迪首席經濟學家Mark Zandi週一(26日)在X平台上發文明確反對進一步緊縮貨幣政策，直言「此舉將是錯誤的」。",
+        "Zandi還說，在Fed9月做出升息決定時，他便已警告這是一個「嚴重的錯誤」。"
+      ],
+      "summary": "穆迪首席經濟學家Mark Zandi反對Fed今年剩下兩次會議再升息，稱此舉「將是錯誤的」。；面對Fed今年剩下兩次會議及市場對再次升息的預期，穆迪首席經濟學家Mark Zandi週一(26日)在X平台上發文明確反對進一步緊縮貨幣政策，直言「此舉將是錯誤的」。；Zandi還說，在Fed9月做出升息決定時，他便已警告這是一個「嚴重的錯誤」。",
+      "sentiment": "利空",
+      "sectors": [
+        "總體經濟",
+        "地緣／政策",
+        "原物料／能源"
+      ],
+      "stocks": [],
+      "highlights": [
+        "Fed",
+        "升息",
+        "警告"
       ],
       "why": "",
       "importance": 8.0,
@@ -934,6 +964,39 @@
         "營收",
         "成長",
         "虧損"
+      ],
+      "why": "",
+      "importance": 7.9,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6637797",
+      "title": "美股重點新聞摘要2026年10月27日",
+      "url": "https://news.cnyes.com/news/id/6637797",
+      "category": "美股雷達",
+      "published": "2026-10-27 08:00:08",
+      "published_ts": "2026-10-27T08:00:08+08:00",
+      "ai_points": [
+        "特斯拉大漲5%甩開其他「七巨頭」躍居10月漲幅之冠 2026 年大部分時間裡…",
+        "特斯拉股價週一(26日)大漲逾 5%，創下 9 月初以來最大單日漲幅，收盤價也來到近三個月新高。",
+        "全文詳讀 Meta擬發行350億美元股票 輝達、超微、博通有意掏錢 Meta Platforms ( META-US )計劃在未來幾個月透過不同形式的股票發行…"
+      ],
+      "summary": "特斯拉大漲5%甩開其他「七巨頭」躍居10月漲幅之冠 2026 年大部分時間裡…；特斯拉股價週一(26日)大漲逾 5%，創下 9 月初以來最大單日漲幅，收盤價也來到近三個月新高。；全文詳讀 Meta擬發行350億美元股票 輝達、超微、博通有意掏錢 Meta Platforms ( META-US )計劃在未來幾個月透過不同形式的股票發行…",
+      "sentiment": "利多",
+      "sectors": [
+        "AI／伺服器",
+        "半導體",
+        "國際股市"
+      ],
+      "stocks": [],
+      "highlights": [
+        "350億美元",
+        "5%",
+        "輝達",
+        "大漲",
+        "新高",
+        "大單"
       ],
       "why": "",
       "importance": 7.9,
@@ -1031,9 +1094,9 @@
     },
     {
       "article_id": "6637996",
-      "title": "鉅亨速報 - Factset 最新調查：智利化工礦業SQM-US的目標價調降至84.5元，幅度約5.06% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：智利化工礦業SQM-US的目標價調降至84.5元，幅度約5.06%",
       "url": "https://news.cnyes.com/news/id/6637996",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-27 06:15:25",
       "published_ts": "2026-10-27T06:15:25+08:00",
       "ai_points": [
@@ -1267,9 +1330,9 @@
     },
     {
       "article_id": "6637995",
-      "title": "鉅亨速報 - Factset 最新調查：前線公司FRO-US的目標價調升至49.71元，幅度約3.41% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：前線公司FRO-US的目標價調升至49.71元，幅度約3.41%",
       "url": "https://news.cnyes.com/news/id/6637995",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-27 06:15:23",
       "published_ts": "2026-10-27T06:15:23+08:00",
       "ai_points": [
@@ -1679,9 +1742,9 @@
     },
     {
       "article_id": "6637903",
-      "title": "鉅亨速報 - Factset 最新調查：艾利科技ALGN-US的目標價調降至188元，幅度約5.53% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：艾利科技ALGN-US的目標價調降至188元，幅度約5.53%",
       "url": "https://news.cnyes.com/news/id/6637903",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-27 00:15:33",
       "published_ts": "2026-10-27T00:15:33+08:00",
       "ai_points": [
@@ -1716,9 +1779,9 @@
     },
     {
       "article_id": "6637904",
-      "title": "鉅亨速報 - Factset 最新調查：超捷國際MCHP-US的目標價調降至108元，幅度約3.57% | 鉅亨網",
+      "title": "鉅亨速報 - Factset 最新調查：超捷國際MCHP-US的目標價調降至108元，幅度約3.57%",
       "url": "https://news.cnyes.com/news/id/6637904",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-27 00:15:37",
       "published_ts": "2026-10-27T00:15:37+08:00",
       "ai_points": [
@@ -3339,9 +3402,9 @@
     },
     {
       "article_id": "6637933",
-      "title": "盤中速報 - 數據狗(DDOG-US)大漲5.07%，報283.31美元 | 鉅亨網",
+      "title": "盤中速報 - 數據狗(DDOG-US)大漲5.07%，報283.31美元",
       "url": "https://news.cnyes.com/news/id/6637933",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-27 02:39:56",
       "published_ts": "2026-10-27T02:39:56+08:00",
       "ai_points": [
@@ -3376,9 +3439,9 @@
     },
     {
       "article_id": "6637939",
-      "title": "盤中速報 - 特許通訊(CHTR-US)大跌5.09%，報103.09美元 | 鉅亨網",
+      "title": "盤中速報 - 特許通訊(CHTR-US)大跌5.09%，報103.09美元",
       "url": "https://news.cnyes.com/news/id/6637939",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-27 03:04:32",
       "published_ts": "2026-10-27T03:04:32+08:00",
       "ai_points": [
@@ -3413,9 +3476,9 @@
     },
     {
       "article_id": "6637946",
-      "title": "盤中速報 - DoorDash公司(DASH-US)大跌6.94%，報166.93美元 | 鉅亨網",
+      "title": "盤中速報 - DoorDash公司(DASH-US)大跌6.94%，報166.93美元",
       "url": "https://news.cnyes.com/news/id/6637946",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-27 03:40:15",
       "published_ts": "2026-10-27T03:40:15+08:00",
       "ai_points": [
@@ -3450,9 +3513,9 @@
     },
     {
       "article_id": "6637947",
-      "title": "盤中速報 - MongoDB公司(MDB-US)大漲5.03%，報389.74美元 | 鉅亨網",
+      "title": "盤中速報 - MongoDB公司(MDB-US)大漲5.03%，報389.74美元",
       "url": "https://news.cnyes.com/news/id/6637947",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-27 03:51:35",
       "published_ts": "2026-10-27T03:51:35+08:00",
       "ai_points": [
@@ -3487,9 +3550,9 @@
     },
     {
       "article_id": "6637953",
-      "title": "盤中速報 - 洛克希德馬丁(LMT-US)大漲5%，報634.39美元 | 鉅亨網",
+      "title": "盤中速報 - 洛克希德馬丁(LMT-US)大漲5%，報634.39美元",
       "url": "https://news.cnyes.com/news/id/6637953",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-27 04:08:30",
       "published_ts": "2026-10-27T04:08:30+08:00",
       "ai_points": [
@@ -4210,9 +4273,9 @@
     },
     {
       "article_id": "6637881",
-      "title": "盤中速報 - 新思科技(SNPS-US)大漲5.03%，報451.79美元 | 鉅亨網",
+      "title": "盤中速報 - 新思科技(SNPS-US)大漲5.03%，報451.79美元",
       "url": "https://news.cnyes.com/news/id/6637881",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-26 23:07:39",
       "published_ts": "2026-10-26T23:07:39+08:00",
       "ai_points": [
@@ -4247,9 +4310,9 @@
     },
     {
       "article_id": "6637882",
-      "title": "盤中速報 - 安謀控股公司(ARM-US)大漲5.01%，報220.86美元 | 鉅亨網",
+      "title": "盤中速報 - 安謀控股公司(ARM-US)大漲5.01%，報220.86美元",
       "url": "https://news.cnyes.com/news/id/6637882",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-26 23:07:43",
       "published_ts": "2026-10-26T23:07:43+08:00",
       "ai_points": [
@@ -4284,9 +4347,9 @@
     },
     {
       "article_id": "6637912",
-      "title": "盤中速報 - 恩智浦半導體(NXPI-US)大漲5.3%，報247.36美元 | 鉅亨網",
+      "title": "盤中速報 - 恩智浦半導體(NXPI-US)大漲5.3%，報247.36美元",
       "url": "https://news.cnyes.com/news/id/6637912",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-27 00:53:52",
       "published_ts": "2026-10-27T00:53:52+08:00",
       "ai_points": [
@@ -4321,9 +4384,9 @@
     },
     {
       "article_id": "6637918",
-      "title": "盤中速報 - 英特爾(INTC-US)大漲5.01%，報91.32美元 | 鉅亨網",
+      "title": "盤中速報 - 英特爾(INTC-US)大漲5.01%，報91.32美元",
       "url": "https://news.cnyes.com/news/id/6637918",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-27 01:14:34",
       "published_ts": "2026-10-27T01:14:34+08:00",
       "ai_points": [
@@ -4358,9 +4421,9 @@
     },
     {
       "article_id": "6637922",
-      "title": "盤中速報 - 英特格(ENTG-US)大漲5.06%，報141.33美元 | 鉅亨網",
+      "title": "盤中速報 - 英特格(ENTG-US)大漲5.06%，報141.33美元",
       "url": "https://news.cnyes.com/news/id/6637922",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-27 01:29:38",
       "published_ts": "2026-10-27T01:29:38+08:00",
       "ai_points": [
@@ -4395,9 +4458,9 @@
     },
     {
       "article_id": "6637924",
-      "title": "盤中速報 - 連貫(COHR-US)大漲7.24%，報224.45美元 | 鉅亨網",
+      "title": "盤中速報 - 連貫(COHR-US)大漲7.24%，報224.45美元",
       "url": "https://news.cnyes.com/news/id/6637924",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-27 01:31:26",
       "published_ts": "2026-10-27T01:31:26+08:00",
       "ai_points": [
@@ -4483,34 +4546,6 @@
       "highlights": [],
       "why": "",
       "importance": 3.6,
-      "ai_source": "rule",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6637541",
-      "title": "川普示警對伊朗「到了決策時刻」：談判或「徹底了結此事」？",
-      "url": "https://news.cnyes.com/news/id/6637541",
-      "category": "國際政經",
-      "published": "2026-10-26 08:05:46",
-      "published_ts": "2026-10-26T08:05:46+08:00",
-      "ai_points": [
-        "川普稱面對伊朗與胡塞威脅升高，須決定與德黑蘭達成協議或恢復打擊。",
-        "美國總統川普表示，在伊朗及其支持的胡塞武裝對中東地區美國人的威脅日益加劇之際，他已到了「必須做出決定」的時刻，究竟是與德黑蘭達成協議，還是恢復對伊打擊。",
-        "根據《彭博》報導，川普接受《福斯新聞》（Fox News）節目Sunday Morning Futures專訪時表示：「我必須做出決定，是徹底了結此事，這其實很容易做到…"
-      ],
-      "summary": "川普稱面對伊朗與胡塞威脅升高，須決定與德黑蘭達成協議或恢復打擊。；美國總統川普表示，在伊朗及其支持的胡塞武裝對中東地區美國人的威脅日益加劇之際，他已到了「必須做出決定」的時刻，究竟是與德黑蘭達成協議，還是恢復對伊打擊。；根據《彭博》報導，川普接受《福斯新聞》（Fox News）節目Sunday Morning Futures專訪時表示：「我必須做出決定，是徹底了結此事，這其實很容易做到…",
-      "sentiment": "利空",
-      "sectors": [
-        "地緣／政策",
-        "航運／航空"
-      ],
-      "stocks": [],
-      "highlights": [
-        "中東",
-        "川普"
-      ],
-      "why": "",
-      "importance": 3.5,
       "ai_source": "rule",
       "source": "鉅亨網"
     },
@@ -4628,6 +4663,34 @@
       "highlights": [
         "恐慌",
         "警告"
+      ],
+      "why": "",
+      "importance": 2.5,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6637541",
+      "title": "川普示警對伊朗「到了決策時刻」：談判或「徹底了結此事」？",
+      "url": "https://news.cnyes.com/news/id/6637541",
+      "category": "國際政經",
+      "published": "2026-10-26 08:05:46",
+      "published_ts": "2026-10-26T08:05:46+08:00",
+      "ai_points": [
+        "川普稱面對伊朗與胡塞威脅升高，須決定與德黑蘭達成協議或恢復打擊。",
+        "美國總統川普表示，在伊朗及其支持的胡塞武裝對中東地區美國人的威脅日益加劇之際，他已到了「必須做出決定」的時刻，究竟是與德黑蘭達成協議，還是恢復對伊打擊。",
+        "根據《彭博》報導，川普接受《福斯新聞》（Fox News）節目Sunday Morning Futures專訪時表示：「我必須做出決定，是徹底了結此事，這其實很容易做到…"
+      ],
+      "summary": "川普稱面對伊朗與胡塞威脅升高，須決定與德黑蘭達成協議或恢復打擊。；美國總統川普表示，在伊朗及其支持的胡塞武裝對中東地區美國人的威脅日益加劇之際，他已到了「必須做出決定」的時刻，究竟是與德黑蘭達成協議，還是恢復對伊打擊。；根據《彭博》報導，川普接受《福斯新聞》（Fox News）節目Sunday Morning Futures專訪時表示：「我必須做出決定，是徹底了結此事，這其實很容易做到…",
+      "sentiment": "利空",
+      "sectors": [
+        "地緣／政策",
+        "航運／航空"
+      ],
+      "stocks": [],
+      "highlights": [
+        "中東",
+        "川普"
       ],
       "why": "",
       "importance": 2.5,
