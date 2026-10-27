@@ -173,8 +173,9 @@ def main() -> int:
     env = os.environ.copy()
     env["PYTHONUNBUFFERED"] = "1"
     env["TZ"] = "Asia/Taipei"
-    # 法說會一天只更新一次：只有 earnings 這個工作會爬法說會，finance 只更新新聞
-    if job == "earnings":
+    # 法說會主要在 18:00 的 earnings 工作更新；Fugle 常在晚上才貼當天的備忘錄（2026-10-27 四場都在 18:00 後），
+    # 所以 22 點以後的 finance 時段（23:00）也補爬一次，已分析過的文章會跳過。
+    if job == "earnings" or (job in FINANCE_JOBS and datetime.now(TAIPEI).hour >= 22):
         env.pop("FINANCE_SKIP_EARNINGS", None)
     elif job in FINANCE_JOBS:
         env["FINANCE_SKIP_EARNINGS"] = "true"

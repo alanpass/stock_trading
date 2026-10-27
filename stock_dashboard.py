@@ -265,6 +265,28 @@ def _local_stock_names() -> dict:
         return {}
 
 
+@st.cache_data(ttl=86400, show_spinner=False, max_entries=512)
+def _ticker_name(code: str) -> str:
+    """Fugle ticker 的股票名稱（一天快取）；查不到就丟例外，不把失敗結果快取起來。"""
+    name = (client.ticker(code) or {}).get("name")
+    if not name:
+        raise ValueError(f"{code} 沒有名稱")
+    return name
+
+
+def stock_name(code: str) -> str:
+    """股票名稱：本機產業主檔 → Fugle ticker；都查不到才回傳代號。
+    雲端網站沒有產業主檔，行情 API 撞到額度改用日 K 時也不帶名稱（2026-10-27 上銀只顯示 2049）。"""
+    code = clean_symbol(code)
+    name = _local_stock_names().get(code)
+    if name:
+        return name
+    try:
+        return _ticker_name(code)
+    except Exception:
+        return code
+
+
 @st.cache_data(ttl=1800, show_spinner=False)
 def previous_day_daily_quote(code):
     """開盤前以最近交易日的日K作為目前價格顯示資料。"""
@@ -286,12 +308,7 @@ def previous_day_daily_quote(code):
         prev_close = float(prev["close"]) if prev is not None else np.nan
         change = float(last["change"]) if pd.notna(last.get("change")) else (close-prev_close if pd.notna(prev_close) else np.nan)
         cp = change / prev_close * 100 if pd.notna(change) and pd.notna(prev_close) and prev_close != 0 else np.nan
-        name = _local_stock_names().get(code)
-        if not name:
-            try:
-                name = client.ticker(code).get("name") or code
-            except Exception:
-                name = code
+        name = stock_name(code)
         return {
             "date": last["date"].date().isoformat(),
             "symbol": code, "name": name,
@@ -435,7 +452,9 @@ def _watch_rows(watchlist_key, _bucket):
             if pd.isna(cp) and pd.notna(ch) and pd.notna(prev) and float(prev) != 0:
                 cp = ch / prev * 100
 
-        name = x.get("name") or x.get("stockName") or x.get("securityName") or code
+        name = x.get("name") or x.get("stockName") or x.get("securityName")
+        if not name or name == code:
+            name = stock_name(code)
         limit_up = pd.to_numeric(x.get("limitUpPrice", x.get("limitUp", np.nan)), errors="coerce")
         limit_down = pd.to_numeric(x.get("limitDownPrice", x.get("limitDown", np.nan)), errors="coerce")
         # Fugle 的 quote／snapshot 沒有漲跌停價：依參考價推算，並以 Fugle 的漲跌停旗標為準。
@@ -1665,7 +1684,12 @@ def _recent_news_items(days: int = 2):
 
 def _record_company(item: dict) -> str:
     code = clean_symbol(item.get("symbol") or item.get("code") or item.get("stock_code") or "")
-    name = str(item.get("name") or item.get("company") or item.get("company_name") or code).strip()
+    name = str(item.get("name") or item.get("company") or item.get("company_name") or "").strip()
+    if not name or name == code:
+        # Fugle 法說會備忘錄只有代號，名稱在標題裡：「【裕山法說會重點內容備忘錄】…」
+        m = re.search(r"【([^】]+?)法說會", str(item.get("title") or ""))
+        name = m.group(1).strip() if m else (stock_name(code) if code else "")
+    name = name or code
     return f"{name}（{code}）" if code and code not in name else name
 
 

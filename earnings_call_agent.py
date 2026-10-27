@@ -220,7 +220,7 @@ class FugleMemoCrawler:
             )
             for pattern in patterns:
                 for match in re.findall(pattern, raw, flags=re.I):
-                    href = html.unescape(match).rstrip(".,);]}'\"")
+                    href = html.unescape(match).rstrip(".,);]}'\"\\")  # JSON 字串裡的網址常帶跳脫用的反斜線
                     u = urljoin(final_url or TOPIC_URL, href)
                     u = u.split("#", 1)[0].split("?", 1)[0].rstrip("/")
                     if not u.startswith(POST_PREFIX):
