@@ -75,7 +75,17 @@ def write_status(status: str, **extra: object) -> None:
         pass
 
 
+def _pull_site_watchlist() -> None:
+    """網站上改的自選股存在 Supabase；先同步回 user_watchlist.json。"""
+    try:
+        import watchlist_store
+        watchlist_store.pull_to_file()
+    except Exception:
+        pass
+
+
 def load_watchlist() -> list[str]:
+    _pull_site_watchlist()
     path = BASE / "user_watchlist.json"
     if not path.exists():
         return DEFAULT_WATCHLIST.copy()

@@ -80,7 +80,17 @@ TPEX_DAILY_URL = "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_daily_close_
 # ============================================================================
 # 基本工具
 # ============================================================================
+def _pull_site_watchlist() -> None:
+    """網站上改的自選股存在 Supabase；先同步回 user_watchlist.json。"""
+    try:
+        import watchlist_store
+        watchlist_store.pull_to_file()
+    except Exception:
+        pass
+
+
 def load_watchlist() -> list[str]:
+    _pull_site_watchlist()
     try:
         if WATCHLIST_FILE.exists():
             data = json.loads(WATCHLIST_FILE.read_text(encoding="utf-8"))

@@ -73,6 +73,7 @@ def _load_cloud_secret_env() -> None:
 
 _load_cloud_secret_env()
 
+import watchlist_store
 from market_calendar import is_twse_trading_day, market_status_text
 from stock_api import (
     FugleClient, clean_symbol, INDUSTRIES,
@@ -132,7 +133,10 @@ WATCHLIST_INDUSTRY_FALLBACK = {
 WATCHLIST_FILE = BASE / "user_watchlist.json"
 
 def load_watchlist():
-    """讀取使用者上次加入的自選股；若檔案不存在則使用預設清單。"""
+    """讀取自選股：先讀 Supabase（Cloud 重新部署會重置本機檔案），再退回 user_watchlist.json、預設清單。"""
+    remote = watchlist_store.load()
+    if remote:
+        return remote
     try:
         if WATCHLIST_FILE.exists():
             data = json.loads(WATCHLIST_FILE.read_text(encoding="utf-8"))
@@ -145,11 +149,12 @@ def load_watchlist():
     return WATCHLIST_DEFAULT.copy()
 
 def save_watchlist(items):
-    """將自選股保存到本機，下一次開啟 Dashboard 仍會保留。"""
+    """將自選股存進 Supabase（永久）與本機檔案；資料庫寫入失敗回傳 False。"""
     try:
         WATCHLIST_FILE.write_text(json.dumps(list(dict.fromkeys(items)), ensure_ascii=False, indent=2), encoding="utf-8")
     except Exception:
         pass
+    return watchlist_store.save(items)
 
 
 
@@ -1421,11 +1426,14 @@ def render_strategy_search() -> None:
             if st.button("加入自選股", key=f"add_watch_site_{code}"):
                 st.session_state.watchlist.append(code)
                 st.session_state.watchlist = list(dict.fromkeys(st.session_state.watchlist))
-                save_watchlist(st.session_state.watchlist)
+                if not save_watchlist(st.session_state.watchlist):
+                    st.session_state.watchlist_save_failed = True
                 st.rerun()
         else:
             st.caption("登入後才能新增自選股。")
 
+    if st.session_state.pop("watchlist_save_failed", False):
+        st.warning("自選股已更新，但沒有存進雲端資料庫；網站重新部署後可能會還原。")
     st.markdown(f'<div class="selected-strip"><span>目前分析標的</span><strong>{code}</strong><span>｜自選股 {len(st.session_state.watchlist)} 檔</span></div>', unsafe_allow_html=True)
 
 
@@ -3994,7 +4002,8 @@ def _watch_remove(code: str) -> None:
         return
     new_watchlist = [x for x in st.session_state.watchlist if x != code]
     st.session_state.watchlist = new_watchlist
-    save_watchlist(new_watchlist)
+    if not save_watchlist(new_watchlist):
+        st.session_state.watchlist_save_failed = True
     if st.session_state.get('selected') == code:
         st.session_state.selected = new_watchlist[0] if new_watchlist else WATCHLIST_DEFAULT[0]
     st.session_state.ai_selected = None
