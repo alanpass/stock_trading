@@ -369,6 +369,28 @@ def _technical(hist: pd.DataFrame) -> tuple[list[dict], list[dict]]:
     return pv, tech
 
 
+def holder_since_tag(since: dict) -> tuple[str, str, str]:
+    """集保公布後到最新交易日的每日估計：主力買賣超（大戶）、融資增減（散戶）。回傳 (標籤, 依據, 色調)。"""
+    main, margin = since.get("main"), since.get("margin")
+    span = f"{since['start'][5:].replace('-', '/')}–{since['end'][5:].replace('-', '/')}，{since['days']} 日"
+    parts = []
+    if main is not None:
+        parts.append(f"主力{'買' if main >= 0 else '賣'}超 {abs(main):,.0f} 張")
+    if margin is not None:
+        parts.append(f"融資{'增' if margin >= 0 else '減'} {abs(margin):,.0f} 張")
+    big_buy = main is not None and main > 0
+    big_sell = main is not None and main < 0
+    retail_in = margin is not None and margin > 0
+    retail_out = margin is not None and margin < 0
+    if big_buy and not retail_in:
+        text, tone = "集保後大戶續買", "bull"
+    elif big_sell and not retail_out:
+        text, tone = "集保後大戶續賣", "bear"
+    else:
+        text, tone = "集保後籌碼（每日估計）", "flat"
+    return text, f"{'、'.join(parts)}（{span}；集保下次公布前以每日資料估計）", tone
+
+
 def _news(symbol: str, name: str, news: list[dict], earnings: list[dict], fund: dict) -> list[dict]:
     out = []
     if fund.get("disposal"):
@@ -438,6 +460,9 @@ def compute(symbol: str, hist: pd.DataFrame | None = None, name: str = "", news:
             chip.append(_tag("散戶離場", f"≤50 張散戶持股 {h['retail_pct']:.2f}%（{h['d_retail']:+.2f}），{span}", "bull"))
         elif h["d_retail"] >= HOLDER_CHANGE:
             chip.append(_tag("散戶進場", f"≤50 張散戶持股 {h['retail_pct']:.2f}%（{h['d_retail']:+.2f}），{span}", "bear"))
+        since = h.get("since")
+        if since:
+            chip.append(_tag(*holder_since_tag(since)))
     fh = (snap.get("foreign_hold") or {}).get(symbol, float("nan"))
     if fh == fh and fh >= FOREIGN_HOLD:
         chip.append(_tag("外資高持股", f"外資持股比率 {fh:.1f}%（門檻 {FOREIGN_HOLD:.0f}%）"))

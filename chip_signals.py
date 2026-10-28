@@ -266,6 +266,15 @@ def compute(symbol: str) -> dict:
         d_big, d_retail = now["big_pct"] - prev["big_pct"], now["retail_pct"] - prev["retail_pct"]
         holder = {"asof": now["date"], "prev": prev["date"], "big_pct": now["big_pct"], "retail_pct": now["retail_pct"],
                   "d_big": d_big, "d_retail": d_retail}
+        # 集保每週才公布一次，之後幾天用每日資料估計：主力買賣超代表大戶、融資增減代表散戶
+        asof = pd.Timestamp(now["date"]).date()
+        m_after = [(d, v) for d, v in main if d > asof and v == v]
+        f_after = [(d, v) for d, v in margin["margin"] if d > asof and v == v]
+        if m_after or f_after:
+            days_after = sorted({d for d, _ in m_after + f_after})
+            holder["since"] = {"start": days_after[0].isoformat(), "end": days_after[-1].isoformat(), "days": len(days_after),
+                               "main": sum(v for _, v in m_after) if m_after else None,
+                               "margin": sum(v for _, v in f_after) if f_after else None}
         if d_big >= TDCC_MIN_CHANGE and d_retail <= -TDCC_MIN_CHANGE:
             signals.append({"key": "holder", "text": "大戶買散戶賣", "tone": "bull"})
         elif d_big <= -TDCC_MIN_CHANGE and d_retail >= TDCC_MIN_CHANGE:

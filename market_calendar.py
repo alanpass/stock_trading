@@ -46,6 +46,7 @@ KNOWN_TWSE_CLOSED_2026 = {
     "2026-09-28": "孔子誕辰紀念日/教師節",
     "2026-10-09": "國慶日補假",
     "2026-10-10": "國慶日",
+    "2026-10-23": "休市（Fugle／TWSE 當天無成交資料，原因未查證）",
     "2026-10-25": "臺灣光復暨金門古寧頭大捷紀念日",
     "2026-10-26": "臺灣光復暨金門古寧頭大捷紀念日補假",
     "2026-12-25": "行憲紀念日",
@@ -88,6 +89,13 @@ def _parse_rows(payload) -> dict[str, str]:
     return out
 
 
+def _with_known(closed: dict[str, str], year: int) -> dict[str, str]:
+    """官方假日表不含臨時休市（例如 2026-10-23 當天沒有開盤），補上本檔已知的休市日。"""
+    if year == 2026:
+        return {**KNOWN_TWSE_CLOSED_2026, **closed}
+    return closed
+
+
 def get_twse_closed_dates(base_dir: str | Path = ".", year: int | None = None, force: bool = False) -> dict[str, str]:
     year = int(year or datetime.now(TAIPEI_TZ).year)
     path = _cache_path(base_dir, year)
@@ -95,7 +103,7 @@ def get_twse_closed_dates(base_dir: str | Path = ".", year: int | None = None, f
         try:
             payload = json.loads(path.read_text(encoding="utf-8"))
             if isinstance(payload, dict) and payload.get("closed_dates"):
-                return {str(k): str(v) for k, v in payload["closed_dates"].items()}
+                return _with_known({str(k): str(v) for k, v in payload["closed_dates"].items()}, year)
         except Exception:
             pass
 
@@ -116,7 +124,7 @@ def get_twse_closed_dates(base_dir: str | Path = ".", year: int | None = None, f
             path.write_text(json.dumps({"year": year, "closed_dates": closed, "source": "official-fallback-2026"}, ensure_ascii=False, indent=2), encoding="utf-8")
         except Exception:
             pass
-    return closed
+    return _with_known(closed, year)
 
 
 def is_twse_trading_day(value=None, base_dir: str | Path = ".") -> bool:

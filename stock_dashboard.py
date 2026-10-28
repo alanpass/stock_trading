@@ -5111,6 +5111,9 @@ def render_chip_signals(show_chips: bool = True):
         trs.append(
             f'<tr><td>大戶／散戶</td><td class="sig-t-{tone}">大戶 {h["big_pct"]:.2f}%（{h["d_big"]:+.2f}）・散戶 {h["retail_pct"]:.2f}%（{h["d_retail"]:+.2f}）</td>'
             f'<td class="sig-muted">集保 {h["prev"][4:6]}/{h["prev"][6:]} → {h["asof"][4:6]}/{h["asof"][6:]}</td></tr>')
+        if h.get("since"):
+            text, why, tone = stock_features.holder_since_tag(h["since"])
+            trs.append(f'<tr><td>集保後（每日估計）</td><td class="sig-t-{tone}">{text}</td><td class="sig-muted">{why}</td></tr>')
     asof = next((r["asof"] for r in res["rows"] if r.get("asof")), "")
     st.markdown(
         f'<div class="sig-table-wrap"><table class="sig-table"><thead><tr><th>項目</th><th>最新一日（{asof}）</th><th>連續天數</th></tr></thead>'
