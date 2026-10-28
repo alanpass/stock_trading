@@ -880,6 +880,44 @@ def build_official_industry_flows(base: Path, asof: str, previous: str) -> tuple
     return sorted(out, key=lambda f: f["turnover_change"], reverse=True), member_values
 
 
+SHARE_BASE_DAYS = 20   # 占比變化的比較基準：前 20 個交易日的平均占比（ToAlpha 資金流向同法）
+
+
+def add_share_flows(payload: dict[str, Any], base: Path) -> None:
+    """每個主題／官方產業加上「今天占全市場成交金額比例 − 前 20 個交易日平均占比」（百分點）。
+
+    全市場＝TWSE MI_INDEX＋TPEx 每日收盤行情所有證券的成交金額；每天一份，存在 data/cache 不重抓。
+    寫入欄位：share_pct、share_avg20_pct、share_delta20_pp。
+    """
+    import stock_features
+    import chip_signals
+    from datetime import date as _date
+
+    asof = _date.fromisoformat(payload["data_asof"])
+    days = [d for d in chip_signals.recent_trading_days(SHARE_BASE_DAYS + 1, asof)]
+    quotes = {d: stock_features._quotes(d) for d in days}
+    days = [d for d in days if quotes[d]]
+    if len(days) < 6 or days[0] != asof:
+        raise RuntimeError(f"占比基準資料不足：{len(days)} 天")
+    totals = {d: sum(v["value"] for v in quotes[d].values() if v["value"] == v["value"]) for d in days}
+
+    def share(members: list[str], d) -> float:
+        return sum(quotes[d][c]["value"] for c in members if c in quotes[d] and quotes[d][c]["value"] == quotes[d][c]["value"]) / totals[d] * 100
+
+    for kind in ("groups", "official_industries"):
+        for g in payload.get(kind) or []:
+            members = [str(c.get("symbol")) for c in g["components"]] if "components" in g else list(g.get("members") or [])
+            if not members:
+                continue
+            today = share(members, days[0])
+            base_days = days[1:]
+            avg = sum(share(members, d) for d in base_days) / len(base_days)
+            g["share_pct"] = round(today, 3)
+            g["share_avg20_pct"] = round(avg, 3)
+            g["share_delta20_pp"] = round(today - avg, 3)
+    payload["share_base_days"] = len(days) - 1
+
+
 def update_industry_rotation(base_dir: str | Path, force: bool = False, publish: bool = True) -> dict[str, Any]:
     """更新一輪資料；若官方基準未更新到今天，保留上一份發布資料。"""
     base = Path(base_dir).resolve()
@@ -974,6 +1012,10 @@ def update_industry_rotation(base_dir: str | Path, force: bool = False, publish:
                 base, payload["data_asof"], payload["previous_data_asof"])
     except Exception as exc:
         errors.append(f"官方產業資金增減失敗：{type(exc).__name__}: {exc}")
+    try:
+        add_share_flows(payload, base)
+    except Exception as exc:
+        errors.append(f"資金占比（較 20 日均）失敗：{type(exc).__name__}: {exc}")
     payload["errors"] = errors[:30]
     # 至少需要有足夠主題提供今日有效資料，才發布這次快照。
     usable_groups = [g for g in payload["groups"] if g["members_fresh"] > 0 and g["quadrant"] != "資料不足"]

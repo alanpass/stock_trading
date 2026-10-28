@@ -2801,16 +2801,28 @@ def _rotation_build_frame(group_series: dict[str, pd.Series], history_map: dict[
 
 
 def _render_flow_heatmap(payload: dict) -> None:
-    """02｜資金輪動熱力圖：各主題成分股成交金額較前一交易日的增減（金額差，不除以全市場總額）。"""
+    """02｜資金輪動熱力圖：金額較前一交易日增減，或占全市場成交比例較前 20 日平均的變化（可切換）。"""
     _sec('02｜資金輪動熱力圖')
-    kind_label = st.segmented_control("分類", ["產業主題", "官方產業別"], default="產業主題", key="flow_heatmap_kind") or "產業主題"
+    c1, c2 = st.columns([1, 1.4])
+    with c1:
+        kind_label = st.segmented_control("分類", ["產業主題", "官方產業別"], default="產業主題", key="flow_heatmap_kind") or "產業主題"
+    labels_by_metric = stock_features.FLOW_METRICS
+    with c2:
+        metric_label = st.segmented_control("計算方式", list(labels_by_metric.values()),
+                                            default=labels_by_metric[_flow_metric()], key="flow_metric_label") or labels_by_metric["amount"]
+    # 計算方式要帶到自選股卡片與個股特徵（其他頁面沒有這個元件），另存一份非元件的狀態
+    st.session_state["flow_metric"] = next(k for k, v in labels_by_metric.items() if v == metric_label)
+    metric = _flow_metric()
     kind = "official_industries" if kind_label == "官方產業別" else "groups"
-    ranks = stock_features.rotation_flow_ranks(payload, kind)
+    ranks = stock_features.rotation_flow_ranks(payload, kind, metric)
     asof, prev = str(payload.get("data_asof") or ""), str(payload.get("previous_data_asof") or "")
     if not ranks:
-        st.info("這份產業資料還沒有成交金額增減；下一次產業分析更新（交易日 15:10）後會出現。")
+        st.info("這份產業資料還沒有這種計算方式的資金增減；下一次產業分析更新（交易日 15:10）後會出現。")
         return
-    span = f"{prev[5:].replace('-', '/')} → {asof[5:].replace('-', '/')}" if asof and prev else "較前一交易日"
+    if metric == "share20":
+        span = f"{asof[5:].replace('-', '/')} 對前 {payload.get('share_base_days') or 20} 個交易日平均"
+    else:
+        span = f"{prev[5:].replace('-', '/')} → {asof[5:].replace('-', '/')}" if asof and prev else "較前一交易日"
     peak = max(abs(r["change"]) for r in ranks) or 1.0
     # 紅、綠各自以該側最大增減為最深色，資金增加較少的日子紅色也看得出深淺
     peak_up = max((r["change"] for r in ranks if r["change"] > 0), default=1.0)
@@ -2833,9 +2845,14 @@ def _render_flow_heatmap(payload: dict) -> None:
         labels.append(r["name"])
         values.append(max(abs(r["change"]), peak * 0.02))   # 增減很小的主題仍留一小格
         colors.append(color(r["change"]))
-        texts.append(f"<b>{star}{r['name']}</b><br>{r['change'] / 1e8:+,.1f} 億<br>{pct}")
         rank = f"{'增加' if r['side'] == 'up' else '減少'}第 {r['rank']} 名" if r.get("rank") else "持平"
-        hovers.append(f"{r['name']}<br>成交金額 {(r.get('turnover') or 0) / 1e8:,.1f} 億（{r['change'] / 1e8:+,.1f} 億，{pct}）<br>{rank}")
+        if metric == "share20":
+            texts.append(f"<b>{star}{r['name']}</b><br>{r['change']:+.1f} pp<br>占 {r['share']:.1f}%")
+            hovers.append(f"{r['name']}<br>今天占全市場成交 {r['share']:.2f}%，前 20 日平均 {r['share_avg']:.2f}%<br>"
+                          f"{r['change']:+.2f} 個百分點，{rank}")
+        else:
+            texts.append(f"<b>{star}{r['name']}</b><br>{r['change'] / 1e8:+,.1f} 億<br>{pct}")
+            hovers.append(f"{r['name']}<br>成交金額 {(r.get('turnover') or 0) / 1e8:,.1f} 億（{r['change'] / 1e8:+,.1f} 億，{pct}）<br>{rank}")
     fig = go.Figure(go.Treemap(
         labels=labels, parents=[""] * len(labels), values=values, text=texts, textinfo="text",
         hovertext=hovers, hoverinfo="text", marker=dict(colors=colors, line=dict(color="#ffffff", width=2)),
@@ -2859,9 +2876,8 @@ def _render_flow_heatmap(payload: dict) -> None:
             members = "、".join(f"{names.get(c, c)}（{c}）" for c in shown if c)
             if kind != "groups" and len(r["members"]) > len(shown):
                 members += f" 等 {len(r['members'])} 檔"
-            pct = f"（{r['pct']:+.1f}%）" if r.get("pct") is not None else ""
             items.append(f'<li><div class="flow-top-head"><span class="flow-rank">{r["rank"]}</span><b>{_esc(r["name"])}</b>'
-                         f'<span class="flow-amt">{r["change"] / 1e8:+,.1f} 億{pct}</span></div>'
+                         f'<span class="flow-amt">{stock_features.flow_value_text(r)}</span></div>'
                          f'<div class="flow-members">{_esc(members)}</div></li>')
         body = "".join(items) or '<li class="flow-empty">無</li>'
         return f'<div class="flow-top flow-{side}"><div class="flow-top-title">{title}</div><ol>{body}</ol></div>'
@@ -2871,8 +2887,10 @@ def _render_flow_heatmap(payload: dict) -> None:
                 + top_list("up", f"產業市場輪動資金增加 前 {stock_features.FLOW_TOP}")
                 + top_list("down", f"產業市場輪動資金減少 前 {stock_features.FLOW_TOP}")
                 + "</div>", unsafe_allow_html=True)
-    st.caption(f"資料日期 {span}。每格是一個{'產業主題（代表股）' if kind == 'groups' else '官方產業別（上市櫃全部股票，不含 ETF）'}，大小與顏色＝該主題代表股今天成交金額減前一交易日成交金額（紅＝增加、綠＝減少，越深越多），"
-               f"直接比較金額增減、不除以全市場總成交金額；★＝增加或減少前 {stock_features.FLOW_TOP} 名。"
+    how = ("今天占全市場成交金額的比例減掉前 20 個交易日的平均占比（百分點，pp；ToAlpha 資金流向同法，大盤量縮放大時不受影響）"
+           if metric == "share20" else "今天成交金額減前一交易日成交金額，直接比較金額增減、不除以全市場總成交金額（大盤整體量縮時多數產業會一起變少）")
+    st.caption(f"資料日期 {span}。每格是一個{'產業主題（代表股）' if kind == 'groups' else '官方產業別（上市櫃全部股票，不含 ETF）'}，"
+               f"大小與顏色＝{how}；紅＝增加、綠＝減少，越深越多；★＝增加或減少前 {stock_features.FLOW_TOP} 名。"
                "同一股票可能屬於多個主題；代表股只是研究樣本，不等於整個產業。這些主題的個股在「操作策略 → 個股符合特徵 → 價量面」也會標出資金增減。")
 
 
@@ -4886,18 +4904,23 @@ _SIG_WORDS = {"foreign": ("買超", "賣超"), "trust": ("買超", "賣超"), "m
 _SIG_BULL_WHEN_UP = {"foreign": True, "trust": True, "main": True, "margin": True, "short": False}
 
 
+def _flow_metric() -> str:
+    """資金輪動的計算方式（產業分析頁的切換）；自選股卡片與個股特徵跟著用。"""
+    return st.session_state.get("flow_metric", "amount")
+
+
 @st.cache_data(ttl=600, show_spinner=False)
-def _flow_by_symbol(_generated_at: str) -> dict[str, list[dict]]:
+def _flow_by_symbol(_generated_at: str, metric: str = "amount") -> dict[str, list[dict]]:
     """{代號: [所屬主題的資金增減]}，前 5 名排前面；依產業分析快照的產生時間快取。"""
     out: dict[str, list[dict]] = {}
     payload = load_published_rotation(BASE)
-    for r in stock_features.rotation_flow_ranks(payload):
+    for r in stock_features.rotation_flow_ranks(payload, metric=metric):
         if r["side"] == "flat":
             continue
         for code in r["members"]:
             out.setdefault(code, []).append(r)
     # 不在任何主題代表股裡的個股：改用官方產業別（排名是官方產業之間比）
-    for r in stock_features.rotation_flow_ranks(payload, "official_industries"):
+    for r in stock_features.rotation_flow_ranks(payload, "official_industries", metric):
         if r["side"] == "flat":
             continue
         for code in r["members"]:
@@ -4911,12 +4934,12 @@ def _flow_by_symbol(_generated_at: str) -> dict[str, list[dict]]:
 def _flow_chips_html(code: str, limit: int = 2) -> str:
     """自選股卡片上的產業資金增減標籤：前 5 名實心，其餘一般；一檔屬於多個主題時最多顯示 limit 個。"""
     payload = load_published_rotation(BASE)
-    rows = _flow_by_symbol(str(payload.get("generated_at") or "")).get(clean_symbol(code), [])
+    rows = _flow_by_symbol(str(payload.get("generated_at") or ""), _flow_metric()).get(clean_symbol(code), [])
     chips = []
     for r in rows[:limit]:
         up = r["side"] == "up"
         text = f"{r['name']} 資金{'流入' if up else '流出'}#{r['rank']}" if r["top"] else f"{r['name']} 資金{'增' if up else '減'}"
-        why = f"{r['name']}成分股成交金額較前一交易日{'增加' if up else '減少'} {abs(r['change']) / 1e8:,.1f} 億，{'增加' if up else '減少'}第 {r['rank']} 名"
+        why = f"{stock_features.flow_why_text(r)}（{stock_features.FLOW_METRICS[r['metric']]}）"
         chips.append(f'<span class="sig sig-{"bull" if up else "bear"}{" sig-top" if r["top"] else ""}" title="{_esc(why)}">{_esc(text)}</span>')
     return "".join(chips)
 
@@ -5174,13 +5197,13 @@ _FEAT_CLASS = {"消息面": "news", "籌碼面": "chip", "價量面": "pv", "基
 
 
 @st.cache_data(ttl=900, show_spinner=False, max_entries=128)
-def _cached_stock_features(code: str) -> dict:
+def _cached_stock_features(code: str, flow_metric: str = "amount") -> dict:
     tickers = get_all_tickers()
     hit = tickers.loc[tickers["symbol"] == code, "name"] if "symbol" in tickers.columns else pd.Series(dtype=str)
     return stock_features.compute(
         code, get_history(code, 420), name=str(hit.iloc[0]) if len(hit) else "",
         news=_recent_news_items(days=2), earnings=_recent_earnings_items(days=5),
-        chips=chip_signals.get_blocking(code, timeout=90), rotation=load_published_rotation(BASE),
+        chips=chip_signals.get_blocking(code, timeout=90), rotation=load_published_rotation(BASE), flow_metric=flow_metric,
     )
 
 
@@ -5189,7 +5212,7 @@ def render_stock_features():
     selected = st.session_state.selected
     with st.spinner("整理個股特徵…（第一次約 10～30 秒）"):
         try:
-            res = _cached_stock_features(selected)
+            res = _cached_stock_features(selected, _flow_metric())
         except Exception as exc:
             st.warning(f"個股特徵暫時取不到：{type(exc).__name__}")
             return
