@@ -2803,7 +2803,9 @@ def _rotation_build_frame(group_series: dict[str, pd.Series], history_map: dict[
 def _render_flow_heatmap(payload: dict) -> None:
     """02｜資金輪動熱力圖：各主題成分股成交金額較前一交易日的增減（金額差，不除以全市場總額）。"""
     _sec('02｜資金輪動熱力圖')
-    ranks = stock_features.rotation_flow_ranks(payload)
+    kind_label = st.segmented_control("分類", ["產業主題", "官方產業別"], default="產業主題", key="flow_heatmap_kind") or "產業主題"
+    kind = "official_industries" if kind_label == "官方產業別" else "groups"
+    ranks = stock_features.rotation_flow_ranks(payload, kind)
     asof, prev = str(payload.get("data_asof") or ""), str(payload.get("previous_data_asof") or "")
     if not ranks:
         st.info("這份產業資料還沒有成交金額增減；下一次產業分析更新（交易日 15:10）後會出現。")
@@ -2843,7 +2845,7 @@ def _render_flow_heatmap(payload: dict) -> None:
     fig.data[0].textfont.color = ["#ffffff" if depth(r["change"]) > 0.45 else "#2b2424" for r in ranks]
     st.plotly_chart(fig, use_container_width=True, key="rotation_flow_heatmap", config={"displaylogo": False, "responsive": True})
 
-    names = {}
+    names = dict(_local_stock_names())
     for g in payload.get("groups") or []:
         for c in g.get("components") or []:
             names[str(c.get("symbol"))] = c.get("name") or str(c.get("symbol"))
@@ -2853,7 +2855,10 @@ def _render_flow_heatmap(payload: dict) -> None:
         rows.sort(key=lambda r: r["rank"])
         items = []
         for r in rows:
-            members = "、".join(f"{names.get(c, c)}（{c}）" for c in r["members"] if c)
+            shown = r["members"] if kind == "groups" else _top_members_by_value(r["members"], payload)
+            members = "、".join(f"{names.get(c, c)}（{c}）" for c in shown if c)
+            if kind != "groups" and len(r["members"]) > len(shown):
+                members += f" 等 {len(r['members'])} 檔"
             pct = f"（{r['pct']:+.1f}%）" if r.get("pct") is not None else ""
             items.append(f'<li><div class="flow-top-head"><span class="flow-rank">{r["rank"]}</span><b>{_esc(r["name"])}</b>'
                          f'<span class="flow-amt">{r["change"] / 1e8:+,.1f} 億{pct}</span></div>'
@@ -2866,9 +2871,15 @@ def _render_flow_heatmap(payload: dict) -> None:
                 + top_list("up", f"產業市場輪動資金增加 前 {stock_features.FLOW_TOP}")
                 + top_list("down", f"產業市場輪動資金減少 前 {stock_features.FLOW_TOP}")
                 + "</div>", unsafe_allow_html=True)
-    st.caption(f"資料日期 {span}。每格是一個產業主題，大小與顏色＝該主題代表股今天成交金額減前一交易日成交金額（紅＝增加、綠＝減少，越深越多），"
+    st.caption(f"資料日期 {span}。每格是一個{'產業主題（代表股）' if kind == 'groups' else '官方產業別（上市櫃全部股票，不含 ETF）'}，大小與顏色＝該主題代表股今天成交金額減前一交易日成交金額（紅＝增加、綠＝減少，越深越多），"
                f"直接比較金額增減、不除以全市場總成交金額；★＝增加或減少前 {stock_features.FLOW_TOP} 名。"
                "同一股票可能屬於多個主題；代表股只是研究樣本，不等於整個產業。這些主題的個股在「操作策略 → 個股符合特徵 → 價量面」也會標出資金增減。")
+
+
+def _top_members_by_value(members: list[str], payload: dict, n: int = 8) -> list[str]:
+    """官方產業成分股太多，只列今天成交金額最大的 n 檔（金額來自發布資料的 member_values）。"""
+    values = payload.get("official_member_values") or {}
+    return sorted(members, key=lambda c: -(values.get(c) or 0))[:n]
 
 
 _FLOW_CSS = """<style>
@@ -4879,11 +4890,19 @@ _SIG_BULL_WHEN_UP = {"foreign": True, "trust": True, "main": True, "margin": Tru
 def _flow_by_symbol(_generated_at: str) -> dict[str, list[dict]]:
     """{代號: [所屬主題的資金增減]}，前 5 名排前面；依產業分析快照的產生時間快取。"""
     out: dict[str, list[dict]] = {}
-    for r in stock_features.rotation_flow_ranks(load_published_rotation(BASE)):
+    payload = load_published_rotation(BASE)
+    for r in stock_features.rotation_flow_ranks(payload):
         if r["side"] == "flat":
             continue
         for code in r["members"]:
             out.setdefault(code, []).append(r)
+    # 不在任何主題代表股裡的個股：改用官方產業別（排名是官方產業之間比）
+    for r in stock_features.rotation_flow_ranks(payload, "official_industries"):
+        if r["side"] == "flat":
+            continue
+        for code in r["members"]:
+            if code not in out or out[code][0].get("official"):
+                out.setdefault(code, []).append({**r, "official": True})
     for rows in out.values():
         rows.sort(key=lambda r: (not r["top"], -abs(r["change"])))
     return out

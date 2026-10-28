@@ -309,9 +309,10 @@ def _tag(text: str, why: str, tone: str = "flat") -> dict:
 FLOW_TOP = 5                # 產業資金增加／減少前 5 名特別顯示
 
 
-def rotation_flow_ranks(rotation: dict | None) -> list[dict]:
-    """產業輪動主題依「成交金額較前一交易日增減」排序（大到小）；同一批成分股比較，不除以全市場總額。"""
-    rows = [g for g in (rotation or {}).get("groups") or [] if g.get("turnover_change") is not None]
+def rotation_flow_ranks(rotation: dict | None, kind: str = "groups") -> list[dict]:
+    """產業依「成交金額較前一交易日增減」排序（大到小）；同一批股票比較，不除以全市場總額。
+    kind：groups＝產業輪動主題（代表股）、official_industries＝官方產業別（上市櫃全部股票）。"""
+    rows = [g for g in (rotation or {}).get(kind) or [] if g.get("turnover_change") is not None]
     rows.sort(key=lambda g: g["turnover_change"], reverse=True)
     up = [g for g in rows if g["turnover_change"] > 0]
     down = sorted((g for g in rows if g["turnover_change"] < 0), key=lambda g: g["turnover_change"])
@@ -322,13 +323,17 @@ def rotation_flow_ranks(rotation: dict | None) -> list[dict]:
         out.append({"name": g["name"], "change": g["turnover_change"], "pct": g.get("turnover_change_pct"),
                     "turnover": g.get("turnover"), "side": side, "rank": rank,
                     "top": rank is not None and rank <= FLOW_TOP,
-                    "members": [str(c.get("symbol") or c.get("code") or "") for c in g.get("components") or []]})
+                    "members": [str(c.get("symbol") or c.get("code") or "") for c in g.get("components") or []]
+                    if "components" in g else [str(c) for c in g.get("members") or []]})
     return out
 
 
 def _rotation_flow(symbol: str, rotation: dict | None) -> list[dict]:
     """個股所屬產業主題的資金增減標籤；前 5 名加 top 標記（網站上實心粗體）。"""
     ranks = rotation_flow_ranks(rotation)
+    if not any(symbol in r["members"] for r in ranks):
+        # 不在任何主題代表股裡：改用官方產業別（排名也是在官方產業之間比）
+        ranks = rotation_flow_ranks(rotation, "official_industries")
     asof = (rotation or {}).get("data_asof") or ""
     prev = (rotation or {}).get("previous_data_asof") or ""
     span = f"{prev[5:].replace('-', '/')} → {asof[5:].replace('-', '/')}" if asof and prev else "較前一交易日"

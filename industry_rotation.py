@@ -841,6 +841,45 @@ def publish_to_github(payload: dict[str, Any], repo: str | None = None) -> dict[
     raise RuntimeError("GitHub 發布失敗：重試後仍有版本衝突。")
 
 
+def build_official_industry_flows(base: Path, asof: str, previous: str) -> tuple[list[dict[str, Any]], dict[str, float]]:
+    """官方產業別（上市櫃全部股票）今天與前一交易日成交金額的增減；給不在主題代表股裡的個股用。
+
+    產業別取 data/industry_master.csv，成交金額取 TWSE MI_INDEX 與 TPEx 每日收盤行情（stock_features._quotes）。
+    排除 ETF／無分類（00）、管理股票（80）與非 01–38 的代碼。
+    """
+    import stock_features
+    from datetime import date as _date
+    from stock_api import INDUSTRIES
+
+    master = pd.read_csv(base / "data" / "industry_master.csv", dtype=str)
+    industry_of = {clean_symbol(sym): str(ind).zfill(2) for sym, ind in zip(master["symbol"], master["industry"])
+                   if isinstance(ind, str) and ind.isdigit() and ind.zfill(2) not in {"00", "80"} and ind.zfill(2) in INDUSTRIES}
+    today_q = stock_features._quotes(_date.fromisoformat(asof))
+    prev_q = stock_features._quotes(_date.fromisoformat(previous))
+    if not today_q or not prev_q:
+        raise RuntimeError(f"官方產業成交金額缺資料：{asof} {len(today_q)} 檔、{previous} {len(prev_q)} 檔")
+    flows: dict[str, dict[str, Any]] = {}
+    for code, ind in industry_of.items():
+        now_v = _parse_number((today_q.get(code) or {}).get("value"))
+        prev_v = _parse_number((prev_q.get(code) or {}).get("value"))
+        if not (np.isfinite(now_v) and np.isfinite(prev_v)):
+            continue
+        f = flows.setdefault(ind, {"code": ind, "name": INDUSTRIES[ind], "turnover": 0.0, "previous_turnover": 0.0, "members": []})
+        f["turnover"] += now_v
+        f["previous_turnover"] += prev_v
+        f["members"].append(code)
+    out = []
+    member_values = {code: round(_parse_number((today_q.get(code) or {}).get("value")), 0)
+                     for f in flows.values() for code in f["members"]}
+    for f in flows.values():
+        if f["turnover"] <= 0 or f["previous_turnover"] <= 0:
+            continue
+        out.append({**f, "turnover": round(f["turnover"], 0), "previous_turnover": round(f["previous_turnover"], 0),
+                    "turnover_change": round(f["turnover"] - f["previous_turnover"], 0),
+                    "turnover_change_pct": round((f["turnover"] / f["previous_turnover"] - 1) * 100.0, 2)})
+    return sorted(out, key=lambda f: f["turnover_change"], reverse=True), member_values
+
+
 def update_industry_rotation(base_dir: str | Path, force: bool = False, publish: bool = True) -> dict[str, Any]:
     """更新一輪資料；若官方基準未更新到今天，保留上一份發布資料。"""
     base = Path(base_dir).resolve()
@@ -929,6 +968,12 @@ def update_industry_rotation(base_dir: str | Path, force: bool = False, publish:
         history_map, taiex, names,
         generated_at=now_taipei(),
     )
+    try:
+        if payload.get("data_asof") and payload.get("previous_data_asof"):
+            payload["official_industries"], payload["official_member_values"] = build_official_industry_flows(
+                base, payload["data_asof"], payload["previous_data_asof"])
+    except Exception as exc:
+        errors.append(f"官方產業資金增減失敗：{type(exc).__name__}: {exc}")
     payload["errors"] = errors[:30]
     # 至少需要有足夠主題提供今日有效資料，才發布這次快照。
     usable_groups = [g for g in payload["groups"] if g["members_fresh"] > 0 and g["quadrant"] != "資料不足"]
