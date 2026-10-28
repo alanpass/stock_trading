@@ -2808,12 +2808,18 @@ def _render_flow_heatmap(payload: dict) -> None:
         return
     span = f"{prev[5:].replace('-', '/')} → {asof[5:].replace('-', '/')}" if asof and prev else "較前一交易日"
     peak = max(abs(r["change"]) for r in ranks) or 1.0
+    # 紅、綠各自以該側最大增減為最深色，資金增加較少的日子紅色也看得出深淺
+    peak_up = max((r["change"] for r in ranks if r["change"] > 0), default=1.0)
+    peak_down = max((-r["change"] for r in ranks if r["change"] < 0), default=1.0)
+
+    def depth(v: float) -> float:
+        return min(1.0, abs(v) / (peak_up if v > 0 else peak_down)) ** 0.6
 
     def color(v: float) -> str:
-        # 台股慣例：資金增加紅、減少綠；顏色深淺依增減金額相對最大值
-        t = min(1.0, abs(v) / peak) ** 0.6
-        base = (196, 52, 52) if v > 0 else (22, 128, 74)
-        light = (250, 244, 244) if v > 0 else (241, 248, 244)
+        # 台股慣例：資金增加紅、減少綠；增減越多越深（深紅→淺紅、深綠→淺綠）
+        t = depth(v)
+        base = (139, 26, 26) if v > 0 else (14, 90, 50)
+        light = (244, 178, 178) if v > 0 else (168, 220, 188)
         return "rgb({},{},{})".format(*(round(light[i] + (base[i] - light[i]) * t) for i in range(3)))
 
     labels, values, colors, texts, hovers = [], [], [], [], []
@@ -2832,7 +2838,7 @@ def _render_flow_heatmap(payload: dict) -> None:
         textfont=dict(size=13), tiling=dict(pad=2), sort=True,
     ))
     fig.update_layout(height=460, margin=dict(l=0, r=0, t=0, b=0))
-    fig.data[0].textfont.color = ["#ffffff" if abs(r["change"]) / peak > 0.35 else "#3e3a3a" for r in ranks]
+    fig.data[0].textfont.color = ["#ffffff" if depth(r["change"]) > 0.45 else "#2b2424" for r in ranks]
     st.plotly_chart(fig, use_container_width=True, key="rotation_flow_heatmap", config={"displaylogo": False, "responsive": True})
 
     names = {}
