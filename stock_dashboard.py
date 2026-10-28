@@ -2809,7 +2809,7 @@ def _render_flow_heatmap(payload: dict) -> None:
     labels_by_metric = stock_features.FLOW_METRICS
     with c2:
         metric_label = st.segmented_control("計算方式", list(labels_by_metric.values()),
-                                            default=labels_by_metric[_flow_metric()], key="flow_metric_label") or labels_by_metric["amount"]
+                                            default=labels_by_metric[_flow_metric()], key="flow_metric_label") or labels_by_metric["share20"]
     # 計算方式要帶到自選股卡片與個股特徵（其他頁面沒有這個元件），另存一份非元件的狀態
     st.session_state["flow_metric"] = next(k for k, v in labels_by_metric.items() if v == metric_label)
     metric = _flow_metric()
@@ -4906,11 +4906,11 @@ _SIG_BULL_WHEN_UP = {"foreign": True, "trust": True, "main": True, "margin": Tru
 
 def _flow_metric() -> str:
     """資金輪動的計算方式（產業分析頁的切換）；自選股卡片與個股特徵跟著用。"""
-    return st.session_state.get("flow_metric", "amount")
+    return st.session_state.get("flow_metric", "share20")
 
 
 @st.cache_data(ttl=600, show_spinner=False)
-def _flow_by_symbol(_generated_at: str, metric: str = "amount") -> dict[str, list[dict]]:
+def _flow_by_symbol(_generated_at: str, metric: str = "share20") -> dict[str, list[dict]]:
     """{代號: [所屬主題的資金增減]}，前 5 名排前面；依產業分析快照的產生時間快取。"""
     out: dict[str, list[dict]] = {}
     payload = load_published_rotation(BASE)
@@ -5197,7 +5197,7 @@ _FEAT_CLASS = {"消息面": "news", "籌碼面": "chip", "價量面": "pv", "基
 
 
 @st.cache_data(ttl=900, show_spinner=False, max_entries=128)
-def _cached_stock_features(code: str, flow_metric: str = "amount") -> dict:
+def _cached_stock_features(code: str, flow_metric: str = "share20") -> dict:
     tickers = get_all_tickers()
     hit = tickers.loc[tickers["symbol"] == code, "name"] if "symbol" in tickers.columns else pd.Series(dtype=str)
     return stock_features.compute(

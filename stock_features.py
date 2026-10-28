@@ -309,16 +309,19 @@ def _tag(text: str, why: str, tone: str = "flat") -> dict:
 FLOW_TOP = 5                # 產業資金增加／減少前 5 名特別顯示
 
 
-FLOW_METRICS = {"amount": "較昨日金額", "share20": "較 20 日均占比"}
+FLOW_METRICS = {"share20": "較 20 日均占比", "amount": "較昨日金額"}   # 第一個是預設
 
 
-def rotation_flow_ranks(rotation: dict | None, kind: str = "groups", metric: str = "amount") -> list[dict]:
+def rotation_flow_ranks(rotation: dict | None, kind: str = "groups", metric: str = "share20") -> list[dict]:
     """產業依資金增減排序（大到小）。
     kind：groups＝產業輪動主題（代表股）、official_industries＝官方產業別（上市櫃全部股票）。
     metric：amount＝成交金額較前一交易日增減（元，不除以全市場總額）；
             share20＝今天占全市場成交金額比例 − 前 20 個交易日平均占比（百分點，ToAlpha 資金流向同法）。"""
     field = "share_delta20_pp" if metric == "share20" else "turnover_change"
     rows = [g for g in (rotation or {}).get(kind) or [] if g.get(field) is not None]
+    if not rows and metric == "share20":
+        # 舊版發布資料沒有 20 日占比欄位：退回金額增減
+        return rotation_flow_ranks(rotation, kind, "amount")
     rows.sort(key=lambda g: g[field], reverse=True)
     up = [g for g in rows if g[field] > 0]
     down = sorted((g for g in rows if g[field] < 0), key=lambda g: g[field])
@@ -354,7 +357,7 @@ def flow_why_text(r: dict) -> str:
             f"{'（' + format(r['pct'], '+.1f') + '%）' if r.get('pct') is not None else ''}，資金{'增加' if up else '減少'}第 {r['rank']} 名")
 
 
-def _rotation_flow(symbol: str, rotation: dict | None, metric: str = "amount") -> list[dict]:
+def _rotation_flow(symbol: str, rotation: dict | None, metric: str = "share20") -> list[dict]:
     """個股所屬產業主題的資金增減標籤；前 5 名加 top 標記（網站上實心粗體）。"""
     ranks = rotation_flow_ranks(rotation, metric=metric)
     if not any(symbol in r["members"] for r in ranks):
@@ -479,7 +482,7 @@ def _news(symbol: str, name: str, news: list[dict], earnings: list[dict], fund: 
 
 def compute(symbol: str, hist: pd.DataFrame | None = None, name: str = "", news: list | None = None,
             earnings: list | None = None, chips: dict | None = None, rotation: dict | None = None,
-            flow_metric: str = "amount") -> dict:
+            flow_metric: str = "share20") -> dict:
     """hist：日 K（呼叫端提供，避免重複下載）；chips：chip_signals.compute 的結果（可省略）。"""
     symbol = clean_symbol(symbol)
     snap = market_snapshot()
