@@ -1,59 +1,24 @@
 {
  "schema_version": 2,
  "report_type": "system_picks_public",
- "generated_at": "2026-10-27T15:58:35+08:00",
- "data_asof": "2026-10-27",
+ "generated_at": "2026-10-28T15:57:55+08:00",
+ "data_asof": "2026-10-28",
  "latest": {
-  "date": "2026-10-27",
+  "date": "2026-10-28",
   "picks": [
-   {
-    "symbol": "1303",
-    "name": "南亞",
-    "themes": [
-     "CCL／銅箔基板"
-    ],
-    "close": 297.5,
-    "r20": 28.51,
-    "horizon": "swing",
-    "reasons": [
-     {
-      "cat": "型態",
-      "text": "K 線型態「雙底突破」（底部反轉候選）"
-     },
-     {
-      "cat": "技術",
-      "text": "收盤 297.50 站上月線 289.80，月線高於季線 233.95"
-     },
-     {
-      "cat": "動能",
-      "text": "近 20 日上漲 28.5%，動能延續但未過熱"
-     },
-     {
-      "cat": "基本面",
-      "text": "2026/09 月營收年增 55.3%"
-     },
-     {
-      "cat": "系統",
-      "text": "題材波段引擎（前 3 強題材 × 20 日動能）入選"
-     }
-    ],
-    "score": 5,
-    "pattern": "雙底突破",
-    "classification": "底部反轉候選"
-   },
    {
     "symbol": "4938",
     "name": "和碩",
     "themes": [
      "組裝代工／ODM"
     ],
-    "close": 105.0,
-    "r20": 16.67,
+    "close": 108.0,
+    "r20": 18.29,
     "horizon": "swing",
     "reasons": [
      {
       "cat": "題材",
-      "text": "「組裝代工／ODM」位於產業輪動改善象限，族群近 20 日 +1.3%"
+      "text": "「組裝代工／ODM」位於產業輪動改善象限，族群近 20 日 +2.7%"
      },
      {
       "cat": "型態",
@@ -61,11 +26,11 @@
      },
      {
       "cat": "技術",
-      "text": "收盤 105.00 站上月線 96.13，月線高於季線 91.83"
+      "text": "收盤 108.00 站上月線 96.97，月線高於季線 92.27"
      },
      {
       "cat": "動能",
-      "text": "近 20 日上漲 16.7%，動能延續但未過熱"
+      "text": "近 20 日上漲 18.3%，動能延續但未過熱"
      },
      {
       "cat": "基本面",
@@ -77,18 +42,61 @@
     "classification": "底部反轉候選"
    },
    {
-    "symbol": "5309",
-    "name": "系統電",
+    "symbol": "3189",
+    "name": "景碩",
     "themes": [
-     "電源／BBU"
+     "ABF／IC 載板"
     ],
-    "close": 67.5,
-    "r20": 30.31,
+    "close": 1035.0,
+    "r20": 14.24,
+    "horizon": "swing",
+    "reasons": [
+     {
+      "cat": "型態",
+      "text": "K 線型態「雙底突破」（底部反轉候選）"
+     },
+     {
+      "cat": "技術",
+      "text": "收盤 1,035.00 站上月線 1,015.75，月線高於季線 887.50"
+     },
+     {
+      "cat": "動能",
+      "text": "近 20 日上漲 14.2%，動能延續但未過熱"
+     },
+     {
+      "cat": "基本面",
+      "text": "2026/09 月營收年增 44.5%"
+     },
+     {
+      "cat": "系統",
+      "text": "題材波段引擎（前 3 強題材 × 20 日動能）入選"
+     },
+     {
+      "cat": "研究筆記",
+      "text": "載板供需偏緊（載板股漲停，今日上漲9.99%）"
+     },
+     {
+      "cat": "研究筆記",
+      "text": "同業財報強（載板股漲停，今日上漲9.99%）"
+     }
+    ],
+    "score": 5,
+    "pattern": "雙底突破",
+    "classification": "底部反轉候選"
+   },
+   {
+    "symbol": "6117",
+    "name": "迎廣",
+    "themes": [
+     "機殼／機櫃"
+    ],
+    "close": 67.1,
+    "r20": 8.58,
     "horizon": "swing",
     "reasons": [
      {
       "cat": "題材",
-      "text": "「電源／BBU」位於產業輪動改善象限，族群近 20 日 -3.8%"
+      "text": "「機殼／機櫃」位於產業輪動改善象限，族群近 20 日 -1.4%"
      },
      {
       "cat": "型態",
@@ -96,11 +104,46 @@
      },
      {
       "cat": "技術",
-      "text": "收盤 67.50 站上月線 66.22，月線高於季線 56.74"
+      "text": "收盤 67.10 站上月線 66.20，月線高於季線 64.08"
      },
      {
       "cat": "動能",
-      "text": "近 20 日上漲 30.3%，動能延續但未過熱"
+      "text": "近 20 日上漲 8.6%，動能延續但未過熱"
+     },
+     {
+      "cat": "基本面",
+      "text": "2026/09 月營收年增 36.0%"
+     }
+    ],
+    "score": 5,
+    "pattern": "雙底突破",
+    "classification": "底部反轉候選"
+   },
+   {
+    "symbol": "1303",
+    "name": "南亞",
+    "themes": [
+     "CCL／銅箔基板"
+    ],
+    "close": 319.0,
+    "r20": 40.22,
+    "horizon": "swing",
+    "reasons": [
+     {
+      "cat": "型態",
+      "text": "K 線型態「雙底突破」（底部反轉候選）"
+     },
+     {
+      "cat": "技術",
+      "text": "收盤 319.00 站上月線 294.38，月線高於季線 236.91"
+     },
+     {
+      "cat": "基本面",
+      "text": "2026/09 月營收年增 55.3%"
+     },
+     {
+      "cat": "系統",
+      "text": "題材波段引擎（前 3 強題材 × 20 日動能）入選"
      }
     ],
     "score": 4,
@@ -113,8 +156,8 @@
     "themes": [
      "被動元件"
     ],
-    "close": 372.5,
-    "r20": 19.77,
+    "close": 398.0,
+    "r20": 30.07,
     "horizon": "swing",
     "reasons": [
      {
@@ -123,11 +166,11 @@
      },
      {
       "cat": "技術",
-      "text": "收盤 372.50 站上月線 371.55，月線高於季線 313.87"
+      "text": "收盤 398.00 站上月線 376.15，月線高於季線 316.82"
      },
      {
       "cat": "動能",
-      "text": "近 20 日上漲 19.8%，動能延續但未過熱"
+      "text": "近 20 日上漲 30.1%，動能延續但未過熱"
      },
      {
       "cat": "基本面",
@@ -135,11 +178,7 @@
      },
      {
       "cat": "研究筆記",
-      "text": "9月營收YoY +53.93%（今日上漲1.22%，被動元件止跌但仍缺報價證據）"
-     },
-     {
-      "cat": "研究筆記",
-      "text": "20日報酬仍為正（今日上漲1.22%，被動元件止跌但仍缺報價證據）"
+      "text": "9月營收YoY +53.93%（今日上漲6.85%，被動元件隨大盤強彈）"
      }
     ],
     "score": 4,
@@ -152,8 +191,8 @@
     "themes": [
      "被動元件"
     ],
-    "close": 133.0,
-    "r20": 19.28,
+    "close": 137.5,
+    "r20": 23.32,
     "horizon": "swing",
     "reasons": [
      {
@@ -162,11 +201,11 @@
      },
      {
       "cat": "技術",
-      "text": "收盤 133.00 站上月線 130.43，月線高於季線 115.90"
+      "text": "收盤 137.50 站上月線 131.72，月線高於季線 116.60"
      },
      {
       "cat": "動能",
-      "text": "近 20 日上漲 19.3%，動能延續但未過熱"
+      "text": "近 20 日上漲 23.3%，動能延續但未過熱"
      },
      {
       "cat": "基本面",
@@ -178,13 +217,44 @@
     "classification": "底部反轉候選"
    },
    {
+    "symbol": "4958",
+    "name": "臻鼎-KY",
+    "themes": [
+     "PCB／伺服器板／HDI"
+    ],
+    "close": 550.0,
+    "r20": 16.28,
+    "horizon": "swing",
+    "reasons": [
+     {
+      "cat": "技術",
+      "text": "收盤 550.00 站上月線 548.70，月線高於季線 498.45"
+     },
+     {
+      "cat": "動能",
+      "text": "近 20 日上漲 16.3%，動能延續但未過熱"
+     },
+     {
+      "cat": "基本面",
+      "text": "2026/09 月營收年增 36.1%"
+     },
+     {
+      "cat": "系統",
+      "text": "題材波段引擎（前 3 強題材 × 20 日動能）入選"
+     }
+    ],
+    "score": 4,
+    "pattern": "雙底",
+    "classification": "底部反轉候選"
+   },
+   {
     "symbol": "1802",
     "name": "台玻",
     "themes": [
      "玻纖布／銅箔"
     ],
-    "close": 65.2,
-    "r20": 10.88,
+    "close": 65.6,
+    "r20": 13.89,
     "horizon": "swing",
     "reasons": [
      {
@@ -193,11 +263,11 @@
      },
      {
       "cat": "技術",
-      "text": "收盤 65.20 站上月線 62.77，月線高於季線 58.70"
+      "text": "收盤 65.60 站上月線 63.16，月線高於季線 59.06"
      },
      {
       "cat": "動能",
-      "text": "近 20 日上漲 10.9%，動能延續但未過熱"
+      "text": "近 20 日上漲 13.9%，動能延續但未過熱"
      },
      {
       "cat": "基本面",
@@ -209,75 +279,13 @@
     "classification": "底部反轉候選"
    },
    {
-    "symbol": "3533",
-    "name": "嘉澤",
-    "themes": [
-     "高速連接器／線材"
-    ],
-    "close": 1925.0,
-    "r20": 10.32,
-    "horizon": "swing",
-    "reasons": [
-     {
-      "cat": "型態",
-      "text": "K 線型態「雙底突破」（底部反轉候選）"
-     },
-     {
-      "cat": "技術",
-      "text": "收盤 1,925.00 站上月線 1,825.25，月線高於季線 1,752.50"
-     },
-     {
-      "cat": "動能",
-      "text": "近 20 日上漲 10.3%，動能延續但未過熱"
-     },
-     {
-      "cat": "研究筆記",
-      "text": "CPO標準設計出爐（媒體）（今日上漲7.24%，AI伺服器連接器與CPO題材受關注）"
-     },
-     {
-      "cat": "研究筆記",
-      "text": "EPS 39.04元（今日上漲7.24%，AI伺服器連接器與CPO題材受關注）"
-     }
-    ],
-    "score": 3,
-    "pattern": "雙底突破",
-    "classification": "底部反轉候選"
-   },
-   {
-    "symbol": "6196",
-    "name": "帆宣",
-    "themes": [
-     "廠務工程"
-    ],
-    "close": 584.0,
-    "r20": 9.16,
-    "horizon": "swing",
-    "reasons": [
-     {
-      "cat": "型態",
-      "text": "K 線型態「上升趨勢」（多頭延續／持續創高）"
-     },
-     {
-      "cat": "動能",
-      "text": "近 20 日上漲 9.2%，動能延續但未過熱"
-     },
-     {
-      "cat": "基本面",
-      "text": "2026/09 月營收年增 88.5%"
-     }
-    ],
-    "score": 3,
-    "pattern": "上升趨勢",
-    "classification": "多頭延續／持續創高"
-   },
-   {
     "symbol": "2451",
     "name": "創見",
     "themes": [
      "記憶體／儲存"
     ],
-    "close": 281.5,
-    "r20": -1.23,
+    "close": 293.5,
+    "r20": 3.16,
     "horizon": "long",
     "reasons": [
      {
@@ -286,11 +294,11 @@
      },
      {
       "cat": "技術",
-      "text": "站上年線 253.00，季線高於年線，長期趨勢向上"
+      "text": "站上年線 253.66，季線高於年線，長期趨勢向上"
      },
      {
       "cat": "評價",
-      "text": "本益比 4.8 倍（≤ 35）"
+      "text": "本益比 4.9 倍（≤ 35）"
      },
      {
       "cat": "股利",
@@ -298,11 +306,48 @@
      },
      {
       "cat": "股利",
-      "text": "殖利率 4.28%"
+      "text": "殖利率 4.18%"
      },
      {
       "cat": "動能",
-      "text": "近一年上漲 113.3%"
+      "text": "近一年上漲 118.2%"
+     }
+    ],
+    "score": 6
+   },
+   {
+    "symbol": "3260",
+    "name": "威剛",
+    "themes": [
+     "記憶體／儲存"
+    ],
+    "close": 363.5,
+    "r20": -5.09,
+    "horizon": "long",
+    "reasons": [
+     {
+      "cat": "基本面",
+      "text": "2026/09 月營收年增 199.9%"
+     },
+     {
+      "cat": "技術",
+      "text": "站上年線 346.59，季線高於年線，長期趨勢向上"
+     },
+     {
+      "cat": "評價",
+      "text": "本益比 4.3 倍（≤ 35）"
+     },
+     {
+      "cat": "股利",
+      "text": "最近 5 年每年配息"
+     },
+     {
+      "cat": "股利",
+      "text": "殖利率 5.14%"
+     },
+     {
+      "cat": "動能",
+      "text": "近一年上漲 91.8%"
      }
     ],
     "score": 6
@@ -313,8 +358,8 @@
     "themes": [
      "廠務工程"
     ],
-    "close": 251.0,
-    "r20": -5.99,
+    "close": 254.0,
+    "r20": -5.58,
     "horizon": "long",
     "reasons": [
      {
@@ -323,7 +368,7 @@
      },
      {
       "cat": "技術",
-      "text": "站上年線 240.28，季線高於年線，長期趨勢向上"
+      "text": "站上年線 240.62，季線高於年線，長期趨勢向上"
      },
      {
       "cat": "評價",
@@ -335,11 +380,11 @@
      },
      {
       "cat": "股利",
-      "text": "殖利率 4.00%"
+      "text": "殖利率 3.98%"
      },
      {
       "cat": "動能",
-      "text": "近一年上漲 49.4%"
+      "text": "近一年上漲 49.0%"
      }
     ],
     "score": 6
@@ -350,8 +395,8 @@
     "themes": [
      "組裝代工／ODM"
     ],
-    "close": 357.5,
-    "r20": -2.46,
+    "close": 362.5,
+    "r20": -0.68,
     "horizon": "long",
     "reasons": [
      {
@@ -360,11 +405,11 @@
      },
      {
       "cat": "技術",
-      "text": "站上年線 295.92，季線高於年線，長期趨勢向上"
+      "text": "站上年線 296.24，季線高於年線，長期趨勢向上"
      },
      {
       "cat": "評價",
-      "text": "本益比 13.1 倍（≤ 35）"
+      "text": "本益比 13.4 倍（≤ 35）"
      },
      {
       "cat": "股利",
@@ -372,11 +417,11 @@
      },
      {
       "cat": "股利",
-      "text": "殖利率 3.44%"
+      "text": "殖利率 3.36%"
      },
      {
       "cat": "動能",
-      "text": "近一年上漲 24.8%"
+      "text": "近一年上漲 27.4%"
      }
     ],
     "score": 6
@@ -387,8 +432,8 @@
     "themes": [
      "廠務工程"
     ],
-    "close": 648.0,
-    "r20": 2.05,
+    "close": 660.0,
+    "r20": 2.17,
     "horizon": "long",
     "reasons": [
      {
@@ -397,11 +442,11 @@
      },
      {
       "cat": "技術",
-      "text": "站上年線 625.63，季線高於年線，長期趨勢向上"
+      "text": "站上年線 626.49，季線高於年線，長期趨勢向上"
      },
      {
       "cat": "評價",
-      "text": "本益比 19.8 倍（≤ 35）"
+      "text": "本益比 19.4 倍（≤ 35）"
      },
      {
       "cat": "股利",
@@ -409,11 +454,11 @@
      },
      {
       "cat": "股利",
-      "text": "殖利率 3.32%"
+      "text": "殖利率 3.40%"
      },
      {
       "cat": "動能",
-      "text": "近一年上漲 45.0%"
+      "text": "近一年上漲 45.1%"
      }
     ],
     "score": 6
@@ -424,8 +469,8 @@
     "themes": [
      "記憶體／儲存"
     ],
-    "close": 264.0,
-    "r20": -2.94,
+    "close": 279.5,
+    "r20": 2.76,
     "horizon": "long",
     "reasons": [
      {
@@ -434,11 +479,11 @@
      },
      {
       "cat": "技術",
-      "text": "站上年線 227.96，季線高於年線，長期趨勢向上"
+      "text": "站上年線 228.60，季線高於年線，長期趨勢向上"
      },
      {
       "cat": "評價",
-      "text": "本益比 3.7 倍（≤ 35）"
+      "text": "本益比 3.9 倍（≤ 35）"
      },
      {
       "cat": "股利",
@@ -446,11 +491,11 @@
      },
      {
       "cat": "股利",
-      "text": "殖利率 3.45%"
+      "text": "殖利率 3.27%"
      },
      {
       "cat": "動能",
-      "text": "近一年上漲 103.1%"
+      "text": "近一年上漲 121.8%"
      }
     ],
     "score": 6
@@ -461,8 +506,8 @@
     "themes": [
      "組裝代工／ODM"
     ],
-    "close": 105.0,
-    "r20": 16.67,
+    "close": 108.0,
+    "r20": 18.29,
     "horizon": "long",
     "reasons": [
      {
@@ -471,11 +516,11 @@
      },
      {
       "cat": "技術",
-      "text": "站上年線 80.77，季線高於年線，長期趨勢向上"
+      "text": "站上年線 80.90，季線高於年線，長期趨勢向上"
      },
      {
       "cat": "評價",
-      "text": "本益比 17.4 倍（≤ 35）"
+      "text": "本益比 17.7 倍（≤ 35）"
      },
      {
       "cat": "股利",
@@ -483,11 +528,11 @@
      },
      {
       "cat": "股利",
-      "text": "殖利率 3.87%"
+      "text": "殖利率 3.82%"
      },
      {
       "cat": "動能",
-      "text": "近一年上漲 38.2%"
+      "text": "近一年上漲 40.4%"
      }
     ],
     "score": 6
@@ -498,8 +543,8 @@
     "themes": [
      "組裝代工／ODM"
     ],
-    "close": 327.5,
-    "r20": -4.24,
+    "close": 330.0,
+    "r20": -3.37,
     "horizon": "long",
     "reasons": [
      {
@@ -508,11 +553,11 @@
      },
      {
       "cat": "技術",
-      "text": "站上年線 313.72，季線高於年線，長期趨勢向上"
+      "text": "站上年線 313.81，季線高於年線，長期趨勢向上"
      },
      {
       "cat": "評價",
-      "text": "本益比 14.0 倍（≤ 35）"
+      "text": "本益比 14.3 倍（≤ 35）"
      },
      {
       "cat": "股利",
@@ -520,56 +565,19 @@
      },
      {
       "cat": "股利",
-      "text": "殖利率 4.84%"
+      "text": "殖利率 4.76%"
      },
      {
       "cat": "動能",
-      "text": "近一年上漲 7.7%"
-     }
-    ],
-    "score": 6
-   },
-   {
-    "symbol": "2356",
-    "name": "英業達",
-    "themes": [
-     "組裝代工／ODM"
-    ],
-    "close": 63.0,
-    "r20": 2.94,
-    "horizon": "long",
-    "reasons": [
-     {
-      "cat": "基本面",
-      "text": "2026/09 月營收年增 62.9%"
-     },
-     {
-      "cat": "技術",
-      "text": "站上年線 53.34，季線高於年線，長期趨勢向上"
-     },
-     {
-      "cat": "評價",
-      "text": "本益比 19.5 倍（≤ 35）"
-     },
-     {
-      "cat": "股利",
-      "text": "最近 5 年每年配息"
-     },
-     {
-      "cat": "股利",
-      "text": "殖利率 3.31%"
-     },
-     {
-      "cat": "動能",
-      "text": "近一年上漲 34.0%"
+      "text": "近一年上漲 7.1%"
      }
     ],
     "score": 6
    }
   ],
   "candidates": {
-   "swing": 14,
-   "long": 78
+   "swing": 28,
+   "long": 89
   }
  },
  "tracked": [
@@ -579,9 +587,9 @@
    "name": "南亞",
    "horizon": "swing",
    "ref_price": 301.0,
-   "last_close": 297.5,
-   "last_date": "2026-10-27",
-   "ret_pct": -1.16
+   "last_close": 319.0,
+   "last_date": "2026-10-28",
+   "ret_pct": 5.98
   },
   {
    "date": "2026-10-22",
@@ -589,9 +597,9 @@
    "name": "和碩",
    "horizon": "swing",
    "ref_price": 103.5,
-   "last_close": 105.0,
-   "last_date": "2026-10-27",
-   "ret_pct": 1.45
+   "last_close": 108.0,
+   "last_date": "2026-10-28",
+   "ret_pct": 4.35
   },
   {
    "date": "2026-10-22",
@@ -599,9 +607,9 @@
    "name": "迎廣",
    "horizon": "swing",
    "ref_price": 66.0,
-   "last_close": 64.6,
-   "last_date": "2026-10-27",
-   "ret_pct": -2.12
+   "last_close": 67.1,
+   "last_date": "2026-10-28",
+   "ret_pct": 1.67
   },
   {
    "date": "2026-10-22",
@@ -609,9 +617,9 @@
    "name": "臻鼎-KY",
    "horizon": "swing",
    "ref_price": 567.0,
-   "last_close": 520.0,
-   "last_date": "2026-10-27",
-   "ret_pct": -8.29
+   "last_close": 550.0,
+   "last_date": "2026-10-28",
+   "ret_pct": -3.0
   },
   {
    "date": "2026-10-22",
@@ -619,9 +627,9 @@
    "name": "金山電",
    "horizon": "swing",
    "ref_price": 135.5,
-   "last_close": 133.0,
-   "last_date": "2026-10-27",
-   "ret_pct": -1.85
+   "last_close": 137.5,
+   "last_date": "2026-10-28",
+   "ret_pct": 1.48
   },
   {
    "date": "2026-10-22",
@@ -629,9 +637,9 @@
    "name": "景碩",
    "horizon": "swing",
    "ref_price": 986.0,
-   "last_close": 941.0,
-   "last_date": "2026-10-27",
-   "ret_pct": -4.56
+   "last_close": 1035.0,
+   "last_date": "2026-10-28",
+   "ret_pct": 4.97
   },
   {
    "date": "2026-10-22",
@@ -639,9 +647,9 @@
    "name": "定穎投控",
    "horizon": "swing",
    "ref_price": 134.5,
-   "last_close": 125.5,
-   "last_date": "2026-10-27",
-   "ret_pct": -6.69
+   "last_close": 133.5,
+   "last_date": "2026-10-28",
+   "ret_pct": -0.74
   },
   {
    "date": "2026-10-22",
@@ -649,9 +657,9 @@
    "name": "台玻",
    "horizon": "swing",
    "ref_price": 67.1,
-   "last_close": 65.2,
-   "last_date": "2026-10-27",
-   "ret_pct": -2.83
+   "last_close": 65.6,
+   "last_date": "2026-10-28",
+   "ret_pct": -2.24
   },
   {
    "date": "2026-10-22",
@@ -659,9 +667,9 @@
    "name": "創見",
    "horizon": "long",
    "ref_price": 275.0,
-   "last_close": 281.5,
-   "last_date": "2026-10-27",
-   "ret_pct": 2.36
+   "last_close": 293.5,
+   "last_date": "2026-10-28",
+   "ret_pct": 6.73
   },
   {
    "date": "2026-10-22",
@@ -669,9 +677,9 @@
    "name": "朋億*",
    "horizon": "long",
    "ref_price": 250.0,
-   "last_close": 251.0,
-   "last_date": "2026-10-27",
-   "ret_pct": 0.4
+   "last_close": 254.0,
+   "last_date": "2026-10-28",
+   "ret_pct": 1.6
   },
   {
    "date": "2026-10-22",
@@ -679,9 +687,9 @@
    "name": "技嘉",
    "horizon": "long",
    "ref_price": 349.0,
-   "last_close": 357.5,
-   "last_date": "2026-10-27",
-   "ret_pct": 2.44
+   "last_close": 362.5,
+   "last_date": "2026-10-28",
+   "ret_pct": 3.87
   },
   {
    "date": "2026-10-22",
@@ -689,9 +697,9 @@
    "name": "洋基工程",
    "horizon": "long",
    "ref_price": 663.0,
-   "last_close": 648.0,
-   "last_date": "2026-10-27",
-   "ret_pct": -2.26
+   "last_close": 660.0,
+   "last_date": "2026-10-28",
+   "ret_pct": -0.45
   },
   {
    "date": "2026-10-22",
@@ -699,9 +707,9 @@
    "name": "十銓",
    "horizon": "long",
    "ref_price": 250.0,
-   "last_close": 264.0,
-   "last_date": "2026-10-27",
-   "ret_pct": 5.6
+   "last_close": 279.5,
+   "last_date": "2026-10-28",
+   "ret_pct": 11.8
   },
   {
    "date": "2026-10-22",
@@ -709,9 +717,9 @@
    "name": "和碩",
    "horizon": "long",
    "ref_price": 103.5,
-   "last_close": 105.0,
-   "last_date": "2026-10-27",
-   "ret_pct": 1.45
+   "last_close": 108.0,
+   "last_date": "2026-10-28",
+   "ret_pct": 4.35
   },
   {
    "date": "2026-10-22",
@@ -719,9 +727,9 @@
    "name": "廣達",
    "horizon": "long",
    "ref_price": 322.0,
-   "last_close": 327.5,
-   "last_date": "2026-10-27",
-   "ret_pct": 1.71
+   "last_close": 330.0,
+   "last_date": "2026-10-28",
+   "ret_pct": 2.48
   },
   {
    "date": "2026-10-22",
@@ -729,9 +737,9 @@
    "name": "英業達",
    "horizon": "long",
    "ref_price": 60.5,
-   "last_close": 63.0,
-   "last_date": "2026-10-27",
-   "ret_pct": 4.13
+   "last_close": 63.8,
+   "last_date": "2026-10-28",
+   "ret_pct": 5.45
   },
   {
    "date": "2026-10-27",
@@ -739,9 +747,9 @@
    "name": "南亞",
    "horizon": "swing",
    "ref_price": 297.5,
-   "last_close": 297.5,
-   "last_date": "2026-10-27",
-   "ret_pct": null
+   "last_close": 319.0,
+   "last_date": "2026-10-28",
+   "ret_pct": 7.23
   },
   {
    "date": "2026-10-27",
@@ -749,9 +757,9 @@
    "name": "和碩",
    "horizon": "swing",
    "ref_price": 105.0,
-   "last_close": 105.0,
-   "last_date": "2026-10-27",
-   "ret_pct": null
+   "last_close": 108.0,
+   "last_date": "2026-10-28",
+   "ret_pct": 2.86
   },
   {
    "date": "2026-10-27",
@@ -759,9 +767,9 @@
    "name": "系統電",
    "horizon": "swing",
    "ref_price": 67.5,
-   "last_close": 67.5,
-   "last_date": "2026-10-27",
-   "ret_pct": null
+   "last_close": 68.9,
+   "last_date": "2026-10-28",
+   "ret_pct": 2.07
   },
   {
    "date": "2026-10-27",
@@ -769,9 +777,9 @@
    "name": "華新科",
    "horizon": "swing",
    "ref_price": 372.5,
-   "last_close": 372.5,
-   "last_date": "2026-10-27",
-   "ret_pct": null
+   "last_close": 398.0,
+   "last_date": "2026-10-28",
+   "ret_pct": 6.85
   },
   {
    "date": "2026-10-27",
@@ -779,9 +787,9 @@
    "name": "金山電",
    "horizon": "swing",
    "ref_price": 133.0,
-   "last_close": 133.0,
-   "last_date": "2026-10-27",
-   "ret_pct": null
+   "last_close": 137.5,
+   "last_date": "2026-10-28",
+   "ret_pct": 3.38
   },
   {
    "date": "2026-10-27",
@@ -789,9 +797,9 @@
    "name": "台玻",
    "horizon": "swing",
    "ref_price": 65.2,
-   "last_close": 65.2,
-   "last_date": "2026-10-27",
-   "ret_pct": null
+   "last_close": 65.6,
+   "last_date": "2026-10-28",
+   "ret_pct": 0.61
   },
   {
    "date": "2026-10-27",
@@ -799,9 +807,9 @@
    "name": "嘉澤",
    "horizon": "swing",
    "ref_price": 1925.0,
-   "last_close": 1925.0,
-   "last_date": "2026-10-27",
-   "ret_pct": null
+   "last_close": 1955.0,
+   "last_date": "2026-10-28",
+   "ret_pct": 1.56
   },
   {
    "date": "2026-10-27",
@@ -809,9 +817,9 @@
    "name": "帆宣",
    "horizon": "swing",
    "ref_price": 584.0,
-   "last_close": 584.0,
-   "last_date": "2026-10-27",
-   "ret_pct": null
+   "last_close": 592.0,
+   "last_date": "2026-10-28",
+   "ret_pct": 1.37
   },
   {
    "date": "2026-10-27",
@@ -819,9 +827,9 @@
    "name": "創見",
    "horizon": "long",
    "ref_price": 281.5,
-   "last_close": 281.5,
-   "last_date": "2026-10-27",
-   "ret_pct": null
+   "last_close": 293.5,
+   "last_date": "2026-10-28",
+   "ret_pct": 4.26
   },
   {
    "date": "2026-10-27",
@@ -829,9 +837,9 @@
    "name": "朋億*",
    "horizon": "long",
    "ref_price": 251.0,
-   "last_close": 251.0,
-   "last_date": "2026-10-27",
-   "ret_pct": null
+   "last_close": 254.0,
+   "last_date": "2026-10-28",
+   "ret_pct": 1.2
   },
   {
    "date": "2026-10-27",
@@ -839,9 +847,9 @@
    "name": "技嘉",
    "horizon": "long",
    "ref_price": 357.5,
-   "last_close": 357.5,
-   "last_date": "2026-10-27",
-   "ret_pct": null
+   "last_close": 362.5,
+   "last_date": "2026-10-28",
+   "ret_pct": 1.4
   },
   {
    "date": "2026-10-27",
@@ -849,9 +857,9 @@
    "name": "洋基工程",
    "horizon": "long",
    "ref_price": 648.0,
-   "last_close": 648.0,
-   "last_date": "2026-10-27",
-   "ret_pct": null
+   "last_close": 660.0,
+   "last_date": "2026-10-28",
+   "ret_pct": 1.85
   },
   {
    "date": "2026-10-27",
@@ -859,9 +867,9 @@
    "name": "十銓",
    "horizon": "long",
    "ref_price": 264.0,
-   "last_close": 264.0,
-   "last_date": "2026-10-27",
-   "ret_pct": null
+   "last_close": 279.5,
+   "last_date": "2026-10-28",
+   "ret_pct": 5.87
   },
   {
    "date": "2026-10-27",
@@ -869,9 +877,9 @@
    "name": "和碩",
    "horizon": "long",
    "ref_price": 105.0,
-   "last_close": 105.0,
-   "last_date": "2026-10-27",
-   "ret_pct": null
+   "last_close": 108.0,
+   "last_date": "2026-10-28",
+   "ret_pct": 2.86
   },
   {
    "date": "2026-10-27",
@@ -879,9 +887,9 @@
    "name": "廣達",
    "horizon": "long",
    "ref_price": 327.5,
-   "last_close": 327.5,
-   "last_date": "2026-10-27",
-   "ret_pct": null
+   "last_close": 330.0,
+   "last_date": "2026-10-28",
+   "ret_pct": 0.76
   },
   {
    "date": "2026-10-27",
@@ -889,23 +897,183 @@
    "name": "英業達",
    "horizon": "long",
    "ref_price": 63.0,
-   "last_close": 63.0,
-   "last_date": "2026-10-27",
+   "last_close": 63.8,
+   "last_date": "2026-10-28",
+   "ret_pct": 1.27
+  },
+  {
+   "date": "2026-10-28",
+   "symbol": "4938",
+   "name": "和碩",
+   "horizon": "swing",
+   "ref_price": 108.0,
+   "last_close": 108.0,
+   "last_date": "2026-10-28",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-10-28",
+   "symbol": "3189",
+   "name": "景碩",
+   "horizon": "swing",
+   "ref_price": 1035.0,
+   "last_close": 1035.0,
+   "last_date": "2026-10-28",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-10-28",
+   "symbol": "6117",
+   "name": "迎廣",
+   "horizon": "swing",
+   "ref_price": 67.1,
+   "last_close": 67.1,
+   "last_date": "2026-10-28",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-10-28",
+   "symbol": "1303",
+   "name": "南亞",
+   "horizon": "swing",
+   "ref_price": 319.0,
+   "last_close": 319.0,
+   "last_date": "2026-10-28",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-10-28",
+   "symbol": "2492",
+   "name": "華新科",
+   "horizon": "swing",
+   "ref_price": 398.0,
+   "last_close": 398.0,
+   "last_date": "2026-10-28",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-10-28",
+   "symbol": "8042",
+   "name": "金山電",
+   "horizon": "swing",
+   "ref_price": 137.5,
+   "last_close": 137.5,
+   "last_date": "2026-10-28",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-10-28",
+   "symbol": "4958",
+   "name": "臻鼎-KY",
+   "horizon": "swing",
+   "ref_price": 550.0,
+   "last_close": 550.0,
+   "last_date": "2026-10-28",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-10-28",
+   "symbol": "1802",
+   "name": "台玻",
+   "horizon": "swing",
+   "ref_price": 65.6,
+   "last_close": 65.6,
+   "last_date": "2026-10-28",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-10-28",
+   "symbol": "2451",
+   "name": "創見",
+   "horizon": "long",
+   "ref_price": 293.5,
+   "last_close": 293.5,
+   "last_date": "2026-10-28",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-10-28",
+   "symbol": "3260",
+   "name": "威剛",
+   "horizon": "long",
+   "ref_price": 363.5,
+   "last_close": 363.5,
+   "last_date": "2026-10-28",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-10-28",
+   "symbol": "6613",
+   "name": "朋億*",
+   "horizon": "long",
+   "ref_price": 254.0,
+   "last_close": 254.0,
+   "last_date": "2026-10-28",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-10-28",
+   "symbol": "2376",
+   "name": "技嘉",
+   "horizon": "long",
+   "ref_price": 362.5,
+   "last_close": 362.5,
+   "last_date": "2026-10-28",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-10-28",
+   "symbol": "6691",
+   "name": "洋基工程",
+   "horizon": "long",
+   "ref_price": 660.0,
+   "last_close": 660.0,
+   "last_date": "2026-10-28",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-10-28",
+   "symbol": "4967",
+   "name": "十銓",
+   "horizon": "long",
+   "ref_price": 279.5,
+   "last_close": 279.5,
+   "last_date": "2026-10-28",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-10-28",
+   "symbol": "4938",
+   "name": "和碩",
+   "horizon": "long",
+   "ref_price": 108.0,
+   "last_close": 108.0,
+   "last_date": "2026-10-28",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-10-28",
+   "symbol": "2382",
+   "name": "廣達",
+   "horizon": "long",
+   "ref_price": 330.0,
+   "last_close": 330.0,
+   "last_date": "2026-10-28",
    "ret_pct": null
   }
  ],
  "summary": {
   "swing": {
    "label": "波段（約 2～8 週）",
-   "count": 8,
-   "avg_ret": -3.26,
-   "win_rate": 12.5
+   "count": 16,
+   "avg_ret": 2.4,
+   "win_rate": 81.2
   },
   "long": {
    "label": "長期（數月以上）",
-   "count": 8,
-   "avg_ret": 1.98,
-   "win_rate": 87.5
+   "count": 16,
+   "avg_ret": 3.46,
+   "win_rate": 93.8
   }
  },
  "rules": [
