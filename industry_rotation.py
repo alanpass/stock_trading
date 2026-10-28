@@ -711,6 +711,11 @@ def build_rotation_payload(history_map: dict[str, pd.DataFrame], taiex: pd.DataF
             "falling": int(falling),
             "flat": int(flat),
             "year_high_count": int(year_high_count),
+            # 資金輪動熱力圖：同一批成分股今天與前一交易日的成交金額（元），直接比較金額增減，不除以全市場總額
+            "turnover": round(turnover, 0) if turnover > 0 else None,
+            "previous_turnover": round(previous_turnover, 0) if previous_turnover > 0 else None,
+            "turnover_change": round(turnover - previous_turnover, 0) if turnover > 0 and previous_turnover > 0 else None,
+            "turnover_change_pct": round((turnover / previous_turnover - 1) * 100.0, 2) if turnover > 0 and previous_turnover > 0 else None,
             "market_turnover_share_pct": round(float(share), 3) if np.isfinite(share) else None,
             "market_turnover_share_delta_pp": round(float(share_delta), 3) if np.isfinite(share_delta) else None,
             "yesterday_market_turnover_share_pct": round(float(previous_share), 3) if np.isfinite(previous_share) else None,

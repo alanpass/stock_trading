@@ -306,6 +306,50 @@ def _tag(text: str, why: str, tone: str = "flat") -> dict:
     return {"text": text, "why": why, "tone": tone}
 
 
+FLOW_TOP = 5                # 產業資金增加／減少前 5 名特別顯示
+
+
+def rotation_flow_ranks(rotation: dict | None) -> list[dict]:
+    """產業輪動主題依「成交金額較前一交易日增減」排序（大到小）；同一批成分股比較，不除以全市場總額。"""
+    rows = [g for g in (rotation or {}).get("groups") or [] if g.get("turnover_change") is not None]
+    rows.sort(key=lambda g: g["turnover_change"], reverse=True)
+    up = [g for g in rows if g["turnover_change"] > 0]
+    down = sorted((g for g in rows if g["turnover_change"] < 0), key=lambda g: g["turnover_change"])
+    out = []
+    for g in rows:
+        side = "up" if g["turnover_change"] > 0 else "down" if g["turnover_change"] < 0 else "flat"
+        rank = (up.index(g) + 1) if side == "up" else (down.index(g) + 1) if side == "down" else None
+        out.append({"name": g["name"], "change": g["turnover_change"], "pct": g.get("turnover_change_pct"),
+                    "turnover": g.get("turnover"), "side": side, "rank": rank,
+                    "top": rank is not None and rank <= FLOW_TOP,
+                    "members": [str(c.get("symbol") or c.get("code") or "") for c in g.get("components") or []]})
+    return out
+
+
+def _rotation_flow(symbol: str, rotation: dict | None) -> list[dict]:
+    """個股所屬產業主題的資金增減標籤；前 5 名加 top 標記（網站上實心粗體）。"""
+    ranks = rotation_flow_ranks(rotation)
+    asof = (rotation or {}).get("data_asof") or ""
+    prev = (rotation or {}).get("previous_data_asof") or ""
+    span = f"{prev[5:].replace('-', '/')} → {asof[5:].replace('-', '/')}" if asof and prev else "較前一交易日"
+    tags = []
+    for r in ranks:
+        if symbol not in r["members"] or r["side"] == "flat":
+            continue
+        up = r["side"] == "up"
+        pct = f"（{r['pct']:+.1f}%）" if r.get("pct") is not None else ""
+        why = (f"{r['name']}成分股成交金額{'增加' if up else '減少'} {abs(r['change']) / 1e8:,.1f} 億{pct}，"
+               f"資金{'增加' if up else '減少'}第 {r['rank']} 名（{span}）")
+        if r["top"]:
+            text = f"{r['name']} 資金{'流入' if up else '流出'}前{FLOW_TOP}"
+        else:
+            text = f"{r['name']} 資金{'增加' if up else '減少'}"
+        tag = _tag(text, why, "bull" if up else "bear")
+        tag["top"] = r["top"]
+        tags.append(tag)
+    return tags
+
+
 def _technical(hist: pd.DataFrame) -> tuple[list[dict], list[dict]]:
     """回傳（價量面、技術面）。hist 需含 date、high、low、close、volume，舊到新。"""
     pv, tech = [], []
@@ -409,7 +453,7 @@ def _news(symbol: str, name: str, news: list[dict], earnings: list[dict], fund: 
 
 
 def compute(symbol: str, hist: pd.DataFrame | None = None, name: str = "", news: list | None = None,
-            earnings: list | None = None, chips: dict | None = None) -> dict:
+            earnings: list | None = None, chips: dict | None = None, rotation: dict | None = None) -> dict:
     """hist：日 K（呼叫端提供，避免重複下載）；chips：chip_signals.compute 的結果（可省略）。"""
     symbol = clean_symbol(symbol)
     snap = market_snapshot()
@@ -472,6 +516,7 @@ def compute(symbol: str, hist: pd.DataFrame | None = None, name: str = "", news:
         groups["價量面"].append(_tag("熱門股", f"成交金額 {q['value'] / 1e8:,.1f} 億，全市場前 {HOT_RANK} 名"))
     pv, tech = _technical(hist)
     groups["價量面"] += pv
+    groups["價量面"] += _rotation_flow(symbol, rotation)
     groups["技術面"] = tech
 
     # ---- 基本面 ----

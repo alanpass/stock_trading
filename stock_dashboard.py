@@ -1350,7 +1350,7 @@ body .stApp.stApp [class*="st-key-wc_"] [data-testid="stMarkdownContainer"]:has(
 /* 個股符合特徵：依類別上色（籌碼橘、價量黃、基本藍、技術紫、消息紅），圓點＝偏多紅／偏空綠 */
 .feat-grid{display:grid;grid-template-columns:72px 1fr;gap:14px 16px;align-items:start;margin:4px 0 10px}
 .feat-cat{font-size:14px;font-weight:700;color:#7a7171;padding-top:5px}
-.feat-tags{display:flex;flex-wrap:wrap;gap:8px}
+.feat-tags{display:flex;flex-wrap:wrap;gap:8px}.feat.feat-top{font-weight:800;color:#fff!important;border-color:transparent!important}.feat.feat-top.feat-t-bull{background:#b33636!important}.feat.feat-top.feat-t-bear{background:#1d7a4a!important}
 .feat{display:inline-flex;align-items:center;gap:5px;font-size:14px;font-weight:700;line-height:1.5;padding:3px 13px;border-radius:999px;border:1.5px solid;white-space:nowrap;cursor:help}
 .feat-news{color:#b4372f;background:#fdf0ef;border-color:#efc4c0}
 .feat-chip{color:#b5651d;background:#fdf4ea;border-color:#ecc9a3}
@@ -2518,7 +2518,7 @@ SITE_NAV_SUB = {
              ("專注台股", "專注台股"), ("聯絡資訊", "聯絡資訊")],
     "finance": [("國際風向球：美股、原油、VIX", "國際風向球"), ("AI 今日重點", "AI 今日重點"), ("法說會摘要", "法說會摘要"), ("財經新聞摘要", "財經新聞摘要"),
                 ("名人持股：政治人物", "名人投資人持股", "政治人物"), ("名人持股：投資大師 13F", "名人投資人持股", "投資大師")],
-    "rotation": [("產業族群走勢", "產業族群"), ("產業輪動圖", "產業輪動圖"), ("產業報酬與輪動狀態", "產業報酬與輪動狀態"),
+    "rotation": [("產業族群走勢", "產業族群"), ("資金輪動熱力圖", "資金輪動熱力圖"), ("產業輪動圖", "產業輪動圖"), ("產業報酬與輪動狀態", "產業報酬與輪動狀態"),
                  ("美股產業指標股", "美股產業指標股"), ("本週象限變化", "本週象限變化"), ("成分股漲跌前十", "成分股漲跌前十"),
                  ("輪動解讀與資料限制", "輪動解讀與資料限制")],
     "strategy": [("自選股盤中焦點", "自選股盤中焦點"), ("個股符合特徵", "個股符合特徵"), ("股價趨勢", "股價趨勢"), ("技術 K 線", "技術 K 線"), ("成交量", "成交量"), ("進場建議分析", "進場建議分析系統"),
@@ -2796,6 +2796,89 @@ def _rotation_build_frame(group_series: dict[str, pd.Series], history_map: dict[
         raise RuntimeError("有效歷史樣本不足，至少需要約 70 個交易日資料。")
     result = pd.DataFrame(rows).sort_values("近 20 日", ascending=False, na_position="last").reset_index(drop=True)
     return result, rrg_map
+
+
+def _render_flow_heatmap(payload: dict) -> None:
+    """02｜資金輪動熱力圖：各主題成分股成交金額較前一交易日的增減（金額差，不除以全市場總額）。"""
+    _sec('02｜資金輪動熱力圖')
+    ranks = stock_features.rotation_flow_ranks(payload)
+    asof, prev = str(payload.get("data_asof") or ""), str(payload.get("previous_data_asof") or "")
+    if not ranks:
+        st.info("這份產業資料還沒有成交金額增減；下一次產業分析更新（交易日 15:10）後會出現。")
+        return
+    span = f"{prev[5:].replace('-', '/')} → {asof[5:].replace('-', '/')}" if asof and prev else "較前一交易日"
+    peak = max(abs(r["change"]) for r in ranks) or 1.0
+
+    def color(v: float) -> str:
+        # 台股慣例：資金增加紅、減少綠；顏色深淺依增減金額相對最大值
+        t = min(1.0, abs(v) / peak) ** 0.6
+        base = (196, 52, 52) if v > 0 else (22, 128, 74)
+        light = (250, 244, 244) if v > 0 else (241, 248, 244)
+        return "rgb({},{},{})".format(*(round(light[i] + (base[i] - light[i]) * t) for i in range(3)))
+
+    labels, values, colors, texts, hovers = [], [], [], [], []
+    for r in ranks:
+        star = "★ " if r["top"] else ""
+        pct = f"{r['pct']:+.1f}%" if r.get("pct") is not None else ""
+        labels.append(r["name"])
+        values.append(max(abs(r["change"]), peak * 0.02))   # 增減很小的主題仍留一小格
+        colors.append(color(r["change"]))
+        texts.append(f"<b>{star}{r['name']}</b><br>{r['change'] / 1e8:+,.1f} 億<br>{pct}")
+        rank = f"{'增加' if r['side'] == 'up' else '減少'}第 {r['rank']} 名" if r.get("rank") else "持平"
+        hovers.append(f"{r['name']}<br>成交金額 {(r.get('turnover') or 0) / 1e8:,.1f} 億（{r['change'] / 1e8:+,.1f} 億，{pct}）<br>{rank}")
+    fig = go.Figure(go.Treemap(
+        labels=labels, parents=[""] * len(labels), values=values, text=texts, textinfo="text",
+        hovertext=hovers, hoverinfo="text", marker=dict(colors=colors, line=dict(color="#ffffff", width=2)),
+        textfont=dict(size=13), tiling=dict(pad=2), sort=True,
+    ))
+    fig.update_layout(height=460, margin=dict(l=0, r=0, t=0, b=0))
+    fig.data[0].textfont.color = ["#ffffff" if abs(r["change"]) / peak > 0.35 else "#3e3a3a" for r in ranks]
+    st.plotly_chart(fig, use_container_width=True, key="rotation_flow_heatmap", config={"displaylogo": False, "responsive": True})
+
+    names = {}
+    for g in payload.get("groups") or []:
+        for c in g.get("components") or []:
+            names[str(c.get("symbol"))] = c.get("name") or str(c.get("symbol"))
+
+    def top_list(side: str, title: str) -> str:
+        rows = [r for r in ranks if r["side"] == side and r["top"]]
+        rows.sort(key=lambda r: r["rank"])
+        items = []
+        for r in rows:
+            members = "、".join(f"{names.get(c, c)}（{c}）" for c in r["members"] if c)
+            pct = f"（{r['pct']:+.1f}%）" if r.get("pct") is not None else ""
+            items.append(f'<li><div class="flow-top-head"><span class="flow-rank">{r["rank"]}</span><b>{_esc(r["name"])}</b>'
+                         f'<span class="flow-amt">{r["change"] / 1e8:+,.1f} 億{pct}</span></div>'
+                         f'<div class="flow-members">{_esc(members)}</div></li>')
+        body = "".join(items) or '<li class="flow-empty">無</li>'
+        return f'<div class="flow-top flow-{side}"><div class="flow-top-title">{title}</div><ol>{body}</ol></div>'
+
+    st.markdown(_FLOW_CSS, unsafe_allow_html=True)   # CSS 要單獨一個 markdown，含 <style> 的區塊會被整個隱藏
+    st.markdown('<div class="flow-top-grid">'
+                + top_list("up", f"產業市場輪動資金增加 前 {stock_features.FLOW_TOP}")
+                + top_list("down", f"產業市場輪動資金減少 前 {stock_features.FLOW_TOP}")
+                + "</div>", unsafe_allow_html=True)
+    st.caption(f"資料日期 {span}。每格是一個產業主題，大小與顏色＝該主題代表股今天成交金額減前一交易日成交金額（紅＝增加、綠＝減少，越深越多），"
+               f"直接比較金額增減、不除以全市場總成交金額；★＝增加或減少前 {stock_features.FLOW_TOP} 名。"
+               "同一股票可能屬於多個主題；代表股只是研究樣本，不等於整個產業。這些主題的個股在「操作策略 → 個股符合特徵 → 價量面」也會標出資金增減。")
+
+
+_FLOW_CSS = """<style>
+.flow-top-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:6px 0 10px}
+@media (max-width:760px){.flow-top-grid{grid-template-columns:1fr}}
+.flow-top{border-radius:12px;padding:12px 14px;border:1px solid}
+.flow-up{background:#fdf1f1;border-color:#efcfcf}.flow-down{background:#eef7f2;border-color:#cfe6d9}
+.flow-top-title{font-weight:800;font-size:16px;margin-bottom:6px}
+.flow-up .flow-top-title{color:#a52a2a}.flow-down .flow-top-title{color:#17693f}
+.flow-top ol{list-style:none;margin:0;padding:0}
+.flow-top li{padding:7px 0;border-top:1px dashed rgba(0,0,0,.08)}.flow-top li:first-child{border-top:0}
+.flow-top-head{display:flex;align-items:center;gap:8px;font-size:14.5px}
+.flow-rank{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;color:#fff;font-size:12px;font-weight:800}
+.flow-up .flow-rank{background:#b33636}.flow-down .flow-rank{background:#1d7a4a}
+.flow-amt{margin-left:auto;font-weight:800}.flow-up .flow-amt{color:#b33636}.flow-down .flow-amt{color:#1d7a4a}
+.flow-members{font-size:12.5px;color:#6b6262;margin:3px 0 0 30px;line-height:1.6}
+.flow-empty{color:#8d8585;font-size:13px}
+</style>"""
 
 
 def _render_published_rotation(payload: dict) -> None:
@@ -3327,7 +3410,9 @@ def _render_published_rotation(payload: dict) -> None:
             "兩張圖左側均顯示產業族群名稱；紅色代表高於基準、綠色代表低於基準。美股行情快取 15 分鐘，且部分美股為供應鏈代理，並非完全相同的純標的。"
         )
 
-    _sec('02｜產業輪動圖')
+    _render_flow_heatmap(payload)
+
+    _sec('03｜產業輪動圖')
     st.caption("每條線代表主題相對加權指數的軌跡，每 5 個交易日取一點。RS 高於 100 代表相對強弱高於自身 50 日均值；動能高於 100 代表較 10 個交易日前增強。預設顯示 1 個月與「領先」象限。固定 1400×760 畫布：滑鼠滾輪縮放、雙擊重設；放大後可切換工具列平移，原始大小時不能平移出界，縮小不會超出原始視圖。")
     quadrant_options = ["領先", "轉弱", "改善", "落後", "全選"]
     quadrant_filter = st.radio(
@@ -3461,7 +3546,7 @@ def _render_published_rotation(payload: dict) -> None:
         "該群仍會列在下方報酬表及成分股分類名單。"
     )
 
-    _sec('03｜產業報酬與輪動狀態')
+    _sec('04｜產業報酬與輪動狀態')
     fields = {"族群平均漲跌幅": "today_return", "前一日平均漲跌幅": "yesterday_return",
               "近 20 日": "return_20d", "近 5 日": "return_5d", "今日": "today_return",
               "相對強弱": "relative_strength", "相對動能": "relative_momentum"}
@@ -3566,7 +3651,7 @@ def _render_published_rotation(payload: dict) -> None:
             else:
                 st.info("此主題目前沒有設定代表概念股。")
 
-    _sec('04｜美股產業指標股資訊')
+    _sec('05｜美股產業指標股資訊')
     st.caption(
         "依台股供應鏈子產業整理美股上市指標公司，顯示最新可取得價格與當日漲跌幅。"
         "美股價格與日期來自 Yahoo Finance；每一筆以來源回傳的美東交易日期為準。"
@@ -3639,7 +3724,7 @@ def _render_published_rotation(payload: dict) -> None:
     else:
         st.info("所選產業目前沒有設定美股對照指標。")
 
-    _sec('05｜本週象限變化')
+    _sec('06｜本週象限變化')
     changes = payload.get("quadrant_changes") or []
     if changes:
         changes_df = pd.DataFrame(changes).rename(columns={"name": "產業主題", "from": "前一象限", "to": "目前象限"})
@@ -3649,7 +3734,7 @@ def _render_published_rotation(payload: dict) -> None:
     else:
         st.caption("目前沒有可用的象限轉換紀錄，或輪動方向尚未跨越象限。")
 
-    _sec('06｜成分股漲跌前十')
+    _sec('07｜成分股漲跌前十')
     upcol, downcol = st.columns(2)
     for col, data_key, label in [(upcol, "gainers", "漲幅前十"), (downcol, "losers", "跌幅前十")]:
         with col:
@@ -3665,7 +3750,7 @@ def _render_published_rotation(payload: dict) -> None:
                 hide_index=True,
             )
 
-    _sec('07｜輪動解讀與資料限制')
+    _sec('08｜輪動解讀與資料限制')
     st.markdown("""
     <div class="rotation-quadrants">
       <div class="rotation-leading"><strong>領先｜右上</strong><br>相對大盤偏強，動能持續增強。</div>
@@ -5041,7 +5126,7 @@ def _cached_stock_features(code: str) -> dict:
     return stock_features.compute(
         code, get_history(code, 420), name=str(hit.iloc[0]) if len(hit) else "",
         news=_recent_news_items(days=2), earnings=_recent_earnings_items(days=5),
-        chips=chip_signals.get_blocking(code, timeout=90),
+        chips=chip_signals.get_blocking(code, timeout=90), rotation=load_published_rotation(BASE),
     )
 
 
@@ -5057,7 +5142,7 @@ def render_stock_features():
     rows = []
     for cat, tags in res["groups"].items():
         cls = _FEAT_CLASS[cat]
-        chips = "".join(f'<span class="feat feat-{cls} feat-t-{t["tone"]}" title="{_esc(t["why"])}">{_esc(t["text"])}</span>'
+        chips = "".join(f'<span class="feat feat-{cls} feat-t-{t["tone"]}{" feat-top" if t.get("top") else ""}" title="{_esc(t["why"])}">{_esc(t["text"])}</span>'
                         for t in tags) or '<span class="feat-none">無</span>'
         rows.append(f'<div class="feat-cat">{cat}</div><div class="feat-tags">{chips}</div>')
     asof = res.get("asof") or "—"
