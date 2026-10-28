@@ -1332,6 +1332,8 @@ _UX_CSS = """<style>
 .sig{display:inline-block;font-size:13px;font-weight:700;line-height:1.5;padding:2px 11px;border-radius:999px;border:1px solid;white-space:nowrap}
 .sig-bull{color:#d23c3c;background:#fdeeee;border-color:#f2c3c3}
 .sig-bear{color:#14874f;background:#e8f6ee;border-color:#bde3cd}
+.sig.sig-top.sig-bull{color:#fff!important;background:#b33636;border-color:#b33636}
+.sig.sig-top.sig-bear{color:#fff!important;background:#1d7a4a;border-color:#1d7a4a}
 .sig-flat{color:#6b6464;background:#f3f1f1;border-color:#e2dcdc}
 .sig-none,.sig-wait{font-size:12.5px;color:#8a8080}
 .sig-wait{animation:uxFade 1s ease-in-out infinite alternate}
@@ -4229,7 +4231,7 @@ def render_watchlist(compact: bool = False):
                                 f"<span style='color:{vcolor}'>{ch_txt}</span>"
                                 f"<span style='color:{vcolor}'>{cp_txt}</span>"
                                 "</div>"
-                                f"<div class='wc-chips'>{_signal_chips_html(chip_map.get(clean_symbol(r['code'])), empty_text='', pending_text='籌碼計算中…')}</div>"
+                                f"<div class='wc-chips'>{_flow_chips_html(r['code'])}{_signal_chips_html(chip_map.get(clean_symbol(r['code'])), empty_text='', pending_text='籌碼計算中…')}</div>"
                                 "</div>",
                                 unsafe_allow_html=True,
                             )
@@ -4873,6 +4875,33 @@ _SIG_WORDS = {"foreign": ("買超", "賣超"), "trust": ("買超", "賣超"), "m
 _SIG_BULL_WHEN_UP = {"foreign": True, "trust": True, "main": True, "margin": True, "short": False}
 
 
+@st.cache_data(ttl=600, show_spinner=False)
+def _flow_by_symbol(_generated_at: str) -> dict[str, list[dict]]:
+    """{代號: [所屬主題的資金增減]}，前 5 名排前面；依產業分析快照的產生時間快取。"""
+    out: dict[str, list[dict]] = {}
+    for r in stock_features.rotation_flow_ranks(load_published_rotation(BASE)):
+        if r["side"] == "flat":
+            continue
+        for code in r["members"]:
+            out.setdefault(code, []).append(r)
+    for rows in out.values():
+        rows.sort(key=lambda r: (not r["top"], -abs(r["change"])))
+    return out
+
+
+def _flow_chips_html(code: str, limit: int = 2) -> str:
+    """自選股卡片上的產業資金增減標籤：前 5 名實心，其餘一般；一檔屬於多個主題時最多顯示 limit 個。"""
+    payload = load_published_rotation(BASE)
+    rows = _flow_by_symbol(str(payload.get("generated_at") or "")).get(clean_symbol(code), [])
+    chips = []
+    for r in rows[:limit]:
+        up = r["side"] == "up"
+        text = f"{r['name']} 資金{'流入' if up else '流出'}#{r['rank']}" if r["top"] else f"{r['name']} 資金{'增' if up else '減'}"
+        why = f"{r['name']}成分股成交金額較前一交易日{'增加' if up else '減少'} {abs(r['change']) / 1e8:,.1f} 億，{'增加' if up else '減少'}第 {r['rank']} 名"
+        chips.append(f'<span class="sig sig-{"bull" if up else "bear"}{" sig-top" if r["top"] else ""}" title="{_esc(why)}">{_esc(text)}</span>')
+    return "".join(chips)
+
+
 def _signal_chips_html(res: dict | None, empty_text: str = "目前沒有連續 3 日以上的籌碼訊號", pending_text: str = "籌碼計算中…") -> str:
     if res is None:
         return f'<span class="sig-wait">{pending_text}</span>' if pending_text else ""
@@ -5088,7 +5117,7 @@ def render_watch_focus():
         pct = (c["price"] - s["ref"]) / s["ref"] * 100
         new = '<span class="fx-new">NEW</span>' if live and (now - t).total_seconds() <= FOCUS_NEW_MINUTES * 60 else ""
         tags = "".join(f'<span class="sig sig-{e["side"]}">{_esc(e["text"])}</span>' for e in c["events"])
-        chips = _signal_chips_html(chip_map.get(s["code"]), empty_text="無連續籌碼訊號", pending_text="籌碼計算中…")
+        chips = _flow_chips_html(s["code"]) + _signal_chips_html(chip_map.get(s["code"]), empty_text="無連續籌碼訊號", pending_text="籌碼計算中…")
         prior = earlier.get(s["code"], [])
         hist = ""
         if prior:
