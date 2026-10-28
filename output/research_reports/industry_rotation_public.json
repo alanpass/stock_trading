@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-10-28T22:21:56+08:00",
+  "generated_at": "2026-10-28T22:34:49+08:00",
   "data_asof": "2026-10-28",
   "previous_data_asof": "2026-10-27",
   "previous_previous_data_asof": "2026-10-22",
@@ -838,7 +838,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 7.879,
+      "share_avg20_pct": 6.104,
+      "share_delta20_pp": 1.775
     },
     {
       "name": "玻纖布／銅箔",
@@ -1310,7 +1313,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 2.223,
+      "share_avg20_pct": 2.32,
+      "share_delta20_pp": -0.097
     },
     {
       "name": "ABF／IC 載板",
@@ -1752,7 +1758,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 6.315,
+      "share_avg20_pct": 4.406,
+      "share_delta20_pp": 1.909
     },
     {
       "name": "被動元件",
@@ -2329,7 +2338,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 3.761,
+      "share_avg20_pct": 5.417,
+      "share_delta20_pp": -1.656
     },
     {
       "name": "PCB／伺服器板／HDI",
@@ -2846,7 +2858,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 2.667,
+      "share_avg20_pct": 3.775,
+      "share_delta20_pp": -1.109
     },
     {
       "name": "網通／交換器",
@@ -3333,7 +3348,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 0.781,
+      "share_avg20_pct": 1.02,
+      "share_delta20_pp": -0.24
     },
     {
       "name": "組裝代工／ODM",
@@ -3865,7 +3883,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 3.667,
+      "share_avg20_pct": 3.123,
+      "share_delta20_pp": 0.544
     },
     {
       "name": "磊晶／化合物半導體",
@@ -4352,7 +4373,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 1.909,
+      "share_avg20_pct": 1.969,
+      "share_delta20_pp": -0.06
     },
     {
       "name": "機器人／自動化",
@@ -4929,7 +4953,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 0.731,
+      "share_avg20_pct": 0.387,
+      "share_delta20_pp": 0.344
     },
     {
       "name": "機殼／機櫃",
@@ -5386,7 +5413,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 0.223,
+      "share_avg20_pct": 0.297,
+      "share_delta20_pp": -0.074
     },
     {
       "name": "散熱／液冷",
@@ -5918,7 +5948,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 3.703,
+      "share_avg20_pct": 3.056,
+      "share_delta20_pp": 0.647
     },
     {
       "name": "電源／BBU",
@@ -6480,7 +6513,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 1.855,
+      "share_avg20_pct": 2.358,
+      "share_delta20_pp": -0.503
     },
     {
       "name": "記憶體／儲存",
@@ -7057,7 +7093,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 8.116,
+      "share_avg20_pct": 4.53,
+      "share_delta20_pp": 3.586
     },
     {
       "name": "高速傳輸 IC",
@@ -7454,7 +7493,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 0.08,
+      "share_avg20_pct": 0.082,
+      "share_delta20_pp": -0.001
     },
     {
       "name": "晶圓代工",
@@ -7806,7 +7848,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 5.761,
+      "share_avg20_pct": 5.68,
+      "share_delta20_pp": 0.081
     },
     {
       "name": "封裝測試",
@@ -8293,7 +8338,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 4.442,
+      "share_avg20_pct": 3.16,
+      "share_delta20_pp": 1.282
     },
     {
       "name": "檢測分析",
@@ -8735,7 +8783,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 0.064,
+      "share_avg20_pct": 0.057,
+      "share_delta20_pp": 0.007
     },
     {
       "name": "先進封裝設備",
@@ -9252,7 +9303,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 0.401,
+      "share_avg20_pct": 0.685,
+      "share_delta20_pp": -0.284
     },
     {
       "name": "廠務工程",
@@ -9739,7 +9793,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 0.264,
+      "share_avg20_pct": 0.608,
+      "share_delta20_pp": -0.344
     },
     {
       "name": "重電／電網",
@@ -10226,7 +10283,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 0.173,
+      "share_avg20_pct": 0.2,
+      "share_delta20_pp": -0.027
     },
     {
       "name": "ASIC／矽智財",
@@ -10743,7 +10803,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 6.287,
+      "share_avg20_pct": 5.927,
+      "share_delta20_pp": 0.36
     },
     {
       "name": "高速連接器／線材",
@@ -11290,7 +11353,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 1.357,
+      "share_avg20_pct": 1.386,
+      "share_delta20_pp": -0.03
     },
     {
       "name": "低軌衛星",
@@ -11762,7 +11828,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 0.553,
+      "share_avg20_pct": 1.081,
+      "share_delta20_pp": -0.527
     },
     {
       "name": "矽光子／光通訊",
@@ -12354,7 +12423,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 1.848,
+      "share_avg20_pct": 2.126,
+      "share_delta20_pp": -0.279
     },
     {
       "name": "測試介面／設備",
@@ -12841,7 +12913,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 1.943,
+      "share_avg20_pct": 2.046,
+      "share_delta20_pp": -0.103
     },
     {
       "name": "BMC／伺服器管理晶片",
@@ -13193,7 +13268,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 0.814,
+      "share_avg20_pct": 0.475,
+      "share_delta20_pp": 0.339
     },
     {
       "name": "滑軌",
@@ -13590,7 +13668,10 @@
           "year_high": false,
           "fresh": true
         }
-      ]
+      ],
+      "share_pct": 0.378,
+      "share_avg20_pct": 0.594,
+      "share_delta20_pp": -0.215
     }
   ],
   "official_industries": [
@@ -13628,7 +13709,10 @@
         "9949"
       ],
       "turnover_change": 514912526.0,
-      "turnover_change_pct": 51.37
+      "turnover_change_pct": 51.37,
+      "share_pct": 0.165,
+      "share_avg20_pct": 0.162,
+      "share_delta20_pp": 0.004
     },
     {
       "code": "23",
@@ -13650,7 +13734,10 @@
         "9937"
       ],
       "turnover_change": 470822180.0,
-      "turnover_change_pct": 20.82
+      "turnover_change_pct": 20.82,
+      "share_pct": 0.297,
+      "share_avg20_pct": 0.408,
+      "share_delta20_pp": -0.111
     },
     {
       "code": "08",
@@ -13665,7 +13752,10 @@
         "1817"
       ],
       "turnover_change": 251668687.0,
-      "turnover_change_pct": 3.02
+      "turnover_change_pct": 3.02,
+      "share_pct": 0.933,
+      "share_avg20_pct": 0.576,
+      "share_delta20_pp": 0.358
     },
     {
       "code": "33",
@@ -13679,7 +13769,10 @@
         "6578"
       ],
       "turnover_change": -868433.0,
-      "turnover_change_pct": -24.68
+      "turnover_change_pct": -24.68,
+      "share_pct": 0.0,
+      "share_avg20_pct": 0.001,
+      "share_delta20_pp": -0.001
     },
     {
       "code": "09",
@@ -13696,7 +13789,10 @@
         "6790"
       ],
       "turnover_change": -30150613.0,
-      "turnover_change_pct": -26.33
+      "turnover_change_pct": -26.33,
+      "share_pct": 0.009,
+      "share_avg20_pct": 0.014,
+      "share_delta20_pp": -0.004
     },
     {
       "code": "05",
@@ -13804,7 +13900,10 @@
         "9951"
       ],
       "turnover_change": -69837142.0,
-      "turnover_change_pct": -0.42
+      "turnover_change_pct": -0.42,
+      "share_pct": 1.793,
+      "share_avg20_pct": 1.154,
+      "share_delta20_pp": 0.639
     },
     {
       "code": "38",
@@ -13849,7 +13948,10 @@
         "9935"
       ],
       "turnover_change": -129014598.0,
-      "turnover_change_pct": -20.4
+      "turnover_change_pct": -20.4,
+      "share_pct": 0.055,
+      "share_avg20_pct": 0.048,
+      "share_delta20_pp": 0.007
     },
     {
       "code": "16",
@@ -13909,7 +14011,10 @@
         "9943"
       ],
       "turnover_change": -149643170.0,
-      "turnover_change_pct": -38.75
+      "turnover_change_pct": -38.75,
+      "share_pct": 0.026,
+      "share_avg20_pct": 0.021,
+      "share_delta20_pp": 0.005
     },
     {
       "code": "06",
@@ -13936,7 +14041,10 @@
         "5283"
       ],
       "turnover_change": -256571072.0,
-      "turnover_change_pct": -25.74
+      "turnover_change_pct": -25.74,
+      "share_pct": 0.081,
+      "share_avg20_pct": 0.135,
+      "share_delta20_pp": -0.055
     },
     {
       "code": "36",
@@ -13986,7 +14094,10 @@
         "8932"
       ],
       "turnover_change": -377696783.0,
-      "turnover_change_pct": -27.94
+      "turnover_change_pct": -27.94,
+      "share_pct": 0.106,
+      "share_avg20_pct": 0.085,
+      "share_delta20_pp": 0.021
     },
     {
       "code": "01",
@@ -14004,7 +14115,10 @@
         "1110"
       ],
       "turnover_change": -489779889.0,
-      "turnover_change_pct": -27.64
+      "turnover_change_pct": -27.64,
+      "share_pct": 0.14,
+      "share_avg20_pct": 0.152,
+      "share_delta20_pp": -0.013
     },
     {
       "code": "37",
@@ -14041,7 +14155,10 @@
         "9960"
       ],
       "turnover_change": -492799551.0,
-      "turnover_change_pct": -26.49
+      "turnover_change_pct": -26.49,
+      "share_pct": 0.149,
+      "share_avg20_pct": 0.082,
+      "share_delta20_pp": 0.067
     },
     {
       "code": "11",
@@ -14062,7 +14179,10 @@
         "6582"
       ],
       "turnover_change": -528226570.0,
-      "turnover_change_pct": -56.87
+      "turnover_change_pct": -56.87,
+      "share_pct": 0.044,
+      "share_avg20_pct": 0.04,
+      "share_delta20_pp": 0.004
     },
     {
       "code": "35",
@@ -14118,7 +14238,10 @@
         "9955"
       ],
       "turnover_change": -615541507.0,
-      "turnover_change_pct": -30.6
+      "turnover_change_pct": -30.6,
+      "share_pct": 0.152,
+      "share_avg20_pct": 0.195,
+      "share_delta20_pp": -0.043
     },
     {
       "code": "12",
@@ -14172,7 +14295,10 @@
         "7821"
       ],
       "turnover_change": -823666420.0,
-      "turnover_change_pct": -40.64
+      "turnover_change_pct": -40.64,
+      "share_pct": 0.131,
+      "share_avg20_pct": 0.185,
+      "share_delta20_pp": -0.054
     },
     {
       "code": "04",
@@ -14234,7 +14360,10 @@
         "6506"
       ],
       "turnover_change": -867888236.0,
-      "turnover_change_pct": -51.54
+      "turnover_change_pct": -51.54,
+      "share_pct": 0.089,
+      "share_avg20_pct": 0.134,
+      "share_delta20_pp": -0.045
     },
     {
       "code": "20",
@@ -14343,7 +14472,10 @@
         "9945"
       ],
       "turnover_change": -1003565056.0,
-      "turnover_change_pct": -23.2
+      "turnover_change_pct": -23.2,
+      "share_pct": 0.361,
+      "share_avg20_pct": 0.344,
+      "share_delta20_pp": 0.017
     },
     {
       "code": "10",
@@ -14403,7 +14535,10 @@
         "9962"
       ],
       "turnover_change": -1160496529.0,
-      "turnover_change_pct": -36.17
+      "turnover_change_pct": -36.17,
+      "share_pct": 0.223,
+      "share_avg20_pct": 0.256,
+      "share_delta20_pp": -0.033
     },
     {
       "code": "21",
@@ -14454,7 +14589,10 @@
         "6509"
       ],
       "turnover_change": -1174975317.0,
-      "turnover_change_pct": -21.69
+      "turnover_change_pct": -21.69,
+      "share_pct": 0.462,
+      "share_avg20_pct": 0.716,
+      "share_delta20_pp": -0.254
     },
     {
       "code": "02",
@@ -14497,7 +14635,10 @@
         "7791"
       ],
       "turnover_change": -1382523263.0,
-      "turnover_change_pct": -60.07
+      "turnover_change_pct": -60.07,
+      "share_pct": 0.1,
+      "share_avg20_pct": 0.112,
+      "share_delta20_pp": -0.012
     },
     {
       "code": "22",
@@ -14663,7 +14804,10 @@
         "8436"
       ],
       "turnover_change": -1947498152.0,
-      "turnover_change_pct": -36.22
+      "turnover_change_pct": -36.22,
+      "share_pct": 0.373,
+      "share_avg20_pct": 0.45,
+      "share_delta20_pp": -0.077
     },
     {
       "code": "30",
@@ -14718,7 +14862,10 @@
         "8416"
       ],
       "turnover_change": -1983450883.0,
-      "turnover_change_pct": -34.81
+      "turnover_change_pct": -34.81,
+      "share_pct": 0.404,
+      "share_avg20_pct": 0.185,
+      "share_delta20_pp": 0.219
     },
     {
       "code": "14",
@@ -14816,7 +14963,10 @@
         "9946"
       ],
       "turnover_change": -2154880073.0,
-      "turnover_change_pct": -56.05
+      "turnover_change_pct": -56.05,
+      "share_pct": 0.184,
+      "share_avg20_pct": 0.126,
+      "share_delta20_pp": 0.058
     },
     {
       "code": "29",
@@ -14864,7 +15014,10 @@
         "8112A"
       ],
       "turnover_change": -2533843286.0,
-      "turnover_change_pct": -42.29
+      "turnover_change_pct": -42.29,
+      "share_pct": 0.376,
+      "share_avg20_pct": 0.403,
+      "share_delta20_pp": -0.027
     },
     {
       "code": "15",
@@ -14908,7 +15061,10 @@
         "8367"
       ],
       "turnover_change": -3793578236.0,
-      "turnover_change_pct": -43.34
+      "turnover_change_pct": -43.34,
+      "share_pct": 0.54,
+      "share_avg20_pct": 0.791,
+      "share_delta20_pp": -0.251
     },
     {
       "code": "27",
@@ -15005,7 +15161,10 @@
         "8176"
       ],
       "turnover_change": -6777812621.0,
-      "turnover_change_pct": -20.64
+      "turnover_change_pct": -20.64,
+      "share_pct": 2.836,
+      "share_avg20_pct": 3.306,
+      "share_delta20_pp": -0.47
     },
     {
       "code": "31",
@@ -15108,7 +15267,10 @@
         "8499"
       ],
       "turnover_change": -6787862657.0,
-      "turnover_change_pct": -13.86
+      "turnover_change_pct": -13.86,
+      "share_pct": 4.592,
+      "share_avg20_pct": 3.986,
+      "share_delta20_pp": 0.606
     },
     {
       "code": "03",
@@ -15143,7 +15305,10 @@
         "9950"
       ],
       "turnover_change": -9064676794.0,
-      "turnover_change_pct": -22.26
+      "turnover_change_pct": -22.26,
+      "share_pct": 3.446,
+      "share_avg20_pct": 3.306,
+      "share_delta20_pp": 0.14
     },
     {
       "code": "25",
@@ -15260,7 +15425,10 @@
         "9912"
       ],
       "turnover_change": -11138946488.0,
-      "turnover_change_pct": -17.8
+      "turnover_change_pct": -17.8,
+      "share_pct": 5.599,
+      "share_avg20_pct": 5.071,
+      "share_delta20_pp": 0.528
     },
     {
       "code": "26",
@@ -15382,7 +15550,10 @@
         "8240"
       ],
       "turnover_change": -14013169126.0,
-      "turnover_change_pct": -20.18
+      "turnover_change_pct": -20.18,
+      "share_pct": 6.031,
+      "share_avg20_pct": 6.713,
+      "share_delta20_pp": -0.682
     },
     {
       "code": "17",
@@ -15449,7 +15620,10 @@
         "6028"
       ],
       "turnover_change": -15187709479.0,
-      "turnover_change_pct": -47.37
+      "turnover_change_pct": -47.37,
+      "share_pct": 1.836,
+      "share_avg20_pct": 1.777,
+      "share_delta20_pp": 0.059
     },
     {
       "code": "24",
@@ -15658,7 +15832,10 @@
         "8383"
       ],
       "turnover_change": -67124735969.0,
-      "turnover_change_pct": -17.45
+      "turnover_change_pct": -17.45,
+      "share_pct": 34.543,
+      "share_avg20_pct": 33.069,
+      "share_delta20_pp": 1.474
     },
     {
       "code": "28",
@@ -15870,7 +16047,10 @@
         "8291"
       ],
       "turnover_change": -98603892531.0,
-      "turnover_change_pct": -31.86
+      "turnover_change_pct": -31.86,
+      "share_pct": 22.946,
+      "share_avg20_pct": 23.65,
+      "share_delta20_pp": -0.704
     }
   ],
   "official_member_values": {
@@ -17823,5 +18003,6 @@
     "8923": 62655.0,
     "9949": 453941.0
   },
+  "share_base_days": 20,
   "errors": []
 }
