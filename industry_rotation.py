@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 import json
+import re
 import os
 import time
 import base64
@@ -880,6 +881,50 @@ def build_official_industry_flows(base: Path, asof: str, previous: str) -> tuple
     return sorted(out, key=lambda f: f["turnover_change"], reverse=True), member_values
 
 
+VALUE_CHAIN_MIN_MEMBERS = 3   # 產業鏈細分少於 3 檔的子鏈太容易被單一股票左右，不列入
+
+
+def build_value_chain_flows(base: Path, asof: str, previous: str) -> tuple[list[dict[str, Any]], dict[str, float]]:
+    """TPEx 產業價值鏈最細一層（例如 半導體 > IC設計 > 電源管理IC）今天與前一交易日成交金額的增減。
+
+    分類由 value_chain.py 從 ic.tpex.org.tw 爬下（一個月重爬一次）；同一股票可屬於多個子鏈。
+    """
+    import stock_features
+    import value_chain
+    from datetime import date as _date
+
+    data = value_chain.load(max_age_days=value_chain.MAX_AGE_DAYS)
+    if not data:
+        raise RuntimeError("沒有產業價值鏈分類檔（value_chain.py）")
+    today_q = stock_features._quotes(_date.fromisoformat(asof))
+    prev_q = stock_features._quotes(_date.fromisoformat(previous))
+    out, member_values = [], {}
+    leaves = value_chain.leaf_groups(data)
+    for leaf in leaves:
+        members, now_sum, prev_sum = [], 0.0, 0.0
+        for code in leaf["members"]:
+            now_v = _parse_number((today_q.get(code) or {}).get("value"))
+            prev_v = _parse_number((prev_q.get(code) or {}).get("value"))
+            if np.isfinite(now_v) and np.isfinite(prev_v):
+                members.append(code)
+                now_sum += now_v
+                prev_sum += prev_v
+                member_values[code] = round(now_v, 0)
+        if len(members) < VALUE_CHAIN_MIN_MEMBERS or now_sum <= 0 or prev_sum <= 0:
+            continue
+        # 顯示名稱：第三層用「子鏈／細項」（IC設計／電源管理IC），第二層用「產業／子鏈」（半導體／IC封裝測試）
+        name = re.sub(r"[（(]例如[^）)]*[）)]", "", leaf["name"]).strip()   # 「石化原料(例如純對苯二甲酸…)」只留前面
+        label = f"{leaf['chain']}／{name}" if leaf["name"] != leaf["chain"] else f"{leaf['industry']}／{name}"
+        if sum(1 for x in leaves if x["industry"] == leaf["industry"] and x["name"] == leaf["name"]) > 1 and leaf["stage"]:
+            label += f"（{leaf['stage']}）"   # 同產業同名的子鏈（半導體中游、下游都有「生產製程及檢測設備」）
+        out.append({"code": leaf["id"], "name": label, "path": leaf["path"], "industry": leaf["industry"],
+                    "stage": leaf["stage"], "members": members,
+                    "turnover": round(now_sum, 0), "previous_turnover": round(prev_sum, 0),
+                    "turnover_change": round(now_sum - prev_sum, 0),
+                    "turnover_change_pct": round((now_sum / prev_sum - 1) * 100.0, 2)})
+    return sorted(out, key=lambda f: f["turnover_change"], reverse=True), member_values
+
+
 SHARE_BASE_DAYS = 20   # 占比變化的比較基準：前 20 個交易日的平均占比（ToAlpha 資金流向同法）
 
 
@@ -904,7 +949,7 @@ def add_share_flows(payload: dict[str, Any], base: Path) -> None:
     def share(members: list[str], d) -> float:
         return sum(quotes[d][c]["value"] for c in members if c in quotes[d] and quotes[d][c]["value"] == quotes[d][c]["value"]) / totals[d] * 100
 
-    for kind in ("groups", "official_industries"):
+    for kind in ("groups", "official_industries", "value_chains"):
         for g in payload.get(kind) or []:
             members = [str(c.get("symbol")) for c in g["components"]] if "components" in g else list(g.get("members") or [])
             if not members:
@@ -1012,6 +1057,12 @@ def update_industry_rotation(base_dir: str | Path, force: bool = False, publish:
                 base, payload["data_asof"], payload["previous_data_asof"])
     except Exception as exc:
         errors.append(f"官方產業資金增減失敗：{type(exc).__name__}: {exc}")
+    try:
+        if payload.get("data_asof") and payload.get("previous_data_asof"):
+            payload["value_chains"], chain_values = build_value_chain_flows(base, payload["data_asof"], payload["previous_data_asof"])
+            payload["official_member_values"] = {**chain_values, **(payload.get("official_member_values") or {})}
+    except Exception as exc:
+        errors.append(f"產業鏈細分資金增減失敗：{type(exc).__name__}: {exc}")
     try:
         add_share_flows(payload, base)
     except Exception as exc:

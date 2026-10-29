@@ -2805,7 +2805,8 @@ def _render_flow_heatmap(payload: dict) -> None:
     _sec('02｜資金輪動熱力圖')
     c1, c2 = st.columns([1, 1.4])
     with c1:
-        kind_label = st.segmented_control("分類", ["產業主題", "官方產業別"], default="產業主題", key="flow_heatmap_kind") or "產業主題"
+        kind_label = st.segmented_control("分類", list(stock_features.FLOW_KINDS.values()), default="產業主題",
+                                          key="flow_heatmap_kind") or "產業主題"
     labels_by_metric = stock_features.FLOW_METRICS
     with c2:
         metric_label = st.segmented_control("計算方式", list(labels_by_metric.values()),
@@ -2813,7 +2814,7 @@ def _render_flow_heatmap(payload: dict) -> None:
     # 計算方式要帶到自選股卡片與個股特徵（其他頁面沒有這個元件），另存一份非元件的狀態
     st.session_state["flow_metric"] = next(k for k, v in labels_by_metric.items() if v == metric_label)
     metric = _flow_metric()
-    kind = "official_industries" if kind_label == "官方產業別" else "groups"
+    kind = next(k for k, v in stock_features.FLOW_KINDS.items() if v == kind_label)
     ranks = stock_features.rotation_flow_ranks(payload, kind, metric)
     asof, prev = str(payload.get("data_asof") or ""), str(payload.get("previous_data_asof") or "")
     if not ranks:
@@ -2853,13 +2854,27 @@ def _render_flow_heatmap(payload: dict) -> None:
         else:
             texts.append(f"<b>{star}{r['name']}</b><br>{r['change'] / 1e8:+,.1f} 億<br>{pct}")
             hovers.append(f"{r['name']}<br>成交金額 {(r.get('turnover') or 0) / 1e8:,.1f} 億（{r['change'] / 1e8:+,.1f} 億，{pct}）<br>{rank}")
+    text_colors = ["#ffffff" if depth(r["change"]) > 0.45 else "#2b2424" for r in ranks]
+    ids, parents = [f"g{i}" for i in range(len(ranks))], [""] * len(ranks)
+    if kind == "value_chains":
+        # 兩層：外框是 TPEx 產業（半導體、電腦及週邊設備…），裡面是子鏈；點產業可放大
+        industries: dict[str, float] = {}
+        for i, r in enumerate(ranks):
+            ind = r.get("industry") or "其他"
+            parents[i] = f"ind:{ind}"
+            labels[i] = r["name"].split("／", 1)[-1]
+            industries[ind] = industries.get(ind, 0.0) + values[i]
+        for ind, total in industries.items():
+            ids.append(f"ind:{ind}"); parents.append(""); labels.append(ind); values.append(total)
+            colors.append("#f3eeee"); texts.append(f"<b>{ind}</b>"); hovers.append(ind); text_colors.append("#5a4f4f")
     fig = go.Figure(go.Treemap(
-        labels=labels, parents=[""] * len(labels), values=values, text=texts, textinfo="text",
+        ids=ids, labels=labels, parents=parents, values=values, text=texts, textinfo="text",
+        branchvalues="total" if kind == "value_chains" else "remainder",
         hovertext=hovers, hoverinfo="text", marker=dict(colors=colors, line=dict(color="#ffffff", width=2)),
-        textfont=dict(size=13), tiling=dict(pad=2), sort=True,
+        textfont=dict(size=13, color=text_colors), tiling=dict(pad=2), sort=True,
+        maxdepth=2, pathbar=dict(visible=kind == "value_chains"),
     ))
-    fig.update_layout(height=460, margin=dict(l=0, r=0, t=0, b=0))
-    fig.data[0].textfont.color = ["#ffffff" if depth(r["change"]) > 0.45 else "#2b2424" for r in ranks]
+    fig.update_layout(height=560 if kind == "value_chains" else 460, margin=dict(l=0, r=0, t=0, b=0))
     st.plotly_chart(fig, use_container_width=True, key="rotation_flow_heatmap", config={"displaylogo": False, "responsive": True})
 
     names = dict(_local_stock_names())
@@ -2873,12 +2888,13 @@ def _render_flow_heatmap(payload: dict) -> None:
         items = []
         for r in rows:
             shown = r["members"] if kind == "groups" else _top_members_by_value(r["members"], payload)
+            where = f'<div class="flow-path">{_esc(r["path"])}</div>' if r.get("path") else ""
             members = "、".join(f"{names.get(c, c)}（{c}）" for c in shown if c)
             if kind != "groups" and len(r["members"]) > len(shown):
                 members += f" 等 {len(r['members'])} 檔"
             items.append(f'<li><div class="flow-top-head"><span class="flow-rank">{r["rank"]}</span><b>{_esc(r["name"])}</b>'
                          f'<span class="flow-amt">{stock_features.flow_value_text(r)}</span></div>'
-                         f'<div class="flow-members">{_esc(members)}</div></li>')
+                         f'{where}<div class="flow-members">{_esc(members)}</div></li>')
         body = "".join(items) or '<li class="flow-empty">無</li>'
         return f'<div class="flow-top flow-{side}"><div class="flow-top-title">{title}</div><ol>{body}</ol></div>'
 
@@ -2889,7 +2905,9 @@ def _render_flow_heatmap(payload: dict) -> None:
                 + "</div>", unsafe_allow_html=True)
     how = ("今天占全市場成交金額的比例減掉前 20 個交易日的平均占比（百分點，pp；ToAlpha 資金流向同法，大盤量縮放大時不受影響）"
            if metric == "share20" else "今天成交金額減前一交易日成交金額，直接比較金額增減、不除以全市場總成交金額（大盤整體量縮時多數產業會一起變少）")
-    st.caption(f"資料日期 {span}。每格是一個{'產業主題（代表股）' if kind == 'groups' else '官方產業別（上市櫃全部股票，不含 ETF）'}，"
+    unit = {"groups": "產業主題（代表股）", "official_industries": "官方產業別（上市櫃全部股票，不含 ETF）",
+            "value_chains": "TPEx 產業價值鏈子鏈（上市櫃全部股票，同一檔可屬於多個子鏈；外框是產業，點產業可放大、點上方路徑返回）"}[kind]
+    st.caption(f"資料日期 {span}。每格是一個{unit}，"
                f"大小與顏色＝{how}；紅＝增加、綠＝減少，越深越多；★＝增加或減少前 {stock_features.FLOW_TOP} 名。"
                "同一股票可能屬於多個主題；代表股只是研究樣本，不等於整個產業。這些主題的個股在「操作策略 → 個股符合特徵 → 價量面」也會標出資金增減。")
 
@@ -2913,6 +2931,7 @@ _FLOW_CSS = """<style>
 .flow-rank{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;color:#fff;font-size:12px;font-weight:800}
 .flow-up .flow-rank{background:#b33636}.flow-down .flow-rank{background:#1d7a4a}
 .flow-amt{margin-left:auto;font-weight:800}.flow-up .flow-amt{color:#b33636}.flow-down .flow-amt{color:#1d7a4a}
+.flow-path{font-size:12px;color:#8a7d7d;margin:2px 0 0 30px}
 .flow-members{font-size:12.5px;color:#6b6262;margin:3px 0 0 30px;line-height:1.6}
 .flow-empty{color:#8d8585;font-size:13px}
 </style>"""
@@ -4909,32 +4928,17 @@ def _flow_metric() -> str:
     return st.session_state.get("flow_metric", "share20")
 
 
-@st.cache_data(ttl=600, show_spinner=False)
-def _flow_by_symbol(_generated_at: str, metric: str = "share20") -> dict[str, list[dict]]:
-    """{代號: [所屬主題的資金增減]}，前 5 名排前面；依產業分析快照的產生時間快取。"""
-    out: dict[str, list[dict]] = {}
-    payload = load_published_rotation(BASE)
-    for r in stock_features.rotation_flow_ranks(payload, metric=metric):
-        if r["side"] == "flat":
-            continue
-        for code in r["members"]:
-            out.setdefault(code, []).append(r)
-    # 不在任何主題代表股裡的個股：改用官方產業別（排名是官方產業之間比）
-    for r in stock_features.rotation_flow_ranks(payload, "official_industries", metric):
-        if r["side"] == "flat":
-            continue
-        for code in r["members"]:
-            if code not in out or out[code][0].get("official"):
-                out.setdefault(code, []).append({**r, "official": True})
-    for rows in out.values():
-        rows.sort(key=lambda r: (not r["top"], -abs(r["change"])))
-    return out
+@st.cache_data(ttl=600, show_spinner=False, max_entries=512)
+def _flow_rows(code: str, _generated_at: str, metric: str = "share20") -> list[dict]:
+    """個股的產業資金增減（產業主題 → 產業鏈細分 → 官方產業別），前 5 名排前面；依產業分析快照的產生時間快取。"""
+    rows = stock_features.symbol_flow_rows(clean_symbol(code), load_published_rotation(BASE), metric)
+    return sorted(rows, key=lambda r: (not r["top"], -abs(r["change"])))
 
 
 def _flow_chips_html(code: str, limit: int = 2) -> str:
     """自選股卡片上的產業資金增減標籤：前 5 名實心，其餘一般；一檔屬於多個主題時最多顯示 limit 個。"""
     payload = load_published_rotation(BASE)
-    rows = _flow_by_symbol(str(payload.get("generated_at") or ""), _flow_metric()).get(clean_symbol(code), [])
+    rows = _flow_rows(code, str(payload.get("generated_at") or ""), _flow_metric())
     chips = []
     for r in rows[:limit]:
         up = r["side"] == "up"

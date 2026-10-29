@@ -333,6 +333,7 @@ def rotation_flow_ranks(rotation: dict | None, kind: str = "groups", metric: str
         out.append({"name": g["name"], "change": v, "metric": metric, "pct": g.get("turnover_change_pct"),
                     "amount": g.get("turnover_change"), "share": g.get("share_pct"), "share_avg": g.get("share_avg20_pct"),
                     "turnover": g.get("turnover"), "side": side, "rank": rank,
+                    "industry": g.get("industry"), "path": g.get("path"), "code": g.get("code"),
                     "top": rank is not None and rank <= FLOW_TOP,
                     "members": [str(c.get("symbol") or c.get("code") or "") for c in g.get("components") or []]
                     if "components" in g else [str(c) for c in g.get("members") or []]})
@@ -357,16 +358,28 @@ def flow_why_text(r: dict) -> str:
             f"{'（' + format(r['pct'], '+.1f') + '%）' if r.get('pct') is not None else ''}，資金{'增加' if up else '減少'}第 {r['rank']} 名")
 
 
+FLOW_KINDS = {"groups": "產業主題", "value_chains": "產業鏈細分", "official_industries": "官方產業別"}
+CHAIN_TAG_LIMIT = 2   # 產業鏈細分：一檔常屬於好幾個子鏈，只標最顯著的 2 個
+
+
+def symbol_flow_rows(symbol: str, rotation: dict | None, metric: str = "share20") -> list[dict]:
+    """個股要標的資金增減：產業主題 → 產業鏈細分（TPEx 價值鏈）→ 官方產業別，取第一個有資料的分類。
+    排名是在同一種分類之間比；產業鏈細分只取前 5 名優先、增減最大的 CHAIN_TAG_LIMIT 個。"""
+    for kind in FLOW_KINDS:
+        rows = [{**r, "kind": kind} for r in rotation_flow_ranks(rotation, kind, metric)
+                if symbol in r["members"] and r["side"] != "flat"]
+        if rows:
+            if kind == "value_chains":
+                rows.sort(key=lambda r: (not r["top"], -abs(r["change"])))
+                rows = rows[:CHAIN_TAG_LIMIT]
+            return rows
+    return []
+
+
 def _rotation_flow(symbol: str, rotation: dict | None, metric: str = "share20") -> list[dict]:
     """個股所屬產業主題的資金增減標籤；前 5 名加 top 標記（網站上實心粗體）。"""
-    ranks = rotation_flow_ranks(rotation, metric=metric)
-    if not any(symbol in r["members"] for r in ranks):
-        # 不在任何主題代表股裡：改用官方產業別（排名也是在官方產業之間比）
-        ranks = rotation_flow_ranks(rotation, "official_industries", metric)
     tags = []
-    for r in ranks:
-        if symbol not in r["members"] or r["side"] == "flat":
-            continue
+    for r in symbol_flow_rows(symbol, rotation, metric):
         up = r["side"] == "up"
         if r["top"]:
             text = f"{r['name']} 資金{'流入' if up else '流出'}前{FLOW_TOP}"
