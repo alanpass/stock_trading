@@ -73,6 +73,30 @@ def _load_cloud_secret_env() -> None:
 
 _load_cloud_secret_env()
 
+
+def _refresh_helper_modules() -> None:
+    """Streamlit Cloud 推新版後常只重跑主程式、不重新 import 子模組，網站會拿舊模組配新主程式而出錯
+    （2026-10-26 系統推薦顯示「沒有紀錄」、2026-10-29 AttributeError: symbol_flow_rows）。
+    每個伺服器程序第一次執行時把常改的子模組各重新載入一次，之後檔案比載入時新才再載入。"""
+    import importlib
+    import sys as _sys
+    names = ("market_calendar", "watchlist_store", "stock_features", "chip_signals", "intraday_signals",
+             "industry_rotation", "value_chain", "section_ui", "future_picks_ui", "trend_pattern_ui", "stock_notes_ui")
+    for name in names:
+        mod = _sys.modules.get(name)
+        if mod is None or not getattr(mod, "__file__", None):
+            continue
+        try:
+            mtime = os.path.getmtime(mod.__file__)
+            if getattr(mod, "_loaded_mtime", None) != mtime:
+                mod = importlib.reload(mod)
+                mod._loaded_mtime = mtime
+        except Exception:
+            pass
+
+
+_refresh_helper_modules()
+
 import watchlist_store
 from market_calendar import is_twse_trading_day, market_status_text
 from stock_api import (
