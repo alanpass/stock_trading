@@ -200,12 +200,12 @@ st.set_page_config(page_title="台股即時互動式分析系統", page_icon=_si
 
 # ---- 開站載入動畫：第一次開啟或重新整理時蓋住頁面，整頁跑完才淡出；站內換頁不播放 ----
 # 一輪 3.6 秒：logo 圓環轉入 → 環內 K 線一根根長出（紅綠）、趨勢線往上 → K 線轉成 logo 色、外側斜線長出，停在完整 logo
-# 頁面載入時主執行緒會被圖表塞住 1 秒以上，所以只動 transform／opacity 並讓每個圖形自成一層（GPU 合成，主執行緒忙也不停）；
+# 頁面載入時主執行緒會被圖表塞住 1 秒以上，所以只動 transform／opacity 並讓每個圖形自成一層 div（GPU 合成，主執行緒忙也不停）；
 # 不要改回 stroke-dashoffset、color 這類動畫，同一個動畫也不要混進 visibility（會整個退回主執行緒），也不要用 :has()（每次 DOM 變動都要重算樣式）。
 _BOOT_BASE_CSS = """
 .boot-loader{position:fixed;inset:0;z-index:1000000;display:flex;align-items:center;justify-content:center;
   background:radial-gradient(circle at 50% 42%,#fffdfc 0%,#fbf3f2 62%,#f4e6e5 100%);will-change:opacity;
-  animation:boot-out .4s ease 30s forwards,boot-gone .01s linear 30.4s forwards}
+  animation:boot-out .4s ease 90s forwards,boot-gone .01s linear 90.4s forwards}
 .boot-loader.boot-done{pointer-events:none;animation:boot-out .65s cubic-bezier(.4,0,.2,1) .18s forwards,boot-gone .01s linear .83s forwards}
 .boot-loader.boot-done .boot-inner{animation:boot-inner-out .4s cubic-bezier(.4,0,.2,1) forwards}
 @keyframes boot-out{to{opacity:0}}
@@ -213,7 +213,8 @@ _BOOT_BASE_CSS = """
 @keyframes boot-inner-out{to{opacity:0;transform:scale(1.05)}}
 .boot-inner{display:flex;flex-direction:column;align-items:center;width:min(340px,84vw);will-change:transform,opacity}
 .boot-mark{position:relative;width:min(148px,42vw);aspect-ratio:1}
-.boot-layer{position:absolute;inset:0;width:100%;height:100%;overflow:visible;will-change:transform,opacity}
+.boot-layer{position:absolute;inset:0;will-change:transform,opacity}
+.boot-layer svg{display:block;width:100%;height:100%;overflow:visible}
 .boot-ring{transform-origin:50% 50%;animation:boot-ring 3.6s cubic-bezier(.3,.7,.3,1) infinite both}
 @keyframes boot-ring{0%{opacity:0;transform:rotate(-40deg) scale(.86)}16%{opacity:1;transform:none}93%{opacity:1;transform:none}100%{opacity:0;transform:none}}
 .boot-sweep{transform-origin:50% 50%;animation:boot-sweep 1.5s linear infinite}
@@ -238,10 +239,11 @@ _BOOT_BASE_CSS = """
 }
 """
 # 播放時：不顯示任何按鈕（#sb-toggle、回到頂端是 JS 加到 body 的，層級比動畫高）。放在單獨的 CSS，跑完就拿掉；
-# 30 秒和 .boot-loader 的保險同步，頁面跑太久時動畫自動消失，按鈕也一起回來。
+# 90 秒和 .boot-loader 的保險同步，頁面跑太久時動畫自動消失，按鈕也一起回來。
+# 不要用 content-visibility 藏住底下的頁面：實測反而更慢（跑完 33 秒對 21 秒）。
 _BOOT_PLAYING_CSS = """
 body > *:not(#root),.stApp button,.stApp a,.stApp [role="button"],.stApp [data-testid="stSidebar"],.stApp [data-testid="stHeader"],
-.stApp [data-testid="stExpandSidebarButton"],.stApp [data-testid="stSidebarCollapsedControl"]{animation:boot-controls 30s step-end}
+.stApp [data-testid="stExpandSidebarButton"],.stApp [data-testid="stSidebarCollapsedControl"]{animation:boot-controls 90s step-end}
 @keyframes boot-controls{0%,100%{visibility:hidden}}
 """
 # 跑完時：頁面內容在覆蓋層淡出的同時往上浮入，不是直接露出來（下一輪重跑這段 CSS 就消失）
@@ -264,7 +266,8 @@ def _boot_css(extra: str) -> str:
 def _boot_loader_html(done: bool = False) -> str:
     """動畫用 site_logo 的真實圖形，最後一格就是網站 logo。整段不能有換行，否則 markdown 會把 HTML 拆開。"""
     def layer(cls: str, inner: str, style: str = "") -> str:
-        return f'<svg class="boot-layer {cls}" viewBox="0 0 54 54" aria-hidden="true" style="{style}">{inner}</svg>'
+        # 動畫一定要掛在外層 div：掛在 <svg> 上 Chrome 不會交給 GPU（trace 的 compositeFailed=1024），主執行緒一忙就停
+        return f'<div class="boot-layer {cls}" style="{style}"><svg viewBox="0 0 54 54" aria-hidden="true">{inner}</svg></div>'
 
     colors = ("#c0392f", "#1f8a58", "#c0392f")   # 台股慣例：紅漲綠跌；最後淡入 logo 色的同一根 K 線取代變色動畫
     candles = ""
