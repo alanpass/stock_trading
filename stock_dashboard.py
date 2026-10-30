@@ -249,7 +249,10 @@ _BOOT_DONE_CSS = """
 .stApp [class*="st-key-page_"]{animation:boot-page-in .8s cubic-bezier(.2,.7,.2,1) .12s both}
 .stApp .site-nav,.stApp .brand-block{animation:boot-page-in .7s cubic-bezier(.2,.7,.2,1) .08s both}
 @keyframes boot-page-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){.stApp [class*="st-key-page_"],.stApp .site-nav,.stApp .brand-block{animation:none}}
+/* 收合、回到頂端等層級比動畫高，要等動畫快退完才淡入；只寫 from、不留終態，隱藏中的回到頂端才不會被強制顯示 */
+body > *:not(#root){animation:boot-fade-in .4s ease .62s backwards}
+@keyframes boot-fade-in{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.stApp [class*="st-key-page_"],.stApp .site-nav,.stApp .brand-block,body > *:not(#root){animation:none}}
 """
 BOOT_MIN_SECONDS = 1.2   # 頁面很快跑完時也至少播這麼久，否則動畫閃一下就消失
 
