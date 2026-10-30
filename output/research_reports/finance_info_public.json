@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-10-30",
-  "updated_at": "2026-10-30T08:08:12+08:00",
-  "finished_at": "2026-10-30T08:09:00+08:00",
-  "published_at": "2026-10-30T08:09:00+08:00",
+  "updated_at": "2026-10-30T08:10:02+08:00",
+  "finished_at": "2026-10-30T08:10:22+08:00",
+  "published_at": "2026-10-30T08:10:23+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -18,7 +18,7 @@
   "news_count": 382,
   "earnings_count": 8,
   "news_digest": {
-    "generated_at": "2026-10-30T08:08:12+08:00",
+    "generated_at": "2026-10-30T08:10:02+08:00",
     "headline": "最近 2 天共整理 382 則財經新聞：利多 168、利空 116、中性 34、混合 64；討論度最高的產業：AI／伺服器、半導體、國際股市。",
     "stats": {
       "total": 382,
@@ -298,7 +298,7 @@
     }
   },
   "earnings_digest": {
-    "generated_at": "2026-10-30T08:08:12+08:00",
+    "generated_at": "2026-10-30T08:10:02+08:00",
     "days": 5,
     "total": 8,
     "利多": 4,
@@ -522,15 +522,15 @@
       "future": 31
     },
     "source_method": "api",
-    "reused_from_previous_run": 80,
+    "reused_from_previous_run": 99,
     "window_start": "2026-10-29T00:00:00+08:00",
-    "window_end": "2026-10-30T08:08:59.225999+08:00"
+    "window_end": "2026-10-30T08:10:22.247830+08:00"
   },
   "agent_stats": {
     "input": 382,
     "after_dedupe": 382,
     "ai_cached": 67,
-    "seconds": 0.6,
+    "seconds": 0.5,
     "earnings": {
       "total": 8,
       "ai_cached": 0,
@@ -2276,7 +2276,7 @@
       "article_id": "6641277",
       "title": "鉅亨速報 - Factset 最新調查：貝萊德BLK-US的目標價調升至1400元，幅度約3.32%",
       "url": "https://news.cnyes.com/news/id/6641277",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-30 04:15:26",
       "published_ts": "2026-10-30T04:15:26+08:00",
       "ai_points": [
@@ -2313,7 +2313,7 @@
       "article_id": "6641278",
       "title": "鉅亨速報 - Factset 最新調查：意法半導體STM-US的目標價調降至75.72元，幅度約3.38%",
       "url": "https://news.cnyes.com/news/id/6641278",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-30 04:15:28",
       "published_ts": "2026-10-30T04:15:28+08:00",
       "ai_points": [
@@ -2350,7 +2350,7 @@
       "article_id": "6641279",
       "title": "鉅亨速報 - Factset 最新調查：康寧GLW-US的目標價調降至186元，幅度約4.86%",
       "url": "https://news.cnyes.com/news/id/6641279",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-30 04:15:30",
       "published_ts": "2026-10-30T04:15:30+08:00",
       "ai_points": [
@@ -2387,7 +2387,7 @@
       "article_id": "6641280",
       "title": "鉅亨速報 - Factset 最新調查：偉創力FLEX-US的目標價調升至159元，幅度約6%",
       "url": "https://news.cnyes.com/news/id/6641280",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-30 04:15:35",
       "published_ts": "2026-10-30T04:15:35+08:00",
       "ai_points": [
@@ -2456,7 +2456,7 @@
       "article_id": "6641331",
       "title": "鉅亨速報 - Factset 最新調查：好時HSY-US的目標價調降至183元，幅度約3.68%",
       "url": "https://news.cnyes.com/news/id/6641331",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-30 06:15:19",
       "published_ts": "2026-10-30T06:15:19+08:00",
       "ai_points": [
@@ -2493,7 +2493,7 @@
       "article_id": "6641332",
       "title": "鉅亨速報 - Factset 最新調查：West Pharmaceutical Services, Inc.WST-US的目標價調升至430元，幅度約3.37%",
       "url": "https://news.cnyes.com/news/id/6641332",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-30 06:15:21",
       "published_ts": "2026-10-30T06:15:21+08:00",
       "ai_points": [
@@ -5134,7 +5134,7 @@
       "article_id": "6641210",
       "title": "鉅亨速報 - Factset 最新調查：Alphabet公司(C)GOOG-US的目標價調降至407.91元，幅度約4.36%",
       "url": "https://news.cnyes.com/news/id/6641210",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-30 00:15:38",
       "published_ts": "2026-10-30T00:15:38+08:00",
       "ai_points": [
@@ -5171,7 +5171,7 @@
       "article_id": "6641211",
       "title": "鉅亨速報 - Factset 最新調查：思佳訊半導體SWKS-US的目標價調升至78元，幅度約8.33%",
       "url": "https://news.cnyes.com/news/id/6641211",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-30 00:15:42",
       "published_ts": "2026-10-30T00:15:42+08:00",
       "ai_points": [
@@ -5208,7 +5208,7 @@
       "article_id": "6641212",
       "title": "鉅亨速報 - Factset 最新調查：Takeda Pharmaceutical Co - ADRTAK-US的目標價調升至21.81元，幅度約3.65%",
       "url": "https://news.cnyes.com/news/id/6641212",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-30 00:15:44",
       "published_ts": "2026-10-30T00:15:44+08:00",
       "ai_points": [
@@ -5244,7 +5244,7 @@
       "article_id": "6641213",
       "title": "鉅亨速報 - Factset 最新調查：Alphabet公司(A)GOOGL-US的目標價調降至408.96元，幅度約4.45%",
       "url": "https://news.cnyes.com/news/id/6641213",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-30 00:15:45",
       "published_ts": "2026-10-30T00:15:45+08:00",
       "ai_points": [
@@ -5281,7 +5281,7 @@
       "article_id": "6641214",
       "title": "鉅亨速報 - Factset 最新調查：泰科電子TEL-US的目標價調升至261.5元，幅度約3.98%",
       "url": "https://news.cnyes.com/news/id/6641214",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-30 00:15:46",
       "published_ts": "2026-10-30T00:15:46+08:00",
       "ai_points": [
@@ -5318,7 +5318,7 @@
       "article_id": "6641215",
       "title": "鉅亨速報 - Factset 最新調查：INNIO N.V.INIO-US的目標價調降至31.5元，幅度約5.97%",
       "url": "https://news.cnyes.com/news/id/6641215",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-30 00:15:49",
       "published_ts": "2026-10-30T00:15:49+08:00",
       "ai_points": [
@@ -5354,7 +5354,7 @@
       "article_id": "6641217",
       "title": "鉅亨速報 - Factset 最新調查：Houlihan Lokey Inc - Class AHLI-US的目標價調升至162元，幅度約5.88%",
       "url": "https://news.cnyes.com/news/id/6641217",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-30 00:15:52",
       "published_ts": "2026-10-30T00:15:52+08:00",
       "ai_points": [
@@ -5391,7 +5391,7 @@
       "article_id": "6641216",
       "title": "鉅亨速報 - Factset 最新調查：Genmab - ADRGMAB-US的目標價調升至63.8元，幅度約3.15%",
       "url": "https://news.cnyes.com/news/id/6641216",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-30 00:15:52",
       "published_ts": "2026-10-30T00:15:52+08:00",
       "ai_points": [
@@ -7121,7 +7121,7 @@
       "article_id": "6641255",
       "title": "盤中速報 - 美光科技(MU-US)大跌5%，報934.02美元",
       "url": "https://news.cnyes.com/news/id/6641255",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-30 02:16:03",
       "published_ts": "2026-10-30T02:16:03+08:00",
       "ai_points": [
@@ -7158,7 +7158,7 @@
       "article_id": "6641268",
       "title": "盤中速報 - 恩智浦半導體(NXPI-US)大漲5.05%，報264.39美元",
       "url": "https://news.cnyes.com/news/id/6641268",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-30 03:45:10",
       "published_ts": "2026-10-30T03:45:10+08:00",
       "ai_points": [
@@ -7195,7 +7195,7 @@
       "article_id": "6641271",
       "title": "盤中速報 - 高特利集團(MO-US)大漲5.01%，報76.65美元",
       "url": "https://news.cnyes.com/news/id/6641271",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-30 04:00:15",
       "published_ts": "2026-10-30T04:00:15+08:00",
       "ai_points": [
@@ -8831,42 +8831,6 @@
       "why": "美股電商個股EPS預估上修",
       "importance": 5.8,
       "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6640139",
-      "title": "「中國製造」轉型！電動車、AI零組件與工業機械崛起 出口版圖改寫全球競爭",
-      "url": "https://news.cnyes.com/news/id/6640139",
-      "category": "國際政經",
-      "published": "2026-10-29 08:10:02",
-      "published_ts": "2026-10-29T08:10:02+08:00",
-      "ai_points": [
-        "中國出口重心轉向電動休旅車、AI基礎設施零件、化學品、工業機械與智慧家電，傳統鞋類、玩具、家具停滯下滑。",
-        "2026年上半年中國晶片出口1,772.8億美元、電腦與伺服器年增41.3%；",
-        "出口數據顯示，美國在動力割草機市場受到的衝擊尤其明顯，美國此類產品出口額從2023年的10億美元，降至2025年的2.54億美元，減少約7.46億美元；"
-      ],
-      "summary": "中國出口重心轉向電動休旅車、AI基礎設施零件、化學品、工業機械與智慧家電，傳統鞋類、玩具、家具停滯下滑。；2026年上半年中國晶片出口1,772.8億美元、電腦與伺服器年增41.3%；；出口數據顯示，美國在動力割草機市場受到的衝擊尤其明顯，美國此類產品出口額從2023年的10億美元，降至2025年的2.54億美元，減少約7.46億美元；",
-      "sentiment": "利多",
-      "sectors": [
-        "AI／伺服器",
-        "半導體",
-        "地緣／政策"
-      ],
-      "stocks": [],
-      "highlights": [
-        "1,772.8億美元",
-        "2.54億美元",
-        "7.46億美元",
-        "41.3%",
-        "10億美元",
-        "伺服器",
-        "下滑",
-        "AI",
-        "晶片"
-      ],
-      "why": "",
-      "importance": 5.8,
-      "ai_source": "rule",
       "source": "鉅亨網"
     },
     {
@@ -10887,6 +10851,42 @@
       "source": "鉅亨網"
     },
     {
+      "article_id": "6640139",
+      "title": "「中國製造」轉型！電動車、AI零組件與工業機械崛起 出口版圖改寫全球競爭",
+      "url": "https://news.cnyes.com/news/id/6640139",
+      "category": "國際政經",
+      "published": "2026-10-29 08:10:02",
+      "published_ts": "2026-10-29T08:10:02+08:00",
+      "ai_points": [
+        "中國出口重心轉向電動休旅車、AI基礎設施零件、化學品、工業機械與智慧家電，傳統鞋類、玩具、家具停滯下滑。",
+        "2026年上半年中國晶片出口1,772.8億美元、電腦與伺服器年增41.3%；",
+        "出口數據顯示，美國在動力割草機市場受到的衝擊尤其明顯，美國此類產品出口額從2023年的10億美元，降至2025年的2.54億美元，減少約7.46億美元；"
+      ],
+      "summary": "中國出口重心轉向電動休旅車、AI基礎設施零件、化學品、工業機械與智慧家電，傳統鞋類、玩具、家具停滯下滑。；2026年上半年中國晶片出口1,772.8億美元、電腦與伺服器年增41.3%；；出口數據顯示，美國在動力割草機市場受到的衝擊尤其明顯，美國此類產品出口額從2023年的10億美元，降至2025年的2.54億美元，減少約7.46億美元；",
+      "sentiment": "利多",
+      "sectors": [
+        "AI／伺服器",
+        "半導體",
+        "地緣／政策"
+      ],
+      "stocks": [],
+      "highlights": [
+        "1,772.8億美元",
+        "2.54億美元",
+        "7.46億美元",
+        "41.3%",
+        "10億美元",
+        "伺服器",
+        "下滑",
+        "AI",
+        "晶片"
+      ],
+      "why": "",
+      "importance": 4.8,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
       "article_id": "6640307",
       "title": "盤中速報 - 櫃買市場加權指數下跌-8.06點至386.55點，跌幅2.04%",
       "url": "https://news.cnyes.com/news/id/6640307",
@@ -12603,7 +12603,7 @@
       "article_id": "6641182",
       "title": "盤中速報 - 英特格(ENTG-US)大漲5.1%，報167.44美元",
       "url": "https://news.cnyes.com/news/id/6641182",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-29 23:27:03",
       "published_ts": "2026-10-29T23:27:03+08:00",
       "ai_points": [
@@ -12640,7 +12640,7 @@
       "article_id": "6641245",
       "title": "盤中速報 - 甲骨文(ORCL-US)大跌5.02%，報137.29美元",
       "url": "https://news.cnyes.com/news/id/6641245",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-10-30 01:55:07",
       "published_ts": "2026-10-30T01:55:07+08:00",
       "ai_points": [
