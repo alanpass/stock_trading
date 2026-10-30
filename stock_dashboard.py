@@ -696,6 +696,10 @@ def _watch_rows(watchlist_key, _bucket):
 
     # 第二層：公司主要業務／產業鏈子分類。
     profiles = get_business_profiles_cached(tuple(result["code"].tolist()))
+    # 產業主檔還沒有這檔（例如主檔重建前才變成注意股）時，用公司主檔的產業補上。
+    result["industry"] = result.apply(
+        lambda r: str((profiles.get(clean_symbol(r["code"])) or {}).get("industry") or "00").zfill(2) if r["industry"] == "00" else r["industry"], axis=1
+    )
     result["business_group"] = result["code"].map(
         lambda c: str((profiles.get(clean_symbol(c)) or {}).get("business_group", "主要業務待建立"))
     )
