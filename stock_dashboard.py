@@ -2817,7 +2817,9 @@ def _watchlist_on_pick() -> None:
 
 # 名單工具列（參考三竹：清單正上方一條細列，窄下拉選單＋‹ ›＋小圖示；改名、新增才開對話框，平常不佔版面）
 _WATCHLIST_BAR_CSS = """<style>
-body .stApp .st-key-watchlist_bar{gap:0!important;margin:4px 0 4px!important;padding:0!important}
+/* 側欄往下捲時固定在清單上方；sticky 要加在 Streamlit 外面那層 wrapper，否則捲動範圍只有工具列自己 */
+[data-testid="stSidebar"] [data-testid="stLayoutWrapper"]:has(> .st-key-watchlist_bar){position:sticky;top:0;z-index:20;background:var(--site-blush,#fbf1f1);padding:4px 0;box-shadow:0 6px 8px -8px rgba(90,40,40,.35)}
+body .stApp .st-key-watchlist_bar{gap:0!important;margin:0!important;padding:0!important}
 body .stApp .st-key-watchlist_bar [data-testid="stHorizontalBlock"]{gap:0!important;align-items:center!important;flex-wrap:nowrap!important;border:1px solid #e6d8d8;border-radius:9px;background:#fff;padding:2px 3px 2px 0;box-sizing:border-box}
 body .stApp .st-key-watchlist_bar [data-testid="stColumn"]{min-width:0!important;width:auto!important;padding:0!important}
 body .stApp .st-key-watchlist_bar [data-testid="stColumn"]:first-child{flex:1 1 auto!important}
