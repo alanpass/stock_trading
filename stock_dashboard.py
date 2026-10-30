@@ -1485,7 +1485,7 @@ _UX_CSS = """<style>
 .sig-wait{animation:uxFade 1s ease-in-out infinite alternate}
 .wc-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;position:relative;z-index:1;pointer-events:none}
 /* Streamlit 的 markdown 區塊底部有 -1rem 邊距；自選股卡片多了一列訊號後會被吃進卡片底邊，這裡歸零讓卡片依內容長高 */
-body .stApp.stApp [class*="st-key-wc_"] [data-testid="stMarkdownContainer"]:has(> .wc-info){margin-bottom:0!important}
+body .stApp.stApp [class*="st-key-wc_"] [data-testid="stMarkdownContainer"]{margin-bottom:0!important}
 .wc-chips:empty{display:none}
 .wc-chips .sig{font-size:10.5px;padding:0 6px}
 .wc-chips .sig-wait{font-size:10.5px}
@@ -1549,7 +1549,7 @@ def render_header_and_search() -> None:
 def render_strategy_search() -> None:
     """操作策略頁的股票查詢；選取後同步整個操作策略與未來分析。"""
     st.markdown('<div class="content-heading"><div class="eyebrow">STOCK OPERATION</div><h1>操作策略</h1><p>從自選股即時行情到 K 線、量能、籌碼與法人資料，集中處理單一分析標的。</p></div>', unsafe_allow_html=True)
-    left, right = st.columns([8.2, 1.35], gap="small", vertical_alignment="bottom")
+    left, right = st.container(key="stock_search_box").columns([8.2, 1.35], gap="small", vertical_alignment="bottom")
     with left:
         search_text = st.text_input(
             "股票查詢",
@@ -4255,7 +4255,6 @@ button[title='搜尋股票代號或名稱'] .material-symbols-rounded{
   width:34px!important; height:34px!important; font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 32;
 }
 button[title='搜尋股票代號或名稱']:hover{background-color:#1e293b!important;border-color:rgba(255,255,255,.42)!important;}
-[data-testid="column"]:has(button[title='搜尋股票代號或名稱']){min-width:46px!important;}
 .watch-remove-btn button{color:#ef4444!important;font-weight:900!important;}
 div[data-testid="stButton"] > button[kind="secondary"]{border:0;background:transparent;padding:8px 8px;text-align:left;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 div[data-testid="stButton"] > button[kind="secondary"]{color:#ffffff !important;}
@@ -4416,7 +4415,9 @@ def render_watchlist(compact: bool = False):
                     if compact:
                         # 一檔股票 = 一張完整卡片；點選卡片任一處即選取（透明按鈕覆蓋整張卡片）
                         is_sel = str(r['code']) == str(st.session_state.get('selected'))
-                        with st.container(key=f"wc_{r['code']}_{idx}"):
+                        # 漲跌停、選取的外框靠 key 上的標記上色：不要用 :has()，Plotly 量文字時每次都要重算整頁樣式（實測 35ms 對 3ms）
+                        card_state = {"limit-up": "_lu", "limit-down": "_ld"}.get(name_class, "") + ("_sel" if is_sel else "")
+                        with st.container(key=f"wc_{r['code']}_{idx}{card_state}"):
                             st.markdown(
                                 f"<div class='wc-info {name_class}{' wc-selected' if is_sel else ''}{' wc-has-del' if is_authenticated() else ''}'>"
                                 f"<div class='wc-name'>{r['name']}<span>（{r['code']}）</span></div>"
@@ -6585,7 +6586,7 @@ st.markdown(r'''<style>
 }
 
 /* 搜尋：輸入框較長，按鈕緊鄰 */
-div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) {
+.stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] {
   column-gap:8px !important;
 }
 .search-field-row {
@@ -6727,7 +6728,7 @@ st.markdown(r'''<style>
   flex:1 1 auto !important;
 }
 [data-testid="stTextInput"] input{width:100% !important;}
-div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]){column-gap:6px !important;}
+.stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"]{column-gap:6px !important;}
 
 /* 查看／刪除按鈕：淺藍填滿 + 黑色框線 */
 [class*="st-key-watch_select_"] button,
@@ -6853,7 +6854,7 @@ st.markdown(r'''<style>
   border:1.5px solid #58758e !important;
   border-radius:5px !important;
 }
-[data-testid="stCheckbox"] label:has(input:checked) > span:first-of-type{
+[data-testid="stCheckbox"] label[data-selected="true"] > span:first-of-type{
   background:var(--title-red) !important;
   border-color:var(--title-red) !important;
 }
@@ -6915,11 +6916,11 @@ st.markdown(r'''<style>
    ============================================================ */
 
 /* ---------- 搜尋欄：灰框膠囊 + 藍色放大鏡端蓋 ---------- */
-div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]){
+.stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"]{
   column-gap:0 !important;gap:0 !important;align-items:stretch !important;
 }
-div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-baseweb="input"],
-div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-baseweb="base-input"]{
+.stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-baseweb="input"],
+.stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-baseweb="base-input"]{
   background:#fff !important;
   border:4px solid #b3b3b3 !important;
   border-right:0 !important;
@@ -6927,11 +6928,11 @@ div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公�
   height:52px !important;
   box-shadow:none !important;
 }
-div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) input{
+.stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] input{
   background:transparent !important;border:0 !important;border-radius:0 !important;
   height:44px !important;padding:0 20px !important;color:#263746 !important;
 }
-div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-testid="stButton"] > button,
+.stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-testid="stButton"] > button,
 .st-key-do_stock_search_site button{
   height:52px !important;min-height:52px !important;width:100% !important;
   background:#0072c6 !important;border:0 !important;
@@ -6941,16 +6942,16 @@ div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公�
   background-repeat:no-repeat !important;background-position:center !important;background-size:26px 26px !important;
   box-shadow:none !important;
 }
-div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-testid="stButton"] > button:hover,
+.stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-testid="stButton"] > button:hover,
 .st-key-do_stock_search_site button:hover{background-color:#005fa8 !important;}
 /* 按鈕內任何文字／段落一律不顯示，只留放大鏡圖示 */
 .st-key-do_stock_search_site button *,
-div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-testid="stButton"] > button *{
+.stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-testid="stButton"] > button *{
   display:none !important;font-size:0 !important;color:transparent !important;
 }
 .st-key-do_stock_search_site button::before,
-div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-testid="stButton"] > button::before{display:none !important;}
-div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-baseweb="input"]:focus-within{
+.stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-testid="stButton"] > button::before{display:none !important;}
+.stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-baseweb="input"]:focus-within{
   border-color:#0072c6 !important;
 }
 
@@ -6986,9 +6987,7 @@ div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公�
   background:var(--site-blush) !important;background-color:var(--site-blush) !important;
   border:1.5px solid #8e2b2f !important;border-radius:5px !important;
 }
-[data-testid="stCheckbox"] label:has(input:checked) > span:first-child,
-[data-testid="stCheckbox"] [data-baseweb="checkbox"]:has(input:checked) > span:first-child,
-[data-testid="stCheckbox"] [data-baseweb="checkbox"]:has(input:checked) > div:first-child{
+[data-testid="stCheckbox"] label[data-selected="true"] > span:first-child{
   background:#8e2b2f !important;background-color:#8e2b2f !important;
 }
 
@@ -7120,12 +7119,12 @@ body .stApp.stApp [class*="st-key-wc_"] [class*="st-key-wcdel_"] button p{
   margin:0 !important;font-size:12.5px !important;font-weight:700 !important;letter-spacing:.08em !important;line-height:1.2 !important;
   color:#b3121a !important;text-decoration:none;transform:none !important;font-family:"Noto Serif TC","Microsoft JhengHei",serif !important;}
 body .stApp.stApp [class*="st-key-wc_"] [class*="st-key-wcdel_"] button:hover p{text-decoration:underline;color:#8e0f15 !important;}
-body .stApp.stApp [class*="st-key-wc_"]:has(.wc-info.limit-up) [class*="st-key-wcdel_"] button p,
-body .stApp.stApp [class*="st-key-wc_"]:has(.wc-info.limit-down) [class*="st-key-wcdel_"] button p{color:#fff !important;}
+body .stApp.stApp [class*="st-key-wc_"][class*="_lu"] [class*="st-key-wcdel_"] button p,
+body .stApp.stApp [class*="st-key-wc_"][class*="_ld"] [class*="st-key-wcdel_"] button p{color:#fff !important;}
 .wc-info.wc-has-del .wc-name{padding-right:46px;}
-.stApp [class*="st-key-wc_"]:has(.wc-selected){border:2px solid #8e2b2f;background:#fff5f4;box-shadow:0 4px 14px rgba(142,43,47,.20);}
-.stApp [class*="st-key-wc_"]:has(.wc-info.limit-up.wc-selected){background:#7f1d1d;}
-.stApp [class*="st-key-wc_"]:has(.wc-info.limit-down.wc-selected){background:#14532d;}
+.stApp [class*="st-key-wc_"][class*="_sel"]{border:2px solid #8e2b2f;background:#fff5f4;box-shadow:0 4px 14px rgba(142,43,47,.20);}
+.stApp [class*="st-key-wc_"][class*="_lu"][class*="_sel"]{background:#7f1d1d;}
+.stApp [class*="st-key-wc_"][class*="_ld"][class*="_sel"]{background:#14532d;}
 
 /* 置頂分析標的（淺色、精簡） */
 .stApp [data-testid="stSidebar"] .st-key-side_pinned{position:sticky;top:0;z-index:50;background:#fbf1f1;padding:2px 0 8px;margin:0 0 4px;box-shadow:0 6px 8px -6px rgba(142,43,47,.25);}
@@ -7165,8 +7164,8 @@ body .stApp.stApp [class*="st-key-wc_"]:has(.wc-info.limit-down) [class*="st-key
   transition:box-shadow .15s ease,border-color .15s ease;
 }
 [class*="st-key-wc_"]:hover{border-color:#c98f8f;box-shadow:0 4px 14px rgba(142,43,47,.14);}
-[class*="st-key-wc_"]:has(.wc-info.limit-up){background:#7f1d1d;border-color:#5f1414;}
-[class*="st-key-wc_"]:has(.wc-info.limit-down){background:#14532d;border-color:#0b3a1f;}
+[class*="st-key-wc_"][class*="_lu"]{background:#7f1d1d;border-color:#5f1414;}
+[class*="st-key-wc_"][class*="_ld"]{background:#14532d;border-color:#0b3a1f;}
 [class*="st-key-wc_"] [data-testid="stHorizontalBlock"]{align-items:center !important;gap:6px !important;margin:0 !important;}
 [class*="st-key-wc_"] [data-testid="stColumn"]{display:flex;flex-direction:column;justify-content:center;}
 [class*="st-key-wc_"] [data-testid="stElementContainer"],[class*="st-key-wc_"] .element-container{margin:0 !important;}
@@ -7177,8 +7176,8 @@ body .stApp.stApp [class*="st-key-wc_"]:has(.wc-info.limit-down) [class*="st-key
 .wc-info.limit-up .wc-name,.wc-info.limit-down .wc-name{color:#fff !important;}
 .wc-vals{display:flex;align-items:baseline;justify-content:space-between;gap:10px;font-variant-numeric:tabular-nums;font-weight:800;font-size:14px;line-height:1.2;}
 .wc-vals .wc-price{font-size:20px;font-weight:900;letter-spacing:.3px;}
-[class*="st-key-wc_"]:has(.wc-info.limit-up) .wc-vals span,
-[class*="st-key-wc_"]:has(.wc-info.limit-down) .wc-vals span{color:#fff !important;}
+[class*="st-key-wc_"][class*="_lu"] .wc-vals span,
+[class*="st-key-wc_"][class*="_ld"] .wc-vals span{color:#fff !important;}
 /* 選取／刪除：Material Symbols 圖示按鈕（淺藍底＋黑框，圓角正方形，圖示置中）
    注意：全站有 div[data-testid=stButton] > button[kind=secondary] 的 !important 規則，這裡的選擇器要更具體才蓋得過 */
 .stApp [class*="st-key-wc_"] div[data-testid="stButton"]{display:flex !important;justify-content:center !important;align-items:center !important;}
@@ -7219,24 +7218,24 @@ body .stApp.stApp [class*="st-key-wc_"]:has(.wc-info.limit-down) [class*="st-key
    V19 淺色系：搜尋框、下拉選單、單選鈕、輸入框（不再出現深色底）
    ============================================================ */
 /* 搜尋框：白底灰框膠囊，右接藍色放大鏡 */
-div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-testid="stTextInputRootElement"]{
+.stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-testid="stTextInputRootElement"]{
   background:#fff !important;background-color:#fff !important;
   border:3px solid #c3ccd5 !important;border-right:0 !important;
   border-radius:999px 0 0 999px !important;height:52px !important;
   box-shadow:none !important;overflow:hidden;
 }
-div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-testid="stTextInputRootElement"]:focus-within{
+.stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-testid="stTextInputRootElement"]:focus-within{
   border-color:#0072c6 !important;box-shadow:0 0 0 3px rgba(0,114,198,.14) !important;
 }
-div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-baseweb="input"],
-div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) [data-baseweb="base-input"]{
+.stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-baseweb="input"],
+.stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-baseweb="base-input"]{
   background:transparent !important;background-color:transparent !important;border:0 !important;border-radius:0 !important;height:100% !important;
 }
-div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) input{
+.stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] input{
   background:transparent !important;color:#263746 !important;-webkit-text-fill-color:#263746 !important;
   caret-color:#0072c6;padding:0 22px !important;font-size:16px !important;
 }
-div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公司名稱"]) input::placeholder{color:#8a97a3 !important;-webkit-text-fill-color:#8a97a3 !important;}
+.stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] input::placeholder{color:#8a97a3 !important;-webkit-text-fill-color:#8a97a3 !important;}
 
 /* 其他文字輸入框：淺膚色 */
 .stApp [data-testid="stTextInputRootElement"],
@@ -7271,7 +7270,6 @@ div[data-testid="stHorizontalBlock"]:has(input[placeholder*="股票代號或公�
 
 /* 單選鈕：未選取＝白底灰框（原本是黑色實心） */
 .stApp [data-testid="stRadio"] label[data-baseweb="radio"] > div:first-child{background:#fff !important;border:2px solid #9aa8b5 !important;}
-.stApp [data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) > div:first-child{background:#8e2b2f !important;border-color:#8e2b2f !important;}
 .stApp [data-testid="stRadio"] label p{color:#3a2f2f !important;}
 
 /* 財經新聞篩選列：淺膚色面板 */
@@ -7347,7 +7345,7 @@ st.markdown(r'''<style>
 .home-link:hover,.contact-link:hover{background-size:100% 1.5px;}
 
 /* ---------- 4) 頁尾：自選股側欄展開時，頁尾改成縮在主內容區（不再橫跨到側欄底下被蓋住） ---------- */
-body:has([data-testid="stSidebar"]:is([aria-expanded="true"],[data-collapsed="false"]) .side-watch-title) .site-footer{
+[data-testid="stSidebar"]:is([aria-expanded="true"],[data-collapsed="false"]) ~ div [data-testid="stMain"] .site-footer{
   width:100% !important;margin-left:0 !important;margin-right:0 !important;border-radius:14px 14px 0 0;
 }
 
@@ -7594,9 +7592,6 @@ def render_auth_header_actions() -> None:
           color:#8e2b2f!important;-webkit-text-fill-color:#8e2b2f!important;background:transparent!important;
         }
         .stApp .st-key-auth_drawer .st-key-auth_close_panel button::before{display:none!important;}
-        body:has(.st-key-auth_drawer) [data-testid="stSidebarCollapseButton"] {
-          display:none!important;
-        }
         @media(max-width:600px) {
           .stApp .st-key-auth_header_actions div[data-testid="stButton"] > button[kind] p{font-size:13px!important;}
         }
@@ -7631,6 +7626,8 @@ def render_auth_panel() -> None:
         return
 
     with st.sidebar:
+        # 只在面板開啟時才送這段，不要改回 body:has(.st-key-auth_drawer)：單這一條就讓 Plotly 每次量文字慢 3 倍以上
+        st.markdown('<style>[data-testid="stSidebarCollapseButton"]{display:none!important}</style>', unsafe_allow_html=True)
         with st.container(key="auth_drawer"):
             top_col, close_col = st.columns([4, 1], vertical_alignment="center")
             mode = str(st.session_state.get("auth_panel_mode", "login"))
