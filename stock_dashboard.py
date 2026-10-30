@@ -205,6 +205,17 @@ _BOOT_CSS = """<style>
   background:radial-gradient(circle at 50% 42%,#fffdfc 0%,#fbf3f2 62%,#f4e6e5 100%);
   animation:boot-bail .4s ease 30s forwards}
 .boot-loader.boot-done{animation:boot-out .5s ease forwards;pointer-events:none}
+/* 動畫播放時不顯示任何按鈕：#sb-toggle、回到頂端等是 JS 另外加到 body 的，層級比動畫高，調 z-index 不保險 */
+body:has(.boot-loader:not(.boot-done)) > *:not(#root),
+body:has(.boot-loader:not(.boot-done)) button,
+body:has(.boot-loader:not(.boot-done)) a,
+body:has(.boot-loader:not(.boot-done)) [role="button"],
+body:has(.boot-loader:not(.boot-done)) [data-testid="stSidebar"],
+body:has(.boot-loader:not(.boot-done)) [data-testid="stHeader"],
+body:has(.boot-loader:not(.boot-done)) [data-testid="stExpandSidebarButton"],
+body:has(.boot-loader:not(.boot-done)) [data-testid="stSidebarCollapsedControl"]{animation:boot-controls 30s step-end}
+/* 和 .boot-loader 的 30 秒保險同步：頁面跑太久時動畫自動消失，按鈕也要一起回來 */
+@keyframes boot-controls{0%,100%{visibility:hidden}}
 @keyframes boot-out{to{opacity:0;visibility:hidden}}
 @keyframes boot-bail{to{opacity:0;visibility:hidden;pointer-events:none}}
 .boot-inner{display:flex;flex-direction:column;align-items:center;width:min(340px,84vw)}
