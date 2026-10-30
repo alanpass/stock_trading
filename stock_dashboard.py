@@ -206,8 +206,11 @@ _BOOT_BASE_CSS = """
 .boot-loader{position:fixed;inset:0;z-index:1000000;display:flex;align-items:center;justify-content:center;
   background:radial-gradient(circle at 50% 42%,#fffdfc 0%,#fbf3f2 62%,#f4e6e5 100%);will-change:opacity;
   animation:boot-out .4s ease 90s forwards,boot-gone .01s linear 90.4s forwards}
-.boot-loader.boot-done{pointer-events:none;animation:boot-out .65s cubic-bezier(.4,0,.2,1) .18s forwards,boot-gone .01s linear .83s forwards}
-.boot-loader.boot-done .boot-inner{animation:boot-inner-out .4s cubic-bezier(.4,0,.2,1) forwards}
+/* 網頁跑完時瀏覽器常常還在畫圖表，這時開始淡出會停在第一格：等 JS 判斷主執行緒空下來（body.boot-ready）才開始；JS 沒跑到時 3 秒後自己開始 */
+.boot-loader.boot-done{animation:boot-out .65s cubic-bezier(.4,0,.2,1) 3.18s forwards,boot-gone .01s linear 3.83s forwards}
+.boot-loader.boot-done .boot-inner{animation:boot-inner-out .4s cubic-bezier(.4,0,.2,1) 3s forwards}
+.boot-ready .boot-loader.boot-done{pointer-events:none;animation-delay:.18s,.83s}
+.boot-ready .boot-loader.boot-done .boot-inner{animation-delay:0s}
 @keyframes boot-out{to{opacity:0}}
 @keyframes boot-gone{to{visibility:hidden;pointer-events:none}}
 @keyframes boot-inner-out{to{opacity:0;transform:scale(1.05)}}
@@ -248,11 +251,14 @@ body > *:not(#root),.stApp button,.stApp a,.stApp [role="button"],.stApp [data-t
 """
 # 跑完時：頁面內容在覆蓋層淡出的同時往上浮入，不是直接露出來（下一輪重跑這段 CSS 就消失）
 _BOOT_DONE_CSS = """
-.stApp [class*="st-key-page_"]{animation:boot-page-in .8s cubic-bezier(.2,.7,.2,1) .12s both}
-.stApp .site-nav,.stApp .brand-block{animation:boot-page-in .7s cubic-bezier(.2,.7,.2,1) .08s both}
+.stApp [class*="st-key-page_"]{animation:boot-page-in .8s cubic-bezier(.2,.7,.2,1) 3.12s both}
+.stApp .site-nav,.stApp .brand-block{animation:boot-page-in .7s cubic-bezier(.2,.7,.2,1) 3.08s both}
+.boot-ready .stApp [class*="st-key-page_"]{animation-delay:.12s}
+.boot-ready .stApp .site-nav,.boot-ready .stApp .brand-block{animation-delay:.08s}
 @keyframes boot-page-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 /* 收合、回到頂端等層級比動畫高，要等動畫快退完才淡入；只寫 from、不留終態，隱藏中的回到頂端才不會被強制顯示 */
-body > *:not(#root){animation:boot-fade-in .4s ease .62s backwards}
+body > *:not(#root){animation:boot-fade-in .4s ease 3.62s backwards}
+body.boot-ready > *:not(#root){animation-delay:.62s}
 @keyframes boot-fade-in{from{opacity:0}}
 @media (prefers-reduced-motion:reduce){.stApp [class*="st-key-page_"],.stApp .site-nav,.stApp .brand-block,body > *:not(#root){animation:none}}
 """
@@ -8059,6 +8065,19 @@ _components.html(
             if (idle >= 6) { stopJump(); toast("「" + text + "」目前沒有內容可顯示"); }
           }, 250);
         };
+      }
+      // 載入動畫：頁面跑完後，等主執行緒連續 200ms 沒被卡住（計時器沒遲到）才開始淡出，最多等 2.5 秒
+      if (!w.__bootGateV1) {
+        w.__bootGateV1 = true;
+        let last = w.performance.now(), calm = 0, doneAt = 0;
+        const gate = w.setInterval(function() {
+          const now = w.performance.now(), late = now - last - 50;
+          last = now;
+          if (!d.querySelector(".boot-done")) { if (now > 180000) w.clearInterval(gate); return; }
+          doneAt = doneAt || now;
+          calm = late < 30 ? calm + 1 : 0;
+          if (calm >= 4 || now - doneAt > 2500) { d.body.classList.add("boot-ready"); w.clearInterval(gate); }
+        }, 50);
       }
       // 回到頂端按鈕、導覽列陰影、操作策略區塊跳轉（只安裝一次）
       if (!w.__siteUxV1) {
