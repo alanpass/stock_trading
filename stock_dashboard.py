@@ -303,6 +303,10 @@ _boot_started = time.time()
 if _boot_active:
     _boot_css_slot.markdown(_boot_css(_BOOT_PLAYING_CSS), unsafe_allow_html=True)   # CSS 要單獨一個 markdown，含 <style> 的區塊會被整個隱藏
     _boot_slot.markdown(_boot_loader_html(), unsafe_allow_html=True)
+elif _boot_started - st.session_state.get("_site_booted_at", 0) < 6:
+    # 剛跑完就又重跑一輪（登入 cookie 元件載入後常會這樣）：內容不變才不會打斷淡出，直接消失；等淡出跑完才清空
+    _boot_css_slot.markdown(_boot_css(_BOOT_DONE_CSS), unsafe_allow_html=True)
+    _boot_slot.markdown(_boot_loader_html(done=True), unsafe_allow_html=True)
 
 
 def _finish_boot_loader() -> None:
@@ -311,6 +315,7 @@ def _finish_boot_loader() -> None:
         _boot_css_slot.markdown(_boot_css(_BOOT_DONE_CSS), unsafe_allow_html=True)
         _boot_slot.markdown(_boot_loader_html(done=True), unsafe_allow_html=True)
         st.session_state["_site_booted"] = True
+        st.session_state["_site_booted_at"] = time.time()
 
 
 # ---- 所有 Plotly 圖表統一使用與網頁背景相配的淺色系 ----
