@@ -149,7 +149,8 @@ class FugleClient:
         return self._get(f"intraday/ticker/{clean_symbol(symbol)}")
 
     def tickers(self, exchange: str) -> list[dict]:
-        p = {"type": "EQUITY", "exchange": exchange, "isNormal": "true"}
+        # 不加 isNormal：那會漏掉注意、處置等股票，查不到產業就被當成 00。
+        p = {"type": "EQUITY", "exchange": exchange}
         data = self._get("intraday/tickers", p)
         rows = data.get("data", []) or []
         for row in rows:

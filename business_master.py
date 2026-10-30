@@ -278,6 +278,11 @@ def _fallback_group(industry: str, name: str) -> str:
     return f"{INDUSTRIES.get(str(industry).zfill(2), '其他')}／待細分"
 
 
+def _is_bad_etf_group(symbol: str, group: str) -> bool:
+    """不是 ETF（代號 00 開頭）卻被存成 ETF 分類。"""
+    return group.startswith("ETF/無產業分類") and not str(symbol).startswith("00")
+
+
 def enrich_profiles(symbols: Iterable[str], path: Path, client=None, force: bool = False, sleep_seconds: float = 0.15) -> pd.DataFrame:
     path.parent.mkdir(parents=True, exist_ok=True)
     existing = pd.DataFrame()
@@ -339,7 +344,10 @@ def enrich_profiles(symbols: Iterable[str], path: Path, client=None, force: bool
             group = _normalize_group(primary)
         else:
             primary = override.get("primary_chain", old.get("primary_chain", ""))
-            group = override.get("business_group", old.get("business_group", "")) or _fallback_group(industry, name)
+            old_group = str(old.get("business_group", "") or "")
+            if _is_bad_etf_group(symbol, old_group) or old_group.lower() == "nan":
+                old_group = ""   # 舊版把查不到產業的股票存成 ETF，不沿用
+            group = override.get("business_group", old_group) or _fallback_group(industry, name)
 
         if override:
             group = override.get("business_group", group)
@@ -412,6 +420,9 @@ def business_map_for_symbols(symbols: Iterable[str], client=None, path: Path | N
                 continue
             ind = normalize_industry(by.loc[code].get("industry", "00"))
             if code in INDUSTRY_OVERRIDES and ind != INDUSTRY_OVERRIDES[code]:
+                stale.append(code)
+                continue
+            if _is_bad_etf_group(code, str(by.loc[code].get("business_group", ""))) or (ind == "00" and not code.startswith("00")):
                 stale.append(code)
                 continue
             name = str(by.loc[code].get("name", ""))

@@ -80,7 +80,7 @@ def _refresh_helper_modules() -> None:
     每個伺服器程序第一次執行時把常改的子模組各重新載入一次，之後檔案比載入時新才再載入。"""
     import importlib
     import sys as _sys
-    names = ("market_calendar", "watchlist_store", "stock_features", "chip_signals", "intraday_signals",
+    names = ("industry_master", "stock_api", "business_master", "market_calendar", "watchlist_store", "stock_features", "chip_signals", "intraday_signals",
              "industry_rotation", "value_chain", "section_ui", "site_logo", "future_picks_ui", "trend_pattern_ui", "stock_notes_ui")
     for name in names:
         mod = _sys.modules.get(name)
@@ -362,11 +362,13 @@ st.plotly_chart = _light_plotly_chart
 # 這對 Cloud 使用者特別有用：若瀏覽器剛喚醒 App，可以直接取得最新行情。
 
 @st.cache_resource(show_spinner=False)
-def get_client():
+def get_client(api_version: float = 0.0):
     # 網站用：Fugle 每分鐘額度用完時立即放棄該次請求（顯示上一份快取），不讓整頁等待重試。
     return FugleClient(wait_on_limit=False)
 
-client = get_client()
+# 帶 stock_api 的檔案時間：模組重新載入後換新的 client，否則還在用舊版的方法。
+import stock_api as _stock_api
+client = get_client(os.path.getmtime(_stock_api.__file__))
 TW_TZ = ZoneInfo("Asia/Taipei")
 AGENT_LOG_DIR = OUTPUT / "agent_logs"
 AGENT_LOG_DIR.mkdir(parents=True, exist_ok=True)
@@ -672,7 +674,8 @@ def _watch_rows(watchlist_key, _bucket):
         result["industry"] = pd.Series(dtype=str)
         return result, errors
 
-    # 只讀本機產業主檔；若不存在，不在首頁啟動時阻塞建立全市場主檔。
+    # 產業主檔過期或不存在時，先用 Fugle 全部上市櫃清單重建（一天最多兩次 API）。
+    get_all_tickers()
     industry_map = {}
     cache_path = DATA / "industry_master.csv"
     if cache_path.exists():
@@ -703,7 +706,7 @@ def _watch_rows(watchlist_key, _bucket):
 
 @st.cache_data(ttl=21600, show_spinner=False)
 def get_all_tickers() -> pd.DataFrame:
-    # 6 小時更新一次全市場產業主檔；盤中 2 秒刷新不會反覆查詢全市場。
+    # 6 小時讀一次全市場產業主檔（主檔超過一天才重建）；盤中 2 秒刷新不會反覆查詢全市場。
     cache_path = DATA / "industry_master.csv"
     try:
         df = build_master(client, cache_path, force=False)
@@ -737,7 +740,7 @@ def get_all_tickers() -> pd.DataFrame:
 
 @st.cache_data(ttl=21600, show_spinner=False)
 def get_business_profiles_cached(symbols: tuple[str, ...]) -> dict:
-    """讀取／補齊公司主要業務與產業鏈子分類；只對 watchlist/目前研究標的做需要的查詢。"""
+    """讀取／補齊公司主要業務與產業鏈子分類（含修復被誤存成 ETF 的股票）；只對 watchlist/目前研究標的做需要的查詢。"""
     path = DATA / "business_master.csv"
     try:
         return business_map_for_symbols(symbols, client=client, path=path, force=False)

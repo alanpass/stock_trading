@@ -6,6 +6,7 @@ Fugle 文件明確提供 TWSE/TPEx、TSE/OTC 股票清單與 industry 代碼。
 本模組會將全市場分類保存到 data/industry_master.csv，以避免每次畫面刷新重新查詢。
 """
 from __future__ import annotations
+import time
 from pathlib import Path
 import pandas as pd
 
@@ -50,10 +51,21 @@ def normalize_industry(value) -> str:
     return s.zfill(2)
 
 
+MASTER_MAX_AGE_SECONDS = 86400   # 主檔超過一天就用 Fugle 重建，新上市與注意／處置股才不會缺
+
+
+def _cached_rows(path: Path) -> int:
+    try:
+        return len(pd.read_csv(path, dtype=str, usecols=["symbol"]))
+    except Exception:
+        return 0
+
+
 def build_master(client, path: Path, force: bool = False) -> pd.DataFrame:
     """取得 TSE + OTC 全市場一般股票分類，保存成本機快取。"""
     path.parent.mkdir(parents=True, exist_ok=True)
-    if path.exists() and not force:
+    fresh = path.exists() and time.time() - path.stat().st_mtime < MASTER_MAX_AGE_SECONDS
+    if path.exists() and not force and fresh:
         try:
             old = pd.read_csv(path, dtype={"symbol": str, "industry": str})
             if not old.empty:
@@ -95,7 +107,11 @@ def build_master(client, path: Path, force: bool = False) -> pd.DataFrame:
             })
 
     df = pd.DataFrame(rows)
-    if df.empty:
+    if df.empty or (path.exists() and len(df) < _cached_rows(path) * 0.9):
+        # API 失敗或只回一部分時不覆蓋舊主檔；下次再試。
+        if _cached_rows(path) and not force:
+            path.touch()
+            return build_master(client, path)
         return df
     df["symbol"] = df["symbol"].astype(str).str.strip()
     df["industry"] = df["industry"].map(normalize_industry)
