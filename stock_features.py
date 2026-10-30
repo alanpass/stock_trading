@@ -210,7 +210,8 @@ def _foreign_hold(day: date) -> dict[str, float]:
 
 def _rank_sets(values: dict[str, float], n: int = HOT_RANK) -> tuple[set, set]:
     """前 n 大（正）與前 n 小（負）的股票代號。"""
-    s = pd.Series({k: v for k, v in values.items() if _is_stock(k) and v == v})
+    # 指定 float：收盤後到資料公布前（當沖、法人）可能整份是空的，空 Series 預設 object 型別，nlargest 會 TypeError
+    s = pd.Series({k: v for k, v in values.items() if _is_stock(k) and v == v}, dtype=float)
     return set(s[s > 0].nlargest(n).index), set(s[s < 0].nsmallest(n).index)
 
 
