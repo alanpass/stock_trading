@@ -241,11 +241,15 @@ _BOOT_BASE_CSS = """
 .boot-track{position:relative;width:148px;height:2px;margin-top:16px;border-radius:2px;background:rgba(142,43,47,.14);overflow:hidden}
 .boot-track::after{content:"";position:absolute;top:0;bottom:0;left:0;width:38%;border-radius:2px;background:#8e2b2f;will-change:transform;animation:boot-slide 1.4s ease-in-out infinite}
 @keyframes boot-slide{0%{transform:translateX(-110%)}100%{transform:translateX(300%)}}
-.boot-note{margin-top:12px;font-size:12.5px;letter-spacing:.08em;color:#8a7676}
+.boot-note{margin-top:12px;font-size:12.5px;letter-spacing:.08em;color:#8a7676;display:flex;justify-content:center}
+/* 波浪：每個字一層，只動 transform／opacity，主執行緒忙時也不會停 */
+.boot-note span{display:inline-block;opacity:.6;will-change:transform,opacity;animation:boot-wave 1.5s ease-in-out infinite}
+@keyframes boot-wave{0%,50%,100%{transform:none;opacity:.6}20%{transform:translateY(-5px);opacity:1}35%{transform:translateY(1px);opacity:.8}}
 @media (prefers-reduced-motion:reduce){
   .boot-ring,.boot-candle-end,.boot-tail{animation:none;opacity:1;transform:none}
   .boot-candle,.boot-trend,.boot-sweep{animation:none;opacity:0}
   .boot-track::after{animation:none;width:100%}
+  .boot-note span{animation:none;opacity:1}
 }
 """
 # 播放時：不顯示任何按鈕（#sb-toggle、回到頂端是 JS 加到 body 的，層級比動畫高）。放在單獨的 CSS，跑完就拿掉；
@@ -298,11 +302,12 @@ def _boot_loader_html(done: bool = False) -> str:
              'stroke-width="4.4" stroke-dasharray="14 86" stroke-linecap="round"/>')
     trend = ('<path d="M17 36 L24 30 L30 25 L37 17" fill="none" stroke="#8e2b2f" stroke-width="1.1" '
              'stroke-linecap="round" stroke-linejoin="round"/>')
+    note = "".join(f'<span style="animation-delay:{i * 0.09:.2f}s">{char}</span>' for i, char in enumerate("正在準備盤面資料"))
     return (f'<div class="boot-loader{" boot-done" if done else ""}" role="status" aria-label="網站載入中"><div class="boot-inner">'
             f'<div class="boot-mark">{layer("boot-ring", site_logo.ring_svg())}{layer("boot-sweep", sweep)}{candles}'
             f'{layer("boot-trend", trend)}{layer("boot-tail", site_logo.tail_svg())}</div>'
             '<div class="boot-title">台股即時互動式分析系統</div><div class="boot-track"></div>'
-            '<div class="boot-note">正在準備盤面資料</div></div></div>')
+            f'<div class="boot-note">{note}</div></div></div>')
 
 
 # 兩個位置每一輪都要留著（之後留空）：元素數量一變，後面的元件全部位移重建，
