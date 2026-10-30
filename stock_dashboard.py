@@ -157,9 +157,9 @@ WATCHLIST_INDUSTRY_FALLBACK = {
 }
 WATCHLIST_FILE = BASE / "user_watchlist.json"
 
-def load_watchlist():
-    """讀取自選股：先讀 Supabase（Cloud 重新部署會重置本機檔案），再退回 user_watchlist.json、預設清單。"""
-    remote = watchlist_store.load()
+def load_watchlist_doc() -> dict:
+    """讀取所有自選股名單：先讀 Supabase（Cloud 重新部署會重置本機檔案），再退回 user_watchlist.json、預設清單。"""
+    remote = watchlist_store.load_doc()
     if remote:
         return remote
     try:
@@ -168,18 +168,19 @@ def load_watchlist():
             if isinstance(data, list):
                 cleaned = [clean_symbol(x) for x in data if clean_symbol(x)]
                 if cleaned:
-                    return list(dict.fromkeys(cleaned))
+                    return watchlist_store.single_list_doc(cleaned)
     except Exception:
         pass
-    return WATCHLIST_DEFAULT.copy()
+    return watchlist_store.single_list_doc(WATCHLIST_DEFAULT)
 
-def save_watchlist(items):
-    """將自選股存進 Supabase（永久）與本機檔案；資料庫寫入失敗回傳 False。"""
+
+def save_watchlist_doc(doc: dict) -> bool:
+    """將所有名單存進 Supabase（永久），聯集寫回本機檔案；資料庫寫入失敗回傳 False。"""
     try:
-        WATCHLIST_FILE.write_text(json.dumps(list(dict.fromkeys(items)), ensure_ascii=False, indent=2), encoding="utf-8")
+        WATCHLIST_FILE.write_text(json.dumps(watchlist_store.all_items(doc), ensure_ascii=False, indent=2), encoding="utf-8")
     except Exception:
         pass
-    return watchlist_store.save(items)
+    return watchlist_store.save_doc(doc)
 
 
 
@@ -476,10 +477,34 @@ def previous_day_daily_quote(code):
     except Exception:
         return {}
 
-if "watchlist" not in st.session_state:
-    st.session_state.watchlist = load_watchlist()
+if "watchlist_doc" not in st.session_state:
+    st.session_state.watchlist_doc = load_watchlist_doc()
+# watchlist＝目前選的那一份名單；側欄、盤中焦點等都只處理這一份
+st.session_state.watchlist = watchlist_store.active_list(st.session_state.watchlist_doc)["items"]
 if "selected" not in st.session_state:
-    st.session_state.selected = st.session_state.watchlist[0]
+    st.session_state.selected = (st.session_state.watchlist or WATCHLIST_DEFAULT)[0]
+
+
+def _watchlist_change(change) -> str | None:
+    """改名單：先讀資料庫最新版本再套用，別的分頁改過的內容才不會被蓋掉。change(doc) 回傳錯誤訊息或 None。"""
+    active = st.session_state.watchlist_doc["active"]
+    doc = watchlist_store.load_doc() or st.session_state.watchlist_doc
+    if any(x["id"] == active for x in doc["lists"]):
+        doc["active"] = active      # 目前選哪一份以這個分頁為準
+    error = change(doc)
+    if error:
+        return error
+    st.session_state.watchlist_doc = doc
+    st.session_state.watchlist = watchlist_store.active_list(doc)["items"]
+    if not save_watchlist_doc(doc):
+        st.session_state.watchlist_save_failed = True
+    return None
+
+
+def _watchlist_set_items(items: list[str]) -> None:
+    def change(doc):
+        watchlist_store.active_list(doc)["items"] = list(dict.fromkeys(items))
+    _watchlist_change(change)
 
 
 def persist_selected_symbol():
@@ -520,6 +545,8 @@ def _quote_bucket(live_seconds: int) -> int:
 
 
 def watch_rows(watchlist_key):
+    if not watchlist_key:   # 新名單還沒有股票：欄位要在，呼叫端才能用 rows.code 篩選
+        return pd.DataFrame(columns=["code", "name", "industry", "market", "price", "change", "change_pct", "data_date"]), []
     return _watch_rows(watchlist_key, _quote_bucket(15))
 
 
@@ -1617,20 +1644,17 @@ def render_strategy_search() -> None:
     code = clean_symbol(st.session_state.get("selected", ""))
     result = st.session_state.get("search_result") or {}
     if result and code not in st.session_state.watchlist:
-        st.info(f'目前分析標的：{result.get("name", code)}（{code}）尚未加入自選股。')
+        st.info(f'目前分析標的：{result.get("name", code)}（{code}）尚未加入自選股名單「{_watchlist_name()}」。')
         if is_authenticated():
             if st.button("加入自選股", key=f"add_watch_site_{code}"):
-                st.session_state.watchlist.append(code)
-                st.session_state.watchlist = list(dict.fromkeys(st.session_state.watchlist))
-                if not save_watchlist(st.session_state.watchlist):
-                    st.session_state.watchlist_save_failed = True
+                _watchlist_set_items(st.session_state.watchlist + [code])
                 st.rerun()
         else:
             st.caption("登入後才能新增自選股。")
 
     if st.session_state.pop("watchlist_save_failed", False):
         st.warning("自選股已更新，但沒有存進雲端資料庫；網站重新部署後可能會還原。")
-    st.markdown(f'<div class="selected-strip"><span>目前分析標的</span><strong>{code}</strong><span>｜自選股 {len(st.session_state.watchlist)} 檔</span></div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="selected-strip"><span>目前分析標的</span><strong>{code}</strong><span>｜自選股名單「{_esc(_watchlist_name())}」{len(st.session_state.watchlist)} 檔</span></div>', unsafe_allow_html=True)
 
 
 def _collect_json_candidates(patterns: list[str]) -> list[Path]:
@@ -2768,9 +2792,86 @@ _LIVE_SECTIONS = {"strategy-01-focus", "strategy-03-trend", "strategy-05-volume"
 _SKELETON_HTML = '<div class="skeleton"><span></span><span></span><span class="short"></span></div>'
 
 
+def _watchlist_name() -> str:
+    return watchlist_store.active_list(st.session_state.watchlist_doc)["name"]
+
+
+def _watchlist_after_switch() -> None:
+    """切換名單後：目前分析標的不在新名單裡，就改看新名單的第一檔。"""
+    items = st.session_state.watchlist
+    if items and st.session_state.get("selected") not in items:
+        st.session_state.selected = items[0]
+        st.session_state.search_result = None
+        st.session_state.ai_selected = None
+        st.session_state.ai_result = None
+
+
+def _watchlist_on_pick() -> None:
+    doc = st.session_state.watchlist_doc
+    doc["active"] = st.session_state.watchlist_pick
+    st.session_state.watchlist = watchlist_store.active_list(doc)["items"]
+    _watchlist_after_switch()
+    if is_authenticated():     # 下次打開網站停在這一份；沒登入只影響這個分頁
+        _watchlist_change(lambda fresh: None)
+
+
+def _render_watchlist_manager() -> None:
+    doc = st.session_state.watchlist_doc
+    current = watchlist_store.active_list(doc)
+    with st.form("watchlist_add_form", clear_on_submit=True, border=False):
+        new_name = st.text_input("新增名單", placeholder=f"留白就叫「{watchlist_store.next_default_name(doc)}」", max_chars=watchlist_store.MAX_NAME_LENGTH)
+        if st.form_submit_button("新增名單", use_container_width=True):
+            error = _watchlist_change(lambda d: watchlist_store.add_list(d, new_name))
+            if error:
+                st.session_state.watchlist_error = error
+            else:
+                st.session_state.pop("watchlist_pick", None)
+                _watchlist_after_switch()
+            st.rerun()
+    with st.form("watchlist_rename_form", clear_on_submit=True, border=False):
+        renamed = st.text_input(f"把「{current['name']}」改名為", max_chars=watchlist_store.MAX_NAME_LENGTH)
+        if st.form_submit_button("改名", use_container_width=True):
+            error = _watchlist_change(lambda d: watchlist_store.rename_list(d, current["id"], renamed))
+            if error:
+                st.session_state.watchlist_error = error
+            st.session_state.pop("watchlist_pick", None)   # 否則下拉選單還顯示舊名稱
+            st.rerun()
+    if len(doc["lists"]) > 1:
+        sure = st.checkbox(f"確定要刪除「{current['name']}」（{len(current['items'])} 檔）", key=f"watchlist_delete_sure_{current['id']}")
+        if st.button("刪除這份名單", key="watchlist_delete", disabled=not sure, use_container_width=True):
+            error = _watchlist_change(lambda d: watchlist_store.delete_list(d, current["id"]))
+            if error:
+                st.session_state.watchlist_error = error
+            else:
+                st.session_state.pop("watchlist_pick", None)
+                _watchlist_after_switch()
+            st.rerun()
+
+
+def _render_watchlist_switcher() -> None:
+    """切換會重畫整頁（盤中焦點也要換），所以不放在側欄定時重畫的 fragment 裡；輸入名稱時也不會被打斷。"""
+    doc = st.session_state.watchlist_doc
+    names = {x["id"]: x["name"] for x in doc["lists"]}
+    if st.session_state.get("watchlist_pick") not in names:
+        st.session_state.watchlist_pick = doc["active"]
+    st.selectbox("自選股名單", list(names), format_func=lambda list_id: names.get(list_id, list_id),
+                 key="watchlist_pick", on_change=_watchlist_on_pick)
+    if is_authenticated():
+        with st.popover("管理名單", use_container_width=True):
+            _render_watchlist_manager()
+    else:
+        st.caption("登入後可以新增、改名或刪除名單。")
+    error = st.session_state.pop("watchlist_error", None)
+    if error:
+        st.warning(error)
+
+
 def _render_sidebar_watch() -> None:
     render_pinned_selected()
-    st.markdown('<div class="feature-section-title side-watch-title">自選股即時行情</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="feature-section-title side-watch-title">自選股即時行情｜{_esc(_watchlist_name())}</div>', unsafe_allow_html=True)
+    if not st.session_state.watchlist:
+        st.info("這份名單還沒有股票。用上方搜尋找到股票後，按「加入自選股」。")
+        return
     render_watchlist(compact=True)
 
 
@@ -2813,6 +2914,7 @@ def render_strategy_workspace() -> None:
     chips_pending = any(v is None for v in chip_signals.get_nonblocking(st.session_state.watchlist).values())
     side_every = max(live_every, 15) if live_every else (5 if chips_pending else None)
     with st.sidebar:
+        _render_watchlist_switcher()
         st.fragment(_render_sidebar_watch, run_every=side_every)()
 
     for key, body, render in slots:
@@ -4340,9 +4442,7 @@ def _watch_remove(code: str) -> None:
         st.warning("請先登入，才能刪除自選股。")
         return
     new_watchlist = [x for x in st.session_state.watchlist if x != code]
-    st.session_state.watchlist = new_watchlist
-    if not save_watchlist(new_watchlist):
-        st.session_state.watchlist_save_failed = True
+    _watchlist_set_items(new_watchlist)
     if st.session_state.get('selected') == code:
         st.session_state.selected = new_watchlist[0] if new_watchlist else WATCHLIST_DEFAULT[0]
     st.session_state.ai_selected = None
@@ -5266,7 +5366,7 @@ def render_watch_focus():
     """自選股盤中焦點：每 2 分鐘掃描一次自選股的 1 分 K，把剛發生的價量事件依時間列出。"""
     watchlist = tuple(st.session_state.watchlist)
     if not watchlist:
-        st.info("自選股是空的，先在左側加入股票。")
+        st.info(f"自選股名單「{_watchlist_name()}」是空的，先搜尋股票並加入。")
         return
     meta = {}
     try:
@@ -5318,7 +5418,7 @@ def render_watch_focus():
             else f"非交易時段・顯示 {day:%m/%d} 的盤中事件" if day else "目前沒有資料")
     miss = f'<span>暫時取不到：{"、".join(failed[:6])}{"…" if len(failed) > 6 else ""}</span>' if failed else ""
     st.markdown(_FOCUS_CSS, unsafe_allow_html=True)
-    st.markdown(f'<div class="fx-head"><span>{when}</span><span class="fx-count">自選股 {len(stocks)} 檔・'
+    st.markdown(f'<div class="fx-head"><span>{when}</span><span class="fx-count">名單「{_esc(_watchlist_name())}」{len(stocks)} 檔・'
                 f'最新偏多 <b>{n_bull}</b> 檔・偏空 <i>{n_bear}</i> 檔</span>{miss}</div>', unsafe_allow_html=True)
 
     now = taiwan_now().tz_localize(None)

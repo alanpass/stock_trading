@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
-"""自選股永久保存在 Supabase（site_settings 資料表，key＝watchlist）。
+"""自選股名單永久保存在 Supabase（site_settings 資料表，key＝watchlists）。
 
-Streamlit Cloud 的檔案系統每次重新部署都會重置，網站上改的 user_watchlist.json 會被 git 版本蓋回去，
-所以網站改自選股時同時寫進資料庫；本機排程（早報、盤後研究等）開跑前用 pull_to_file() 把資料庫版本同步回
-user_watchlist.json。資料庫連不上或資料表不存在時一律回傳 None，呼叫端退回本機檔案。
+可以有多份名單，各有自己的名稱：
+  {"active": "l1", "lists": [{"id": "l1", "name": "1", "items": ["2330", ...]}, ...]}
+舊版只有一份（key＝watchlist）；還沒存過新格式時，自動把它當成名單「1」。
+
+Streamlit Cloud 的檔案系統每次重新部署都會重置，所以網站改名單時寫進資料庫；本機排程（早報、盤後研究等）開跑前
+用 pull_to_file() 把「所有名單的聯集」同步回 user_watchlist.json，報告才會涵蓋每一份名單。
+資料庫連不上或資料表不存在時回傳 None，呼叫端退回本機檔案。
 
 資料表（Supabase SQL Editor 執行一次）：
   create table if not exists public.site_settings (
@@ -11,8 +15,7 @@ user_watchlist.json。資料庫連不上或資料表不存在時一律回傳 Non
   alter table public.site_settings enable row level security;
 
   python watchlist_store.py          # 顯示資料庫版本
-  python watchlist_store.py --pull   # 資料庫 → user_watchlist.json
-  python watchlist_store.py --push   # user_watchlist.json → 資料庫
+  python watchlist_store.py --pull   # 資料庫（所有名單的聯集）→ user_watchlist.json
 """
 from __future__ import annotations
 
@@ -28,8 +31,11 @@ import requests
 BASE = Path(__file__).resolve().parent
 WATCHLIST_FILE = BASE / "user_watchlist.json"
 TABLE = "site_settings"
-KEY = "watchlist"
+KEY = "watchlists"
+LEGACY_KEY = "watchlist"
 TIMEOUT_SECONDS = 8
+MAX_LISTS = 20
+MAX_NAME_LENGTH = 20
 
 
 def _secret(name: str) -> str:
@@ -61,30 +67,55 @@ def _clean(items) -> list[str]:
     return out
 
 
-def load() -> list[str] | None:
-    """資料庫裡的自選股；沒設定、連不上或還沒存過時回傳 None。"""
+def _read(key: str):
     ep = _endpoint()
     if not ep:
         return None
     url, headers = ep
     try:
-        r = requests.get(url, params={"key": f"eq.{KEY}", "select": "value"}, headers=headers, timeout=TIMEOUT_SECONDS)
+        r = requests.get(url, params={"key": f"eq.{key}", "select": "value"}, headers=headers, timeout=TIMEOUT_SECONDS)
         if r.status_code != 200:
             return None
         rows = r.json()
-        items = _clean(rows[0]["value"]) if rows and isinstance(rows[0].get("value"), list) else []
-        return items or None
+        return rows[0].get("value") if rows else None
     except (requests.RequestException, ValueError, KeyError):
         return None
 
 
-def save(items) -> bool:
+def single_list_doc(items) -> dict:
+    return {"active": "l1", "lists": [{"id": "l1", "name": "1", "items": _clean(items)}]}
+
+
+def _normalize(doc) -> dict | None:
+    """整理資料庫內容；格式不對或一份名單都沒有時回傳 None。"""
+    if not isinstance(doc, dict):
+        return None
+    lists = []
+    for entry in doc.get("lists") or []:
+        if isinstance(entry, dict) and entry.get("id"):
+            lists.append({"id": str(entry["id"]), "name": str(entry.get("name") or entry["id"]), "items": _clean(entry.get("items"))})
+    if not lists:
+        return None
+    active = str(doc.get("active") or "")
+    return {"active": active if any(x["id"] == active for x in lists) else lists[0]["id"], "lists": lists}
+
+
+def load_doc() -> dict | None:
+    """所有名單；沒設定、連不上或還沒存過時回傳 None。"""
+    doc = _normalize(_read(KEY))
+    if doc:
+        return doc
+    legacy = _read(LEGACY_KEY)
+    return single_list_doc(legacy) if isinstance(legacy, list) and _clean(legacy) else None
+
+
+def save_doc(doc: dict) -> bool:
     """寫入（覆蓋）資料庫版本；成功回傳 True。"""
     ep = _endpoint()
     if not ep:
         return False
     url, headers = ep
-    payload = {"key": KEY, "value": _clean(items), "updated_at": datetime.now(timezone.utc).isoformat()}
+    payload = {"key": KEY, "value": doc, "updated_at": datetime.now(timezone.utc).isoformat()}
     try:
         r = requests.post(url, params={"on_conflict": "key"}, json=payload, timeout=TIMEOUT_SECONDS,
                           headers={**headers, "Prefer": "resolution=merge-duplicates,return=minimal"})
@@ -93,9 +124,77 @@ def save(items) -> bool:
         return False
 
 
+def active_list(doc: dict) -> dict:
+    return next((x for x in doc["lists"] if x["id"] == doc["active"]), doc["lists"][0])
+
+
+def all_items(doc: dict) -> list[str]:
+    """所有名單的聯集，目前選的名單排最前面。"""
+    return _clean(active_list(doc)["items"] + [code for x in doc["lists"] for code in x["items"]])
+
+
+def clean_name(name) -> str:
+    return " ".join(str(name or "").split())[:MAX_NAME_LENGTH]
+
+
+def next_default_name(doc: dict) -> str:
+    """下一個沒人用的數字名稱（1、2、3…）。"""
+    used = {x["name"] for x in doc["lists"]}
+    number = 1
+    while str(number) in used:
+        number += 1
+    return str(number)
+
+
+def name_taken(doc: dict, name: str, ignore_id: str = "") -> bool:
+    return any(x["name"] == name and x["id"] != ignore_id for x in doc["lists"])
+
+
+def add_list(doc: dict, name="") -> str | None:
+    """新增空名單並切換過去；回傳錯誤訊息，成功回傳 None。"""
+    if len(doc["lists"]) >= MAX_LISTS:
+        return f"最多 {MAX_LISTS} 份名單。"
+    name = clean_name(name) or next_default_name(doc)
+    if name_taken(doc, name):
+        return f"已經有名為「{name}」的名單。"
+    used = {x["id"] for x in doc["lists"]}
+    number = len(doc["lists"]) + 1
+    while f"l{number}" in used:
+        number += 1
+    doc["lists"].append({"id": f"l{number}", "name": name, "items": []})
+    doc["active"] = f"l{number}"
+    return None
+
+
+def rename_list(doc: dict, list_id: str, name) -> str | None:
+    name = clean_name(name)
+    if not name:
+        return "名稱不能空白。"
+    if name_taken(doc, name, ignore_id=list_id):
+        return f"已經有名為「{name}」的名單。"
+    for entry in doc["lists"]:
+        if entry["id"] == list_id:
+            entry["name"] = name
+            return None
+    return "找不到這份名單，可能已被刪除。"
+
+
+def delete_list(doc: dict, list_id: str) -> str | None:
+    if len(doc["lists"]) <= 1:
+        return "至少要留一份名單。"
+    if not any(x["id"] == list_id for x in doc["lists"]):
+        return "找不到這份名單，可能已被刪除。"
+    index = next(i for i, x in enumerate(doc["lists"]) if x["id"] == list_id)
+    doc["lists"].pop(index)
+    if doc["active"] == list_id:
+        doc["active"] = doc["lists"][max(0, index - 1)]["id"]
+    return None
+
+
 def pull_to_file(path: Path = WATCHLIST_FILE) -> list[str] | None:
-    """把資料庫版本寫回本機 user_watchlist.json（內容相同就不動）；回傳資料庫版本或 None。"""
-    items = load()
+    """把所有名單的聯集寫回本機 user_watchlist.json（內容相同就不動）；回傳聯集或 None。"""
+    doc = load_doc()
+    items = all_items(doc) if doc else []
     if not items:
         return None
     text = json.dumps(items, ensure_ascii=False, indent=2)
@@ -110,15 +209,11 @@ def pull_to_file(path: Path = WATCHLIST_FILE) -> list[str] | None:
 def main() -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
-    arg = sys.argv[1] if len(sys.argv) > 1 else ""
-    if arg == "--push":
-        items = json.loads(WATCHLIST_FILE.read_text(encoding="utf-8"))
-        print(json.dumps({"ok": save(items), "count": len(_clean(items))}, ensure_ascii=False))
-    elif arg == "--pull":
+    if "--pull" in sys.argv[1:]:
         items = pull_to_file()
         print(json.dumps({"ok": items is not None, "items": items}, ensure_ascii=False))
     else:
-        print(json.dumps({"items": load()}, ensure_ascii=False))
+        print(json.dumps(load_doc(), ensure_ascii=False))
     return 0
 
 
