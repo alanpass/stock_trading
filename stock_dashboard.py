@@ -205,15 +205,21 @@ st.set_page_config(page_title="台股即時互動式分析系統", page_icon=_si
 _BOOT_BASE_CSS = """
 .boot-loader{position:fixed;inset:0;z-index:1000000;display:flex;align-items:center;justify-content:center;
   background:radial-gradient(circle at 50% 42%,#fffdfc 0%,#fbf3f2 62%,#f4e6e5 100%);will-change:opacity;
-  animation:boot-out .4s ease 90s forwards,boot-gone .01s linear 90.4s forwards}
-/* 網頁跑完時瀏覽器常常還在畫圖表，這時開始淡出會停在第一格：等 JS 判斷主執行緒空下來（body.boot-ready）才開始；JS 沒跑到時 3 秒後自己開始 */
+  animation:boot-safety-out .4s ease 90s forwards,boot-safety-gone .01s linear 90.4s forwards}
+/* 網頁跑完時瀏覽器常常還在畫圖表，這時開始淡出會停在第一格：等 JS 判斷主執行緒空下來（body.boot-ready）才開始；JS 沒跑到時 3 秒後自己開始。
+   每個階段的動畫名稱一定要不同：同名時瀏覽器沿用進行中的動畫、只改延遲，已經過的時間超過新延遲就直接跳到結尾，等於沒有淡出 */
 .boot-loader.boot-done{animation:boot-out .65s cubic-bezier(.4,0,.2,1) 3.18s forwards,boot-gone .01s linear 3.83s forwards}
 .boot-loader.boot-done .boot-inner{animation:boot-inner-out .4s cubic-bezier(.4,0,.2,1) 3s forwards}
-.boot-ready .boot-loader.boot-done{pointer-events:none;animation-delay:.18s,.83s}
-.boot-ready .boot-loader.boot-done .boot-inner{animation-delay:0s}
+.boot-ready .boot-loader.boot-done{pointer-events:none;animation:boot-out-go .65s cubic-bezier(.4,0,.2,1) .18s forwards,boot-gone-go .01s linear .83s forwards}
+.boot-ready .boot-loader.boot-done .boot-inner{animation:boot-inner-go .4s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes boot-safety-out{to{opacity:0}}
+@keyframes boot-safety-gone{to{visibility:hidden;pointer-events:none}}
 @keyframes boot-out{to{opacity:0}}
 @keyframes boot-gone{to{visibility:hidden;pointer-events:none}}
+@keyframes boot-out-go{to{opacity:0}}
+@keyframes boot-gone-go{to{visibility:hidden;pointer-events:none}}
 @keyframes boot-inner-out{to{opacity:0;transform:scale(1.05)}}
+@keyframes boot-inner-go{to{opacity:0;transform:scale(1.05)}}
 .boot-inner{display:flex;flex-direction:column;align-items:center;width:min(340px,84vw);will-change:transform,opacity}
 .boot-mark{position:relative;width:min(148px,42vw);aspect-ratio:1}
 .boot-layer{position:absolute;inset:0;will-change:transform,opacity}
@@ -253,14 +259,16 @@ body > *:not(#root),.stApp button,.stApp a,.stApp [role="button"],.stApp [data-t
 _BOOT_DONE_CSS = """
 .stApp [class*="st-key-page_"]{animation:boot-page-in .8s cubic-bezier(.2,.7,.2,1) 3.12s both}
 .stApp .site-nav,.stApp .brand-block{animation:boot-page-in .7s cubic-bezier(.2,.7,.2,1) 3.08s both}
-.boot-ready .stApp [class*="st-key-page_"]{animation-delay:.12s}
-.boot-ready .stApp .site-nav,.boot-ready .stApp .brand-block{animation-delay:.08s}
+.boot-ready .stApp [class*="st-key-page_"]{animation:boot-page-go .8s cubic-bezier(.2,.7,.2,1) .12s both}
+.boot-ready .stApp .site-nav,.boot-ready .stApp .brand-block{animation:boot-page-go .7s cubic-bezier(.2,.7,.2,1) .08s both}
 @keyframes boot-page-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes boot-page-go{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 /* 收合、回到頂端等層級比動畫高，要等動畫快退完才淡入；只寫 from、不留終態，隱藏中的回到頂端才不會被強制顯示 */
 body > *:not(#root){animation:boot-fade-in .4s ease 3.62s backwards}
-body.boot-ready > *:not(#root){animation-delay:.62s}
+body.boot-ready > *:not(#root){animation:boot-fade-go .4s ease .62s backwards}
 @keyframes boot-fade-in{from{opacity:0}}
-@media (prefers-reduced-motion:reduce){.stApp [class*="st-key-page_"],.stApp .site-nav,.stApp .brand-block,body > *:not(#root){animation:none}}
+@keyframes boot-fade-go{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.stApp [class*="st-key-page_"],.stApp .site-nav,.stApp .brand-block,body > *:not(#root),.boot-ready .stApp [class*="st-key-page_"],.boot-ready .stApp .site-nav,.boot-ready .stApp .brand-block,body.boot-ready > *:not(#root){animation:none}}
 """
 BOOT_MIN_SECONDS = 1.2   # 頁面很快跑完時也至少播這麼久，否則動畫閃一下就消失
 
