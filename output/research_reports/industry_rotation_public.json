@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-10-30T17:36:52+08:00",
+  "generated_at": "2026-10-30T17:48:06+08:00",
   "data_asof": "2026-10-30",
   "previous_data_asof": "2026-10-29",
   "previous_previous_data_asof": "2026-10-28",
@@ -837,9 +837,9 @@
           "fresh": true
         }
       ],
-      "share_pct": 5.996,
+      "share_pct": 5.993,
       "share_avg20_pct": 6.417,
-      "share_delta20_pp": -0.421
+      "share_delta20_pp": -0.424
     },
     {
       "name": "玻纖布／銅箔",
@@ -1314,7 +1314,7 @@
       ],
       "share_pct": 1.236,
       "share_avg20_pct": 2.475,
-      "share_delta20_pp": -1.238
+      "share_delta20_pp": -1.239
     },
     {
       "name": "組裝代工／ODM",
@@ -1847,9 +1847,9 @@
           "fresh": true
         }
       ],
-      "share_pct": 2.912,
+      "share_pct": 2.911,
       "share_avg20_pct": 3.174,
-      "share_delta20_pp": -0.262
+      "share_delta20_pp": -0.263
     },
     {
       "name": "被動元件",
@@ -2427,9 +2427,9 @@
           "fresh": true
         }
       ],
-      "share_pct": 4.157,
+      "share_pct": 4.155,
       "share_avg20_pct": 5.417,
-      "share_delta20_pp": -1.26
+      "share_delta20_pp": -1.262
     },
     {
       "name": "網通／交換器",
@@ -3437,9 +3437,9 @@
           "fresh": true
         }
       ],
-      "share_pct": 2.45,
+      "share_pct": 2.449,
       "share_avg20_pct": 3.705,
-      "share_delta20_pp": -1.254
+      "share_delta20_pp": -1.255
     },
     {
       "name": "記憶體／儲存",
@@ -4017,9 +4017,9 @@
           "fresh": true
         }
       ],
-      "share_pct": 5.15,
+      "share_pct": 5.147,
       "share_avg20_pct": 4.737,
-      "share_delta20_pp": 0.413
+      "share_delta20_pp": 0.41
     },
     {
       "name": "封裝測試",
@@ -4507,9 +4507,9 @@
           "fresh": true
         }
       ],
-      "share_pct": 4.457,
+      "share_pct": 4.455,
       "share_avg20_pct": 3.154,
-      "share_delta20_pp": 1.302
+      "share_delta20_pp": 1.3
     },
     {
       "name": "機殼／機櫃",
@@ -5502,9 +5502,9 @@
           "fresh": true
         }
       ],
-      "share_pct": 2.865,
+      "share_pct": 2.864,
       "share_avg20_pct": 2.998,
-      "share_delta20_pp": -0.133
+      "share_delta20_pp": -0.134
     },
     {
       "name": "ABF／IC 載板",
@@ -5947,9 +5947,9 @@
           "fresh": true
         }
       ],
-      "share_pct": 3.924,
+      "share_pct": 3.922,
       "share_avg20_pct": 4.193,
-      "share_delta20_pp": -0.268
+      "share_delta20_pp": -0.27
     },
     {
       "name": "重電／電網",
@@ -6927,9 +6927,9 @@
           "fresh": true
         }
       ],
-      "share_pct": 2.44,
+      "share_pct": 2.439,
       "share_avg20_pct": 2.053,
-      "share_delta20_pp": 0.387
+      "share_delta20_pp": 0.386
     },
     {
       "name": "廠務工程",
@@ -7417,9 +7417,9 @@
           "fresh": true
         }
       ],
-      "share_pct": 0.274,
+      "share_pct": 0.317,
       "share_avg20_pct": 0.541,
-      "share_delta20_pp": -0.267
+      "share_delta20_pp": -0.224
     },
     {
       "name": "高速傳輸 IC",
@@ -9407,9 +9407,9 @@
           "fresh": true
         }
       ],
-      "share_pct": 3.46,
+      "share_pct": 3.458,
       "share_avg20_pct": 2.388,
-      "share_delta20_pp": 1.073
+      "share_delta20_pp": 1.071
     },
     {
       "name": "ASIC／矽智財",
@@ -9927,9 +9927,9 @@
           "fresh": true
         }
       ],
-      "share_pct": 7.566,
+      "share_pct": 7.562,
       "share_avg20_pct": 5.855,
-      "share_delta20_pp": 1.711
+      "share_delta20_pp": 1.708
     },
     {
       "name": "高速連接器／線材",
@@ -10957,466 +10957,6 @@
       "share_delta20_pp": -0.441
     },
     {
-      "name": "晶圓代工",
-      "members_total": 4,
-      "members_valid": 4,
-      "members_fresh": 4,
-      "data_coverage_pct": 100.0,
-      "today_return": -4.372,
-      "yesterday_return": -4.817,
-      "return_5d": -6.967,
-      "return_20d": -14.704,
-      "return_60d": 1.783,
-      "return_ytd": 76.011,
-      "rising": 0,
-      "falling": 4,
-      "flat": 0,
-      "year_high_count": 0,
-      "turnover": 120962655302.0,
-      "previous_turnover": 95897912911.0,
-      "turnover_change": 25064742391.0,
-      "turnover_change_pct": 26.14,
-      "market_turnover_share_pct": null,
-      "market_turnover_share_delta_pp": null,
-      "yesterday_market_turnover_share_pct": null,
-      "yesterday_market_turnover_share_delta_pp": null,
-      "sample_turnover_share_pct": null,
-      "sample_turnover_share_delta_pp": null,
-      "yesterday_sample_turnover_share_pct": null,
-      "yesterday_sample_turnover_share_delta_pp": null,
-      "relative_strength": 93.98,
-      "relative_momentum": 93.973,
-      "quadrant": "落後",
-      "previous_quadrant": "落後",
-      "quadrant_changed": false,
-      "rrg": [
-        {
-          "date": "2025-10-01",
-          "rs": 112.898,
-          "momentum": 114.341
-        },
-        {
-          "date": "2025-10-09",
-          "rs": 112.458,
-          "momentum": 103.257
-        },
-        {
-          "date": "2025-10-17",
-          "rs": 110.018,
-          "momentum": 97.45
-        },
-        {
-          "date": "2025-10-27",
-          "rs": 109.025,
-          "momentum": 96.947
-        },
-        {
-          "date": "2025-11-03",
-          "rs": 105.316,
-          "momentum": 95.726
-        },
-        {
-          "date": "2025-11-10",
-          "rs": 103.68,
-          "momentum": 95.098
-        },
-        {
-          "date": "2025-11-17",
-          "rs": 104.796,
-          "momentum": 99.506
-        },
-        {
-          "date": "2025-11-24",
-          "rs": 104.113,
-          "momentum": 100.418
-        },
-        {
-          "date": "2025-12-01",
-          "rs": 102.584,
-          "momentum": 97.889
-        },
-        {
-          "date": "2025-12-08",
-          "rs": 101.684,
-          "momentum": 97.667
-        },
-        {
-          "date": "2025-12-15",
-          "rs": 102.14,
-          "momentum": 99.567
-        },
-        {
-          "date": "2025-12-22",
-          "rs": 107.461,
-          "momentum": 105.681
-        },
-        {
-          "date": "2025-12-30",
-          "rs": 103.941,
-          "momentum": 101.763
-        },
-        {
-          "date": "2026-01-07",
-          "rs": 109.979,
-          "momentum": 102.343
-        },
-        {
-          "date": "2026-01-14",
-          "rs": 112.904,
-          "momentum": 108.624
-        },
-        {
-          "date": "2026-01-21",
-          "rs": 127.562,
-          "momentum": 115.988
-        },
-        {
-          "date": "2026-01-28",
-          "rs": 127.248,
-          "momentum": 112.704
-        },
-        {
-          "date": "2026-02-04",
-          "rs": 111.622,
-          "momentum": 87.504
-        },
-        {
-          "date": "2026-02-11",
-          "rs": 107.153,
-          "momentum": 84.208
-        },
-        {
-          "date": "2026-03-02",
-          "rs": 106.959,
-          "momentum": 95.822
-        },
-        {
-          "date": "2026-03-09",
-          "rs": 100.066,
-          "momentum": 93.386
-        },
-        {
-          "date": "2026-03-16",
-          "rs": 99.654,
-          "momentum": 93.171
-        },
-        {
-          "date": "2026-03-23",
-          "rs": 99.013,
-          "momentum": 98.947
-        },
-        {
-          "date": "2026-03-30",
-          "rs": 95.11,
-          "momentum": 95.44
-        },
-        {
-          "date": "2026-04-08",
-          "rs": 94.849,
-          "momentum": 95.795
-        },
-        {
-          "date": "2026-04-15",
-          "rs": 90.693,
-          "momentum": 95.357
-        },
-        {
-          "date": "2026-04-22",
-          "rs": 99.247,
-          "momentum": 104.637
-        },
-        {
-          "date": "2026-04-29",
-          "rs": 95.499,
-          "momentum": 105.299
-        },
-        {
-          "date": "2026-05-07",
-          "rs": 108.527,
-          "momentum": 109.351
-        },
-        {
-          "date": "2026-05-14",
-          "rs": 109.596,
-          "momentum": 114.761
-        },
-        {
-          "date": "2026-05-21",
-          "rs": 108.14,
-          "momentum": 99.643
-        },
-        {
-          "date": "2026-05-28",
-          "rs": 115.934,
-          "momentum": 105.783
-        },
-        {
-          "date": "2026-06-04",
-          "rs": 107.438,
-          "momentum": 99.35
-        },
-        {
-          "date": "2026-06-11",
-          "rs": 104.982,
-          "momentum": 90.553
-        },
-        {
-          "date": "2026-06-18",
-          "rs": 107.332,
-          "momentum": 99.902
-        },
-        {
-          "date": "2026-06-26",
-          "rs": 117.366,
-          "momentum": 111.796
-        },
-        {
-          "date": "2026-07-03",
-          "rs": 108.714,
-          "momentum": 101.287
-        },
-        {
-          "date": "2026-07-13",
-          "rs": 103.339,
-          "momentum": 88.049
-        },
-        {
-          "date": "2026-07-20",
-          "rs": 96.986,
-          "momentum": 89.212
-        },
-        {
-          "date": "2026-07-27",
-          "rs": 93.89,
-          "momentum": 90.856
-        },
-        {
-          "date": "2026-08-03",
-          "rs": 89.961,
-          "momentum": 92.756
-        },
-        {
-          "date": "2026-08-10",
-          "rs": 94.331,
-          "momentum": 100.47
-        },
-        {
-          "date": "2026-08-17",
-          "rs": 96.026,
-          "momentum": 106.742
-        },
-        {
-          "date": "2026-08-24",
-          "rs": 95.817,
-          "momentum": 101.576
-        },
-        {
-          "date": "2026-08-31",
-          "rs": 95.669,
-          "momentum": 99.628
-        },
-        {
-          "date": "2026-09-07",
-          "rs": 98.634,
-          "momentum": 102.94
-        },
-        {
-          "date": "2026-09-14",
-          "rs": 101.928,
-          "momentum": 106.542
-        },
-        {
-          "date": "2026-09-21",
-          "rs": 104.595,
-          "momentum": 106.043
-        },
-        {
-          "date": "2026-09-30",
-          "rs": 106.439,
-          "momentum": 104.426
-        },
-        {
-          "date": "2026-10-07",
-          "rs": 102.591,
-          "momentum": 98.084
-        },
-        {
-          "date": "2026-10-15",
-          "rs": 97.52,
-          "momentum": 91.62
-        },
-        {
-          "date": "2026-10-22",
-          "rs": 97.45,
-          "momentum": 94.989
-        },
-        {
-          "date": "2026-10-30",
-          "rs": 93.98,
-          "momentum": 93.973
-        }
-      ],
-      "components": [
-        {
-          "symbol": "2330",
-          "name": "台積電",
-          "data_date": "2026-10-30",
-          "close": 2370.0,
-          "change_1d": -1.863,
-          "return_5d": -2.066,
-          "return_20d": -4.242,
-          "return_60d": -2.268,
-          "return_ytd": 52.903,
-          "volume": 34900231.0,
-          "traded_value": 82713547470.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "2303",
-          "name": "聯電",
-          "data_date": "2026-10-30",
-          "close": 111.5,
-          "change_1d": -3.463,
-          "return_5d": -12.891,
-          "return_20d": -27.362,
-          "return_60d": -7.851,
-          "return_ytd": 126.396,
-          "volume": 237895670.0,
-          "traded_value": 26525367205.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "5347",
-          "name": "世界",
-          "data_date": "2026-10-30",
-          "close": 144.0,
-          "change_1d": -7.987,
-          "return_5d": -13.514,
-          "return_20d": -19.328,
-          "return_60d": -4.95,
-          "return_ytd": 56.352,
-          "volume": 35807222.0,
-          "traded_value": 5156239968.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "6770",
-          "name": "力積電",
-          "data_date": "2026-10-30",
-          "close": 66.6,
-          "change_1d": -4.173,
-          "return_5d": 0.604,
-          "return_20d": -7.884,
-          "return_60d": 22.202,
-          "return_ytd": 68.394,
-          "volume": 98611121.0,
-          "traded_value": 6567500658.599999,
-          "year_high": false,
-          "fresh": true
-        }
-      ],
-      "leaders": [
-        {
-          "symbol": "2330",
-          "name": "台積電",
-          "data_date": "2026-10-30",
-          "close": 2370.0,
-          "change_1d": -1.863,
-          "return_5d": -2.066,
-          "return_20d": -4.242,
-          "return_60d": -2.268,
-          "return_ytd": 52.903,
-          "volume": 34900231.0,
-          "traded_value": 82713547470.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "2303",
-          "name": "聯電",
-          "data_date": "2026-10-30",
-          "close": 111.5,
-          "change_1d": -3.463,
-          "return_5d": -12.891,
-          "return_20d": -27.362,
-          "return_60d": -7.851,
-          "return_ytd": 126.396,
-          "volume": 237895670.0,
-          "traded_value": 26525367205.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "6770",
-          "name": "力積電",
-          "data_date": "2026-10-30",
-          "close": 66.6,
-          "change_1d": -4.173,
-          "return_5d": 0.604,
-          "return_20d": -7.884,
-          "return_60d": 22.202,
-          "return_ytd": 68.394,
-          "volume": 98611121.0,
-          "traded_value": 6567500658.599999,
-          "year_high": false,
-          "fresh": true
-        }
-      ],
-      "laggards": [
-        {
-          "symbol": "5347",
-          "name": "世界",
-          "data_date": "2026-10-30",
-          "close": 144.0,
-          "change_1d": -7.987,
-          "return_5d": -13.514,
-          "return_20d": -19.328,
-          "return_60d": -4.95,
-          "return_ytd": 56.352,
-          "volume": 35807222.0,
-          "traded_value": 5156239968.0,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "6770",
-          "name": "力積電",
-          "data_date": "2026-10-30",
-          "close": 66.6,
-          "change_1d": -4.173,
-          "return_5d": 0.604,
-          "return_20d": -7.884,
-          "return_60d": 22.202,
-          "return_ytd": 68.394,
-          "volume": 98611121.0,
-          "traded_value": 6567500658.599999,
-          "year_high": false,
-          "fresh": true
-        },
-        {
-          "symbol": "2303",
-          "name": "聯電",
-          "data_date": "2026-10-30",
-          "close": 111.5,
-          "change_1d": -3.463,
-          "return_5d": -12.891,
-          "return_20d": -27.362,
-          "return_60d": -7.851,
-          "return_ytd": 126.396,
-          "volume": 237895670.0,
-          "traded_value": 26525367205.0,
-          "year_high": false,
-          "fresh": true
-        }
-      ],
-      "share_pct": 10.89,
-      "share_avg20_pct": 8.325,
-      "share_delta20_pp": 2.565
-    },
-    {
       "name": "測試介面／設備",
       "members_total": 6,
       "members_valid": 6,
@@ -11902,9 +11442,454 @@
           "fresh": true
         }
       ],
-      "share_pct": 1.662,
+      "share_pct": 1.661,
       "share_avg20_pct": 2.008,
-      "share_delta20_pp": -0.346
+      "share_delta20_pp": -0.347
+    },
+    {
+      "name": "晶圓代工",
+      "members_total": 3,
+      "members_valid": 3,
+      "members_fresh": 3,
+      "data_coverage_pct": 100.0,
+      "today_return": -4.438,
+      "yesterday_return": -5.582,
+      "return_5d": -9.49,
+      "return_20d": -16.977,
+      "return_60d": -5.023,
+      "return_ytd": 78.55,
+      "rising": 0,
+      "falling": 3,
+      "flat": 0,
+      "year_high_count": 0,
+      "turnover": 114395154643.0,
+      "previous_turnover": 87339732464.0,
+      "turnover_change": 27055422178.0,
+      "turnover_change_pct": 30.98,
+      "market_turnover_share_pct": null,
+      "market_turnover_share_delta_pp": null,
+      "yesterday_market_turnover_share_pct": null,
+      "yesterday_market_turnover_share_delta_pp": null,
+      "sample_turnover_share_pct": null,
+      "sample_turnover_share_delta_pp": null,
+      "yesterday_sample_turnover_share_pct": null,
+      "yesterday_sample_turnover_share_delta_pp": null,
+      "relative_strength": 92.515,
+      "relative_momentum": 91.582,
+      "quadrant": "落後",
+      "previous_quadrant": "落後",
+      "quadrant_changed": false,
+      "rrg": [
+        {
+          "date": "2025-10-01",
+          "rs": 101.272,
+          "momentum": 106.101
+        },
+        {
+          "date": "2025-10-09",
+          "rs": 101.391,
+          "momentum": 99.62
+        },
+        {
+          "date": "2025-10-17",
+          "rs": 101.054,
+          "momentum": 99.785
+        },
+        {
+          "date": "2025-10-27",
+          "rs": 100.217,
+          "momentum": 98.842
+        },
+        {
+          "date": "2025-11-03",
+          "rs": 99.407,
+          "momentum": 98.371
+        },
+        {
+          "date": "2025-11-10",
+          "rs": 96.93,
+          "momentum": 96.72
+        },
+        {
+          "date": "2025-11-17",
+          "rs": 96.514,
+          "momentum": 97.09
+        },
+        {
+          "date": "2025-11-24",
+          "rs": 99.536,
+          "momentum": 102.688
+        },
+        {
+          "date": "2025-12-01",
+          "rs": 98.5,
+          "momentum": 102.058
+        },
+        {
+          "date": "2025-12-08",
+          "rs": 99.457,
+          "momentum": 99.921
+        },
+        {
+          "date": "2025-12-15",
+          "rs": 99.716,
+          "momentum": 101.234
+        },
+        {
+          "date": "2025-12-22",
+          "rs": 102.606,
+          "momentum": 103.167
+        },
+        {
+          "date": "2025-12-30",
+          "rs": 99.973,
+          "momentum": 100.258
+        },
+        {
+          "date": "2026-01-07",
+          "rs": 103.918,
+          "momentum": 101.278
+        },
+        {
+          "date": "2026-01-14",
+          "rs": 108.629,
+          "momentum": 108.658
+        },
+        {
+          "date": "2026-01-21",
+          "rs": 121.721,
+          "momentum": 117.132
+        },
+        {
+          "date": "2026-01-28",
+          "rs": 123.189,
+          "momentum": 113.403
+        },
+        {
+          "date": "2026-02-04",
+          "rs": 104.022,
+          "momentum": 85.459
+        },
+        {
+          "date": "2026-02-11",
+          "rs": 102.844,
+          "momentum": 83.485
+        },
+        {
+          "date": "2026-03-02",
+          "rs": 100.284,
+          "momentum": 96.406
+        },
+        {
+          "date": "2026-03-09",
+          "rs": 97.536,
+          "momentum": 94.838
+        },
+        {
+          "date": "2026-03-16",
+          "rs": 96.466,
+          "momentum": 96.193
+        },
+        {
+          "date": "2026-03-23",
+          "rs": 94.423,
+          "momentum": 96.809
+        },
+        {
+          "date": "2026-03-30",
+          "rs": 95.256,
+          "momentum": 98.745
+        },
+        {
+          "date": "2026-04-08",
+          "rs": 97.4,
+          "momentum": 103.152
+        },
+        {
+          "date": "2026-04-15",
+          "rs": 95.35,
+          "momentum": 100.098
+        },
+        {
+          "date": "2026-04-22",
+          "rs": 105.263,
+          "momentum": 108.073
+        },
+        {
+          "date": "2026-04-29",
+          "rs": 102.196,
+          "momentum": 107.18
+        },
+        {
+          "date": "2026-05-07",
+          "rs": 115.398,
+          "momentum": 109.629
+        },
+        {
+          "date": "2026-05-14",
+          "rs": 116.408,
+          "momentum": 113.907
+        },
+        {
+          "date": "2026-05-21",
+          "rs": 114.953,
+          "momentum": 99.614
+        },
+        {
+          "date": "2026-05-28",
+          "rs": 115.022,
+          "momentum": 98.809
+        },
+        {
+          "date": "2026-06-04",
+          "rs": 105.02,
+          "momentum": 91.359
+        },
+        {
+          "date": "2026-06-11",
+          "rs": 107.142,
+          "momentum": 93.149
+        },
+        {
+          "date": "2026-06-18",
+          "rs": 107.782,
+          "momentum": 102.63
+        },
+        {
+          "date": "2026-06-26",
+          "rs": 118.218,
+          "momentum": 110.337
+        },
+        {
+          "date": "2026-07-03",
+          "rs": 111.325,
+          "momentum": 103.287
+        },
+        {
+          "date": "2026-07-13",
+          "rs": 105.574,
+          "momentum": 89.304
+        },
+        {
+          "date": "2026-07-20",
+          "rs": 98.277,
+          "momentum": 88.279
+        },
+        {
+          "date": "2026-07-27",
+          "rs": 95.561,
+          "momentum": 90.516
+        },
+        {
+          "date": "2026-08-03",
+          "rs": 93.487,
+          "momentum": 95.126
+        },
+        {
+          "date": "2026-08-10",
+          "rs": 93.467,
+          "momentum": 97.809
+        },
+        {
+          "date": "2026-08-17",
+          "rs": 92.678,
+          "momentum": 99.135
+        },
+        {
+          "date": "2026-08-24",
+          "rs": 93.252,
+          "momentum": 99.769
+        },
+        {
+          "date": "2026-08-31",
+          "rs": 92.995,
+          "momentum": 100.342
+        },
+        {
+          "date": "2026-09-07",
+          "rs": 97.219,
+          "momentum": 104.255
+        },
+        {
+          "date": "2026-09-14",
+          "rs": 101.378,
+          "momentum": 109.015
+        },
+        {
+          "date": "2026-09-21",
+          "rs": 105.336,
+          "momentum": 108.349
+        },
+        {
+          "date": "2026-09-30",
+          "rs": 106.601,
+          "momentum": 105.151
+        },
+        {
+          "date": "2026-10-07",
+          "rs": 104.233,
+          "momentum": 98.952
+        },
+        {
+          "date": "2026-10-15",
+          "rs": 98.92,
+          "momentum": 92.795
+        },
+        {
+          "date": "2026-10-22",
+          "rs": 97.978,
+          "momentum": 93.999
+        },
+        {
+          "date": "2026-10-30",
+          "rs": 92.515,
+          "momentum": 91.582
+        }
+      ],
+      "components": [
+        {
+          "symbol": "2330",
+          "name": "台積電",
+          "data_date": "2026-10-30",
+          "close": 2370.0,
+          "change_1d": -1.863,
+          "return_5d": -2.066,
+          "return_20d": -4.242,
+          "return_60d": -2.268,
+          "return_ytd": 52.903,
+          "volume": 34900231.0,
+          "traded_value": 82713547470.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "2303",
+          "name": "聯電",
+          "data_date": "2026-10-30",
+          "close": 111.5,
+          "change_1d": -3.463,
+          "return_5d": -12.891,
+          "return_20d": -27.362,
+          "return_60d": -7.851,
+          "return_ytd": 126.396,
+          "volume": 237895670.0,
+          "traded_value": 26525367205.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "5347",
+          "name": "世界",
+          "data_date": "2026-10-30",
+          "close": 144.0,
+          "change_1d": -7.987,
+          "return_5d": -13.514,
+          "return_20d": -19.328,
+          "return_60d": -4.95,
+          "return_ytd": 56.352,
+          "volume": 35807222.0,
+          "traded_value": 5156239968.0,
+          "year_high": false,
+          "fresh": true
+        }
+      ],
+      "leaders": [
+        {
+          "symbol": "2330",
+          "name": "台積電",
+          "data_date": "2026-10-30",
+          "close": 2370.0,
+          "change_1d": -1.863,
+          "return_5d": -2.066,
+          "return_20d": -4.242,
+          "return_60d": -2.268,
+          "return_ytd": 52.903,
+          "volume": 34900231.0,
+          "traded_value": 82713547470.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "2303",
+          "name": "聯電",
+          "data_date": "2026-10-30",
+          "close": 111.5,
+          "change_1d": -3.463,
+          "return_5d": -12.891,
+          "return_20d": -27.362,
+          "return_60d": -7.851,
+          "return_ytd": 126.396,
+          "volume": 237895670.0,
+          "traded_value": 26525367205.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "5347",
+          "name": "世界",
+          "data_date": "2026-10-30",
+          "close": 144.0,
+          "change_1d": -7.987,
+          "return_5d": -13.514,
+          "return_20d": -19.328,
+          "return_60d": -4.95,
+          "return_ytd": 56.352,
+          "volume": 35807222.0,
+          "traded_value": 5156239968.0,
+          "year_high": false,
+          "fresh": true
+        }
+      ],
+      "laggards": [
+        {
+          "symbol": "5347",
+          "name": "世界",
+          "data_date": "2026-10-30",
+          "close": 144.0,
+          "change_1d": -7.987,
+          "return_5d": -13.514,
+          "return_20d": -19.328,
+          "return_60d": -4.95,
+          "return_ytd": 56.352,
+          "volume": 35807222.0,
+          "traded_value": 5156239968.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "2303",
+          "name": "聯電",
+          "data_date": "2026-10-30",
+          "close": 111.5,
+          "change_1d": -3.463,
+          "return_5d": -12.891,
+          "return_20d": -27.362,
+          "return_60d": -7.851,
+          "return_ytd": 126.396,
+          "volume": 237895670.0,
+          "traded_value": 26525367205.0,
+          "year_high": false,
+          "fresh": true
+        },
+        {
+          "symbol": "2330",
+          "name": "台積電",
+          "data_date": "2026-10-30",
+          "close": 2370.0,
+          "change_1d": -1.863,
+          "return_5d": -2.066,
+          "return_20d": -4.242,
+          "return_60d": -2.268,
+          "return_ytd": 52.903,
+          "volume": 34900231.0,
+          "traded_value": 82713547470.0,
+          "year_high": false,
+          "fresh": true
+        }
+      ],
+      "share_pct": 10.314,
+      "share_avg20_pct": 7.665,
+      "share_delta20_pp": 2.649
     },
     {
       "name": "矽光子／光通訊",
@@ -12497,9 +12482,9 @@
           "fresh": true
         }
       ],
-      "share_pct": 1.801,
+      "share_pct": 1.8,
       "share_avg20_pct": 2.124,
-      "share_delta20_pp": -0.323
+      "share_delta20_pp": -0.324
     },
     {
       "name": "先進封裝設備",
@@ -13017,7 +13002,7 @@
           "fresh": true
         }
       ],
-      "share_pct": 0.453,
+      "share_pct": 0.452,
       "share_avg20_pct": 0.681,
       "share_delta20_pp": -0.228
     },
@@ -13372,9 +13357,9 @@
           "fresh": true
         }
       ],
-      "share_pct": 0.716,
+      "share_pct": 0.717,
       "share_avg20_pct": 0.494,
-      "share_delta20_pp": 0.223
+      "share_delta20_pp": 0.224
     },
     {
       "name": "滑軌",
@@ -13781,7 +13766,7 @@
     {
       "code": "24",
       "name": "半導體業",
-      "turnover": 410802488589.0,
+      "turnover": 410836919429.0,
       "previous_turnover": 376621186954.0,
       "members": [
         "1595",
@@ -13984,11 +13969,11 @@
         "8299",
         "8383"
       ],
-      "turnover_change": 34181301635.0,
+      "turnover_change": 34215732475.0,
       "turnover_change_pct": 9.08,
-      "share_pct": 35.916,
+      "share_pct": 35.901,
       "share_avg20_pct": 32.648,
-      "share_delta20_pp": 3.269
+      "share_delta20_pp": 3.253
     },
     {
       "code": "25",
@@ -14106,9 +14091,9 @@
       ],
       "turnover_change": 10220106251.0,
       "turnover_change_pct": 19.46,
-      "share_pct": 5.486,
+      "share_pct": 5.483,
       "share_avg20_pct": 5.178,
-      "share_delta20_pp": 0.307
+      "share_delta20_pp": 0.304
     },
     {
       "code": "15",
@@ -14153,7 +14138,7 @@
       ],
       "turnover_change": 8053731438.0,
       "turnover_change_pct": 173.63,
-      "share_pct": 1.11,
+      "share_pct": 1.109,
       "share_avg20_pct": 0.777,
       "share_delta20_pp": 0.332
     },
@@ -14223,9 +14208,9 @@
       ],
       "turnover_change": 6274138006.0,
       "turnover_change_pct": 37.53,
-      "share_pct": 2.01,
+      "share_pct": 2.009,
       "share_avg20_pct": 1.81,
-      "share_delta20_pp": 0.201
+      "share_delta20_pp": 0.2
     },
     {
       "code": "20",
@@ -14337,7 +14322,7 @@
       "turnover_change_pct": 114.28,
       "share_pct": 0.666,
       "share_avg20_pct": 0.337,
-      "share_delta20_pp": 0.329
+      "share_delta20_pp": 0.328
     },
     {
       "code": "30",
@@ -14393,14 +14378,14 @@
       ],
       "turnover_change": 2345001215.0,
       "turnover_change_pct": 78.35,
-      "share_pct": 0.467,
+      "share_pct": 0.466,
       "share_avg20_pct": 0.205,
       "share_delta20_pp": 0.262
     },
     {
       "code": "22",
       "name": "生技醫療業",
-      "turnover": 6795199533.0,
+      "turnover": 6854399533.0,
       "previous_turnover": 4857787667.0,
       "members": [
         "1565",
@@ -14560,11 +14545,11 @@
         "8432",
         "8436"
       ],
-      "turnover_change": 1937411866.0,
-      "turnover_change_pct": 39.88,
-      "share_pct": 0.594,
+      "turnover_change": 1996611866.0,
+      "turnover_change_pct": 41.1,
+      "share_pct": 0.599,
       "share_avg20_pct": 0.437,
-      "share_delta20_pp": 0.157
+      "share_delta20_pp": 0.162
     },
     {
       "code": "23",
@@ -14650,7 +14635,7 @@
       ],
       "turnover_change": 863791457.0,
       "turnover_change_pct": 18.55,
-      "share_pct": 0.483,
+      "share_pct": 0.482,
       "share_avg20_pct": 0.635,
       "share_delta20_pp": -0.153
     },
@@ -14751,9 +14736,9 @@
       ],
       "turnover_change": 843011341.0,
       "turnover_change_pct": 3.33,
-      "share_pct": 2.286,
+      "share_pct": 2.285,
       "share_avg20_pct": 3.435,
-      "share_delta20_pp": -1.149
+      "share_delta20_pp": -1.15
     },
     {
       "code": "06",
@@ -14783,7 +14768,7 @@
       "turnover_change_pct": 82.52,
       "share_pct": 0.115,
       "share_avg20_pct": 0.137,
-      "share_delta20_pp": -0.021
+      "share_delta20_pp": -0.022
     },
     {
       "code": "21",
@@ -15476,9 +15461,9 @@
       ],
       "turnover_change": 39873298.0,
       "turnover_change_pct": 0.87,
-      "share_pct": 0.405,
+      "share_pct": 0.404,
       "share_avg20_pct": 0.406,
-      "share_delta20_pp": -0.001
+      "share_delta20_pp": -0.002
     },
     {
       "code": "33",
@@ -15498,108 +15483,9 @@
       "share_delta20_pp": -0.0
     },
     {
-      "code": "27",
-      "name": "通信網路業",
-      "turnover": 34888315075.0,
-      "previous_turnover": 36225879723.0,
-      "members": [
-        "2314",
-        "2332",
-        "2345",
-        "2412",
-        "2419",
-        "2424",
-        "2439",
-        "2444",
-        "2450",
-        "2485",
-        "2498",
-        "3025",
-        "3027",
-        "3045",
-        "3047",
-        "3062",
-        "3081",
-        "3095",
-        "3138",
-        "3152",
-        "3163",
-        "3221",
-        "3234",
-        "3306",
-        "3311",
-        "3363",
-        "3380",
-        "3419",
-        "3447",
-        "3466",
-        "3491",
-        "3499",
-        "3558",
-        "3564",
-        "3596",
-        "3632",
-        "3664",
-        "3669",
-        "3672",
-        "3684",
-        "3694",
-        "3704",
-        "4903",
-        "4904",
-        "4906",
-        "4908",
-        "4909",
-        "4977",
-        "5353",
-        "5388",
-        "6109",
-        "6136",
-        "6142",
-        "6143",
-        "6152",
-        "6170",
-        "6190",
-        "6216",
-        "6218",
-        "6241",
-        "6245",
-        "6263",
-        "6285",
-        "6416",
-        "6417",
-        "6426",
-        "6442",
-        "6465",
-        "6470",
-        "6486",
-        "6530",
-        "6546",
-        "6561",
-        "6588",
-        "6674",
-        "6792",
-        "6863",
-        "7689",
-        "7717",
-        "8011",
-        "8034",
-        "8045",
-        "8048",
-        "8089",
-        "8097",
-        "8101"
-      ],
-      "turnover_change": -1337564648.0,
-      "turnover_change_pct": -3.69,
-      "share_pct": 3.05,
-      "share_avg20_pct": 3.333,
-      "share_delta20_pp": -0.282
-    },
-    {
       "code": "31",
       "name": "其他電子業",
-      "turnover": 32344080794.0,
+      "turnover": 32837174294.0,
       "previous_turnover": 33770500831.0,
       "members": [
         "1785",
@@ -15696,11 +15582,110 @@
         "8455",
         "8499"
       ],
-      "turnover_change": -1426420037.0,
-      "turnover_change_pct": -4.22,
-      "share_pct": 2.828,
+      "turnover_change": -933326537.0,
+      "turnover_change_pct": -2.76,
+      "share_pct": 2.869,
       "share_avg20_pct": 3.888,
-      "share_delta20_pp": -1.06
+      "share_delta20_pp": -1.019
+    },
+    {
+      "code": "27",
+      "name": "通信網路業",
+      "turnover": 34888315075.0,
+      "previous_turnover": 36225879723.0,
+      "members": [
+        "2314",
+        "2332",
+        "2345",
+        "2412",
+        "2419",
+        "2424",
+        "2439",
+        "2444",
+        "2450",
+        "2485",
+        "2498",
+        "3025",
+        "3027",
+        "3045",
+        "3047",
+        "3062",
+        "3081",
+        "3095",
+        "3138",
+        "3152",
+        "3163",
+        "3221",
+        "3234",
+        "3306",
+        "3311",
+        "3363",
+        "3380",
+        "3419",
+        "3447",
+        "3466",
+        "3491",
+        "3499",
+        "3558",
+        "3564",
+        "3596",
+        "3632",
+        "3664",
+        "3669",
+        "3672",
+        "3684",
+        "3694",
+        "3704",
+        "4903",
+        "4904",
+        "4906",
+        "4908",
+        "4909",
+        "4977",
+        "5353",
+        "5388",
+        "6109",
+        "6136",
+        "6142",
+        "6143",
+        "6152",
+        "6170",
+        "6190",
+        "6216",
+        "6218",
+        "6241",
+        "6245",
+        "6263",
+        "6285",
+        "6416",
+        "6417",
+        "6426",
+        "6442",
+        "6465",
+        "6470",
+        "6486",
+        "6530",
+        "6546",
+        "6561",
+        "6588",
+        "6674",
+        "6792",
+        "6863",
+        "7689",
+        "7717",
+        "8011",
+        "8034",
+        "8045",
+        "8048",
+        "8089",
+        "8097",
+        "8101"
+      ],
+      "turnover_change": -1337564648.0,
+      "turnover_change_pct": -3.69,
+      "share_pct": 3.049,
+      "share_avg20_pct": 3.333,
+      "share_delta20_pp": -0.284
     },
     {
       "code": "05",
@@ -15934,9 +15919,9 @@
       ],
       "turnover_change": -7501416011.0,
       "turnover_change_pct": -11.38,
-      "share_pct": 5.107,
+      "share_pct": 5.105,
       "share_avg20_pct": 6.717,
-      "share_delta20_pp": -1.61
+      "share_delta20_pp": -1.612
     },
     {
       "code": "28",
@@ -16148,9 +16133,9 @@
       ],
       "turnover_change": -11929412168.0,
       "turnover_change_pct": -4.89,
-      "share_pct": 20.277,
+      "share_pct": 20.267,
       "share_avg20_pct": 23.87,
-      "share_delta20_pp": -3.592
+      "share_delta20_pp": -3.603
     }
   ],
   "official_member_values": {
@@ -16245,7 +16230,7 @@
     "4968": 49021559.0,
     "6526": 825283958.0,
     "3169": 24250947.0,
-    "5274": 8190325180.0,
+    "5274": 8206135180.0,
     "6708": 34939109.0,
     "8040": 46285374.0,
     "5269": 854028990.0,
@@ -16316,7 +16301,7 @@
     "3680": 580348207.0,
     "4772": 227754860.0,
     "5493": 4242918.0,
-    "5536": 699428188.0,
+    "5536": 1192521688.0,
     "6207": 365250137.0,
     "6208": 11267010.0,
     "6223": 5566530515.0,
@@ -16363,7 +16348,7 @@
     "1742": 3068181.0,
     "1785": 469118647.0,
     "3663": 39269069.0,
-    "4749": 769759927.0,
+    "4749": 788380767.0,
     "4768": 103422218.0,
     "1410": 455320.0,
     "1434": 36572973.0,
@@ -16581,7 +16566,7 @@
     "4107": 22325372.0,
     "4126": 2538035.0,
     "4728": 4087353.0,
-    "6499": 19814513.0,
+    "6499": 79014513.0,
     "6612": 1296810.0,
     "6649": 1908297.0,
     "6730": 163121.0,
@@ -18182,13 +18167,13 @@
         "6708",
         "8040"
       ],
-      "turnover": 65141822183.0,
+      "turnover": 65157632183.0,
       "previous_turnover": 35386462882.0,
-      "turnover_change": 29755359301.0,
-      "turnover_change_pct": 84.09,
-      "share_pct": 5.695,
+      "turnover_change": 29771169301.0,
+      "turnover_change_pct": 84.13,
+      "share_pct": 5.694,
       "share_avg20_pct": 4.112,
-      "share_delta20_pp": 1.583
+      "share_delta20_pp": 1.582
     },
     {
       "code": "D140",
@@ -18239,9 +18224,9 @@
       "previous_turnover": 57969139087.0,
       "turnover_change": 28343786787.0,
       "turnover_change_pct": 48.89,
-      "share_pct": 7.546,
+      "share_pct": 7.542,
       "share_avg20_pct": 5.472,
-      "share_delta20_pp": 2.075
+      "share_delta20_pp": 2.071
     },
     {
       "code": "D180",
@@ -18287,9 +18272,9 @@
       "previous_turnover": 65876672170.0,
       "turnover_change": 23978303608.0,
       "turnover_change_pct": 36.4,
-      "share_pct": 7.856,
+      "share_pct": 7.852,
       "share_avg20_pct": 5.646,
-      "share_delta20_pp": 2.21
+      "share_delta20_pp": 2.206
     },
     {
       "code": "D1C0",
@@ -18308,9 +18293,9 @@
       "previous_turnover": 29912659802.0,
       "turnover_change": 23023850869.0,
       "turnover_change_pct": 76.97,
-      "share_pct": 4.628,
+      "share_pct": 4.626,
       "share_avg20_pct": 3.437,
-      "share_delta20_pp": 1.192
+      "share_delta20_pp": 1.189
     },
     {
       "code": "D900",
@@ -18357,9 +18342,9 @@
       "previous_turnover": 46903219305.0,
       "turnover_change": 18524174173.0,
       "turnover_change_pct": 39.49,
-      "share_pct": 5.72,
+      "share_pct": 5.717,
       "share_avg20_pct": 5.31,
-      "share_delta20_pp": 0.41
+      "share_delta20_pp": 0.407
     },
     {
       "code": "I900",
@@ -18435,9 +18420,9 @@
       "previous_turnover": 52332191659.0,
       "turnover_change": 14634399148.0,
       "turnover_change_pct": 27.96,
-      "share_pct": 5.855,
+      "share_pct": 5.852,
       "share_avg20_pct": 4.641,
-      "share_delta20_pp": 1.214
+      "share_delta20_pp": 1.211
     },
     {
       "code": "IB00",
@@ -18500,9 +18485,9 @@
       "previous_turnover": 46049329335.0,
       "turnover_change": 13947531111.0,
       "turnover_change_pct": 30.29,
-      "share_pct": 5.246,
+      "share_pct": 5.243,
       "share_avg20_pct": 4.029,
-      "share_delta20_pp": 1.216
+      "share_delta20_pp": 1.214
     },
     {
       "code": "FW00",
@@ -18544,9 +18529,9 @@
       "previous_turnover": 37198769797.0,
       "turnover_change": 10760954889.0,
       "turnover_change_pct": 28.93,
-      "share_pct": 4.193,
+      "share_pct": 4.191,
       "share_avg20_pct": 3.04,
-      "share_delta20_pp": 1.153
+      "share_delta20_pp": 1.151
     },
     {
       "code": "FI00",
@@ -18585,9 +18570,9 @@
       "previous_turnover": 53057985553.0,
       "turnover_change": 9834440258.0,
       "turnover_change_pct": 18.54,
-      "share_pct": 5.499,
+      "share_pct": 5.496,
       "share_avg20_pct": 4.495,
-      "share_delta20_pp": 1.004
+      "share_delta20_pp": 1.001
     },
     {
       "code": "5493",
@@ -18635,9 +18620,9 @@
       "previous_turnover": 32539415785.0,
       "turnover_change": 9523681320.0,
       "turnover_change_pct": 29.27,
-      "share_pct": 3.678,
+      "share_pct": 3.676,
       "share_avg20_pct": 2.358,
-      "share_delta20_pp": 1.319
+      "share_delta20_pp": 1.317
     },
     {
       "code": "FJ00",
@@ -18670,9 +18655,9 @@
       "previous_turnover": 46802999021.0,
       "turnover_change": 8987220688.0,
       "turnover_change_pct": 19.2,
-      "share_pct": 4.878,
+      "share_pct": 4.875,
       "share_avg20_pct": 3.949,
-      "share_delta20_pp": 0.929
+      "share_delta20_pp": 0.926
     },
     {
       "code": "A320",
@@ -18738,9 +18723,9 @@
       "previous_turnover": 57639408331.0,
       "turnover_change": 8975661871.0,
       "turnover_change_pct": 15.57,
-      "share_pct": 5.824,
+      "share_pct": 5.821,
       "share_avg20_pct": 5.403,
-      "share_delta20_pp": 0.422
+      "share_delta20_pp": 0.419
     },
     {
       "code": "3180",
@@ -18802,53 +18787,9 @@
       "previous_turnover": 30919058962.0,
       "turnover_change": 8956402992.0,
       "turnover_change_pct": 28.97,
-      "share_pct": 3.486,
+      "share_pct": 3.485,
       "share_avg20_pct": 2.516,
-      "share_delta20_pp": 0.97
-    },
-    {
-      "code": "C226",
-      "name": "醫療器材研發、設計、製造／生物檢測",
-      "path": "醫療器材 > 醫療器材研發、設計、製造 > 生物檢測",
-      "industry": "醫療器材",
-      "stage": "中游",
-      "members": [
-        "1760",
-        "2301",
-        "2308",
-        "2465",
-        "4133",
-        "4169",
-        "4195",
-        "4737",
-        "6645",
-        "6838",
-        "6861",
-        "6955",
-        "7803",
-        "5284",
-        "6598",
-        "3176",
-        "4131",
-        "4160",
-        "4161",
-        "4171",
-        "4183",
-        "4198",
-        "5457",
-        "6228",
-        "6577",
-        "6661",
-        "6662",
-        "6841"
-      ],
-      "turnover": 38437646724.0,
-      "previous_turnover": 29906232849.0,
-      "turnover_change": 8531413875.0,
-      "turnover_change_pct": 28.53,
-      "share_pct": 3.361,
-      "share_avg20_pct": 2.138,
-      "share_delta20_pp": 1.223
+      "share_delta20_pp": 0.968
     },
     {
       "code": "54A0",
@@ -18899,13 +18840,13 @@
         "8099",
         "6741"
       ],
-      "turnover": 43249197903.0,
+      "turnover": 43742291403.0,
       "previous_turnover": 34955311840.0,
-      "turnover_change": 8293886063.0,
-      "turnover_change_pct": 23.73,
-      "share_pct": 3.781,
+      "turnover_change": 8786979563.0,
+      "turnover_change_pct": 25.14,
+      "share_pct": 3.822,
       "share_avg20_pct": 2.391,
-      "share_delta20_pp": 1.39
+      "share_delta20_pp": 1.432
     },
     {
       "code": "54C0",
@@ -18938,13 +18879,13 @@
         "6938",
         "8099"
       ],
-      "turnover": 39457056687.0,
+      "turnover": 39950150187.0,
       "previous_turnover": 31251965950.0,
-      "turnover_change": 8205090737.0,
-      "turnover_change_pct": 26.25,
-      "share_pct": 3.45,
+      "turnover_change": 8698184237.0,
+      "turnover_change_pct": 27.83,
+      "share_pct": 3.491,
       "share_avg20_pct": 2.285,
-      "share_delta20_pp": 1.165
+      "share_delta20_pp": 1.206
     },
     {
       "code": "54B0",
@@ -18985,13 +18926,13 @@
         "8099",
         "6741"
       ],
-      "turnover": 39840618032.0,
+      "turnover": 40333711532.0,
       "previous_turnover": 31678112321.0,
-      "turnover_change": 8162505711.0,
-      "turnover_change_pct": 25.77,
-      "share_pct": 3.483,
+      "turnover_change": 8655599211.0,
+      "turnover_change_pct": 27.32,
+      "share_pct": 3.525,
       "share_avg20_pct": 2.314,
-      "share_delta20_pp": 1.169
+      "share_delta20_pp": 1.21
     },
     {
       "code": "5430",
@@ -19008,13 +18949,13 @@
         "6752",
         "5223"
       ],
-      "turnover": 37899070313.0,
+      "turnover": 38392163813.0,
       "previous_turnover": 29776613550.0,
-      "turnover_change": 8122456763.0,
-      "turnover_change_pct": 27.28,
-      "share_pct": 3.314,
+      "turnover_change": 8615550263.0,
+      "turnover_change_pct": 28.93,
+      "share_pct": 3.355,
       "share_avg20_pct": 2.207,
-      "share_delta20_pp": 1.106
+      "share_delta20_pp": 1.148
     },
     {
       "code": "5420",
@@ -19031,13 +18972,57 @@
         "5536",
         "6752"
       ],
-      "turnover": 37654109109.0,
+      "turnover": 38147202609.0,
       "previous_turnover": 29578871630.0,
-      "turnover_change": 8075237479.0,
-      "turnover_change_pct": 27.3,
-      "share_pct": 3.292,
+      "turnover_change": 8568330979.0,
+      "turnover_change_pct": 28.97,
+      "share_pct": 3.334,
       "share_avg20_pct": 2.249,
-      "share_delta20_pp": 1.043
+      "share_delta20_pp": 1.085
+    },
+    {
+      "code": "C226",
+      "name": "醫療器材研發、設計、製造／生物檢測",
+      "path": "醫療器材 > 醫療器材研發、設計、製造 > 生物檢測",
+      "industry": "醫療器材",
+      "stage": "中游",
+      "members": [
+        "1760",
+        "2301",
+        "2308",
+        "2465",
+        "4133",
+        "4169",
+        "4195",
+        "4737",
+        "6645",
+        "6838",
+        "6861",
+        "6955",
+        "7803",
+        "5284",
+        "6598",
+        "3176",
+        "4131",
+        "4160",
+        "4161",
+        "4171",
+        "4183",
+        "4198",
+        "5457",
+        "6228",
+        "6577",
+        "6661",
+        "6662",
+        "6841"
+      ],
+      "turnover": 38437646724.0,
+      "previous_turnover": 29906232849.0,
+      "turnover_change": 8531413875.0,
+      "turnover_change_pct": 28.53,
+      "share_pct": 3.359,
+      "share_avg20_pct": 2.138,
+      "share_delta20_pp": 1.221
     },
     {
       "code": "AD18",
@@ -19068,9 +19053,9 @@
       "previous_turnover": 32848843148.0,
       "turnover_change": 7767044414.0,
       "turnover_change_pct": 23.64,
-      "share_pct": 3.551,
+      "share_pct": 3.549,
       "share_avg20_pct": 2.51,
-      "share_delta20_pp": 1.041
+      "share_delta20_pp": 1.039
     },
     {
       "code": "5411",
@@ -19105,9 +19090,9 @@
       "previous_turnover": 41401150039.0,
       "turnover_change": 7248413577.0,
       "turnover_change_pct": 17.51,
-      "share_pct": 4.253,
+      "share_pct": 4.251,
       "share_avg20_pct": 3.086,
-      "share_delta20_pp": 1.168
+      "share_delta20_pp": 1.166
     },
     {
       "code": "FM00",
@@ -19146,9 +19131,9 @@
       "previous_turnover": 30884889368.0,
       "turnover_change": 7194134859.0,
       "turnover_change_pct": 23.29,
-      "share_pct": 3.329,
+      "share_pct": 3.328,
       "share_avg20_pct": 2.983,
-      "share_delta20_pp": 0.347
+      "share_delta20_pp": 0.345
     },
     {
       "code": "5390",
@@ -19179,9 +19164,9 @@
       "previous_turnover": 34432107450.0,
       "turnover_change": 7178188088.0,
       "turnover_change_pct": 20.85,
-      "share_pct": 3.638,
+      "share_pct": 3.636,
       "share_avg20_pct": 2.612,
-      "share_delta20_pp": 1.026
+      "share_delta20_pp": 1.024
     },
     {
       "code": "T100",
@@ -19202,7 +19187,7 @@
       "turnover_change_pct": 244.17,
       "share_pct": 0.869,
       "share_avg20_pct": 0.554,
-      "share_delta20_pp": 0.315
+      "share_delta20_pp": 0.314
     },
     {
       "code": "R100",
@@ -19266,81 +19251,9 @@
       "previous_turnover": 28827335189.0,
       "turnover_change": 6701061166.0,
       "turnover_change_pct": 23.25,
-      "share_pct": 3.106,
+      "share_pct": 3.105,
       "share_avg20_pct": 1.957,
-      "share_delta20_pp": 1.149
-    },
-    {
-      "code": "AD17",
-      "name": "智慧電網／能源管理服務",
-      "path": "智慧電網 > 能源管理服務",
-      "industry": "智慧電網",
-      "stage": "",
-      "members": [
-        "1513",
-        "2308",
-        "2352",
-        "2371",
-        "2412",
-        "3622",
-        "4588",
-        "6278",
-        "6614",
-        "6869",
-        "6873",
-        "6994",
-        "7740",
-        "8374",
-        "3710",
-        "5483",
-        "6163",
-        "7842"
-      ],
-      "turnover": 41568979146.0,
-      "previous_turnover": 34976524445.0,
-      "turnover_change": 6592454701.0,
-      "turnover_change_pct": 18.85,
-      "share_pct": 3.634,
-      "share_avg20_pct": 2.743,
-      "share_delta20_pp": 0.892
-    },
-    {
-      "code": "5340",
-      "name": "人工智慧／智慧設備",
-      "path": "人工智慧 > 智慧設備",
-      "industry": "人工智慧",
-      "stage": "應用與服務",
-      "members": [
-        "2308",
-        "2357",
-        "4585",
-        "6412",
-        "6658",
-        "7822",
-        "8374",
-        "3297",
-        "3455",
-        "5209",
-        "6163",
-        "6263",
-        "6664",
-        "6680",
-        "6739",
-        "6752",
-        "6865",
-        "6870",
-        "6877",
-        "6997",
-        "7825",
-        "6741"
-      ],
-      "turnover": 36377590617.0,
-      "previous_turnover": 30058499970.0,
-      "turnover_change": 6319090647.0,
-      "turnover_change_pct": 21.02,
-      "share_pct": 3.18,
-      "share_avg20_pct": 2.101,
-      "share_delta20_pp": 1.08
+      "share_delta20_pp": 1.147
     },
     {
       "code": "A150",
@@ -19388,209 +19301,47 @@
         "8087",
         "8109"
       ],
-      "turnover": 36679078884.0,
+      "turnover": 37172172384.0,
       "previous_turnover": 30538181872.0,
-      "turnover_change": 6140897012.0,
-      "turnover_change_pct": 20.11,
-      "share_pct": 3.207,
+      "turnover_change": 6633990512.0,
+      "turnover_change_pct": 21.72,
+      "share_pct": 3.248,
       "share_avg20_pct": 2.283,
-      "share_delta20_pp": 0.923
+      "share_delta20_pp": 0.965
     },
     {
-      "code": "AD12",
-      "name": "智慧電網／配電管理設施",
-      "path": "智慧電網 > 配電管理設施",
+      "code": "AD17",
+      "name": "智慧電網／能源管理服務",
+      "path": "智慧電網 > 能源管理服務",
       "industry": "智慧電網",
       "stage": "",
       "members": [
         "1513",
-        "1519",
-        "2301",
-        "2308",
-        "2360",
-        "2459",
-        "3622",
-        "6278",
-        "6282",
-        "6441"
-      ],
-      "turnover": 45240380383.0,
-      "previous_turnover": 39172827559.0,
-      "turnover_change": 6067552824.0,
-      "turnover_change_pct": 15.49,
-      "share_pct": 3.955,
-      "share_avg20_pct": 3.19,
-      "share_delta20_pp": 0.765
-    },
-    {
-      "code": "L610",
-      "name": "印刷電路板／硬板、軟板、IC載板製造",
-      "path": "印刷電路板 > 硬板、軟板、IC載板製造",
-      "industry": "印刷電路板",
-      "stage": "中游",
-      "members": [
-        "2313",
-        "2316",
-        "2328",
-        "2355",
-        "2367",
-        "2368",
-        "2402",
-        "3037",
-        "3044",
-        "3229",
-        "3321",
-        "3715",
-        "5469",
-        "6108",
-        "6141",
-        "6153",
-        "6191",
-        "6269",
-        "6271",
-        "6835",
-        "8046",
-        "8213",
-        "4927",
-        "4958",
-        "3114",
-        "3115",
-        "3276",
-        "3390",
-        "4909",
-        "5291",
-        "5321",
-        "5381",
-        "5439",
-        "5464",
-        "6156",
-        "6194",
-        "6207",
-        "6210",
-        "6597",
-        "8074",
-        "8155"
-      ],
-      "turnover": 64199698903.0,
-      "previous_turnover": 58156395638.0,
-      "turnover_change": 6043303265.0,
-      "turnover_change_pct": 10.39,
-      "share_pct": 5.613,
-      "share_avg20_pct": 7.278,
-      "share_delta20_pp": -1.665
-    },
-    {
-      "code": "A310",
-      "name": "電動車輛產業／鋰電池材料",
-      "path": "電動車輛產業 > 鋰電池材料",
-      "industry": "電動車輛產業",
-      "stage": "上游",
-      "members": [
-        "1605",
-        "1611",
-        "1723",
         "2308",
         "2352",
         "2371",
-        "3010",
-        "4739",
-        "5234",
+        "2412",
+        "3622",
+        "4588",
         "6278",
-        "8215",
-        "4721",
-        "8038",
-        "8358",
-        "5227"
+        "6614",
+        "6869",
+        "6873",
+        "6994",
+        "7740",
+        "8374",
+        "3710",
+        "5483",
+        "6163",
+        "7842"
       ],
-      "turnover": 39367896621.0,
-      "previous_turnover": 33391917376.0,
-      "turnover_change": 5975979245.0,
-      "turnover_change_pct": 17.9,
-      "share_pct": 3.442,
-      "share_avg20_pct": 2.927,
-      "share_delta20_pp": 0.515
-    },
-    {
-      "code": "U100",
-      "name": "金融／金控業/銀行業/保險業",
-      "path": "金融 > 金控業/銀行業/保險業",
-      "industry": "金融",
-      "stage": "",
-      "members": [
-        "2801",
-        "2812",
-        "2816",
-        "2820",
-        "2832",
-        "2834",
-        "2836",
-        "2838",
-        "2845",
-        "2849",
-        "2850",
-        "2851",
-        "2852",
-        "2880",
-        "2881",
-        "2882",
-        "2883",
-        "2884",
-        "2885",
-        "2886",
-        "2887",
-        "2889",
-        "2890",
-        "2891",
-        "2892",
-        "2897",
-        "5876",
-        "5880",
-        "5878",
-        "6028"
-      ],
-      "turnover": 22196368603.0,
-      "previous_turnover": 16289364371.0,
-      "turnover_change": 5907004232.0,
-      "turnover_change_pct": 36.26,
-      "share_pct": 1.941,
-      "share_avg20_pct": 1.738,
-      "share_delta20_pp": 0.203
-    },
-    {
-      "code": "P200",
-      "name": "電機機械／傳動元件",
-      "path": "電機機械 > 傳動元件",
-      "industry": "電機機械",
-      "stage": "上游",
-      "members": [
-        "1504",
-        "1526",
-        "1536",
-        "1597",
-        "2049",
-        "2233",
-        "2308",
-        "4540",
-        "4576",
-        "4583",
-        "4590",
-        "1590",
-        "2248",
-        "4528",
-        "4534",
-        "4561",
-        "4568",
-        "4580",
-        "4584",
-        "6982"
-      ],
-      "turnover": 34401884517.0,
-      "previous_turnover": 28513808773.0,
-      "turnover_change": 5888075744.0,
-      "turnover_change_pct": 20.65,
-      "share_pct": 3.008,
-      "share_avg20_pct": 2.027,
-      "share_delta20_pp": 0.981
+      "turnover": 41568979146.0,
+      "previous_turnover": 34976524445.0,
+      "turnover_change": 6592454701.0,
+      "turnover_change_pct": 18.85,
+      "share_pct": 3.633,
+      "share_avg20_pct": 2.743,
+      "share_delta20_pp": 0.89
     },
     {
       "code": "D600",
@@ -19647,13 +19398,275 @@
         "8092",
         "1591"
       ],
-      "turnover": 50883434567.0,
+      "turnover": 51376528067.0,
       "previous_turnover": 45032344186.0,
-      "turnover_change": 5851090381.0,
-      "turnover_change_pct": 12.99,
-      "share_pct": 4.449,
+      "turnover_change": 6344183881.0,
+      "turnover_change_pct": 14.09,
+      "share_pct": 4.49,
       "share_avg20_pct": 4.102,
-      "share_delta20_pp": 0.347
+      "share_delta20_pp": 0.388
+    },
+    {
+      "code": "5340",
+      "name": "人工智慧／智慧設備",
+      "path": "人工智慧 > 智慧設備",
+      "industry": "人工智慧",
+      "stage": "應用與服務",
+      "members": [
+        "2308",
+        "2357",
+        "4585",
+        "6412",
+        "6658",
+        "7822",
+        "8374",
+        "3297",
+        "3455",
+        "5209",
+        "6163",
+        "6263",
+        "6664",
+        "6680",
+        "6739",
+        "6752",
+        "6865",
+        "6870",
+        "6877",
+        "6997",
+        "7825",
+        "6741"
+      ],
+      "turnover": 36377590617.0,
+      "previous_turnover": 30058499970.0,
+      "turnover_change": 6319090647.0,
+      "turnover_change_pct": 21.02,
+      "share_pct": 3.179,
+      "share_avg20_pct": 2.101,
+      "share_delta20_pp": 1.078
+    },
+    {
+      "code": "AD12",
+      "name": "智慧電網／配電管理設施",
+      "path": "智慧電網 > 配電管理設施",
+      "industry": "智慧電網",
+      "stage": "",
+      "members": [
+        "1513",
+        "1519",
+        "2301",
+        "2308",
+        "2360",
+        "2459",
+        "3622",
+        "6278",
+        "6282",
+        "6441"
+      ],
+      "turnover": 45240380383.0,
+      "previous_turnover": 39172827559.0,
+      "turnover_change": 6067552824.0,
+      "turnover_change_pct": 15.49,
+      "share_pct": 3.953,
+      "share_avg20_pct": 3.19,
+      "share_delta20_pp": 0.763
+    },
+    {
+      "code": "L610",
+      "name": "印刷電路板／硬板、軟板、IC載板製造",
+      "path": "印刷電路板 > 硬板、軟板、IC載板製造",
+      "industry": "印刷電路板",
+      "stage": "中游",
+      "members": [
+        "2313",
+        "2316",
+        "2328",
+        "2355",
+        "2367",
+        "2368",
+        "2402",
+        "3037",
+        "3044",
+        "3229",
+        "3321",
+        "3715",
+        "5469",
+        "6108",
+        "6141",
+        "6153",
+        "6191",
+        "6269",
+        "6271",
+        "6835",
+        "8046",
+        "8213",
+        "4927",
+        "4958",
+        "3114",
+        "3115",
+        "3276",
+        "3390",
+        "4909",
+        "5291",
+        "5321",
+        "5381",
+        "5439",
+        "5464",
+        "6156",
+        "6194",
+        "6207",
+        "6210",
+        "6597",
+        "8074",
+        "8155"
+      ],
+      "turnover": 64199698903.0,
+      "previous_turnover": 58156395638.0,
+      "turnover_change": 6043303265.0,
+      "turnover_change_pct": 10.39,
+      "share_pct": 5.61,
+      "share_avg20_pct": 7.278,
+      "share_delta20_pp": -1.668
+    },
+    {
+      "code": "S400",
+      "name": "建材營造／機電工程",
+      "path": "建材營造 > 機電工程",
+      "industry": "建材營造",
+      "stage": "上游",
+      "members": [
+        "1472",
+        "1503",
+        "1504",
+        "2308",
+        "2371",
+        "2597",
+        "3018",
+        "9945",
+        "5536",
+        "6122",
+        "6228",
+        "8383"
+      ],
+      "turnover": 33475564758.0,
+      "previous_turnover": 27452954994.0,
+      "turnover_change": 6022609764.0,
+      "turnover_change_pct": 21.94,
+      "share_pct": 2.925,
+      "share_avg20_pct": 1.969,
+      "share_delta20_pp": 0.957
+    },
+    {
+      "code": "A310",
+      "name": "電動車輛產業／鋰電池材料",
+      "path": "電動車輛產業 > 鋰電池材料",
+      "industry": "電動車輛產業",
+      "stage": "上游",
+      "members": [
+        "1605",
+        "1611",
+        "1723",
+        "2308",
+        "2352",
+        "2371",
+        "3010",
+        "4739",
+        "5234",
+        "6278",
+        "8215",
+        "4721",
+        "8038",
+        "8358",
+        "5227"
+      ],
+      "turnover": 39367896621.0,
+      "previous_turnover": 33391917376.0,
+      "turnover_change": 5975979245.0,
+      "turnover_change_pct": 17.9,
+      "share_pct": 3.44,
+      "share_avg20_pct": 2.927,
+      "share_delta20_pp": 0.513
+    },
+    {
+      "code": "U100",
+      "name": "金融／金控業/銀行業/保險業",
+      "path": "金融 > 金控業/銀行業/保險業",
+      "industry": "金融",
+      "stage": "",
+      "members": [
+        "2801",
+        "2812",
+        "2816",
+        "2820",
+        "2832",
+        "2834",
+        "2836",
+        "2838",
+        "2845",
+        "2849",
+        "2850",
+        "2851",
+        "2852",
+        "2880",
+        "2881",
+        "2882",
+        "2883",
+        "2884",
+        "2885",
+        "2886",
+        "2887",
+        "2889",
+        "2890",
+        "2891",
+        "2892",
+        "2897",
+        "5876",
+        "5880",
+        "5878",
+        "6028"
+      ],
+      "turnover": 22196368603.0,
+      "previous_turnover": 16289364371.0,
+      "turnover_change": 5907004232.0,
+      "turnover_change_pct": 36.26,
+      "share_pct": 1.94,
+      "share_avg20_pct": 1.738,
+      "share_delta20_pp": 0.202
+    },
+    {
+      "code": "P200",
+      "name": "電機機械／傳動元件",
+      "path": "電機機械 > 傳動元件",
+      "industry": "電機機械",
+      "stage": "上游",
+      "members": [
+        "1504",
+        "1526",
+        "1536",
+        "1597",
+        "2049",
+        "2233",
+        "2308",
+        "4540",
+        "4576",
+        "4583",
+        "4590",
+        "1590",
+        "2248",
+        "4528",
+        "4534",
+        "4561",
+        "4568",
+        "4580",
+        "4584",
+        "6982"
+      ],
+      "turnover": 34401884517.0,
+      "previous_turnover": 28513808773.0,
+      "turnover_change": 5888075744.0,
+      "turnover_change_pct": 20.65,
+      "share_pct": 3.006,
+      "share_avg20_pct": 2.027,
+      "share_delta20_pp": 0.979
     },
     {
       "code": "P800",
@@ -19680,9 +19693,9 @@
       "previous_turnover": 31635963975.0,
       "turnover_change": 5812475934.0,
       "turnover_change_pct": 18.37,
-      "share_pct": 3.274,
+      "share_pct": 3.272,
       "share_avg20_pct": 2.199,
-      "share_delta20_pp": 1.075
+      "share_delta20_pp": 1.073
     },
     {
       "code": "AB2A",
@@ -19701,9 +19714,9 @@
       "previous_turnover": 27346149325.0,
       "turnover_change": 5752052781.0,
       "turnover_change_pct": 21.03,
-      "share_pct": 2.894,
+      "share_pct": 2.892,
       "share_avg20_pct": 1.895,
-      "share_delta20_pp": 0.999
+      "share_delta20_pp": 0.997
     },
     {
       "code": "D170",
@@ -19735,9 +19748,9 @@
       "previous_turnover": 28312826047.0,
       "turnover_change": 5720411865.0,
       "turnover_change_pct": 20.2,
-      "share_pct": 2.976,
+      "share_pct": 2.974,
       "share_avg20_pct": 2.004,
-      "share_delta20_pp": 0.972
+      "share_delta20_pp": 0.97
     },
     {
       "code": "FN00",
@@ -19813,37 +19826,9 @@
       "previous_turnover": 33416021354.0,
       "turnover_change": 5572087874.0,
       "turnover_change_pct": 16.67,
-      "share_pct": 3.409,
+      "share_pct": 3.407,
       "share_avg20_pct": 3.085,
-      "share_delta20_pp": 0.324
-    },
-    {
-      "code": "S400",
-      "name": "建材營造／機電工程",
-      "path": "建材營造 > 機電工程",
-      "industry": "建材營造",
-      "stage": "上游",
-      "members": [
-        "1472",
-        "1503",
-        "1504",
-        "2308",
-        "2371",
-        "2597",
-        "3018",
-        "9945",
-        "5536",
-        "6122",
-        "6228",
-        "8383"
-      ],
-      "turnover": 32982471258.0,
-      "previous_turnover": 27452954994.0,
-      "turnover_change": 5529516264.0,
-      "turnover_change_pct": 20.14,
-      "share_pct": 2.884,
-      "share_avg20_pct": 1.969,
-      "share_delta20_pp": 0.915
+      "share_delta20_pp": 0.322
     },
     {
       "code": "A160",
@@ -19878,9 +19863,9 @@
       "previous_turnover": 27686956979.0,
       "turnover_change": 5529109527.0,
       "turnover_change_pct": 19.97,
-      "share_pct": 2.904,
+      "share_pct": 2.903,
       "share_avg20_pct": 1.906,
-      "share_delta20_pp": 0.998
+      "share_delta20_pp": 0.996
     },
     {
       "code": "5440",
@@ -19916,9 +19901,9 @@
       "previous_turnover": 27659474585.0,
       "turnover_change": 5501018946.0,
       "turnover_change_pct": 19.89,
-      "share_pct": 2.899,
+      "share_pct": 2.898,
       "share_avg20_pct": 1.838,
-      "share_delta20_pp": 1.061
+      "share_delta20_pp": 1.06
     },
     {
       "code": "A330",
@@ -19947,9 +19932,9 @@
       "previous_turnover": 29654473085.0,
       "turnover_change": 5465072063.0,
       "turnover_change_pct": 18.43,
-      "share_pct": 3.071,
+      "share_pct": 3.069,
       "share_avg20_pct": 2.27,
-      "share_delta20_pp": 0.801
+      "share_delta20_pp": 0.799
     },
     {
       "code": "5350",
@@ -19995,9 +19980,9 @@
       "previous_turnover": 28335986078.0,
       "turnover_change": 5406050454.0,
       "turnover_change_pct": 19.08,
-      "share_pct": 2.95,
+      "share_pct": 2.949,
       "share_avg20_pct": 1.908,
-      "share_delta20_pp": 1.042
+      "share_delta20_pp": 1.04
     },
     {
       "code": "5610",
@@ -20043,9 +20028,9 @@
       "previous_turnover": 30936391686.0,
       "turnover_change": 5392697913.0,
       "turnover_change_pct": 17.43,
-      "share_pct": 3.176,
+      "share_pct": 3.175,
       "share_avg20_pct": 1.915,
-      "share_delta20_pp": 1.261
+      "share_delta20_pp": 1.26
     },
     {
       "code": "5620",
@@ -20085,9 +20070,9 @@
       "previous_turnover": 27836405997.0,
       "turnover_change": 5306355152.0,
       "turnover_change_pct": 19.06,
-      "share_pct": 2.898,
+      "share_pct": 2.896,
       "share_avg20_pct": 1.849,
-      "share_delta20_pp": 1.049
+      "share_delta20_pp": 1.047
     },
     {
       "code": "C228",
@@ -20123,9 +20108,9 @@
       "previous_turnover": 26067610485.0,
       "turnover_change": 5290254223.0,
       "turnover_change_pct": 20.29,
-      "share_pct": 2.742,
+      "share_pct": 2.74,
       "share_avg20_pct": 1.781,
-      "share_delta20_pp": 0.96
+      "share_delta20_pp": 0.959
     },
     {
       "code": "B600",
@@ -20151,9 +20136,9 @@
       "previous_turnover": 31422339174.0,
       "turnover_change": 5271564344.0,
       "turnover_change_pct": 16.78,
-      "share_pct": 3.208,
+      "share_pct": 3.207,
       "share_avg20_pct": 2.396,
-      "share_delta20_pp": 0.812
+      "share_delta20_pp": 0.81
     },
     {
       "code": "5320",
@@ -20188,9 +20173,9 @@
       "previous_turnover": 27013300260.0,
       "turnover_change": 5250521480.0,
       "turnover_change_pct": 19.44,
-      "share_pct": 2.821,
+      "share_pct": 2.819,
       "share_avg20_pct": 1.835,
-      "share_delta20_pp": 0.986
+      "share_delta20_pp": 0.984
     },
     {
       "code": "X500",
@@ -20208,9 +20193,9 @@
       "previous_turnover": 25930045989.0,
       "turnover_change": 5127123224.0,
       "turnover_change_pct": 19.77,
-      "share_pct": 2.715,
+      "share_pct": 2.714,
       "share_avg20_pct": 1.733,
-      "share_delta20_pp": 0.982
+      "share_delta20_pp": 0.981
     },
     {
       "code": "C211",
@@ -20243,9 +20228,9 @@
       "previous_turnover": 31542636033.0,
       "turnover_change": 5106944689.0,
       "turnover_change_pct": 16.19,
-      "share_pct": 3.204,
+      "share_pct": 3.203,
       "share_avg20_pct": 2.427,
-      "share_delta20_pp": 0.777
+      "share_delta20_pp": 0.776
     },
     {
       "code": "5670",
@@ -20274,9 +20259,9 @@
       "previous_turnover": 26775321799.0,
       "turnover_change": 5080706775.0,
       "turnover_change_pct": 18.98,
-      "share_pct": 2.785,
+      "share_pct": 2.784,
       "share_avg20_pct": 1.803,
-      "share_delta20_pp": 0.982
+      "share_delta20_pp": 0.981
     },
     {
       "code": "PA00",
@@ -20300,9 +20285,9 @@
       "previous_turnover": 27595894221.0,
       "turnover_change": 4947681762.0,
       "turnover_change_pct": 17.93,
-      "share_pct": 2.845,
+      "share_pct": 2.844,
       "share_avg20_pct": 1.938,
-      "share_delta20_pp": 0.908
+      "share_delta20_pp": 0.906
     },
     {
       "code": "P400",
@@ -20331,9 +20316,9 @@
       "previous_turnover": 50338845588.0,
       "turnover_change": 4919051764.0,
       "turnover_change_pct": 9.77,
-      "share_pct": 4.831,
+      "share_pct": 4.829,
       "share_avg20_pct": 4.433,
-      "share_delta20_pp": 0.398
+      "share_delta20_pp": 0.396
     },
     {
       "code": "F700",
@@ -20377,9 +20362,9 @@
       "previous_turnover": 17942391257.0,
       "turnover_change": 4744895749.0,
       "turnover_change_pct": 26.45,
-      "share_pct": 1.984,
+      "share_pct": 1.983,
       "share_avg20_pct": 1.918,
-      "share_delta20_pp": 0.065
+      "share_delta20_pp": 0.064
     },
     {
       "code": "5630",
@@ -20421,9 +20406,9 @@
       "previous_turnover": 30642411097.0,
       "turnover_change": 4728370816.0,
       "turnover_change_pct": 15.43,
-      "share_pct": 3.092,
+      "share_pct": 3.091,
       "share_avg20_pct": 1.851,
-      "share_delta20_pp": 1.242
+      "share_delta20_pp": 1.24
     },
     {
       "code": "5310",
@@ -20474,9 +20459,9 @@
       "previous_turnover": 30086475352.0,
       "turnover_change": 4616779846.0,
       "turnover_change_pct": 15.35,
-      "share_pct": 3.034,
+      "share_pct": 3.033,
       "share_avg20_pct": 1.966,
-      "share_delta20_pp": 1.068
+      "share_delta20_pp": 1.067
     },
     {
       "code": "5360",
@@ -20512,9 +20497,9 @@
       "previous_turnover": 28338132679.0,
       "turnover_change": 4605063490.0,
       "turnover_change_pct": 16.25,
-      "share_pct": 2.88,
+      "share_pct": 2.879,
       "share_avg20_pct": 1.902,
-      "share_delta20_pp": 0.978
+      "share_delta20_pp": 0.977
     },
     {
       "code": "C231",
@@ -20557,9 +20542,9 @@
       "previous_turnover": 29853615017.0,
       "turnover_change": 4510340946.0,
       "turnover_change_pct": 15.11,
-      "share_pct": 3.004,
+      "share_pct": 3.003,
       "share_avg20_pct": 1.852,
-      "share_delta20_pp": 1.153
+      "share_delta20_pp": 1.151
     },
     {
       "code": "5491",
@@ -20597,7 +20582,7 @@
       "previous_turnover": 6388739897.0,
       "turnover_change": 4488073267.0,
       "turnover_change_pct": 70.25,
-      "share_pct": 0.951,
+      "share_pct": 0.95,
       "share_avg20_pct": 0.614,
       "share_delta20_pp": 0.337
     },
@@ -20637,9 +20622,9 @@
       "previous_turnover": 6627182050.0,
       "turnover_change": 4373378265.0,
       "turnover_change_pct": 65.99,
-      "share_pct": 0.962,
+      "share_pct": 0.961,
       "share_avg20_pct": 0.63,
-      "share_delta20_pp": 0.332
+      "share_delta20_pp": 0.331
     },
     {
       "code": "F800",
@@ -20681,9 +20666,9 @@
       "previous_turnover": 39451392532.0,
       "turnover_change": 4291067380.0,
       "turnover_change_pct": 10.88,
-      "share_pct": 3.824,
+      "share_pct": 3.822,
       "share_avg20_pct": 2.893,
-      "share_delta20_pp": 0.931
+      "share_delta20_pp": 0.929
     },
     {
       "code": "5330",
@@ -20733,9 +20718,9 @@
       "previous_turnover": 32737407920.0,
       "turnover_change": 4116945627.0,
       "turnover_change_pct": 12.58,
-      "share_pct": 3.222,
+      "share_pct": 3.221,
       "share_avg20_pct": 1.988,
-      "share_delta20_pp": 1.234
+      "share_delta20_pp": 1.232
     },
     {
       "code": "DA00",
@@ -20769,9 +20754,9 @@
       "previous_turnover": 39411233129.0,
       "turnover_change": 3928979400.0,
       "turnover_change_pct": 9.97,
-      "share_pct": 3.789,
+      "share_pct": 3.787,
       "share_avg20_pct": 2.522,
-      "share_delta20_pp": 1.267
+      "share_delta20_pp": 1.265
     },
     {
       "code": "AD11",
@@ -20801,9 +20786,9 @@
       "previous_turnover": 37017194144.0,
       "turnover_change": 3751394281.0,
       "turnover_change_pct": 10.13,
-      "share_pct": 3.564,
+      "share_pct": 3.563,
       "share_avg20_pct": 2.968,
-      "share_delta20_pp": 0.596
+      "share_delta20_pp": 0.594
     },
     {
       "code": "QE00",
@@ -20883,9 +20868,9 @@
       "previous_turnover": 34802344050.0,
       "turnover_change": 3611349171.0,
       "turnover_change_pct": 10.38,
-      "share_pct": 3.359,
+      "share_pct": 3.357,
       "share_avg20_pct": 2.245,
-      "share_delta20_pp": 1.113
+      "share_delta20_pp": 1.111
     },
     {
       "code": "FB00",
@@ -20922,9 +20907,9 @@
       "previous_turnover": 45441826603.0,
       "turnover_change": 3379086606.0,
       "turnover_change_pct": 7.44,
-      "share_pct": 4.268,
+      "share_pct": 4.266,
       "share_avg20_pct": 3.371,
-      "share_delta20_pp": 0.897
+      "share_delta20_pp": 0.895
     },
     {
       "code": "DB00",
@@ -20972,9 +20957,9 @@
       "previous_turnover": 41829827459.0,
       "turnover_change": 3294638989.0,
       "turnover_change_pct": 7.88,
-      "share_pct": 3.945,
+      "share_pct": 3.943,
       "share_avg20_pct": 3.314,
-      "share_delta20_pp": 0.631
+      "share_delta20_pp": 0.629
     },
     {
       "code": "3110",
@@ -21080,9 +21065,9 @@
       "previous_turnover": 5803555144.0,
       "turnover_change": 3035824722.0,
       "turnover_change_pct": 52.31,
-      "share_pct": 0.773,
+      "share_pct": 0.772,
       "share_avg20_pct": 0.946,
-      "share_delta20_pp": -0.173
+      "share_delta20_pp": -0.174
     },
     {
       "code": "3300",
@@ -21106,7 +21091,7 @@
       "turnover_change_pct": 105.67,
       "share_pct": 0.511,
       "share_avg20_pct": 0.376,
-      "share_delta20_pp": 0.136
+      "share_delta20_pp": 0.135
     },
     {
       "code": "C225",
@@ -21148,13 +21133,13 @@
         "6762",
         "7814"
       ],
-      "turnover": 8529449529.0,
+      "turnover": 8588649529.0,
       "previous_turnover": 5749579629.0,
-      "turnover_change": 2779869900.0,
-      "turnover_change_pct": 48.35,
-      "share_pct": 0.746,
+      "turnover_change": 2839069900.0,
+      "turnover_change_pct": 49.38,
+      "share_pct": 0.751,
       "share_avg20_pct": 0.394,
-      "share_delta20_pp": 0.351
+      "share_delta20_pp": 0.356
     },
     {
       "code": "E300",
@@ -21187,9 +21172,9 @@
       "previous_turnover": 41805543088.0,
       "turnover_change": 2762713889.0,
       "turnover_change_pct": 6.61,
-      "share_pct": 3.897,
+      "share_pct": 3.895,
       "share_avg20_pct": 3.762,
-      "share_delta20_pp": 0.135
+      "share_delta20_pp": 0.133
     },
     {
       "code": "J700",
@@ -21221,9 +21206,9 @@
       "previous_turnover": 70574829875.0,
       "turnover_change": 2676704366.0,
       "turnover_change_pct": 3.79,
-      "share_pct": 6.404,
+      "share_pct": 6.401,
       "share_avg20_pct": 5.939,
-      "share_delta20_pp": 0.465
+      "share_delta20_pp": 0.462
     },
     {
       "code": "E200",
@@ -21243,9 +21228,9 @@
       "previous_turnover": 35151405111.0,
       "turnover_change": 2673651382.0,
       "turnover_change_pct": 7.61,
-      "share_pct": 3.307,
+      "share_pct": 3.305,
       "share_avg20_pct": 2.707,
-      "share_delta20_pp": 0.6
+      "share_delta20_pp": 0.598
     },
     {
       "code": "A110",
@@ -21324,13 +21309,13 @@
         "4772",
         "5483"
       ],
-      "turnover": 6034098243.0,
+      "turnover": 6052719083.0,
       "previous_turnover": 3690164633.0,
-      "turnover_change": 2343933610.0,
-      "turnover_change_pct": 63.52,
-      "share_pct": 0.528,
+      "turnover_change": 2362554450.0,
+      "turnover_change_pct": 64.02,
+      "share_pct": 0.529,
       "share_avg20_pct": 0.891,
-      "share_delta20_pp": -0.364
+      "share_delta20_pp": -0.363
     },
     {
       "code": "5738",
@@ -21349,7 +21334,7 @@
       "previous_turnover": 4876460474.0,
       "turnover_change": 2176053261.0,
       "turnover_change_pct": 44.62,
-      "share_pct": 0.617,
+      "share_pct": 0.616,
       "share_avg20_pct": 0.568,
       "share_delta20_pp": 0.048
     },
@@ -21396,9 +21381,9 @@
       "previous_turnover": 38257877439.0,
       "turnover_change": 2152254346.0,
       "turnover_change_pct": 5.63,
-      "share_pct": 3.533,
+      "share_pct": 3.531,
       "share_avg20_pct": 2.581,
-      "share_delta20_pp": 0.952
+      "share_delta20_pp": 0.95
     },
     {
       "code": "5732",
@@ -21421,7 +21406,7 @@
       "turnover_change_pct": 42.72,
       "share_pct": 0.621,
       "share_avg20_pct": 0.58,
-      "share_delta20_pp": 0.041
+      "share_delta20_pp": 0.04
     },
     {
       "code": "5736",
@@ -21444,7 +21429,7 @@
       "turnover_change_pct": 42.72,
       "share_pct": 0.621,
       "share_avg20_pct": 0.58,
-      "share_delta20_pp": 0.041
+      "share_delta20_pp": 0.04
     },
     {
       "code": "A240",
@@ -21488,7 +21473,7 @@
       "turnover_change_pct": 13.68,
       "share_pct": 1.538,
       "share_avg20_pct": 2.151,
-      "share_delta20_pp": -0.612
+      "share_delta20_pp": -0.613
     },
     {
       "code": "5870",
@@ -21510,9 +21495,9 @@
       "previous_turnover": 13683496512.0,
       "turnover_change": 2084231768.0,
       "turnover_change_pct": 15.23,
-      "share_pct": 1.379,
+      "share_pct": 1.378,
       "share_avg20_pct": 1.349,
-      "share_delta20_pp": 0.03
+      "share_delta20_pp": 0.029
     },
     {
       "code": "FL00",
@@ -21538,9 +21523,9 @@
       "previous_turnover": 38354073083.0,
       "turnover_change": 2075221676.0,
       "turnover_change_pct": 5.41,
-      "share_pct": 3.535,
+      "share_pct": 3.533,
       "share_avg20_pct": 2.365,
-      "share_delta20_pp": 1.17
+      "share_delta20_pp": 1.168
     },
     {
       "code": "A250",
@@ -21596,9 +21581,9 @@
       "previous_turnover": 58487776862.0,
       "turnover_change": 2065655416.0,
       "turnover_change_pct": 3.53,
-      "share_pct": 5.294,
+      "share_pct": 5.291,
       "share_avg20_pct": 4.728,
-      "share_delta20_pp": 0.566
+      "share_delta20_pp": 0.563
     },
     {
       "code": "F600",
@@ -21629,9 +21614,9 @@
       "previous_turnover": 15603853827.0,
       "turnover_change": 1994922425.0,
       "turnover_change_pct": 12.78,
-      "share_pct": 1.539,
+      "share_pct": 1.538,
       "share_avg20_pct": 1.625,
-      "share_delta20_pp": -0.087
+      "share_delta20_pp": -0.088
     },
     {
       "code": "R500",
@@ -21675,6 +21660,87 @@
       "share_delta20_pp": 0.199
     },
     {
+      "code": "D400",
+      "name": "半導體／生產製程及檢測設備（中游）",
+      "path": "半導體 > 生產製程及檢測設備",
+      "industry": "半導體",
+      "stage": "中游",
+      "members": [
+        "2360",
+        "2467",
+        "3030",
+        "3413",
+        "3535",
+        "3583",
+        "4949",
+        "5222",
+        "5434",
+        "6277",
+        "6438",
+        "6515",
+        "6658",
+        "6706",
+        "6789",
+        "6909",
+        "6937",
+        "7631",
+        "7730",
+        "7769",
+        "7795",
+        "7822",
+        "8374",
+        "3114",
+        "3178",
+        "3339",
+        "3402",
+        "3455",
+        "3467",
+        "3485",
+        "3551",
+        "3680",
+        "4772",
+        "5493",
+        "5536",
+        "6207",
+        "6208",
+        "6223",
+        "6510",
+        "6532",
+        "6613",
+        "6664",
+        "6667",
+        "6683",
+        "6725",
+        "6735",
+        "6788",
+        "6823",
+        "6829",
+        "6877",
+        "6895",
+        "6953",
+        "6983",
+        "7556",
+        "7704",
+        "7728",
+        "7751",
+        "7772",
+        "7810",
+        "7828",
+        "7856",
+        "8027",
+        "8091",
+        "8240",
+        "8383"
+      ],
+      "turnover": 30377193740.0,
+      "previous_turnover": 28552239738.0,
+      "turnover_change": 1824954002.0,
+      "turnover_change_pct": 6.39,
+      "share_pct": 2.655,
+      "share_avg20_pct": 3.231,
+      "share_delta20_pp": -0.577
+    },
+    {
       "code": "FT00",
       "name": "電腦及週邊設備／機構樞紐",
       "path": "電腦及週邊設備 > 機構樞紐",
@@ -21695,7 +21761,7 @@
       "turnover_change_pct": 55.27,
       "share_pct": 0.44,
       "share_avg20_pct": 0.366,
-      "share_delta20_pp": 0.074
+      "share_delta20_pp": 0.073
     },
     {
       "code": "ID00",
@@ -21717,7 +21783,7 @@
       "turnover_change_pct": 54.1,
       "share_pct": 0.419,
       "share_avg20_pct": 0.288,
-      "share_delta20_pp": 0.131
+      "share_delta20_pp": 0.13
     },
     {
       "code": "C110",
@@ -21753,7 +21819,7 @@
       "previous_turnover": 3502123499.0,
       "turnover_change": 1560546598.0,
       "turnover_change_pct": 44.56,
-      "share_pct": 0.443,
+      "share_pct": 0.442,
       "share_avg20_pct": 0.264,
       "share_delta20_pp": 0.179
     },
@@ -21809,9 +21875,9 @@
       "previous_turnover": 71204899205.0,
       "turnover_change": 1544697776.0,
       "turnover_change_pct": 2.17,
-      "share_pct": 6.361,
+      "share_pct": 6.357,
       "share_avg20_pct": 6.227,
-      "share_delta20_pp": 0.134
+      "share_delta20_pp": 0.131
     },
     {
       "code": "FE00",
@@ -21894,9 +21960,9 @@
       "previous_turnover": 22038944368.0,
       "turnover_change": 1439100137.0,
       "turnover_change_pct": 6.53,
-      "share_pct": 2.053,
+      "share_pct": 2.052,
       "share_avg20_pct": 2.427,
-      "share_delta20_pp": -0.375
+      "share_delta20_pp": -0.376
     },
     {
       "code": "R400",
@@ -21936,87 +22002,6 @@
       "share_pct": 0.29,
       "share_avg20_pct": 0.142,
       "share_delta20_pp": 0.148
-    },
-    {
-      "code": "D400",
-      "name": "半導體／生產製程及檢測設備（中游）",
-      "path": "半導體 > 生產製程及檢測設備",
-      "industry": "半導體",
-      "stage": "中游",
-      "members": [
-        "2360",
-        "2467",
-        "3030",
-        "3413",
-        "3535",
-        "3583",
-        "4949",
-        "5222",
-        "5434",
-        "6277",
-        "6438",
-        "6515",
-        "6658",
-        "6706",
-        "6789",
-        "6909",
-        "6937",
-        "7631",
-        "7730",
-        "7769",
-        "7795",
-        "7822",
-        "8374",
-        "3114",
-        "3178",
-        "3339",
-        "3402",
-        "3455",
-        "3467",
-        "3485",
-        "3551",
-        "3680",
-        "4772",
-        "5493",
-        "5536",
-        "6207",
-        "6208",
-        "6223",
-        "6510",
-        "6532",
-        "6613",
-        "6664",
-        "6667",
-        "6683",
-        "6725",
-        "6735",
-        "6788",
-        "6823",
-        "6829",
-        "6877",
-        "6895",
-        "6953",
-        "6983",
-        "7556",
-        "7704",
-        "7728",
-        "7751",
-        "7772",
-        "7810",
-        "7828",
-        "7856",
-        "8027",
-        "8091",
-        "8240",
-        "8383"
-      ],
-      "turnover": 29884100240.0,
-      "previous_turnover": 28552239738.0,
-      "turnover_change": 1331860502.0,
-      "turnover_change_pct": 4.66,
-      "share_pct": 2.613,
-      "share_avg20_pct": 3.231,
-      "share_delta20_pp": -0.619
     },
     {
       "code": "5412",
@@ -22070,7 +22055,7 @@
       "previous_turnover": 2256220402.0,
       "turnover_change": 1205440877.0,
       "turnover_change_pct": 53.43,
-      "share_pct": 0.303,
+      "share_pct": 0.302,
       "share_avg20_pct": 0.419,
       "share_delta20_pp": -0.116
     },
@@ -22089,9 +22074,9 @@
       "previous_turnover": 24741721819.0,
       "turnover_change": 1169501180.0,
       "turnover_change_pct": 4.73,
-      "share_pct": 2.265,
+      "share_pct": 2.264,
       "share_avg20_pct": 2.96,
-      "share_delta20_pp": -0.695
+      "share_delta20_pp": -0.696
     },
     {
       "code": "D110",
@@ -22113,9 +22098,9 @@
       "previous_turnover": 34130079002.0,
       "turnover_change": 1168610621.0,
       "turnover_change_pct": 3.42,
-      "share_pct": 3.086,
+      "share_pct": 3.085,
       "share_avg20_pct": 2.009,
-      "share_delta20_pp": 1.077
+      "share_delta20_pp": 1.075
     },
     {
       "code": "A140",
@@ -22143,7 +22128,7 @@
       "turnover_change_pct": 77.88,
       "share_pct": 0.23,
       "share_avg20_pct": 0.441,
-      "share_delta20_pp": -0.21
+      "share_delta20_pp": -0.211
     },
     {
       "code": "FQ00",
@@ -22177,9 +22162,50 @@
       "previous_turnover": 31574653172.0,
       "turnover_change": 1152282617.0,
       "turnover_change_pct": 3.65,
-      "share_pct": 2.861,
+      "share_pct": 2.86,
       "share_avg20_pct": 3.748,
-      "share_delta20_pp": -0.886
+      "share_delta20_pp": -0.888
+    },
+    {
+      "code": "PE00",
+      "name": "電機機械／機電系統工程",
+      "path": "電機機械 > 機電系統工程",
+      "industry": "電機機械",
+      "stage": "下游",
+      "members": [
+        "1503",
+        "1504",
+        "1513",
+        "1514",
+        "1519",
+        "1529",
+        "1535",
+        "1537",
+        "2352",
+        "2371",
+        "2397",
+        "2464",
+        "3018",
+        "4582",
+        "8374",
+        "4506",
+        "4549",
+        "4550",
+        "5536",
+        "6122",
+        "6125",
+        "6234",
+        "6275",
+        "7642",
+        "8383"
+      ],
+      "turnover": 7543699403.0,
+      "previous_turnover": 6399952418.0,
+      "turnover_change": 1143746985.0,
+      "turnover_change_pct": 17.87,
+      "share_pct": 0.659,
+      "share_avg20_pct": 0.541,
+      "share_delta20_pp": 0.118
     },
     {
       "code": "G100",
@@ -22202,13 +22228,13 @@
         "4768",
         "4772"
       ],
-      "turnover": 3328918927.0,
+      "turnover": 3347539767.0,
       "previous_turnover": 2225229500.0,
-      "turnover_change": 1103689427.0,
-      "turnover_change_pct": 49.6,
-      "share_pct": 0.291,
+      "turnover_change": 1122310267.0,
+      "turnover_change_pct": 50.44,
+      "share_pct": 0.293,
       "share_avg20_pct": 0.374,
-      "share_delta20_pp": -0.083
+      "share_delta20_pp": -0.082
     },
     {
       "code": "FH00",
@@ -22305,6 +22331,35 @@
       "share_delta20_pp": -0.551
     },
     {
+      "code": "PD00",
+      "name": "電機機械／冷凍空調設備及零件",
+      "path": "電機機械 > 冷凍空調設備及零件",
+      "industry": "電機機械",
+      "stage": "下游",
+      "members": [
+        "1503",
+        "1504",
+        "1506",
+        "1513",
+        "1614",
+        "2371",
+        "2459",
+        "4532",
+        "4523",
+        "4527",
+        "4543",
+        "5536",
+        "6275"
+      ],
+      "turnover": 2618491173.0,
+      "previous_turnover": 1572609417.0,
+      "turnover_change": 1045881756.0,
+      "turnover_change_pct": 66.51,
+      "share_pct": 0.229,
+      "share_avg20_pct": 0.238,
+      "share_delta20_pp": -0.009
+    },
+    {
       "code": "FG00",
       "name": "電腦及週邊設備／磁碟儲存系統",
       "path": "電腦及週邊設備 > 磁碟儲存系統",
@@ -22377,9 +22432,9 @@
       "previous_turnover": 38887291490.0,
       "turnover_change": 895145404.0,
       "turnover_change_pct": 2.3,
-      "share_pct": 3.478,
+      "share_pct": 3.476,
       "share_avg20_pct": 2.811,
-      "share_delta20_pp": 0.668
+      "share_delta20_pp": 0.666
     },
     {
       "code": "O100",
@@ -22399,9 +22454,9 @@
       "previous_turnover": 25138242312.0,
       "turnover_change": 872209969.0,
       "turnover_change_pct": 3.47,
-      "share_pct": 2.274,
+      "share_pct": 2.273,
       "share_avg20_pct": 3.375,
-      "share_delta20_pp": -1.101
+      "share_delta20_pp": -1.102
     },
     {
       "code": "M300",
@@ -22461,7 +22516,7 @@
       "previous_turnover": 5208023082.0,
       "turnover_change": 850371319.0,
       "turnover_change_pct": 16.33,
-      "share_pct": 0.53,
+      "share_pct": 0.529,
       "share_avg20_pct": 0.73,
       "share_delta20_pp": -0.201
     },
@@ -22606,7 +22661,117 @@
       "turnover_change_pct": 170.45,
       "share_pct": 0.114,
       "share_avg20_pct": 0.113,
-      "share_delta20_pp": 0.001
+      "share_delta20_pp": 0.0
+    },
+    {
+      "code": "X300",
+      "name": "其他／其他電子產品及電子服務產業",
+      "path": "其他 > 其他電子產品及電子服務產業",
+      "industry": "其他",
+      "stage": "",
+      "members": [
+        "1614",
+        "2059",
+        "2301",
+        "2312",
+        "2354",
+        "2359",
+        "2360",
+        "2371",
+        "2373",
+        "2390",
+        "2404",
+        "2414",
+        "2415",
+        "2423",
+        "2433",
+        "2459",
+        "2477",
+        "2482",
+        "2488",
+        "2497",
+        "3002",
+        "3003",
+        "3038",
+        "3040",
+        "3043",
+        "3055",
+        "3311",
+        "3679",
+        "3712",
+        "4585",
+        "4588",
+        "4764",
+        "5283",
+        "6139",
+        "6196",
+        "6201",
+        "6215",
+        "6277",
+        "6409",
+        "6689",
+        "6691",
+        "6698",
+        "6706",
+        "6743",
+        "6776",
+        "6830",
+        "6908",
+        "6944",
+        "7631",
+        "8021",
+        "8072",
+        "8201",
+        "8374",
+        "4935",
+        "5225",
+        "3206",
+        "3219",
+        "3289",
+        "3294",
+        "3303",
+        "3402",
+        "3465",
+        "3508",
+        "3551",
+        "3580",
+        "3587",
+        "3597",
+        "3628",
+        "4577",
+        "5345",
+        "5452",
+        "5536",
+        "6118",
+        "6146",
+        "6154",
+        "6187",
+        "6538",
+        "6654",
+        "6667",
+        "6735",
+        "6739",
+        "6761",
+        "6840",
+        "6855",
+        "6877",
+        "6884",
+        "6903",
+        "7703",
+        "7728",
+        "7792",
+        "7825",
+        "8034",
+        "8047",
+        "8109"
+      ],
+      "turnover": 26788380885.0,
+      "previous_turnover": 25986874298.0,
+      "turnover_change": 801506587.0,
+      "turnover_change_pct": 3.08,
+      "share_pct": 2.341,
+      "share_avg20_pct": 3.257,
+      "share_delta20_pp": -0.916
     },
     {
       "code": "S700",
@@ -22706,7 +22871,49 @@
       "turnover_change_pct": 40.96,
       "share_pct": 0.235,
       "share_avg20_pct": 0.257,
-      "share_delta20_pp": -0.021
+      "share_delta20_pp": -0.022
+    },
+    {
+      "code": "L700",
+      "name": "印刷電路板／生產製程及檢測設備",
+      "path": "印刷電路板 > 生產製程及檢測設備",
+      "industry": "印刷電路板",
+      "stage": "上游",
+      "members": [
+        "1528",
+        "2467",
+        "2493",
+        "3010",
+        "3030",
+        "3535",
+        "3563",
+        "6438",
+        "6658",
+        "6706",
+        "7730",
+        "7795",
+        "8438",
+        "1595",
+        "1785",
+        "3093",
+        "3455",
+        "3485",
+        "3498",
+        "4542",
+        "4577",
+        "5536",
+        "6664",
+        "6727",
+        "6877",
+        "7825"
+      ],
+      "turnover": 7962016361.0,
+      "previous_turnover": 7188218728.0,
+      "turnover_change": 773797633.0,
+      "turnover_change_pct": 10.76,
+      "share_pct": 0.696,
+      "share_avg20_pct": 0.871,
+      "share_delta20_pp": -0.176
     },
     {
       "code": "V300",
@@ -22827,9 +23034,9 @@
       "previous_turnover": 25236753791.0,
       "turnover_change": 690164693.0,
       "turnover_change_pct": 2.73,
-      "share_pct": 2.267,
+      "share_pct": 2.266,
       "share_avg20_pct": 3.353,
-      "share_delta20_pp": -1.086
+      "share_delta20_pp": -1.088
     },
     {
       "code": "N230",
@@ -22938,9 +23145,9 @@
       "previous_turnover": 23686729555.0,
       "turnover_change": 661625843.0,
       "turnover_change_pct": 2.79,
-      "share_pct": 2.129,
+      "share_pct": 2.128,
       "share_avg20_pct": 2.866,
-      "share_delta20_pp": -0.737
+      "share_delta20_pp": -0.738
     },
     {
       "code": "N210",
@@ -22961,50 +23168,9 @@
       "previous_turnover": 1368414314.0,
       "turnover_change": 650904910.0,
       "turnover_change_pct": 47.57,
-      "share_pct": 0.177,
+      "share_pct": 0.176,
       "share_avg20_pct": 0.422,
-      "share_delta20_pp": -0.245
-    },
-    {
-      "code": "PE00",
-      "name": "電機機械／機電系統工程",
-      "path": "電機機械 > 機電系統工程",
-      "industry": "電機機械",
-      "stage": "下游",
-      "members": [
-        "1503",
-        "1504",
-        "1513",
-        "1514",
-        "1519",
-        "1529",
-        "1535",
-        "1537",
-        "2352",
-        "2371",
-        "2397",
-        "2464",
-        "3018",
-        "4582",
-        "8374",
-        "4506",
-        "4549",
-        "4550",
-        "5536",
-        "6122",
-        "6125",
-        "6234",
-        "6275",
-        "7642",
-        "8383"
-      ],
-      "turnover": 7050605903.0,
-      "previous_turnover": 6399952418.0,
-      "turnover_change": 650653485.0,
-      "turnover_change_pct": 10.17,
-      "share_pct": 0.616,
-      "share_avg20_pct": 0.541,
-      "share_delta20_pp": 0.075
+      "share_delta20_pp": -0.246
     },
     {
       "code": "D1F0",
@@ -23055,9 +23221,9 @@
       "previous_turnover": 77469751926.0,
       "turnover_change": 618288578.0,
       "turnover_change_pct": 0.8,
-      "share_pct": 6.827,
+      "share_pct": 6.824,
       "share_avg20_pct": 6.996,
-      "share_delta20_pp": -0.169
+      "share_delta20_pp": -0.173
     },
     {
       "code": "V200",
@@ -23207,7 +23373,7 @@
       "previous_turnover": 2424533819.0,
       "turnover_change": 578494316.0,
       "turnover_change_pct": 23.86,
-      "share_pct": 0.263,
+      "share_pct": 0.262,
       "share_avg20_pct": 0.174,
       "share_delta20_pp": 0.089
     },
@@ -23307,35 +23473,6 @@
       "share_delta20_pp": 0.024
     },
     {
-      "code": "PD00",
-      "name": "電機機械／冷凍空調設備及零件",
-      "path": "電機機械 > 冷凍空調設備及零件",
-      "industry": "電機機械",
-      "stage": "下游",
-      "members": [
-        "1503",
-        "1504",
-        "1506",
-        "1513",
-        "1614",
-        "2371",
-        "2459",
-        "4532",
-        "4523",
-        "4527",
-        "4543",
-        "5536",
-        "6275"
-      ],
-      "turnover": 2125397673.0,
-      "previous_turnover": 1572609417.0,
-      "turnover_change": 552788256.0,
-      "turnover_change_pct": 35.15,
-      "share_pct": 0.186,
-      "share_avg20_pct": 0.238,
-      "share_delta20_pp": -0.052
-    },
-    {
       "code": "H600",
       "name": "觸控面板／膠材",
       "path": "觸控面板 > 膠材",
@@ -23417,6 +23554,38 @@
       "share_delta20_pp": -0.051
     },
     {
+      "code": "S800",
+      "name": "建材營造／工程承攬",
+      "path": "建材營造 > 工程承攬",
+      "industry": "建材營造",
+      "stage": "中游",
+      "members": [
+        "1402",
+        "1472",
+        "1603",
+        "2511",
+        "2527",
+        "2535",
+        "3052",
+        "3703",
+        "9917",
+        "9933",
+        "9958",
+        "5536",
+        "6122",
+        "6179",
+        "6228",
+        "8383"
+      ],
+      "turnover": 2293291626.0,
+      "previous_turnover": 1780352119.0,
+      "turnover_change": 512939507.0,
+      "turnover_change_pct": 28.81,
+      "share_pct": 0.2,
+      "share_avg20_pct": 0.218,
+      "share_delta20_pp": -0.018
+    },
+    {
       "code": "O700",
       "name": "紡織／染整",
       "path": "紡織 > 染整",
@@ -23448,9 +23617,9 @@
       "previous_turnover": 23592637266.0,
       "turnover_change": 503172962.0,
       "turnover_change_pct": 2.13,
-      "share_pct": 2.107,
+      "share_pct": 2.106,
       "share_avg20_pct": 2.836,
-      "share_delta20_pp": -0.73
+      "share_delta20_pp": -0.731
     },
     {
       "code": "5413",
@@ -23587,7 +23756,7 @@
       "turnover_change_pct": 9.32,
       "share_pct": 0.426,
       "share_avg20_pct": 0.298,
-      "share_delta20_pp": 0.129
+      "share_delta20_pp": 0.128
     },
     {
       "code": "O500",
@@ -23621,6 +23790,27 @@
       "share_pct": 0.126,
       "share_avg20_pct": 0.276,
       "share_delta20_pp": -0.15
+    },
+    {
+      "code": "S500",
+      "name": "建材營造／工程設計",
+      "path": "建材營造 > 工程設計",
+      "industry": "建材營造",
+      "stage": "上游",
+      "members": [
+        "2597",
+        "9945",
+        "5536",
+        "6228",
+        "8383"
+      ],
+      "turnover": 1400673483.0,
+      "previous_turnover": 995825272.0,
+      "turnover_change": 404848211.0,
+      "turnover_change_pct": 40.65,
+      "share_pct": 0.122,
+      "share_avg20_pct": 0.14,
+      "share_delta20_pp": -0.018
     },
     {
       "code": "Q900",
@@ -23730,7 +23920,7 @@
       "turnover_change_pct": 20.57,
       "share_pct": 0.195,
       "share_avg20_pct": 0.105,
-      "share_delta20_pp": 0.09
+      "share_delta20_pp": 0.089
     },
     {
       "code": "L500",
@@ -23841,7 +24031,7 @@
       "previous_turnover": 1473527373.0,
       "turnover_change": 362437578.0,
       "turnover_change_pct": 24.6,
-      "share_pct": 0.161,
+      "share_pct": 0.16,
       "share_avg20_pct": 0.166,
       "share_delta20_pp": -0.005
     },
@@ -23860,7 +24050,7 @@
       "previous_turnover": 1473527373.0,
       "turnover_change": 362437578.0,
       "turnover_change_pct": 24.6,
-      "share_pct": 0.161,
+      "share_pct": 0.16,
       "share_avg20_pct": 0.166,
       "share_delta20_pp": -0.005
     },
@@ -23879,7 +24069,7 @@
       "previous_turnover": 1473527373.0,
       "turnover_change": 362437578.0,
       "turnover_change_pct": 24.6,
-      "share_pct": 0.161,
+      "share_pct": 0.16,
       "share_avg20_pct": 0.166,
       "share_delta20_pp": -0.005
     },
@@ -23898,7 +24088,7 @@
       "previous_turnover": 1473527373.0,
       "turnover_change": 362437578.0,
       "turnover_change_pct": 24.6,
-      "share_pct": 0.161,
+      "share_pct": 0.16,
       "share_avg20_pct": 0.166,
       "share_delta20_pp": -0.005
     },
@@ -24012,119 +24202,9 @@
       "previous_turnover": 22835115986.0,
       "turnover_change": 313448202.0,
       "turnover_change_pct": 1.37,
-      "share_pct": 2.024,
+      "share_pct": 2.023,
       "share_avg20_pct": 2.611,
-      "share_delta20_pp": -0.587
-    },
-    {
-      "code": "X300",
-      "name": "其他／其他電子產品及電子服務產業",
-      "path": "其他 > 其他電子產品及電子服務產業",
-      "industry": "其他",
-      "stage": "",
-      "members": [
-        "1614",
-        "2059",
-        "2301",
-        "2312",
-        "2354",
-        "2359",
-        "2360",
-        "2371",
-        "2373",
-        "2390",
-        "2404",
-        "2414",
-        "2415",
-        "2423",
-        "2433",
-        "2459",
-        "2477",
-        "2482",
-        "2488",
-        "2497",
-        "3002",
-        "3003",
-        "3038",
-        "3040",
-        "3043",
-        "3055",
-        "3311",
-        "3679",
-        "3712",
-        "4585",
-        "4588",
-        "4764",
-        "5283",
-        "6139",
-        "6196",
-        "6201",
-        "6215",
-        "6277",
-        "6409",
-        "6689",
-        "6691",
-        "6698",
-        "6706",
-        "6743",
-        "6776",
-        "6830",
-        "6908",
-        "6944",
-        "7631",
-        "8021",
-        "8072",
-        "8201",
-        "8374",
-        "4935",
-        "5225",
-        "3206",
-        "3219",
-        "3289",
-        "3294",
-        "3303",
-        "3402",
-        "3465",
-        "3508",
-        "3551",
-        "3580",
-        "3587",
-        "3597",
-        "3628",
-        "4577",
-        "5345",
-        "5452",
-        "5536",
-        "6118",
-        "6146",
-        "6154",
-        "6187",
-        "6538",
-        "6654",
-        "6667",
-        "6735",
-        "6739",
-        "6761",
-        "6840",
-        "6855",
-        "6877",
-        "6884",
-        "6903",
-        "7703",
-        "7728",
-        "7792",
-        "7825",
-        "8034",
-        "8047",
-        "8109"
-      ],
-      "turnover": 26295287385.0,
-      "previous_turnover": 25986874298.0,
-      "turnover_change": 308413087.0,
-      "turnover_change_pct": 1.19,
-      "share_pct": 2.299,
-      "share_avg20_pct": 3.257,
-      "share_delta20_pp": -0.958
+      "share_delta20_pp": -0.588
     },
     {
       "code": "L400",
@@ -24142,9 +24222,9 @@
       "previous_turnover": 23364794799.0,
       "turnover_change": 303423653.0,
       "turnover_change_pct": 1.3,
-      "share_pct": 2.069,
+      "share_pct": 2.068,
       "share_avg20_pct": 3.165,
-      "share_delta20_pp": -1.096
+      "share_delta20_pp": -1.097
     },
     {
       "code": "1C00",
@@ -24164,7 +24244,7 @@
       "previous_turnover": 943329842.0,
       "turnover_change": 298181993.0,
       "turnover_change_pct": 31.61,
-      "share_pct": 0.109,
+      "share_pct": 0.108,
       "share_avg20_pct": 0.124,
       "share_delta20_pp": -0.015
     },
@@ -24206,7 +24286,7 @@
       "previous_turnover": 901009261.0,
       "turnover_change": 282833811.0,
       "turnover_change_pct": 31.39,
-      "share_pct": 0.104,
+      "share_pct": 0.103,
       "share_avg20_pct": 0.116,
       "share_delta20_pp": -0.012
     },
@@ -24226,51 +24306,9 @@
       "previous_turnover": 901287461.0,
       "turnover_change": 282771511.0,
       "turnover_change_pct": 31.37,
-      "share_pct": 0.104,
+      "share_pct": 0.103,
       "share_avg20_pct": 0.116,
       "share_delta20_pp": -0.012
-    },
-    {
-      "code": "L700",
-      "name": "印刷電路板／生產製程及檢測設備",
-      "path": "印刷電路板 > 生產製程及檢測設備",
-      "industry": "印刷電路板",
-      "stage": "上游",
-      "members": [
-        "1528",
-        "2467",
-        "2493",
-        "3010",
-        "3030",
-        "3535",
-        "3563",
-        "6438",
-        "6658",
-        "6706",
-        "7730",
-        "7795",
-        "8438",
-        "1595",
-        "1785",
-        "3093",
-        "3455",
-        "3485",
-        "3498",
-        "4542",
-        "4577",
-        "5536",
-        "6664",
-        "6727",
-        "6877",
-        "7825"
-      ],
-      "turnover": 7468922861.0,
-      "previous_turnover": 7188218728.0,
-      "turnover_change": 280704133.0,
-      "turnover_change_pct": 3.91,
-      "share_pct": 0.653,
-      "share_avg20_pct": 0.871,
-      "share_delta20_pp": -0.218
     },
     {
       "code": "C130",
@@ -24411,7 +24449,7 @@
       "previous_turnover": 393520647.0,
       "turnover_change": 275856127.0,
       "turnover_change_pct": 70.1,
-      "share_pct": 0.059,
+      "share_pct": 0.058,
       "share_avg20_pct": 0.055,
       "share_delta20_pp": 0.004
     },
@@ -24438,7 +24476,7 @@
       "turnover_change_pct": 37.86,
       "share_pct": 0.087,
       "share_avg20_pct": 0.132,
-      "share_delta20_pp": -0.044
+      "share_delta20_pp": -0.045
     },
     {
       "code": "5530",
@@ -24560,7 +24598,7 @@
       "previous_turnover": 1885723311.0,
       "turnover_change": 247602686.0,
       "turnover_change_pct": 13.13,
-      "share_pct": 0.187,
+      "share_pct": 0.186,
       "share_avg20_pct": 0.121,
       "share_delta20_pp": 0.066
     },
@@ -24583,7 +24621,7 @@
       "turnover_change_pct": 6.52,
       "share_pct": 0.344,
       "share_avg20_pct": 0.515,
-      "share_delta20_pp": -0.171
+      "share_delta20_pp": -0.172
     },
     {
       "code": "AB2E",
@@ -24626,7 +24664,7 @@
       "turnover_change_pct": 6.45,
       "share_pct": 0.344,
       "share_avg20_pct": 0.515,
-      "share_delta20_pp": -0.171
+      "share_delta20_pp": -0.172
     },
     {
       "code": "C330",
@@ -24998,7 +25036,7 @@
       "previous_turnover": 79100020.0,
       "turnover_change": 189787390.0,
       "turnover_change_pct": 239.93,
-      "share_pct": 0.024,
+      "share_pct": 0.023,
       "share_avg20_pct": 0.014,
       "share_delta20_pp": 0.009
     },
@@ -25061,7 +25099,7 @@
       "previous_turnover": 6076984464.0,
       "turnover_change": 185552752.0,
       "turnover_change_pct": 3.05,
-      "share_pct": 0.548,
+      "share_pct": 0.547,
       "share_avg20_pct": 0.667,
       "share_delta20_pp": -0.12
     },
@@ -25091,7 +25129,7 @@
       "previous_turnover": 1563104033.0,
       "turnover_change": 181153118.0,
       "turnover_change_pct": 11.59,
-      "share_pct": 0.153,
+      "share_pct": 0.152,
       "share_avg20_pct": 0.185,
       "share_delta20_pp": -0.032
     },
@@ -25341,7 +25379,7 @@
       "previous_turnover": 608070434.0,
       "turnover_change": 152642163.0,
       "turnover_change_pct": 25.1,
-      "share_pct": 0.067,
+      "share_pct": 0.066,
       "share_avg20_pct": 0.085,
       "share_delta20_pp": -0.019
     },
@@ -25451,7 +25489,7 @@
       "previous_turnover": 1824324945.0,
       "turnover_change": 137918361.0,
       "turnover_change_pct": 7.56,
-      "share_pct": 0.172,
+      "share_pct": 0.171,
       "share_avg20_pct": 0.114,
       "share_delta20_pp": 0.058
     },
@@ -26706,9 +26744,9 @@
       "previous_turnover": 22649496099.0,
       "turnover_change": 28732419.0,
       "turnover_change_pct": 0.13,
-      "share_pct": 1.983,
+      "share_pct": 1.982,
       "share_avg20_pct": 2.578,
-      "share_delta20_pp": -0.595
+      "share_delta20_pp": -0.596
     },
     {
       "code": "52A0",
@@ -26924,38 +26962,6 @@
       "share_pct": 0.004,
       "share_avg20_pct": 0.003,
       "share_delta20_pp": 0.001
-    },
-    {
-      "code": "S800",
-      "name": "建材營造／工程承攬",
-      "path": "建材營造 > 工程承攬",
-      "industry": "建材營造",
-      "stage": "中游",
-      "members": [
-        "1402",
-        "1472",
-        "1603",
-        "2511",
-        "2527",
-        "2535",
-        "3052",
-        "3703",
-        "9917",
-        "9933",
-        "9958",
-        "5536",
-        "6122",
-        "6179",
-        "6228",
-        "8383"
-      ],
-      "turnover": 1800198126.0,
-      "previous_turnover": 1780352119.0,
-      "turnover_change": 19846007.0,
-      "turnover_change_pct": 1.11,
-      "share_pct": 0.157,
-      "share_avg20_pct": 0.218,
-      "share_delta20_pp": -0.061
     },
     {
       "code": "C310",
@@ -27657,7 +27663,7 @@
       "previous_turnover": 887803157.0,
       "turnover_change": -12578004.0,
       "turnover_change_pct": -1.42,
-      "share_pct": 0.077,
+      "share_pct": 0.076,
       "share_avg20_pct": 0.086,
       "share_delta20_pp": -0.009
     },
@@ -27748,7 +27754,7 @@
       "previous_turnover": 428351720.0,
       "turnover_change": -22291895.0,
       "turnover_change_pct": -5.2,
-      "share_pct": 0.036,
+      "share_pct": 0.035,
       "share_avg20_pct": 0.039,
       "share_delta20_pp": -0.003
     },
@@ -27893,7 +27899,7 @@
       "previous_turnover": 3275829850.0,
       "turnover_change": -44163727.0,
       "turnover_change_pct": -1.35,
-      "share_pct": 0.283,
+      "share_pct": 0.282,
       "share_avg20_pct": 0.131,
       "share_delta20_pp": 0.151
     },
@@ -28025,27 +28031,6 @@
       "share_delta20_pp": 0.002
     },
     {
-      "code": "S500",
-      "name": "建材營造／工程設計",
-      "path": "建材營造 > 工程設計",
-      "industry": "建材營造",
-      "stage": "上游",
-      "members": [
-        "2597",
-        "9945",
-        "5536",
-        "6228",
-        "8383"
-      ],
-      "turnover": 907579983.0,
-      "previous_turnover": 995825272.0,
-      "turnover_change": -88245289.0,
-      "turnover_change_pct": -8.86,
-      "share_pct": 0.079,
-      "share_avg20_pct": 0.14,
-      "share_delta20_pp": -0.061
-    },
-    {
       "code": "C212",
       "name": "電子零組件、塑化材料、五金零件／金屬零件",
       "path": "醫療器材 > 電子零組件、塑化材料、五金零件 > 金屬零件",
@@ -28169,7 +28154,7 @@
       "previous_turnover": 3754698245.0,
       "turnover_change": -111618313.0,
       "turnover_change_pct": -2.97,
-      "share_pct": 0.319,
+      "share_pct": 0.318,
       "share_avg20_pct": 0.493,
       "share_delta20_pp": -0.175
     },
@@ -28256,7 +28241,7 @@
       "previous_turnover": 11926387561.0,
       "turnover_change": -145986306.0,
       "turnover_change_pct": -1.22,
-      "share_pct": 1.03,
+      "share_pct": 1.029,
       "share_avg20_pct": 1.21,
       "share_delta20_pp": -0.18
     },
@@ -28363,7 +28348,7 @@
       "previous_turnover": 4615513286.0,
       "turnover_change": -239568260.0,
       "turnover_change_pct": -5.19,
-      "share_pct": 0.383,
+      "share_pct": 0.382,
       "share_avg20_pct": 0.921,
       "share_delta20_pp": -0.539
     },
@@ -28470,9 +28455,9 @@
       "previous_turnover": 5011773336.0,
       "turnover_change": -258776512.0,
       "turnover_change_pct": -5.16,
-      "share_pct": 0.416,
+      "share_pct": 0.415,
       "share_avg20_pct": 0.179,
-      "share_delta20_pp": 0.237
+      "share_delta20_pp": 0.236
     },
     {
       "code": "A120",
@@ -28494,7 +28479,7 @@
       "turnover_change_pct": -2.37,
       "share_pct": 0.938,
       "share_avg20_pct": 1.682,
-      "share_delta20_pp": -0.744
+      "share_delta20_pp": -0.745
     },
     {
       "code": "D1D0",
@@ -28520,7 +28505,7 @@
       "turnover_change_pct": -7.03,
       "share_pct": 0.311,
       "share_avg20_pct": 0.252,
-      "share_delta20_pp": 0.059
+      "share_delta20_pp": 0.058
     },
     {
       "code": "C227",
@@ -28619,7 +28604,7 @@
       "previous_turnover": 12355553410.0,
       "turnover_change": -280171849.0,
       "turnover_change_pct": -2.27,
-      "share_pct": 1.056,
+      "share_pct": 1.055,
       "share_avg20_pct": 0.861,
       "share_delta20_pp": 0.194
     },
@@ -28649,9 +28634,9 @@
       "previous_turnover": 19913829588.0,
       "turnover_change": -285802502.0,
       "turnover_change_pct": -1.44,
-      "share_pct": 1.716,
+      "share_pct": 1.715,
       "share_avg20_pct": 2.644,
-      "share_delta20_pp": -0.928
+      "share_delta20_pp": -0.929
     },
     {
       "code": "P900",
@@ -28697,7 +28682,7 @@
       "previous_turnover": 6341594995.0,
       "turnover_change": -318610075.0,
       "turnover_change_pct": -5.02,
-      "share_pct": 0.527,
+      "share_pct": 0.526,
       "share_avg20_pct": 0.443,
       "share_delta20_pp": 0.083
     },
@@ -28758,7 +28743,7 @@
       "previous_turnover": 3124502034.0,
       "turnover_change": -326846414.0,
       "turnover_change_pct": -10.46,
-      "share_pct": 0.245,
+      "share_pct": 0.244,
       "share_avg20_pct": 0.05,
       "share_delta20_pp": 0.195
     },
@@ -28933,7 +28918,7 @@
       "previous_turnover": 9705626483.0,
       "turnover_change": -1144161580.0,
       "turnover_change_pct": -11.79,
-      "share_pct": 0.749,
+      "share_pct": 0.748,
       "share_avg20_pct": 0.531,
       "share_delta20_pp": 0.217
     },
@@ -29020,40 +29005,9 @@
       "previous_turnover": 35125522842.0,
       "turnover_change": -1243738518.0,
       "turnover_change_pct": -3.54,
-      "share_pct": 2.962,
+      "share_pct": 2.961,
       "share_avg20_pct": 3.374,
-      "share_delta20_pp": -0.411
-    },
-    {
-      "code": "J800",
-      "name": "被動元件／濾波器、振盪器",
-      "path": "被動元件 > 濾波器、振盪器",
-      "industry": "被動元件",
-      "stage": "中游",
-      "members": [
-        "2327",
-        "2459",
-        "2484",
-        "2492",
-        "3026",
-        "3042",
-        "6155",
-        "3221",
-        "3663",
-        "6174",
-        "6284",
-        "6821",
-        "8071",
-        "8182",
-        "8289"
-      ],
-      "turnover": 44187517611.0,
-      "previous_turnover": 45614178702.0,
-      "turnover_change": -1426661091.0,
-      "turnover_change_pct": -3.13,
-      "share_pct": 3.863,
-      "share_avg20_pct": 4.82,
-      "share_delta20_pp": -0.957
+      "share_delta20_pp": -0.413
     },
     {
       "code": "A220",
@@ -29092,13 +29046,13 @@
         "8091",
         "8109"
       ],
-      "turnover": 19089580621.0,
+      "turnover": 19601294961.0,
       "previous_turnover": 20906597659.0,
-      "turnover_change": -1817017038.0,
-      "turnover_change_pct": -8.69,
-      "share_pct": 1.669,
+      "turnover_change": -1305302698.0,
+      "turnover_change_pct": -6.24,
+      "share_pct": 1.713,
       "share_avg20_pct": 2.258,
-      "share_delta20_pp": -0.589
+      "share_delta20_pp": -0.545
     },
     {
       "code": "GD00",
@@ -29138,13 +29092,44 @@
         "7703",
         "8064"
       ],
-      "turnover": 9026296083.0,
+      "turnover": 9519389583.0,
       "previous_turnover": 10876262685.0,
-      "turnover_change": -1849966602.0,
-      "turnover_change_pct": -17.01,
-      "share_pct": 0.789,
+      "turnover_change": -1356873102.0,
+      "turnover_change_pct": -12.48,
+      "share_pct": 0.832,
       "share_avg20_pct": 1.198,
-      "share_delta20_pp": -0.409
+      "share_delta20_pp": -0.366
+    },
+    {
+      "code": "J800",
+      "name": "被動元件／濾波器、振盪器",
+      "path": "被動元件 > 濾波器、振盪器",
+      "industry": "被動元件",
+      "stage": "中游",
+      "members": [
+        "2327",
+        "2459",
+        "2484",
+        "2492",
+        "3026",
+        "3042",
+        "6155",
+        "3221",
+        "3663",
+        "6174",
+        "6284",
+        "6821",
+        "8071",
+        "8182",
+        "8289"
+      ],
+      "turnover": 44187517611.0,
+      "previous_turnover": 45614178702.0,
+      "turnover_change": -1426661091.0,
+      "turnover_change_pct": -3.13,
+      "share_pct": 3.861,
+      "share_avg20_pct": 4.82,
+      "share_delta20_pp": -0.959
     },
     {
       "code": "F400",
@@ -29195,7 +29180,7 @@
       "previous_turnover": 19134492019.0,
       "turnover_change": -2232110487.0,
       "turnover_change_pct": -11.67,
-      "share_pct": 1.478,
+      "share_pct": 1.477,
       "share_avg20_pct": 0.954,
       "share_delta20_pp": 0.523
     },
@@ -29258,9 +29243,9 @@
       "previous_turnover": 14635467706.0,
       "turnover_change": -2391019549.0,
       "turnover_change_pct": -16.34,
-      "share_pct": 1.071,
+      "share_pct": 1.07,
       "share_avg20_pct": 0.922,
-      "share_delta20_pp": 0.149
+      "share_delta20_pp": 0.148
     },
     {
       "code": "X400",
@@ -29404,7 +29389,7 @@
       "turnover_change_pct": -26.87,
       "share_pct": 0.585,
       "share_avg20_pct": 0.621,
-      "share_delta20_pp": -0.036
+      "share_delta20_pp": -0.037
     },
     {
       "code": "X200",
@@ -29476,9 +29461,9 @@
       "previous_turnover": 13665056525.0,
       "turnover_change": -2723385723.0,
       "turnover_change_pct": -19.93,
-      "share_pct": 0.957,
+      "share_pct": 0.956,
       "share_avg20_pct": 0.964,
-      "share_delta20_pp": -0.007
+      "share_delta20_pp": -0.008
     },
     {
       "code": "D700",
@@ -29503,7 +29488,7 @@
       "turnover_change_pct": -15.24,
       "share_pct": 1.47,
       "share_avg20_pct": 1.79,
-      "share_delta20_pp": -0.32
+      "share_delta20_pp": -0.321
     },
     {
       "code": "G900",
@@ -29542,7 +29527,7 @@
       "turnover_change_pct": -47.34,
       "share_pct": 0.341,
       "share_avg20_pct": 0.238,
-      "share_delta20_pp": 0.104
+      "share_delta20_pp": 0.103
     },
     {
       "code": "D310",
@@ -29579,9 +29564,9 @@
       "previous_turnover": 205060543848.0,
       "turnover_change": -3894386444.0,
       "turnover_change_pct": -1.9,
-      "share_pct": 17.588,
+      "share_pct": 17.579,
       "share_avg20_pct": 16.224,
-      "share_delta20_pp": 1.364
+      "share_delta20_pp": 1.355
     },
     {
       "code": "L620",
@@ -29607,9 +29592,9 @@
       "previous_turnover": 19640664010.0,
       "turnover_change": -4346908094.0,
       "turnover_change_pct": -22.13,
-      "share_pct": 1.337,
+      "share_pct": 1.336,
       "share_avg20_pct": 2.027,
-      "share_delta20_pp": -0.69
+      "share_delta20_pp": -0.691
     },
     {
       "code": "P700",
@@ -29666,9 +29651,9 @@
       "previous_turnover": 65696175284.0,
       "turnover_change": -6501637614.0,
       "turnover_change_pct": -9.9,
-      "share_pct": 5.175,
+      "share_pct": 5.173,
       "share_avg20_pct": 3.309,
-      "share_delta20_pp": 1.866
+      "share_delta20_pp": 1.864
     },
     {
       "code": "L100",
@@ -29688,9 +29673,9 @@
       "previous_turnover": 43206454102.0,
       "turnover_change": -7516382768.0,
       "turnover_change_pct": -17.4,
-      "share_pct": 3.12,
+      "share_pct": 3.119,
       "share_avg20_pct": 4.472,
-      "share_delta20_pp": -1.352
+      "share_delta20_pp": -1.354
     },
     {
       "code": "I400",
@@ -29727,9 +29712,9 @@
       "previous_turnover": 29827682511.0,
       "turnover_change": -8633081686.0,
       "turnover_change_pct": -28.94,
-      "share_pct": 1.853,
+      "share_pct": 1.852,
       "share_avg20_pct": 2.546,
-      "share_delta20_pp": -0.693
+      "share_delta20_pp": -0.694
     },
     {
       "code": "J200",
@@ -29747,9 +29732,9 @@
       "previous_turnover": 27024876126.0,
       "turnover_change": -11380949088.0,
       "turnover_change_pct": -42.11,
-      "share_pct": 1.368,
+      "share_pct": 1.367,
       "share_avg20_pct": 1.442,
-      "share_delta20_pp": -0.074
+      "share_delta20_pp": -0.075
     },
     {
       "code": "L630",
@@ -29780,9 +29765,9 @@
       "previous_turnover": 90909654703.0,
       "turnover_change": -13122897910.0,
       "turnover_change_pct": -14.44,
-      "share_pct": 6.801,
+      "share_pct": 6.797,
       "share_avg20_pct": 8.099,
-      "share_delta20_pp": -1.298
+      "share_delta20_pp": -1.301
     },
     {
       "code": "I300",
@@ -29804,9 +29789,9 @@
       "previous_turnover": 49174861262.0,
       "turnover_change": -14805789088.0,
       "turnover_change_pct": -30.11,
-      "share_pct": 3.005,
+      "share_pct": 3.003,
       "share_avg20_pct": 2.929,
-      "share_delta20_pp": 0.076
+      "share_delta20_pp": 0.074
     },
     {
       "code": "D320",
@@ -29824,9 +29809,9 @@
       "previous_turnover": 52775005460.0,
       "turnover_change": -16062036959.0,
       "turnover_change_pct": -30.43,
-      "share_pct": 3.21,
+      "share_pct": 3.208,
       "share_avg20_pct": 3.504,
-      "share_delta20_pp": -0.294
+      "share_delta20_pp": -0.296
     },
     {
       "code": "F500",
@@ -29854,9 +29839,9 @@
       "previous_turnover": 60329709042.0,
       "turnover_change": -17333868918.0,
       "turnover_change_pct": -28.73,
-      "share_pct": 3.759,
+      "share_pct": 3.757,
       "share_avg20_pct": 3.5,
-      "share_delta20_pp": 0.26
+      "share_delta20_pp": 0.258
     },
     {
       "code": "D150",
@@ -29876,9 +29861,9 @@
       "previous_turnover": 63215517711.0,
       "turnover_change": -20934080888.0,
       "turnover_change_pct": -33.12,
-      "share_pct": 3.697,
+      "share_pct": 3.695,
       "share_avg20_pct": 3.65,
-      "share_delta20_pp": 0.046
+      "share_delta20_pp": 0.044
     }
   ],
   "share_base_days": 20,
