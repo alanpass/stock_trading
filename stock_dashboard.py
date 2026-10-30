@@ -81,7 +81,7 @@ def _refresh_helper_modules() -> None:
     import importlib
     import sys as _sys
     names = ("market_calendar", "watchlist_store", "stock_features", "chip_signals", "intraday_signals",
-             "industry_rotation", "value_chain", "section_ui", "future_picks_ui", "trend_pattern_ui", "stock_notes_ui")
+             "industry_rotation", "value_chain", "section_ui", "site_logo", "future_picks_ui", "trend_pattern_ui", "stock_notes_ui")
     for name in names:
         mod = _sys.modules.get(name)
         if mod is None or not getattr(mod, "__file__", None):
@@ -123,6 +123,7 @@ import chip_signals
 import stock_features
 import intraday_signals
 import section_ui
+import site_logo
 from future_picks_ui import render_system_picks  # 模組改名過：雲端只改子模組時不會重新載入
 from section_ui import section as _sec, section_box as _sec_box
 from global_markets import GLOBAL_INDICATORS, fetch_indicator, vix_regime
@@ -195,6 +196,72 @@ def _site_favicon():
 
 
 st.set_page_config(page_title="台股即時互動式分析系統", page_icon=_site_favicon(), layout="wide", initial_sidebar_state="collapsed")
+
+
+# ---- 開站載入動畫：第一次開啟或重新整理時蓋住頁面，整頁跑完才淡出；站內換頁不播放 ----
+# 一輪 3.6 秒：logo 圓環畫出 → 環內 K 線一根根長出（紅綠）、趨勢線往上走 → K 線轉成 logo 色、外側斜線畫上，停在完整 logo
+_BOOT_CSS = """<style>
+.boot-loader{position:fixed;inset:0;z-index:1000000;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 42%,#fffdfc 0%,#fbf3f2 62%,#f4e6e5 100%);
+  animation:boot-bail .4s ease 30s forwards}
+.boot-loader.boot-done{animation:boot-out .5s ease forwards;pointer-events:none}
+@keyframes boot-out{to{opacity:0;visibility:hidden}}
+@keyframes boot-bail{to{opacity:0;visibility:hidden;pointer-events:none}}
+.boot-inner{display:flex;flex-direction:column;align-items:center;width:min(340px,84vw)}
+.boot-mark{width:min(148px,42vw);height:auto;overflow:visible}
+.boot-ring,.boot-tail{stroke-dasharray:100 100;stroke-dashoffset:100}
+.boot-ring{animation:boot-ring 3.6s ease-in-out infinite both}
+@keyframes boot-ring{0%{stroke-dashoffset:100;opacity:1}22%{stroke-dashoffset:0}93%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:0}}
+.boot-tail{animation:boot-tail 3.6s ease-in-out infinite both}
+@keyframes boot-tail{0%,66%{stroke-dashoffset:100;opacity:1}78%{stroke-dashoffset:0}93%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:0}}
+.boot-candle{opacity:0;transform-box:fill-box;transform-origin:center;animation:boot-candle 3.6s cubic-bezier(.2,.8,.2,1) infinite both}
+@keyframes boot-candle{0%,18%{opacity:0;transform:scaleY(.1);color:var(--boot-c)}30%{opacity:1;transform:scaleY(1);color:var(--boot-c)}62%{opacity:1;transform:scaleY(1);color:var(--boot-c)}74%{color:#8e2b2f}93%{opacity:1;transform:scaleY(1);color:#8e2b2f}100%{opacity:0;transform:scaleY(1);color:#8e2b2f}}
+.boot-trend{stroke-dasharray:100 100;stroke-dashoffset:100;animation:boot-trend 3.6s ease-in-out infinite both}
+@keyframes boot-trend{0%,28%{stroke-dashoffset:100;opacity:1}50%{stroke-dashoffset:0;opacity:1}58%{stroke-dashoffset:0;opacity:1}68%,100%{stroke-dashoffset:0;opacity:0}}
+.boot-title{margin-top:24px;font-family:Georgia,"Noto Serif TC","Microsoft JhengHei",serif;font-size:21px;letter-spacing:.14em;color:#8e2b2f;text-align:center;line-height:1.5}
+.boot-track{position:relative;width:148px;height:2px;margin-top:16px;border-radius:2px;background:rgba(142,43,47,.14);overflow:hidden}
+.boot-track::after{content:"";position:absolute;top:0;bottom:0;left:0;width:38%;border-radius:2px;background:#8e2b2f;animation:boot-slide 1.4s ease-in-out infinite}
+@keyframes boot-slide{0%{transform:translateX(-110%)}100%{transform:translateX(300%)}}
+.boot-note{margin-top:12px;font-size:12.5px;letter-spacing:.08em;color:#8a7676}
+@media (prefers-reduced-motion:reduce){
+  .boot-ring,.boot-tail{animation:none;stroke-dashoffset:0}
+  .boot-candle{animation:none;opacity:1;color:#8e2b2f}
+  .boot-trend{animation:none;opacity:0}
+  .boot-track::after{animation:none;width:100%}
+}
+</style>"""
+
+def _boot_loader_html(done: bool = False) -> str:
+    """動畫用 site_logo 的真實圖形，最後一格就是網站 logo。整段不能有換行，否則 markdown 會把 HTML 拆開。"""
+    colors = ("#c0392f", "#1f8a58", "#c0392f")   # 台股慣例：紅漲綠跌
+    ring = site_logo.ring_svg('class="boot-ring" pathLength="100"')
+    tail = site_logo.tail_svg('class="boot-tail" pathLength="100"')
+    candles = "".join(
+        site_logo.candle_svg(i, f'class="boot-candle" fill="currentColor" stroke="currentColor" style="--boot-c:{c};animation-delay:{i * 0.1:.1f}s"')
+        for i, c in enumerate(colors))
+    return (f'<div class="boot-loader{" boot-done" if done else ""}" role="status" aria-label="網站載入中"><div class="boot-inner">'
+            '<svg class="boot-mark" viewBox="0 0 54 54" aria-hidden="true">'
+            f'{ring}{candles}'
+            '<path class="boot-trend" pathLength="100" d="M17 36 L24 30 L30 25 L37 17" fill="none" stroke="#8e2b2f" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>'
+            f'{tail}</svg>'
+            '<div class="boot-title">台股即時互動式分析系統</div><div class="boot-track"></div>'
+            '<div class="boot-note">正在準備盤面資料</div></div></div>')
+
+
+# 兩個位置每一輪都要留著（之後留空）：元素數量一變，後面的元件全部位移重建，
+# 攔截換頁連結的 iframe 也會被換掉，站內換頁就變成整頁重新載入。
+_boot_css_slot, _boot_slot = st.empty(), st.empty()
+# 帳號審核連結會中途 st.stop()，走不到淡出那一行，不播放
+_boot_active = not st.session_state.get("_site_booted") and "account_review" not in st.query_params
+if _boot_active:
+    _boot_css_slot.markdown(_BOOT_CSS, unsafe_allow_html=True)   # CSS 要單獨一個 markdown，含 <style> 的區塊會被整個隱藏
+    _boot_slot.markdown(_boot_loader_html(), unsafe_allow_html=True)
+
+
+def _finish_boot_loader() -> None:
+    if _boot_active:
+        _boot_slot.markdown(_boot_loader_html(done=True), unsafe_allow_html=True)
+        st.session_state["_site_booted"] = True
 
 
 # ---- 所有 Plotly 圖表統一使用與網頁背景相配的淺色系 ----
@@ -1085,7 +1152,7 @@ header[data-testid="stHeader"]{background:rgba(255,255,255,.96)!important;min-he
 #MainMenu{visibility:hidden!important;}
 footer:not(.site-footer){display:none!important;}
 
-.brand-block{text-align:center;padding:0 0 0}.brand-mark{width:54px;height:54px;margin:0 auto 8px;position:relative}.brand-mark:before{content:"";position:absolute;inset:8px;border:4px solid var(--site-red);border-radius:50% 50% 46% 54%;transform:rotate(-22deg)}.brand-mark:after{content:"";position:absolute;width:23px;height:15px;border-left:4px solid var(--site-red);border-bottom:4px solid var(--site-red);left:17px;top:21px;transform:rotate(32deg);border-radius:0 0 0 8px}.brand-mark span{position:absolute;width:12px;height:12px;background:#fff;left:15px;top:16px;border-radius:50%;z-index:2}.brand-name{font-family:Georgia,"Noto Serif TC","Microsoft JhengHei",serif;font-size:20px;letter-spacing:1.5px;color:#555}.site-status-line{text-align:center;font-size:10px;color:#989898;margin:4px 0 10px;letter-spacing:.4px}.site-nav{display:flex;justify-content:center;align-items:center;gap:28px;flex-wrap:wrap;padding:8px 4px 12px}.site-nav-link{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;color:#777!important;text-decoration:none!important;font-size:11px;letter-spacing:.6px;padding:3px 0;border-bottom:1px solid transparent;transition:.18s ease}.site-nav-link:hover{color:var(--site-red)!important}.site-nav-link.active{color:var(--site-red)!important;border-bottom-color:var(--site-red);font-weight:800}.site-rule{border-top:1px dashed #a9a1a1;margin:1px 0 20px}
+.brand-block{text-align:center;padding:0 0 0}.brand-mark{width:54px;height:54px;margin:0 auto 8px}.brand-mark svg{display:block;width:54px;height:54px}.brand-name{font-family:Georgia,"Noto Serif TC","Microsoft JhengHei",serif;font-size:20px;letter-spacing:1.5px;color:#555}.site-status-line{text-align:center;font-size:10px;color:#989898;margin:4px 0 10px;letter-spacing:.4px}.site-nav{display:flex;justify-content:center;align-items:center;gap:28px;flex-wrap:wrap;padding:8px 4px 12px}.site-nav-link{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;color:#777!important;text-decoration:none!important;font-size:11px;letter-spacing:.6px;padding:3px 0;border-bottom:1px solid transparent;transition:.18s ease}.site-nav-link:hover{color:var(--site-red)!important}.site-nav-link.active{color:var(--site-red)!important;border-bottom-color:var(--site-red);font-weight:800}.site-rule{border-top:1px dashed #a9a1a1;margin:1px 0 20px}
 .page-image-banner{position:relative;width:100%;height:180px;border-radius:10px;overflow:hidden;margin:0 0 24px;box-shadow:0 8px 24px rgba(0,0,0,.08)}.page-image-banner>img{display:block;width:100%;height:100%;object-fit:cover}.page-image-shade{position:absolute;inset:0;background:rgba(15,15,20,.42)}.page-image-title{position:absolute;left:34px;bottom:24px;color:#fff;font-family:Georgia,"Noto Serif TC","Microsoft JhengHei",serif;font-size:28px;font-weight:500;letter-spacing:1px}.contact-page-banner{margin-bottom:20px}.hero-visual{width:100%;height:350px;border-radius:10px;overflow:hidden;margin:0 0 0;box-shadow:0 8px 25px rgba(0,0,0,.08)}
 .home-band{padding:48px 42px;margin:0}.home-band.blush{background:var(--site-blush)}.home-band.white-band{background:#fff}.home-two-col{width:100%;margin:0;display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center}.home-two-col.reverse-on-mobile{grid-template-columns:.92fr 1.08fr}.home-copy{max-width:540px}.eyebrow{color:var(--site-red);font-size:10px;letter-spacing:2px;font-weight:800;margin-bottom:7px}.home-copy h2,.content-heading h1{font-family:Georgia,"Noto Serif TC","Microsoft JhengHei",serif;color:var(--site-red);font-size:32px;line-height:1.2;margin:0 0 14px;font-weight:500}.home-copy p,.content-heading p{font-size:13px;line-height:1.9;color:#5f5a5a;margin:0 0 10px}.home-link,.contact-link{display:inline-block;margin-top:8px;color:var(--site-red)!important;text-decoration:none!important;font-size:12px;font-weight:800;letter-spacing:.5px;border-bottom:1px solid rgba(142,43,47,.45);padding-bottom:3px}.home-image-stack{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end}.small-visual{height:170px;border-radius:8px;overflow:hidden;box-shadow:0 5px 14px rgba(0,0,0,.12)}.home-image-grid{display:grid;gap:10px}.home-image-grid.three-grid{grid-template-columns:repeat(3,1fr)}.home-image-grid.six-grid{grid-template-columns:repeat(3,1fr)}.home-image-grid>div,.focus-mini{min-width:0;border-radius:8px;overflow:hidden;box-shadow:0 5px 12px rgba(0,0,0,.09)}.home-image-grid.three-grid>div{height:142px}.home-image-grid.six-grid>div{height:118px}.home-accordion-hints{margin:14px 0 8px;border-top:1px solid #ded4d4}.home-accordion-hints>div{display:flex;justify-content:space-between;gap:16px;padding:12px 2px;border-bottom:1px solid #ded4d4;font-size:12px}.home-accordion-hints span{color:#8b8282}
 .contact-band{position:relative;min-height:280px;overflow:hidden;margin:0}.contact-overlay{position:absolute;inset:0}.contact-overlay svg,.contact-overlay img{width:100%;height:100%;display:block;object-fit:cover;}.contact-shade{position:absolute;inset:0;background:rgba(20,20,20,.76)}.contact-content{position:relative;z-index:2;max-width:780px;margin:0 auto;padding:44px 42px;color:#fff}.contact-content .eyebrow{color:#cf9494}.contact-content h2{font-family:Georgia,"Noto Serif TC","Microsoft JhengHei",serif;font-size:30px;font-weight:500;margin:0 0 14px;color:#fff}.contact-content p{font-size:13px;line-height:1.9;color:#ddd;margin:0;max-width:660px}.contact-link{color:#e8b2b2!important;border-color:rgba(232,178,178,.4)}
@@ -1190,9 +1257,9 @@ def _stock_svg(variant: int = 0, wide: bool = False, dark: bool = False) -> str:
 
 
 def _site_header_svg() -> str:
-    return '''
+    return f'''
     <div class="brand-block" aria-label="台股即時互動式分析系統">
-      <div class="brand-mark"><span></span></div>
+      <div class="brand-mark">{site_logo.svg_markup()}</div>
       <div class="brand-name">台股即時互動式分析系統</div>
     </div>
     '''
@@ -8033,10 +8100,13 @@ def _render_page_body(section: str) -> None:
 
 
 # 頁面內容包一層有 key 的容器：換頁時容器重建、播放淡入動畫；同一頁內重跑不會重播。
-with st.container(key=f"page_{current_section}"):
-    _render_page(current_section)
+try:
+    with st.container(key=f"page_{current_section}"):
+        _render_page(current_section)
 
-# 盤中自動更新改由「操作策略」各即時區塊的 fragment（run_every）負責，不再整頁重跑。
+    # 盤中自動更新改由「操作策略」各即時區塊的 fragment（run_every）負責，不再整頁重跑。
 
-# Footer 必須是整個網頁最後一個可見內容。
-_render_footer()
+    # Footer 必須是整個網頁最後一個可見內容。
+    _render_footer()
+finally:
+    _finish_boot_loader()   # 頁面出錯也要收掉載入動畫，錯誤訊息才看得到
