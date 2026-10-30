@@ -199,62 +199,85 @@ st.set_page_config(page_title="台股即時互動式分析系統", page_icon=_si
 
 
 # ---- 開站載入動畫：第一次開啟或重新整理時蓋住頁面，整頁跑完才淡出；站內換頁不播放 ----
-# 一輪 3.6 秒：logo 圓環畫出 → 環內 K 線一根根長出（紅綠）、趨勢線往上走 → K 線轉成 logo 色、外側斜線畫上，停在完整 logo
-_BOOT_CSS = """<style>
+# 一輪 3.6 秒：logo 圓環轉入 → 環內 K 線一根根長出（紅綠）、趨勢線往上 → K 線轉成 logo 色、外側斜線長出，停在完整 logo
+# 頁面載入時主執行緒會被圖表塞住 1 秒以上，所以只動 transform／opacity 並讓每個圖形自成一層（GPU 合成，主執行緒忙也不停）；
+# 不要改回 stroke-dashoffset、color 這類動畫，同一個動畫也不要混進 visibility（會整個退回主執行緒），也不要用 :has()（每次 DOM 變動都要重算樣式）。
+_BOOT_BASE_CSS = """
 .boot-loader{position:fixed;inset:0;z-index:1000000;display:flex;align-items:center;justify-content:center;
-  background:radial-gradient(circle at 50% 42%,#fffdfc 0%,#fbf3f2 62%,#f4e6e5 100%);
-  animation:boot-bail .4s ease 30s forwards}
-.boot-loader.boot-done{animation:boot-out .5s ease forwards;pointer-events:none}
-/* 動畫播放時不顯示任何按鈕：#sb-toggle、回到頂端等是 JS 另外加到 body 的，層級比動畫高，調 z-index 不保險 */
-body:has(.boot-loader:not(.boot-done)) > *:not(#root),
-body:has(.boot-loader:not(.boot-done)) button,
-body:has(.boot-loader:not(.boot-done)) a,
-body:has(.boot-loader:not(.boot-done)) [role="button"],
-body:has(.boot-loader:not(.boot-done)) [data-testid="stSidebar"],
-body:has(.boot-loader:not(.boot-done)) [data-testid="stHeader"],
-body:has(.boot-loader:not(.boot-done)) [data-testid="stExpandSidebarButton"],
-body:has(.boot-loader:not(.boot-done)) [data-testid="stSidebarCollapsedControl"]{animation:boot-controls 30s step-end}
-/* 和 .boot-loader 的 30 秒保險同步：頁面跑太久時動畫自動消失，按鈕也要一起回來 */
-@keyframes boot-controls{0%,100%{visibility:hidden}}
-@keyframes boot-out{to{opacity:0;visibility:hidden}}
-@keyframes boot-bail{to{opacity:0;visibility:hidden;pointer-events:none}}
-.boot-inner{display:flex;flex-direction:column;align-items:center;width:min(340px,84vw)}
-.boot-mark{width:min(148px,42vw);height:auto;overflow:visible}
-.boot-ring,.boot-tail{stroke-dasharray:100 100;stroke-dashoffset:100}
-.boot-ring{animation:boot-ring 3.6s ease-in-out infinite both}
-@keyframes boot-ring{0%{stroke-dashoffset:100;opacity:1}22%{stroke-dashoffset:0}93%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:0}}
-.boot-tail{animation:boot-tail 3.6s ease-in-out infinite both}
-@keyframes boot-tail{0%,66%{stroke-dashoffset:100;opacity:1}78%{stroke-dashoffset:0}93%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:0}}
-.boot-candle{opacity:0;transform-box:fill-box;transform-origin:center;animation:boot-candle 3.6s cubic-bezier(.2,.8,.2,1) infinite both}
-@keyframes boot-candle{0%,18%{opacity:0;transform:scaleY(.1);color:var(--boot-c)}30%{opacity:1;transform:scaleY(1);color:var(--boot-c)}62%{opacity:1;transform:scaleY(1);color:var(--boot-c)}74%{color:#8e2b2f}93%{opacity:1;transform:scaleY(1);color:#8e2b2f}100%{opacity:0;transform:scaleY(1);color:#8e2b2f}}
-.boot-trend{stroke-dasharray:100 100;stroke-dashoffset:100;animation:boot-trend 3.6s ease-in-out infinite both}
-@keyframes boot-trend{0%,28%{stroke-dashoffset:100;opacity:1}50%{stroke-dashoffset:0;opacity:1}58%{stroke-dashoffset:0;opacity:1}68%,100%{stroke-dashoffset:0;opacity:0}}
+  background:radial-gradient(circle at 50% 42%,#fffdfc 0%,#fbf3f2 62%,#f4e6e5 100%);will-change:opacity;
+  animation:boot-out .4s ease 30s forwards,boot-gone .01s linear 30.4s forwards}
+.boot-loader.boot-done{pointer-events:none;animation:boot-out .65s cubic-bezier(.4,0,.2,1) .18s forwards,boot-gone .01s linear .83s forwards}
+.boot-loader.boot-done .boot-inner{animation:boot-inner-out .4s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes boot-out{to{opacity:0}}
+@keyframes boot-gone{to{visibility:hidden;pointer-events:none}}
+@keyframes boot-inner-out{to{opacity:0;transform:scale(1.05)}}
+.boot-inner{display:flex;flex-direction:column;align-items:center;width:min(340px,84vw);will-change:transform,opacity}
+.boot-mark{position:relative;width:min(148px,42vw);aspect-ratio:1}
+.boot-layer{position:absolute;inset:0;width:100%;height:100%;overflow:visible;will-change:transform,opacity}
+.boot-ring{transform-origin:50% 50%;animation:boot-ring 3.6s cubic-bezier(.3,.7,.3,1) infinite both}
+@keyframes boot-ring{0%{opacity:0;transform:rotate(-40deg) scale(.86)}16%{opacity:1;transform:none}93%{opacity:1;transform:none}100%{opacity:0;transform:none}}
+.boot-sweep{transform-origin:50% 50%;animation:boot-sweep 1.5s linear infinite}
+@keyframes boot-sweep{to{transform:rotate(360deg)}}
+.boot-candle{opacity:0;animation:boot-candle 3.6s cubic-bezier(.2,.8,.2,1) infinite both}
+@keyframes boot-candle{0%,14%{opacity:0;transform:scaleY(.08)}26%{opacity:1;transform:none}62%{opacity:1;transform:none}74%,100%{opacity:0;transform:none}}
+.boot-candle-end{opacity:0;animation:boot-candle-end 3.6s ease-in-out infinite both}
+@keyframes boot-candle-end{0%,62%{opacity:0}74%{opacity:1}93%{opacity:1}100%{opacity:0}}
+.boot-trend{opacity:0;transform-origin:31.5% 66.7%;animation:boot-trend 3.6s cubic-bezier(.3,.7,.3,1) infinite both}
+@keyframes boot-trend{0%,26%{opacity:0;transform:scale(.05)}30%{opacity:1}44%{opacity:1;transform:none}56%{opacity:1;transform:none}66%,100%{opacity:0;transform:none}}
+.boot-tail{opacity:0;transform-origin:73% 73%;animation:boot-tail 3.6s cubic-bezier(.2,.8,.2,1) infinite both}
+@keyframes boot-tail{0%,64%{opacity:0;transform:scale(.05)}68%{opacity:1}78%{opacity:1;transform:none}93%{opacity:1;transform:none}100%{opacity:0;transform:none}}
 .boot-title{margin-top:24px;font-family:Georgia,"Noto Serif TC","Microsoft JhengHei",serif;font-size:21px;letter-spacing:.14em;color:#8e2b2f;text-align:center;line-height:1.5}
 .boot-track{position:relative;width:148px;height:2px;margin-top:16px;border-radius:2px;background:rgba(142,43,47,.14);overflow:hidden}
-.boot-track::after{content:"";position:absolute;top:0;bottom:0;left:0;width:38%;border-radius:2px;background:#8e2b2f;animation:boot-slide 1.4s ease-in-out infinite}
+.boot-track::after{content:"";position:absolute;top:0;bottom:0;left:0;width:38%;border-radius:2px;background:#8e2b2f;will-change:transform;animation:boot-slide 1.4s ease-in-out infinite}
 @keyframes boot-slide{0%{transform:translateX(-110%)}100%{transform:translateX(300%)}}
 .boot-note{margin-top:12px;font-size:12.5px;letter-spacing:.08em;color:#8a7676}
 @media (prefers-reduced-motion:reduce){
-  .boot-ring,.boot-tail{animation:none;stroke-dashoffset:0}
-  .boot-candle{animation:none;opacity:1;color:#8e2b2f}
-  .boot-trend{animation:none;opacity:0}
+  .boot-ring,.boot-candle-end,.boot-tail{animation:none;opacity:1;transform:none}
+  .boot-candle,.boot-trend,.boot-sweep{animation:none;opacity:0}
   .boot-track::after{animation:none;width:100%}
 }
-</style>"""
+"""
+# 播放時：不顯示任何按鈕（#sb-toggle、回到頂端是 JS 加到 body 的，層級比動畫高）。放在單獨的 CSS，跑完就拿掉；
+# 30 秒和 .boot-loader 的保險同步，頁面跑太久時動畫自動消失，按鈕也一起回來。
+_BOOT_PLAYING_CSS = """
+body > *:not(#root),.stApp button,.stApp a,.stApp [role="button"],.stApp [data-testid="stSidebar"],.stApp [data-testid="stHeader"],
+.stApp [data-testid="stExpandSidebarButton"],.stApp [data-testid="stSidebarCollapsedControl"]{animation:boot-controls 30s step-end}
+@keyframes boot-controls{0%,100%{visibility:hidden}}
+"""
+# 跑完時：頁面內容在覆蓋層淡出的同時往上浮入，不是直接露出來（下一輪重跑這段 CSS 就消失）
+_BOOT_DONE_CSS = """
+.stApp [class*="st-key-page_"]{animation:boot-page-in .8s cubic-bezier(.2,.7,.2,1) .12s both}
+.stApp .site-nav,.stApp .brand-block{animation:boot-page-in .7s cubic-bezier(.2,.7,.2,1) .08s both}
+@keyframes boot-page-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.stApp [class*="st-key-page_"],.stApp .site-nav,.stApp .brand-block{animation:none}}
+"""
+BOOT_MIN_SECONDS = 1.2   # 頁面很快跑完時也至少播這麼久，否則動畫閃一下就消失
+
+
+def _boot_css(extra: str) -> str:
+    return "<style>" + _BOOT_BASE_CSS + extra + "</style>"
+
 
 def _boot_loader_html(done: bool = False) -> str:
     """動畫用 site_logo 的真實圖形，最後一格就是網站 logo。整段不能有換行，否則 markdown 會把 HTML 拆開。"""
-    colors = ("#c0392f", "#1f8a58", "#c0392f")   # 台股慣例：紅漲綠跌
-    ring = site_logo.ring_svg('class="boot-ring" pathLength="100"')
-    tail = site_logo.tail_svg('class="boot-tail" pathLength="100"')
-    candles = "".join(
-        site_logo.candle_svg(i, f'class="boot-candle" fill="currentColor" stroke="currentColor" style="--boot-c:{c};animation-delay:{i * 0.1:.1f}s"')
-        for i, c in enumerate(colors))
+    def layer(cls: str, inner: str, style: str = "") -> str:
+        return f'<svg class="boot-layer {cls}" viewBox="0 0 54 54" aria-hidden="true" style="{style}">{inner}</svg>'
+
+    colors = ("#c0392f", "#1f8a58", "#c0392f")   # 台股慣例：紅漲綠跌；最後淡入 logo 色的同一根 K 線取代變色動畫
+    candles = ""
+    for i, color in enumerate(colors):
+        x, _top, _bottom, _wick_top, wick_bottom = site_logo.CANDLES[i]
+        timing = f"animation-delay:{i * 0.1:.1f}s;"
+        origin = f"transform-origin:{x / 54 * 100:.1f}% {wick_bottom / 54 * 100:.1f}%;"
+        candles += layer("boot-candle", site_logo.candle_svg(i, f'fill="{color}" stroke="{color}"'), timing + origin)
+        candles += layer("boot-candle-end", site_logo.candle_svg(i), timing)
+    sweep = ('<circle cx="27" cy="27" r="17" pathLength="100" fill="none" stroke="#fff" stroke-opacity=".5" '
+             'stroke-width="4.4" stroke-dasharray="14 86" stroke-linecap="round"/>')
+    trend = ('<path d="M17 36 L24 30 L30 25 L37 17" fill="none" stroke="#8e2b2f" stroke-width="1.1" '
+             'stroke-linecap="round" stroke-linejoin="round"/>')
     return (f'<div class="boot-loader{" boot-done" if done else ""}" role="status" aria-label="網站載入中"><div class="boot-inner">'
-            '<svg class="boot-mark" viewBox="0 0 54 54" aria-hidden="true">'
-            f'{ring}{candles}'
-            '<path class="boot-trend" pathLength="100" d="M17 36 L24 30 L30 25 L37 17" fill="none" stroke="#8e2b2f" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>'
-            f'{tail}</svg>'
+            f'<div class="boot-mark">{layer("boot-ring", site_logo.ring_svg())}{layer("boot-sweep", sweep)}{candles}'
+            f'{layer("boot-trend", trend)}{layer("boot-tail", site_logo.tail_svg())}</div>'
             '<div class="boot-title">台股即時互動式分析系統</div><div class="boot-track"></div>'
             '<div class="boot-note">正在準備盤面資料</div></div></div>')
 
@@ -264,13 +287,16 @@ def _boot_loader_html(done: bool = False) -> str:
 _boot_css_slot, _boot_slot = st.empty(), st.empty()
 # 帳號審核連結會中途 st.stop()，走不到淡出那一行，不播放
 _boot_active = not st.session_state.get("_site_booted") and "account_review" not in st.query_params
+_boot_started = time.time()
 if _boot_active:
-    _boot_css_slot.markdown(_BOOT_CSS, unsafe_allow_html=True)   # CSS 要單獨一個 markdown，含 <style> 的區塊會被整個隱藏
+    _boot_css_slot.markdown(_boot_css(_BOOT_PLAYING_CSS), unsafe_allow_html=True)   # CSS 要單獨一個 markdown，含 <style> 的區塊會被整個隱藏
     _boot_slot.markdown(_boot_loader_html(), unsafe_allow_html=True)
 
 
 def _finish_boot_loader() -> None:
     if _boot_active:
+        time.sleep(max(0.0, BOOT_MIN_SECONDS - (time.time() - _boot_started)))
+        _boot_css_slot.markdown(_boot_css(_BOOT_DONE_CSS), unsafe_allow_html=True)
         _boot_slot.markdown(_boot_loader_html(done=True), unsafe_allow_html=True)
         st.session_state["_site_booted"] = True
 
