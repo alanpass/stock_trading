@@ -1399,6 +1399,18 @@ _UX_CSS = """<style>
 /* 換頁淡入 */
 [class*="st-key-page_"]{animation:uxPageIn .5s cubic-bezier(.2,.7,.2,1) backwards}
 @keyframes uxPageIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+/* 換頁等待：點下主題到新頁面出現之間，舊頁面先藏起來（JS 切換 body.ux-nav-pending） */
+.ux-nav-pending [class*="st-key-page_"],.ux-nav-pending .site-footer{visibility:hidden}
+.st-key-site_pages{gap:0!important}
+#ux-nav-loading{display:none;position:fixed;left:50%;top:44%;z-index:900;transform:translate(-50%,-50%);flex-direction:column;align-items:center;gap:14px;pointer-events:none}
+.ux-nav-pending #ux-nav-loading{display:flex;animation:uxNavShow .25s ease}
+@keyframes uxNavShow{from{opacity:0}}
+.ux-nav-bars{display:flex;align-items:flex-end;gap:6px;height:34px}
+.ux-nav-bars i{width:9px;height:100%;border-radius:2px;background:#8e2b2f;transform-origin:bottom;animation:uxNavBar 1s ease-in-out infinite alternate}
+.ux-nav-bars i:nth-child(1){animation-delay:-.6s}
+.ux-nav-bars i:nth-child(2){animation-delay:-.3s}
+@keyframes uxNavBar{from{transform:scaleY(.35);opacity:.45}to{transform:none;opacity:1}}
+.ux-nav-text{font-size:13.5px;letter-spacing:.08em;color:#8a7676}
 
 /* 首頁：五步驟快速入口 */
 .home-flow{padding:44px 0 30px;text-align:center}
@@ -7937,6 +7949,7 @@ _components.html(
           const jumpText = anchor.getAttribute("data-target");
           const active = d.querySelector(".site-nav-link.active");
           const samePage = !!active && (active.getAttribute("href") || "").indexOf("section=" + section) >= 0;
+          if (!samePage) w.__uxNavPending(section, active);
           if (!samePage || !jumpText) button.click();      // 點目前所在頁的主題本身：照舊重新整理該頁
           if (jumpText) w.__uxJumpTo(jumpText, anchor.getAttribute("data-tab"), samePage ? null : section);
           // 點完收起下拉；同時移開焦點，否則 :focus-within 會讓選單重新打開、擋住剛捲到的區塊
@@ -7944,6 +7957,37 @@ _components.html(
           const item = anchor.closest(".nav-item");
           if (item) { item.classList.add("nav-closed"); setTimeout(function() { item.classList.remove("nav-closed"); }, 400); }
         }, true);
+
+        // 一點主題就先換畫面：導覽列標到新主題、舊頁面藏起來，不必等伺服器；新頁面有內容（或這輪跑完）才收掉提示
+        let pendingTimer = null;
+        const clearPending = () => {
+          clearInterval(pendingTimer); pendingTimer = null;
+          d.body.classList.remove("ux-nav-pending");
+        };
+        w.__uxNavPending = function(section, active) {
+          const link = d.querySelector('.site-nav-link[href*="section=' + section + '"]');
+          if (active) active.classList.remove("active");
+          if (link) link.classList.add("active");
+          let box = d.getElementById("ux-nav-loading");
+          if (!box) {
+            box = d.createElement("div"); box.id = "ux-nav-loading"; box.setAttribute("role", "status");
+            box.innerHTML = '<div class="ux-nav-bars"><i></i><i></i><i></i></div><div class="ux-nav-text"></div>';
+            d.body.appendChild(box);
+          }
+          box.querySelector(".ux-nav-text").textContent = "正在切換到「" + (link ? link.textContent.trim() : "") + "」";
+          d.body.classList.add("ux-nav-pending");
+          clearInterval(pendingTimer);
+          const started = Date.now();
+          let sawRunning = false;
+          pendingTimer = setInterval(function() {
+            const app = d.querySelector(".stApp");
+            const running = !!app && app.getAttribute("data-test-script-state") === "running";
+            sawRunning = sawRunning || running;
+            const page = d.querySelector(".st-key-page_" + section);
+            const ready = page && page.scrollHeight > 160;
+            if (ready || (page && sawRunning && !running) || Date.now() - started > 45000) clearPending();
+          }, 100);
+        };
 
         // 依標題文字找頁面上的區塊（排除導覽列、頁尾、頁首大標與橫幅），捲到它並閃一下提示位置
         const TITLES = '.feature-section-title,.finance-card-title,.form-title,.fin-digest h3,.home-copy h2,.home-flow h2,' +
@@ -8004,10 +8048,9 @@ _components.html(
             if (running) { idle = 0; return; }
             idle += 1;
             if (targetSection) {
-              // 換頁：導覽列的目前頁要先變成目標頁，再連續兩次閒置，畫面才算穩定，避免捲到舊頁面的同名標題
-              const act = d.querySelector(".site-nav-link.active");
-              const arrived = act && (act.getAttribute("href") || "").indexOf("section=" + targetSection) >= 0;
-              if (!arrived) { if (Date.now() - started > 30000) stopJump(); return; }
+              // 換頁：目標頁的容器要先出現，再連續兩次閒置，畫面才算穩定，避免捲到舊頁面的同名標題
+              // （導覽列的目前頁一點就先換了，不能用來判斷）
+              if (!d.querySelector(".st-key-page_" + targetSection)) { if (Date.now() - started > 30000) stopJump(); return; }
               if (idle < 2) return;
             }
             const el = findTitle(text);
@@ -8141,7 +8184,15 @@ def _render_page_body(section: str) -> None:
 
 # 頁面內容包一層有 key 的容器：換頁時容器重建、播放淡入動畫；同一頁內重跑不會重播。
 try:
-    with st.container(key=f"page_{current_section}"):
+    # 同一位置的新容器會繼承舊容器的子元素，舊主題要等新內容一格格蓋掉、整輪跑完才消失，所以每個主題各有一個位置。
+    # 換頁時先在舊主題的位置寫入 empty 清掉它。不能在同一位置先 empty 再放容器：送出前會被合併掉，等於沒清。
+    with st.container(key="site_pages"):
+        _page_slots = {key: st.container() for key, _label, _hint in SITE_NAV}
+    _previous_section = st.session_state.get("_rendered_section")
+    if _previous_section in _page_slots and _previous_section != current_section:
+        _page_slots[_previous_section].empty()
+    st.session_state["_rendered_section"] = current_section
+    with _page_slots[current_section].container(key=f"page_{current_section}"):
         _render_page(current_section)
 
     # 盤中自動更新改由「操作策略」各即時區塊的 fragment（run_every）負責，不再整頁重跑。
