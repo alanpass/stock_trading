@@ -2815,60 +2815,127 @@ def _watchlist_on_pick() -> None:
         _watchlist_change(lambda fresh: None)
 
 
-def _render_watchlist_manager() -> None:
+# 名單工具列（參考三竹：清單正上方一條細列，窄下拉選單＋‹ ›＋小圖示；改名、新增才開對話框，平常不佔版面）
+_WATCHLIST_BAR_CSS = """<style>
+body .stApp .st-key-watchlist_bar{gap:0!important;margin:4px 0 4px!important;padding:0!important}
+body .stApp .st-key-watchlist_bar [data-testid="stHorizontalBlock"]{gap:0!important;align-items:center!important;flex-wrap:nowrap!important;border:1px solid #e6d8d8;border-radius:9px;background:#fff;padding:2px 3px 2px 0;box-sizing:border-box}
+body .stApp .st-key-watchlist_bar [data-testid="stColumn"]{min-width:0!important;width:auto!important;padding:0!important}
+body .stApp .st-key-watchlist_bar [data-testid="stColumn"]:first-child{flex:1 1 auto!important}
+body .stApp .st-key-watchlist_bar [data-testid="stColumn"]:not(:first-child){flex:0 0 28px!important}
+/* 有提示文字的按鈕外面多包一層 tooltip，選擇器不能寫成 stButton > button */
+/* 下拉選單融入工具列：沒有自己的外框 */
+body .stApp .st-key-watchlist_bar [data-testid="stSelectbox"] [data-baseweb="select"],
+body .stApp .st-key-watchlist_bar [data-testid="stSelectbox"] [data-baseweb="select"] > div,
+body .stApp .st-key-watchlist_bar [data-testid="stSelectbox"] [role="group"],
+body .stApp .st-key-watchlist_bar [data-testid="stSelectbox"] [role="combobox"]{min-height:30px!important;height:30px!important;border:0!important;background:transparent!important;box-shadow:none!important;align-items:center!important}
+body .stApp .st-key-watchlist_bar [data-testid="stSelectbox"] input{font-size:14px!important;font-weight:700!important;color:#8e2b2f!important;-webkit-text-fill-color:#8e2b2f!important;padding:0 0 0 10px!important}
+body .stApp .st-key-watchlist_bar div[data-testid="stButton"]{margin:0!important}
+body .stApp.stApp .st-key-watchlist_bar div[data-testid="stButton"] button{width:28px!important;min-width:28px!important;height:28px!important;min-height:28px!important;padding:0!important;border:0!important;border-radius:6px!important;background:transparent!important;background-image:none!important;box-shadow:none!important;color:#8e2b2f!important;transform:none!important}
+body .stApp.stApp .st-key-watchlist_bar div[data-testid="stButton"] button:hover:not(:disabled){background:#f8e9e9!important}
+body .stApp.stApp .st-key-watchlist_bar div[data-testid="stButton"] button:disabled{color:#d8cccc!important;background:transparent!important;opacity:1!important}
+body .stApp.stApp .st-key-watchlist_bar div[data-testid="stButton"] button::before{display:none!important}
+body .stApp.stApp .st-key-watchlist_bar div[data-testid="stButton"] button span{font-size:18px!important;color:inherit!important;-webkit-text-fill-color:currentColor!important}
+/* 名單對話框（不在 .stApp 底下，選擇器不能加 .stApp）：不要表單外框，一個主按鈕，刪除是紅色文字 */
+body [data-testid="stDialog"] [data-testid="stForm"]{border:0!important;padding:0!important;background:transparent!important;box-shadow:none!important}
+body [data-testid="stDialog"] h2{font-size:18px!important;color:#8e2b2f!important}
+body [data-testid="stDialog"] input[type="text"]{background:#fff!important}
+body [data-testid="stDialog"] [data-testid="stTextInputRootElement"],body [data-testid="stDialog"] [data-baseweb="input"]{background:#fff!important;border-color:#dcc9c9!important;border-radius:8px!important}
+html body [data-testid="stDialog"] [data-testid="stFormSubmitButton"] button{background:#8e2b2f!important;background-image:none!important;border:0!important;box-shadow:none!important;border-radius:8px!important;min-height:38px!important;height:38px!important;transform:none!important}
+html body [data-testid="stDialog"] [data-testid="stFormSubmitButton"] button,
+html body [data-testid="stDialog"] [data-testid="stFormSubmitButton"] button *{color:#fff!important;-webkit-text-fill-color:#fff!important}
+html body [data-testid="stDialog"] [data-testid="stFormSubmitButton"] button:hover{background:#74211f!important}
+html body [data-testid="stDialog"] [data-testid="stFormSubmitButton"] button::before{display:none!important}
+html body [data-testid="stDialog"] [class*="st-key-wl_dlg_delete"] div[data-testid="stButton"] button{background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;min-height:32px!important;height:32px!important;transform:none!important}
+html body [data-testid="stDialog"] [class*="st-key-wl_dlg_delete"] div[data-testid="stButton"] button,
+html body [data-testid="stDialog"] [class*="st-key-wl_dlg_delete"] div[data-testid="stButton"] button *{color:#b3261e!important;-webkit-text-fill-color:#b3261e!important;font-size:13.5px!important}
+html body [data-testid="stDialog"] [class*="st-key-wl_dlg_delete"] div[data-testid="stButton"] button:hover{background:#fbeeee!important}
+html body [data-testid="stDialog"] [class*="st-key-wl_dlg_delete"] div[data-testid="stButton"] button::before{display:none!important}
+</style>"""
+
+
+def _watchlist_step(delta: int) -> None:
+    ids = [x["id"] for x in st.session_state.watchlist_doc["lists"]]
+    st.session_state.watchlist_pick = ids[(ids.index(st.session_state.watchlist_doc["active"]) + delta) % len(ids)]
+    _watchlist_on_pick()
+
+
+@st.dialog("新增自選股名單", width="small")
+def _watchlist_add_dialog() -> None:
+    doc = st.session_state.watchlist_doc
+    with st.form("wl_add_form", border=False):
+        name = st.text_input("名稱", value=watchlist_store.next_default_name(doc), max_chars=watchlist_store.MAX_NAME_LENGTH)
+        if st.form_submit_button("新增", type="primary", use_container_width=True):
+            error = _watchlist_change(lambda d: watchlist_store.add_list(d, name))
+            if error:
+                st.warning(error)
+            else:
+                st.session_state.pop("watchlist_pick", None)
+                _watchlist_after_switch()
+                st.rerun()
+
+
+@st.dialog("編輯自選股名單", width="small")
+def _watchlist_edit_dialog() -> None:
     doc = st.session_state.watchlist_doc
     current = watchlist_store.active_list(doc)
-    with st.form("watchlist_add_form", clear_on_submit=True, border=False):
-        new_name = st.text_input("新增名單", placeholder=f"留白就叫「{watchlist_store.next_default_name(doc)}」", max_chars=watchlist_store.MAX_NAME_LENGTH)
-        if st.form_submit_button("新增名單", use_container_width=True):
-            error = _watchlist_change(lambda d: watchlist_store.add_list(d, new_name))
+    with st.form("wl_edit_form", border=False):
+        name = st.text_input("名稱", value=current["name"], max_chars=watchlist_store.MAX_NAME_LENGTH)
+        if st.form_submit_button("儲存", type="primary", use_container_width=True):
+            error = _watchlist_change(lambda d: watchlist_store.rename_list(d, current["id"], name))
             if error:
-                st.session_state.watchlist_error = error
+                st.warning(error)
             else:
-                st.session_state.pop("watchlist_pick", None)
-                _watchlist_after_switch()
-            st.rerun()
-    with st.form("watchlist_rename_form", clear_on_submit=True, border=False):
-        renamed = st.text_input(f"把「{current['name']}」改名為", max_chars=watchlist_store.MAX_NAME_LENGTH)
-        if st.form_submit_button("改名", use_container_width=True):
-            error = _watchlist_change(lambda d: watchlist_store.rename_list(d, current["id"], renamed))
-            if error:
-                st.session_state.watchlist_error = error
-            st.session_state.pop("watchlist_pick", None)   # 否則下拉選單還顯示舊名稱
-            st.rerun()
-    if len(doc["lists"]) > 1:
-        sure = st.checkbox(f"確定要刪除「{current['name']}」（{len(current['items'])} 檔）", key=f"watchlist_delete_sure_{current['id']}")
-        if st.button("刪除這份名單", key="watchlist_delete", disabled=not sure, use_container_width=True):
+                st.session_state.pop("watchlist_pick", None)   # 否則下拉選單還顯示舊名稱
+                st.rerun()
+    if len(doc["lists"]) <= 1:
+        return
+    if not st.session_state.get("wl_delete_asked"):
+        with st.container(key="wl_dlg_delete"):
+            if st.button("刪除這份名單", icon=":material/delete:", use_container_width=True):
+                st.session_state.wl_delete_asked = True
+                st.rerun(scope="fragment")
+        return
+    st.warning(f"確定刪除「{current['name']}」？裡面的 {len(current['items'])} 檔會一起移除，無法復原。")
+    keep, remove = st.columns(2)
+    if keep.button("取消", use_container_width=True):
+        st.session_state.wl_delete_asked = False
+        st.rerun(scope="fragment")
+    with remove.container(key="wl_dlg_delete_yes"):
+        if st.button("確定刪除", use_container_width=True):
+            st.session_state.wl_delete_asked = False
             error = _watchlist_change(lambda d: watchlist_store.delete_list(d, current["id"]))
             if error:
-                st.session_state.watchlist_error = error
+                st.warning(error)
             else:
                 st.session_state.pop("watchlist_pick", None)
                 _watchlist_after_switch()
-            st.rerun()
+                st.rerun()
 
 
-def _render_watchlist_switcher() -> None:
-    """切換會重畫整頁（盤中焦點也要換），所以不放在側欄定時重畫的 fragment 裡；輸入名稱時也不會被打斷。"""
+def _render_watchlist_bar() -> None:
+    """切換會重畫整頁（盤中焦點也要換），所以不放在側欄定時重畫的 fragment 裡。"""
     doc = st.session_state.watchlist_doc
     names = {x["id"]: x["name"] for x in doc["lists"]}
     if st.session_state.get("watchlist_pick") not in names:
         st.session_state.watchlist_pick = doc["active"]
-    st.selectbox("自選股名單", list(names), format_func=lambda list_id: names.get(list_id, list_id),
-                 key="watchlist_pick", on_change=_watchlist_on_pick)
-    if is_authenticated():
-        with st.popover("管理名單", use_container_width=True):
-            _render_watchlist_manager()
-    else:
-        st.caption("登入後可以新增、改名或刪除名單。")
-    error = st.session_state.pop("watchlist_error", None)
-    if error:
-        st.warning(error)
+    st.markdown(_WATCHLIST_BAR_CSS, unsafe_allow_html=True)
+    single = len(names) <= 1
+    editable = is_authenticated()
+    with st.container(key="watchlist_bar"):
+        cols = st.columns([6, 1, 1, 1, 1] if editable else [6, 1, 1], gap="small", vertical_alignment="center")
+        cols[0].selectbox("自選股名單", list(names), format_func=lambda list_id: names.get(list_id, list_id), key="watchlist_pick",
+                          on_change=_watchlist_on_pick, label_visibility="collapsed")
+        cols[1].button("", icon=":material/chevron_left:", key="wl_prev", help="上一份名單", disabled=single, on_click=_watchlist_step, args=(-1,))
+        cols[2].button("", icon=":material/chevron_right:", key="wl_next", help="下一份名單", disabled=single, on_click=_watchlist_step, args=(1,))
+        if editable:
+            if cols[3].button("", icon=":material/edit:", key="wl_edit", help="改名或刪除這份名單"):
+                st.session_state.wl_delete_asked = False
+                _watchlist_edit_dialog()
+            if cols[4].button("", icon=":material/add:", key="wl_add", help="新增名單"):
+                _watchlist_add_dialog()
 
 
 def _render_sidebar_watch() -> None:
-    render_pinned_selected()
-    st.markdown(f'<div class="feature-section-title side-watch-title">自選股即時行情｜{_esc(_watchlist_name())}</div>', unsafe_allow_html=True)
     if not st.session_state.watchlist:
         st.info("這份名單還沒有股票。用上方搜尋找到股票後，按「加入自選股」。")
         return
@@ -2914,7 +2981,9 @@ def render_strategy_workspace() -> None:
     chips_pending = any(v is None for v in chip_signals.get_nonblocking(st.session_state.watchlist).values())
     side_every = max(live_every, 15) if live_every else (5 if chips_pending else None)
     with st.sidebar:
-        _render_watchlist_switcher()
+        st.fragment(render_pinned_selected, run_every=side_every)()
+        st.markdown('<div class="feature-section-title side-watch-title">自選股即時行情</div>', unsafe_allow_html=True)
+        _render_watchlist_bar()
         st.fragment(_render_sidebar_watch, run_every=side_every)()
 
     for key, body, render in slots:
