@@ -237,7 +237,7 @@ _BOOT_BASE_CSS = """
 @keyframes boot-trend{0%,26%{opacity:0;transform:scale(.05)}30%{opacity:1}44%{opacity:1;transform:none}56%{opacity:1;transform:none}66%,100%{opacity:0;transform:none}}
 .boot-tail{opacity:0;transform-origin:73% 73%;animation:boot-tail 3.6s cubic-bezier(.2,.8,.2,1) infinite both}
 @keyframes boot-tail{0%,64%{opacity:0;transform:scale(.05)}68%{opacity:1}78%{opacity:1;transform:none}93%{opacity:1;transform:none}100%{opacity:0;transform:none}}
-.boot-title{margin-top:24px;font-family:Georgia,"Noto Serif TC","Microsoft JhengHei",serif;font-size:21px;letter-spacing:.14em;color:#8e2b2f;text-align:center;line-height:1.5}
+.boot-title{margin-top:24px;font-family:"Yuji Boku","Yuji Syuku","Zhi Mang Xing","DFKai-SB","BiauKai","標楷體","Noto Serif TC",serif;font-size:clamp(19px,5.6vw,25px);font-weight:400;letter-spacing:.14em;color:#8e2b2f;text-align:center;line-height:1.5;white-space:nowrap}
 .boot-track{position:relative;width:148px;height:2px;margin-top:16px;border-radius:2px;background:rgba(142,43,47,.14);overflow:hidden}
 .boot-track::after{content:"";position:absolute;top:0;bottom:0;left:0;width:38%;border-radius:2px;background:#8e2b2f;will-change:transform;animation:boot-slide 1.4s ease-in-out infinite}
 @keyframes boot-slide{0%{transform:translateX(-110%)}100%{transform:translateX(300%)}}
@@ -275,7 +275,9 @@ BOOT_MIN_SECONDS = 1.2   # 頁面很快跑完時也至少播這麼久，否則�
 
 
 def _boot_css(extra: str) -> str:
-    return "<style>" + _BOOT_BASE_CSS + extra + "</style>"
+    # 網站名稱的字體；網站本身的 @import 要到腳本後段才送出，動畫得自己先載入。display=block：字體到之前先留白，不會閃過別的字體
+    font = '@import url("https://fonts.googleapis.com/css2?family=Yuji+Boku&family=Yuji+Syuku&display=block");'
+    return "<style>" + font + _BOOT_BASE_CSS + extra + "</style>"
 
 
 def _boot_loader_html(done: bool = False) -> str:
