@@ -221,8 +221,8 @@ _BOOT_BASE_CSS = """
 @keyframes boot-gone-go{to{visibility:hidden;pointer-events:none}}
 @keyframes boot-inner-out{to{opacity:0;transform:scale(1.05)}}
 @keyframes boot-inner-go{to{opacity:0;transform:scale(1.05)}}
-.boot-inner{display:flex;flex-direction:column;align-items:center;width:min(340px,84vw);will-change:transform,opacity}
-.boot-mark{position:relative;width:min(148px,42vw);aspect-ratio:1}
+.boot-inner{display:flex;flex-direction:column;align-items:center;width:min(860px,92vw);will-change:transform,opacity}
+.boot-mark{position:relative;width:min(340px,54vw,40vh);aspect-ratio:1}
 .boot-layer{position:absolute;inset:0;will-change:transform,opacity}
 .boot-layer svg{display:block;width:100%;height:100%;overflow:visible}
 .boot-ring{transform-origin:50% 50%;animation:boot-ring 3.6s cubic-bezier(.3,.7,.3,1) infinite both}
@@ -237,14 +237,14 @@ _BOOT_BASE_CSS = """
 @keyframes boot-trend{0%,26%{opacity:0;transform:scale(.05)}30%{opacity:1}44%{opacity:1;transform:none}56%{opacity:1;transform:none}66%,100%{opacity:0;transform:none}}
 .boot-tail{opacity:0;transform-origin:73% 73%;animation:boot-tail 3.6s cubic-bezier(.2,.8,.2,1) infinite both}
 @keyframes boot-tail{0%,64%{opacity:0;transform:scale(.05)}68%{opacity:1}78%{opacity:1;transform:none}93%{opacity:1;transform:none}100%{opacity:0;transform:none}}
-.boot-title{margin-top:24px;font-family:"Yuji Boku","Yuji Syuku","Zhi Mang Xing","DFKai-SB","BiauKai","標楷體","Noto Serif TC",serif;font-size:clamp(19px,5.6vw,25px);font-weight:400;letter-spacing:.14em;color:#8e2b2f;text-align:center;line-height:1.5;white-space:nowrap}
-.boot-track{position:relative;width:148px;height:2px;margin-top:16px;border-radius:2px;background:rgba(142,43,47,.14);overflow:hidden}
+.boot-title{margin-top:36px;font-family:"Yuji Boku","Yuji Syuku","Zhi Mang Xing","DFKai-SB","BiauKai","標楷體","Noto Serif TC",serif;font-size:clamp(20px,min(6.4vw,8vh),54px);font-weight:400;letter-spacing:.14em;color:#8e2b2f;text-align:center;line-height:1.5;white-space:nowrap}
+.boot-track{position:relative;width:min(340px,54vw);height:4px;margin-top:28px;border-radius:2px;background:rgba(142,43,47,.14);overflow:hidden}
 .boot-track::after{content:"";position:absolute;top:0;bottom:0;left:0;width:38%;border-radius:2px;background:#8e2b2f;will-change:transform;animation:boot-slide 1.4s ease-in-out infinite}
 @keyframes boot-slide{0%{transform:translateX(-110%)}100%{transform:translateX(300%)}}
-.boot-note{margin-top:12px;font-size:12.5px;letter-spacing:.08em;color:#8a7676;display:flex;justify-content:center}
+.boot-note{margin-top:22px;font-size:clamp(15px,4.2vw,24px);letter-spacing:.08em;color:#8a7676;display:flex;justify-content:center}
 /* 波浪：每個字一層，只動 transform／opacity，主執行緒忙時也不會停 */
 .boot-note span{display:inline-block;opacity:.6;will-change:transform,opacity;animation:boot-wave 1.5s ease-in-out infinite}
-@keyframes boot-wave{0%,50%,100%{transform:none;opacity:.6}20%{transform:translateY(-5px);opacity:1}35%{transform:translateY(1px);opacity:.8}}
+@keyframes boot-wave{0%,50%,100%{transform:none;opacity:.6}20%{transform:translateY(-.4em);opacity:1}35%{transform:translateY(.08em);opacity:.8}}
 @media (prefers-reduced-motion:reduce){
   .boot-ring,.boot-candle-end,.boot-tail{animation:none;opacity:1;transform:none}
   .boot-candle,.boot-trend,.boot-sweep{animation:none;opacity:0}
