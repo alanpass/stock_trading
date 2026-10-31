@@ -14,6 +14,7 @@
 """
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 import json
 import threading
 import time
@@ -273,6 +274,36 @@ def fundamentals() -> dict[str, dict]:
                 put(r["SecuritiesCompanyCode"], notice=str(r.get("TradingInformation", ""))[:80])
         return out
     return _memo("fundamentals", 3600, build)
+
+
+def company_financials() -> dict[str, dict]:
+    """個股財務數字（OpenAPI 最新一期）：本益比、累計 EPS 與損益（仟元）、月營收（仟元）及月增／年增。"""
+    sources = {"twse_bwibbu": f"{TWSE_OPENAPI}/exchangeReport/BWIBBU_ALL", "tpex_pe": f"{TPEX_OPENAPI}/tpex_mainboard_peratio_analysis",
+               "twse_rev": f"{TWSE_OPENAPI}/opendata/t187ap05_L", "tpex_rev": f"{TPEX_OPENAPI}/mopsfin_t187ap05_O",
+               "twse_eps": f"{TWSE_OPENAPI}/opendata/t187ap14_L", "tpex_eps": f"{TPEX_OPENAPI}/mopsfin_t187ap14_O"}
+
+    def build():
+        with ThreadPoolExecutor(max_workers=len(sources)) as pool:
+            data = dict(zip(sources, pool.map(lambda kv: _openapi(*kv), sources.items())))
+        out: dict[str, dict] = {}
+        put = lambda code, **kw: out.setdefault(clean_symbol(code), {}).update(kw)
+        for r in data["twse_bwibbu"]:
+            put(r.get("Code", ""), pe=_num(r.get("PEratio")))
+        for r in data["tpex_pe"]:
+            put(r.get("SecuritiesCompanyCode", ""), pe=_num(r.get("PriceEarningRatio")))
+        for r in data["twse_rev"] + data["tpex_rev"]:
+            ym = str(r.get("資料年月", ""))
+            put(r.get("公司代號", ""), revenue=_num(r.get("營業收入-當月營收")), rev_mom=_num(r.get("營業收入-上月比較增減(%)")),
+                rev_yoy=_num(r.get("營業收入-去年同月增減(%)")), rev_cum_yoy=_num(r.get("累計營業收入-前期比較增減(%)")),
+                rev_month=f"{int(ym[:-2]) + 1911}/{ym[-2:]}" if len(ym) >= 5 else "")
+        for r in data["twse_eps"] + data["tpex_eps"]:
+            year = str(r.get("年度") or r.get("Year") or "")
+            # 資料是當年度累計到該季（第 2 季的 EPS 是上半年合計）
+            put(r.get("公司代號") or r.get("SecuritiesCompanyCode") or "", eps=_num(r.get("基本每股盈餘(元)", r.get("基本每股盈餘"))),
+                eps_period=f"{int(year) + 1911} Q{r.get('季別', '')}" if year.isdigit() else "",
+                income_revenue=_num(r.get("營業收入")), income_operating=_num(r.get("營業利益")), income_net=_num(r.get("稅後淨利")))
+        return out
+    return _memo("company_financials", 3600, build)
 
 
 def dividend_years(symbol: str) -> list[int]:

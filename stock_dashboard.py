@@ -398,6 +398,7 @@ QUOTE_REFRESH_SECONDS = max(LIVE_REFRESH_SECONDS, 10)
 CHART_REFRESH_SECONDS = 15
 WATCH_REFRESH_PER_ROUND = 8     # 自選股每 15 秒最多更新幾檔，最久沒更新的先查
 WATCH_RATE_RESERVE = 6          # 額度剩這麼多時先不更新自選股，留給分析標的
+FOCUS_RATE_RESERVE = 20         # 盤中焦點掃描不用掉最後這些額度：剛開頁面時名單很長，否則分析標的的圖表會查不到
 MARKET_OPEN = dt_time(9, 0)
 MARKET_CLOSE = dt_time(13, 30)
 
@@ -805,6 +806,18 @@ def search_stock(keyword: str) -> pd.DataFrame:
     if not q:
         return pd.DataFrame()
     df = get_all_tickers()
+    found = _match_stock(df, q)
+    # 主檔最多一天才更新，可能還沒有新上市或舊版漏掉的股票：找不到就重建一次再找（5 分鐘最多一次，每次 2 個請求）
+    memo = _quote_memo()
+    if found.empty and time.time() - memo.get("_master_rebuilt_at", 0) >= 300:
+        memo["_master_rebuilt_at"] = time.time()
+        build_master(client, DATA / "industry_master.csv", force=True)
+        get_all_tickers.clear()
+        found = _match_stock(get_all_tickers(), q)
+    return found
+
+
+def _match_stock(df: pd.DataFrame, q: str) -> pd.DataFrame:
     if df.empty:
         return df
     code_s = df["symbol"].astype(str).str.upper()
@@ -1671,7 +1684,10 @@ def render_strategy_search() -> None:
     with right:
         do_search = st.button("\u200b", use_container_width=True, key="do_stock_search_site", help="搜尋")
 
-    if do_search:
+    # 按 Enter 只會讓輸入框內容改變、不會按到按鈕，內容跟上次搜尋不同也要查
+    typed = search_text.strip() and search_text != st.session_state.get("stock_search_done")
+    if do_search or typed:
+        st.session_state.stock_search_done = search_text
         found = search_stock(search_text)
         if found.empty:
             st.warning("找不到符合的股票代號或名稱。")
@@ -1720,6 +1736,41 @@ def render_strategy_search() -> None:
     if st.session_state.pop("watchlist_save_failed", False):
         st.warning("自選股已更新，但沒有存進雲端資料庫；網站重新部署後可能會還原。")
     st.markdown(f'<div class="selected-strip"><span>目前分析標的</span><strong>{code}</strong><span>｜自選股名單「{_esc(_watchlist_name())}」{len(st.session_state.watchlist)} 檔</span></div>', unsafe_allow_html=True)
+    _render_financial_strip(code)
+
+
+def _stock_financials(code: str) -> dict:
+    try:
+        import stock_features
+        return stock_features.company_financials().get(clean_symbol(code), {})
+    except Exception:
+        return {}
+
+
+def _render_financial_strip(code: str) -> None:
+    """目前分析標的的本益比、EPS 與月營收月增／年增；上漲紅、下跌綠。"""
+    fin = _stock_financials(code)
+    if not fin:
+        return
+    has = lambda key: pd.notna(fin.get(key, np.nan))
+    def pct(key):
+        if not has(key):
+            return "<b>--</b>"
+        tone = "fin-up" if fin[key] > 0 else "fin-down" if fin[key] < 0 else ""
+        return f"<b class='{tone}'>{fin[key]:+.2f}%</b>"
+    tile = lambda label, value, note="": f"<div class='fin-tile'><span>{label}</span>{value}<small>{note}</small></div>"
+    pe = f"<b>{fin['pe']:.2f}</b>" if has("pe") else "<b>--</b>"
+    eps_tone = "fin-down" if has("eps") and fin["eps"] < 0 else ""
+    eps = f"<b class='{eps_tone}'>{fin['eps']:.2f}</b>" if has("eps") else "<b>--</b>"
+    revenue = f"<b>{fin['revenue'] / 1e5:,.2f} 億</b>" if has("revenue") else "<b>--</b>"
+    month, period = fin.get("rev_month", ""), fin.get("eps_period", "")
+    tiles = (tile("本益比", pe, "倍" if has("pe") else "無資料或虧損") + tile("EPS", eps, f"{period} 累計・元")
+             + tile("月營收", revenue, month) + tile("月營收月增", pct("rev_mom"), "較上月")
+             + tile("月營收年增", pct("rev_yoy"), "較去年同月") + tile("累計營收年增", pct("rev_cum_yoy"), "今年累計"))
+    amounts = [(label, fin.get(key, np.nan)) for label, key in (("營收", "income_revenue"), ("營業利益", "income_operating"), ("稅後淨利", "income_net"))]
+    detail = "、".join(f"{label} {v / 1e5:,.2f} 億" for label, v in amounts if pd.notna(v))
+    note = f"<div class='fin-note'>{period} 累計財報：{detail}</div>" if detail else ""
+    st.markdown(f"<div class='fin-strip'>{tiles}</div>{note}", unsafe_allow_html=True)
 
 
 def _collect_json_candidates(patterns: list[str]) -> list[Path]:
@@ -4791,7 +4842,7 @@ def render_pinned_selected() -> None:
     sr = rows[rows.code == selected]
     sr = sr.iloc[0] if not sr.empty else None
     info = {}
-    if is_market_open_now():
+    if is_market_open_now() or sr is None:   # 不在自選股裡的股票，名稱和產業也要查
         try: info = get_ticker(selected)
         except Exception: info = {}
     name = info.get("name") or (sr["name"] if sr is not None else selected)
@@ -4806,10 +4857,10 @@ def render_pinned_selected() -> None:
         pass
 
     live = {}
-    if is_market_open_now():
+    if is_market_open_now() or sr is None:   # 搜尋的股票不在自選股裡時，名單沒有它的價格
         try: live = get_quote(selected)
         except Exception: live = {}
-    elif sr is not None:
+    else:
         live = {"tradePrice": sr.get("price", np.nan), "change": sr.get("change", np.nan), "changePercent": sr.get("change_pct", np.nan)}
     lp = pd.to_numeric(live.get("tradePrice", live.get("closePrice", np.nan)), errors="coerce")
     lch = pd.to_numeric(live.get("change", np.nan), errors="coerce")
@@ -4837,6 +4888,10 @@ def render_pinned_selected() -> None:
     ch_txt = "--" if pd.isna(lch) else f"{lch:+,.2f}"
     cp_txt = "--" if pd.isna(lcp) else f"{lcp:+.2f}%"
     meta = f"{market}｜{industry_code} {industry_name}" + (f"｜{biz}" if biz else "")
+    fin = _stock_financials(selected)
+    fin_items = [(label, fin.get(key, np.nan), fmt) for label, key, fmt in (("本益比", "pe", "{:.1f}"), ("EPS", "eps", "{:.2f}"), ("營收年增", "rev_yoy", "{:+.1f}%"))]
+    fin_txt = "｜".join(f"{label} {fmt.format(v)}" for label, v, fmt in fin_items if pd.notna(v))
+    fin_html = f"<div class='pin-meta'>{fin_txt}</div>" if fin_txt else ""
     with st.container(key="side_pinned"):
         st.markdown(
             "<div class='pin-card'>"
@@ -4844,6 +4899,7 @@ def render_pinned_selected() -> None:
             f"<div class='pin-name'>{name}<span>（{selected}）</span></div>"
             f"<div class='pin-vals' style='color:{color}'><b>{price_txt}</b><span>{ch_txt}</span><span>{cp_txt}</span></div>"
             f"<div class='pin-meta'>{meta}</div>"
+            f"{fin_html}"
             f"{ix_html}"
             "</div>",
             unsafe_allow_html=True,
@@ -5454,6 +5510,8 @@ def _focus_daily(code: str, day_iso: str) -> pd.DataFrame:
 
 @st.cache_data(ttl=920, show_spinner=False, max_entries=128)
 def _focus_minutes(code: str, bucket: int) -> pd.DataFrame:
+    if _stock_api.rate_slots_free() < FOCUS_RATE_RESERVE:
+        raise _NoData(code)   # 不快取，每分鐘重畫時再補
     k = _fetch_intraday(code, "1")
     if k is None or k.empty:
         raise _NoData(code)
@@ -7455,6 +7513,15 @@ body .stApp.stApp [class*="st-key-wc_"][class*="_ld"] [class*="st-key-wcdel_"] b
 .pin-vals{display:flex;align-items:baseline;gap:10px;font-variant-numeric:tabular-nums;font-weight:800;font-size:13px;}
 .pin-vals b{font-size:21px;font-weight:900;}
 .pin-meta{font-size:11.5px;color:#7a6a6a;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fin-strip{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin:10px 0 4px;}
+.fin-tile{background:#fff;border:1px solid #eadfdf;border-radius:8px;padding:8px 10px;min-width:0;}
+.fin-tile span{display:block;font-size:12px;color:#7d7474;white-space:nowrap;}
+.fin-tile b{display:block;font-size:17px;font-weight:800;color:#3b3535;margin:2px 0;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.fin-tile b.fin-up{color:#d23c3c;}
+.fin-tile b.fin-down{color:#14874f;}
+.fin-tile small{display:block;font-size:11px;color:#9a9090;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fin-note{font-size:12px;color:#7d7474;margin:0 0 12px;}
+@media(max-width:900px){.fin-strip{grid-template-columns:repeat(3,minmax(0,1fr));}}
 .pin-ix{display:flex;align-items:baseline;gap:8px;margin-top:5px;padding-top:5px;border-top:1px dashed #e6d3d3;font-size:12px;font-variant-numeric:tabular-nums;}
 .pin-ix b{font-size:13px;color:#1f2937;}.pin-ix-label{color:#7a6a6a;font-weight:700;}
 
