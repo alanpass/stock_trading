@@ -3452,38 +3452,6 @@ def _render_published_rotation(payload: dict) -> None:
         "本頁資料於台股交易日 15:10 起由本機排程更新，再發布到 GitHub。"
     )
 
-    a, b, c = st.columns([1, 3, 1.5])
-    with a:
-        period = st.radio("輪動軌跡", ["1 個月", "3 個月", "半年", "1 年"], index=0, key="rotation_published_period_v3")
-    display_to_internal = {rotation_label(name): name for name in by_name}
-    all_labels = list(display_to_internal.keys())
-    selection_key = "rotation_published_groups_all_v3"
-    # 新工作階段預設選取全部 27 群；獨立新 key 避免沿用舊版只選 10 群的狀態。
-    if selection_key not in st.session_state:
-        st.session_state[selection_key] = all_labels.copy()
-    with b:
-        select_actions = st.columns(2)
-        with select_actions[0]:
-            if st.button(f"全選 {len(all_labels)} 群", key="rotation_select_all_v3", use_container_width=True):
-                st.session_state[selection_key] = all_labels.copy()
-        with select_actions[1]:
-            if st.button("清除選取", key="rotation_clear_selection_v3", use_container_width=True):
-                st.session_state[selection_key] = []
-        selected_labels = st.multiselect(
-            "觀察主題（預設全部顯示）",
-            all_labels,
-            key=selection_key,
-            help="預設選取全部 27 個子產業。可按「清除選取」後重新挑選，或按「全選」恢復全部群組。",
-        )
-        selected = [display_to_internal[label] for label in selected_labels if label in display_to_internal]
-    with c:
-        sort_by = st.selectbox(
-            "排行依據",
-            ["族群平均漲跌幅", "前一日平均漲跌幅", "近 20 日", "近 5 日", "相對強弱", "相對動能"],
-            index=0,
-            key="rotation_published_sort_v2",
-        )
-
     quadrants = {q: sum(1 for g in groups if g.get("quadrant") == q) for q in ["領先", "改善", "轉弱", "落後"]}
     kpis = st.columns(5)
     kpis[0].metric("追蹤主題", f"{len(groups)} 群")
@@ -3494,8 +3462,13 @@ def _render_published_rotation(payload: dict) -> None:
 
     # 族群平均漲跌幅：依最新完成交易日各主題代表股的日漲跌幅算術平均。
     previous_date = str(payload.get("previous_data_asof") or "")
-    latest_label = f"最新交易日 {asof[5:]}" if len(asof) >= 10 else "最新交易日"
-    previous_label = f"前一交易日 {previous_date[5:]}" if len(previous_date) >= 10 else "前一交易日"
+    sort_labels = {
+        "族群平均漲跌幅": f"平均漲跌幅（{asof[5:]}）" if len(asof) >= 10 else "平均漲跌幅",
+        "前一日平均漲跌幅": f"平均漲跌幅（{previous_date[5:]}）" if len(previous_date) >= 10 else "前一日平均漲跌幅",
+    }
+    sort_options = ["族群平均漲跌幅", "前一日平均漲跌幅", "近 20 日", "近 5 日", "相對強弱", "相對動能"]
+    sort_key = "rotation_published_sort_v2"
+    sort_by = st.session_state.get(sort_key, sort_options[0])   # 標題在選單上方，先讀目前的選擇
 
     # 「排行依據」同時控制下方台股產業圖的數值、排序、標籤與基準線。
     chart_metric_fields = {
@@ -3516,26 +3489,12 @@ def _render_published_rotation(payload: dict) -> None:
     }
     chart_metric_label = chart_metric_labels[sort_by]
     _sec(f'01｜產業族群{chart_metric_label}')
+    # 這一區只留排行依據：輪動軌跡與主題篩選只影響 03、04，放在 03。
+    sort_col, _ = st.columns([1, 2])
+    sort_by = sort_col.selectbox("排行依據", sort_options, format_func=lambda option: sort_labels.get(option, option), key=sort_key)
     metric_is_index = sort_by in ("相對強弱", "相對動能")
-
-    if sort_by == "族群平均漲跌幅":
-        average_day = st.radio(
-            "資料日期（使用最新已完成交易日，不以日曆日判斷）",
-            [latest_label, previous_label],
-            horizontal=True,
-            key="rotation_published_avg_return_day_v1",
-        )
-        metric_key = "yesterday_return" if average_day == previous_label else "today_return"
-        average_date = previous_date if average_day == previous_label else asof
-    elif sort_by == "前一日平均漲跌幅":
-        average_day = previous_label
-        metric_key = "yesterday_return"
-        average_date = previous_date
-        st.caption(f"目前排行依據：前一日平均漲跌幅（資料日期：{average_date or '未知'}）")
-    else:
-        average_day = chart_metric_label
-        metric_key = chart_metric_fields[sort_by]
-        average_date = asof
+    metric_key = chart_metric_fields[sort_by]
+    average_date = previous_date if sort_by == "前一日平均漲跌幅" else asof
 
     # 漲跌報酬以 0 為基準；相對強弱／動能以 100 為中性基準。
     axis_baseline = 100.0 if metric_is_index else 0.0
@@ -3614,12 +3573,9 @@ def _render_published_rotation(payload: dict) -> None:
             "相對強弱": "relative_strength",
             "相對動能": "relative_momentum",
         }
-        # 若台股單日報酬圖切換到前一交易日，美股也改用美股前一個有效交易日。
+        # 台股單日報酬圖看前一交易日時，美股也用美股前一個有效交易日。
         us_metric_selected = us_metric_for_sort[sort_by]
         us_chart_metric_label = chart_metric_label
-        if sort_by == "族群平均漲跌幅" and average_day == previous_label:
-            us_metric_selected = "yesterday_return"
-            us_chart_metric_label = "前一日平均漲跌幅"
 
         def _us_theme_metrics(internal_name: str) -> dict:
             """計算美股主題等權平均報酬、相對強弱與相對動能。"""
@@ -3877,7 +3833,7 @@ def _render_published_rotation(payload: dict) -> None:
             st.plotly_chart(
                 tw_chart,
                 use_container_width=True,
-                key=f"rotation_published_avg_return_tw_{metric_key}_{average_day}_{len(average_rows)}",
+                key=f"rotation_published_avg_return_tw_{metric_key}_{len(average_rows)}",
                 config={"displaylogo": False, "responsive": True},
             )
         with us_col:
@@ -3895,7 +3851,7 @@ def _render_published_rotation(payload: dict) -> None:
             st.plotly_chart(
                 us_chart,
                 use_container_width=True,
-                key=f"rotation_published_avg_return_us_{metric_key}_{average_day}_{len(us_average_rows)}",
+                key=f"rotation_published_avg_return_us_{metric_key}_{len(us_average_rows)}",
                 config={"displaylogo": False, "responsive": True},
             )
         st.caption(
@@ -3909,8 +3865,20 @@ def _render_published_rotation(payload: dict) -> None:
 
     _sec('03｜產業輪動圖')
     st.caption("每條線代表主題相對加權指數的軌跡，每 5 個交易日取一點。RS 高於 100 代表相對強弱高於自身 50 日均值；動能高於 100 代表較 10 個交易日前增強。預設顯示 1 個月與「領先」象限。固定 1400×760 畫布：滑鼠滾輪縮放、雙擊重設；放大後可切換工具列平移，原始大小時不能平移出界，縮小不會超出原始視圖。")
+    display_to_internal = {rotation_label(name): name for name in by_name}
+    all_labels = list(display_to_internal.keys())
+    selection_key = "rotation_published_groups_all_v3"
+    # 新工作階段預設選取全部 27 群；獨立新 key 避免沿用舊版只選 10 群的狀態。
+    if selection_key not in st.session_state:
+        st.session_state[selection_key] = all_labels.copy()
+
+    def _set_rotation_groups(labels: list[str]) -> None:
+        st.session_state[selection_key] = labels
+
+    period_col, quadrant_col, filter_col = st.columns([2.1, 2.5, 1], vertical_alignment="bottom")
+    period = period_col.radio("輪動軌跡", ["1 個月", "3 個月", "半年", "1 年"], index=0, horizontal=True, key="rotation_published_period_v3")
     quadrant_options = ["領先", "轉弱", "改善", "落後", "全選"]
-    quadrant_filter = st.radio(
+    quadrant_filter = quadrant_col.radio(
         "當前所在的象限",
         quadrant_options,
         index=0,
@@ -3918,6 +3886,15 @@ def _render_published_rotation(payload: dict) -> None:
         key="rotation_published_quadrant_filter_v1",
         help="只顯示目前位於指定象限的產業軌跡；「全選」會顯示所有象限。",
     )
+    # 27 個主題收進彈出面板，平常不佔版面；名稱固定，面板才不會在勾選後關閉
+    with filter_col.popover("篩選主題", icon=":material/filter_list:", use_container_width=True, help="同時影響 03 產業輪動圖與 04 報酬表"):
+        select_actions = st.columns(2)
+        select_actions[0].button(f"全選 {len(all_labels)} 群", key="rotation_select_all_v3", use_container_width=True,
+                                 on_click=_set_rotation_groups, args=(all_labels.copy(),))
+        select_actions[1].button("清除選取", key="rotation_clear_selection_v3", use_container_width=True,
+                                 on_click=_set_rotation_groups, args=([],))
+        selected_labels = st.multiselect("觀察主題（預設全部顯示）", all_labels, key=selection_key)
+    selected = [display_to_internal[label] for label in selected_labels if label in display_to_internal]
     plot_selected = [
         name for name in selected
         if quadrant_filter == "全選"
@@ -4028,7 +4005,7 @@ def _render_published_rotation(payload: dict) -> None:
         )
     elif not plot_selected:
         if not selected:
-            st.info("目前沒有選取任何產業群。請按「全選 27 群」或在上方選取要觀察的產業。")
+            st.info("目前沒有選取任何產業群。請按上方「篩選主題」選取要觀察的產業。")
         else:
             st.info(f"目前「{quadrant_filter}」象限沒有符合條件的已選產業。請切換到其他象限或「全選」。")
     else:
