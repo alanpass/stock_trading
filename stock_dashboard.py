@@ -81,7 +81,7 @@ def _refresh_helper_modules() -> None:
     import importlib
     import sys as _sys
     names = ("industry_master", "stock_api", "business_master", "market_calendar", "watchlist_store", "stock_features", "chip_signals", "intraday_signals",
-             "industry_rotation", "value_chain", "section_ui", "site_logo", "future_picks_ui", "trend_pattern_ui", "stock_notes_ui")
+             "industry_rotation", "value_chain", "mobile_app", "section_ui", "site_logo", "future_picks_ui", "trend_pattern_ui", "stock_notes_ui")
     for name in names:
         mod = _sys.modules.get(name)
         if mod is None or not getattr(mod, "__file__", None):
