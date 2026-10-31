@@ -4900,7 +4900,8 @@ def render_pinned_selected() -> None:
     price_txt = "--" if pd.isna(lp) else f"{lp:,.2f}"
     ch_txt = "--" if pd.isna(lch) else f"{lch:+,.2f}"
     cp_txt = "--" if pd.isna(lcp) else f"{lcp:+.2f}%"
-    meta = f"{market}｜{industry_code} {industry_name}" + (f"｜{biz}" if biz else "")
+    # 收盤後自選股名單可能沒有市場別，空的就不顯示
+    meta = "｜".join(x for x in (market, f"{industry_code} {industry_name}", biz) if x)
     fin = _stock_financials(selected)
     fin_items = [(label, fin.get(key, np.nan), fmt) for label, key, fmt in (("本益比", "pe", "{:.1f}"), ("EPS", "eps", "{:.2f}"))]
     fin_txt = "｜".join(f"{label} {fmt.format(v)}" for label, v, fmt in fin_items if pd.notna(v))
