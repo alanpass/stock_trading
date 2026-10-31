@@ -101,6 +101,15 @@ def _acquire_rate_slot(wait: bool) -> None:
         time.sleep(delay)
 
 
+def rate_slots_free() -> int:
+    """這一分鐘還能送幾個請求（本機計數），讓自選股輪流更新時讓出額度。"""
+    with _RATE_LOCK:
+        now = time.monotonic()
+        while _RATE_TIMES and now - _RATE_TIMES[0] >= 60:
+            _RATE_TIMES.popleft()
+        return FUGLE_RATE_LIMIT_PER_MIN - len(_RATE_TIMES)
+
+
 class FugleClient:
     def __init__(self, api_key: str | None = None, timeout: int = 20, wait_on_limit: bool = True):
         """wait_on_limit=False（網站用）：額度用完時立即放棄這次請求，不讓頁面等待；

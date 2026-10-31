@@ -391,6 +391,13 @@ except Exception:
     LIVE_REFRESH_SECONDS = 5
 
 REFRESH_INTERVAL = LIVE_REFRESH_SECONDS if is_taiwan_cash_session_open() else None
+# Fugle 每分鐘 55 次由所有使用者共用，盤中的分配（一人看一檔）：
+#   分析標的報價 10 秒 6 次＋分 K 兩種週期 15 秒 8 次＋逐筆 15 秒 4 次，共 18 次
+#   盤中焦點每 2 分鐘掃一次名單，約 15 次；剩下的給自選股輪流更新
+QUOTE_REFRESH_SECONDS = max(LIVE_REFRESH_SECONDS, 10)
+CHART_REFRESH_SECONDS = 15
+WATCH_REFRESH_PER_ROUND = 8     # 自選股每 15 秒最多更新幾檔，最久沒更新的先查
+WATCH_RATE_RESERVE = 6          # 額度剩這麼多時先不更新自選股，留給分析標的
 MARKET_OPEN = dt_time(9, 0)
 MARKET_CLOSE = dt_time(13, 30)
 
@@ -570,12 +577,13 @@ def watch_rows(watchlist_key):
 
 @st.cache_resource(show_spinner=False)
 def _quote_memo() -> dict:
-    """每檔最近查到的行情 {code: (時間格, quote)}，跨名單、跨使用者共用。"""
+    """每檔最近查到的行情 {code: (時間格, quote, 查詢時間)}，跨名單、跨使用者共用。"""
     return {}
 
 
-@st.cache_data(ttl=600, show_spinner=False, max_entries=64)
-def _watch_rows(watchlist_key, _bucket):
+# 時間格參數不能以底線開頭：st.cache_data 不把底線開頭的參數算進快取鍵，資料會一直放到 ttl 才更新。
+@st.cache_data(ttl=320, show_spinner=False, max_entries=64)
+def _watch_rows(watchlist_key, bucket):
     rows, errors, maps = [], [], {}
     market_open = is_market_open_now()
     now = taiwan_now()
@@ -618,22 +626,32 @@ def _watch_rows(watchlist_key, _bucket):
         return x
 
     memo = _quote_memo()
+    watchlist = list(watchlist_key)
+    refresh = set(watchlist)
+    if market_open:
+        # 逐檔查價每檔都花一次額度，整份名單每 15 秒重查會超過上限：改成每輪只查最久沒更新的幾檔。
+        # 沒有今天行情的股票一定要查，否則開盤後會把昨天的價格當成現價。
+        def fetched_at(code):
+            hit = memo.get(code)
+            return hit[2] if hit and str(hit[1].get("date", today.isoformat()))[:10] == today.isoformat() else 0
+        oldest = sorted(watchlist, key=fetched_at)
+        room = max(0, min(WATCH_REFRESH_PER_ROUND, _stock_api.rate_slots_free() - WATCH_RATE_RESERVE))
+        refresh = {c for c in oldest if not fetched_at(c)} | set(oldest[:room])
 
     def fetch_memo(code):
         # 這個時間格查過就不再花額度；這次查不到就沿用上一筆（列上的資料日期仍是舊資料本身的日期）。
         hit = memo.get(code)
-        if hit and hit[0] == _bucket:
+        if hit and (hit[0] == bucket or code not in refresh):
             return hit[1]
         x = fetch_one(code) or {}
         if any(pd.notna(pd.to_numeric(x.get(k), errors="coerce")) for k in ("lastPrice", "closePrice", "tradePrice", "avgPrice")):
-            memo[code] = (_bucket, x)
+            memo[code] = (bucket, x, time.time())
             return x
         if after_close:   # 盤後的空結果會留在 _get_quote 的快取，清掉才查得到
-            _get_quote.clear(code, 0)
+            _get_quote.clear(code, _quote_bucket(QUOTE_REFRESH_SECONDS))
         return hit[1] if hit else x
 
     # 逐檔查詢改成並行：20 多檔的等待時間從「加總」變成「最慢一檔」。Fugle 額度由 stock_api 共用計數控管。
-    watchlist = list(watchlist_key)
     with ThreadPoolExecutor(max_workers=8) as pool:
         quotes = list(pool.map(fetch_memo, watchlist))
     for code, x in zip(watchlist, quotes):
@@ -802,11 +820,11 @@ def search_stock(keyword: str) -> pd.DataFrame:
 
 
 def get_quote(code: str) -> dict:
-    return _get_quote(code, _quote_bucket(LIVE_REFRESH_SECONDS))
+    return _get_quote(code, _quote_bucket(QUOTE_REFRESH_SECONDS))
 
 
-@st.cache_data(ttl=600, show_spinner=False, max_entries=512)
-def _get_quote(code: str, _bucket: int) -> dict:
+@st.cache_data(ttl=320, show_spinner=False, max_entries=256)
+def _get_quote(code: str, bucket: int) -> dict:
     """取得最新且日期可驗證的行情。
 
     規則：
@@ -925,14 +943,14 @@ class _NoData(Exception):
 
 def get_intraday(code: str, timeframe: str) -> pd.DataFrame:
     try:
-        return _get_intraday_cached(clean_symbol(code), str(timeframe), _quote_bucket(LIVE_REFRESH_SECONDS))
+        return _get_intraday_cached(clean_symbol(code), str(timeframe), _quote_bucket(CHART_REFRESH_SECONDS))
     except _NoData:
         return pd.DataFrame()
 
 
-@st.cache_data(ttl=600, show_spinner=False, max_entries=256)
-def _get_intraday_cached(code: str, timeframe: str, _bucket: int) -> pd.DataFrame:
-    """盤中依 LIVE_REFRESH_SECONDS 更新；盤外分 K 不會變，快取 5 分鐘。失敗不快取。"""
+@st.cache_data(ttl=320, show_spinner=False, max_entries=64)
+def _get_intraday_cached(code: str, timeframe: str, bucket: int) -> pd.DataFrame:
+    """盤中依 CHART_REFRESH_SECONDS 更新；盤外分 K 不會變，快取 5 分鐘。失敗不快取。"""
     k = _fetch_intraday(code, timeframe)
     if k is None or k.empty:
         raise _NoData(code)
@@ -989,13 +1007,13 @@ def _fetch_intraday(code: str, timeframe: str) -> pd.DataFrame:
 
 def get_trades(code: str) -> pd.DataFrame:
     try:
-        return _get_trades_cached(clean_symbol(code), _quote_bucket(LIVE_REFRESH_SECONDS))
+        return _get_trades_cached(clean_symbol(code), _quote_bucket(CHART_REFRESH_SECONDS))
     except _NoData:
         return pd.DataFrame()
 
 
-@st.cache_data(ttl=600, show_spinner=False, max_entries=128)
-def _get_trades_cached(code: str, _bucket: int) -> pd.DataFrame:
+@st.cache_data(ttl=320, show_spinner=False, max_entries=16)
+def _get_trades_cached(code: str, bucket: int) -> pd.DataFrame:
     try:
         payload = client._get(f"intraday/trades/{code}")
     except Exception as exc:
@@ -5434,8 +5452,8 @@ def _focus_daily(code: str, day_iso: str) -> pd.DataFrame:
     return h[["date", "open", "high", "low", "close", "volume"]].reset_index(drop=True)
 
 
-@st.cache_data(ttl=900, show_spinner=False, max_entries=256)
-def _focus_minutes(code: str, _bucket: int) -> pd.DataFrame:
+@st.cache_data(ttl=920, show_spinner=False, max_entries=128)
+def _focus_minutes(code: str, bucket: int) -> pd.DataFrame:
     k = _fetch_intraday(code, "1")
     if k is None or k.empty:
         raise _NoData(code)
