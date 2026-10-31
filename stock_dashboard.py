@@ -1747,6 +1747,18 @@ def _stock_financials(code: str) -> dict:
         return {}
 
 
+def _revenue_growth_html(code: str) -> str:
+    """側欄卡片的一行月營收月增／年增；沒有資料就不顯示。"""
+    fin = _stock_financials(code)
+    parts = []
+    for label, key in (("月增", "rev_mom"), ("年增", "rev_yoy")):
+        v = fin.get(key, np.nan)
+        if pd.notna(v):
+            tone = "rev-up" if v > 0 else "rev-down" if v < 0 else ""
+            parts.append(f"{label} <b class='{tone}'>{v:+.2f}%</b>")
+    return f"<div class='rev-line'><span>營收</span>{''.join(f'<i>{p}</i>' for p in parts)}</div>" if parts else ""
+
+
 def _render_financial_strip(code: str) -> None:
     """目前分析標的的本益比、EPS 與月營收月增／年增；上漲紅、下跌綠。"""
     fin = _stock_financials(code)
@@ -4797,6 +4809,7 @@ def render_watchlist(compact: bool = False):
                                 f"<span style='color:{vcolor}'>{ch_txt}</span>"
                                 f"<span style='color:{vcolor}'>{cp_txt}</span>"
                                 "</div>"
+                                f"{_revenue_growth_html(r['code'])}"
                                 f"<div class='wc-chips'>{_flow_chips_html(r['code'])}{_signal_chips_html(chip_map.get(clean_symbol(r['code'])), empty_text='', pending_text='籌碼計算中…')}</div>"
                                 "</div>",
                                 unsafe_allow_html=True,
@@ -4889,7 +4902,7 @@ def render_pinned_selected() -> None:
     cp_txt = "--" if pd.isna(lcp) else f"{lcp:+.2f}%"
     meta = f"{market}｜{industry_code} {industry_name}" + (f"｜{biz}" if biz else "")
     fin = _stock_financials(selected)
-    fin_items = [(label, fin.get(key, np.nan), fmt) for label, key, fmt in (("本益比", "pe", "{:.1f}"), ("EPS", "eps", "{:.2f}"), ("營收年增", "rev_yoy", "{:+.1f}%"))]
+    fin_items = [(label, fin.get(key, np.nan), fmt) for label, key, fmt in (("本益比", "pe", "{:.1f}"), ("EPS", "eps", "{:.2f}"))]
     fin_txt = "｜".join(f"{label} {fmt.format(v)}" for label, v, fmt in fin_items if pd.notna(v))
     fin_html = f"<div class='pin-meta'>{fin_txt}</div>" if fin_txt else ""
     with st.container(key="side_pinned"):
@@ -4900,6 +4913,7 @@ def render_pinned_selected() -> None:
             f"<div class='pin-vals' style='color:{color}'><b>{price_txt}</b><span>{ch_txt}</span><span>{cp_txt}</span></div>"
             f"<div class='pin-meta'>{meta}</div>"
             f"{fin_html}"
+            f"{_revenue_growth_html(selected)}"
             f"{ix_html}"
             "</div>",
             unsafe_allow_html=True,
@@ -7564,6 +7578,13 @@ body .stApp.stApp [class*="st-key-wc_"][class*="_ld"] [class*="st-key-wcdel_"] b
 .wc-vals .wc-price{font-size:20px;font-weight:900;letter-spacing:.3px;}
 [class*="st-key-wc_"][class*="_lu"] .wc-vals span,
 [class*="st-key-wc_"][class*="_ld"] .wc-vals span{color:#fff !important;}
+.rev-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;margin-top:2px;font-size:12px;line-height:1.3;color:#7a6a6a;font-variant-numeric:tabular-nums;position:relative;z-index:1;pointer-events:none;}
+.rev-line i{font-style:normal;}
+.rev-line b{font-weight:800;color:#475569;}
+.rev-line b.rev-up{color:#c62828;}
+.rev-line b.rev-down{color:#0f8a5f;}
+[class*="st-key-wc_"][class*="_lu"] .rev-line,[class*="st-key-wc_"][class*="_lu"] .rev-line b,
+[class*="st-key-wc_"][class*="_ld"] .rev-line,[class*="st-key-wc_"][class*="_ld"] .rev-line b{color:#fff !important;}
 /* 選取／刪除：Material Symbols 圖示按鈕（淺藍底＋黑框，圓角正方形，圖示置中）
    注意：全站有 div[data-testid=stButton] > button[kind=secondary] 的 !important 規則，這裡的選擇器要更具體才蓋得過 */
 .stApp [class*="st-key-wc_"] div[data-testid="stButton"]{display:flex !important;justify-content:center !important;align-items:center !important;}
