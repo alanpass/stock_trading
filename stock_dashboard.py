@@ -121,6 +121,7 @@ from celebrity_holdings import POLITICIANS, fetch_all_gurus
 import chip_signals
 import stock_features
 import intraday_signals
+import mobile_app
 import section_ui
 import site_logo
 from future_picks_ui import render_system_picks  # 模組改名過：雲端只改子模組時不會重新載入
@@ -2886,8 +2887,15 @@ def render_site_navigation() -> str:
         icon = f'<svg class="nav-ico" viewBox="0 0 24 24">{_NAV_ICONS.get(key, "")}</svg>'
         links.append(f'<div class="nav-item"><a class="site-nav-link{active}" href="?section={key}" target="_self">{icon}{label}</a>{drop}</div>')
     # 包在有 key 的容器裡才能 position:sticky（捲到下方也能直接換頁）
+    # m-subnav 只在手機顯示：本頁功能捷徑，沿用下拉選單的跳轉方式
+    chips = "".join(
+        f'<a href="?section={current}" target="_self" data-target="{_esc(sub[1])}"'
+        + (f' data-tab="{_esc(sub[2])}"' if len(sub) > 2 else "")
+        + f'>{_esc(sub[0])}</a>'
+        for sub in SITE_NAV_SUB.get(current, [])
+    )
     with st.container(key="site_nav_sticky"):
-        st.markdown('<nav translate="no" class="site-nav">' + ''.join(links) + '</nav>', unsafe_allow_html=True)
+        st.markdown('<nav translate="no" class="site-nav">' + ''.join(links) + f'</nav><div translate="no" class="m-subnav">{chips}</div>', unsafe_allow_html=True)
     nav = [(key, label) for key, label, _ in SITE_NAV]
     st.markdown(
         '<style>.st-key-site_nav_control{position:fixed!important;left:-10000px!important;top:0!important;width:1px!important;height:1px!important;overflow:hidden!important;opacity:0!important;pointer-events:none!important;z-index:-1!important;}</style>',
@@ -8234,6 +8242,7 @@ def sync_sidebar_visibility(section: str) -> None:
       放在 iframe 裡的計時器會跟著消失，按鈕就會卡住。
     """
     auth_open = bool(st.session_state.get("auth_panel_open", False))
+    js_auth = "true" if auth_open else "false"
     should_open = (section == "strategy") or auth_open
     state_key = (section, auth_open)
     apply_auto = st.session_state.get("_sb_last_state") != state_key
@@ -8309,7 +8318,8 @@ def sync_sidebar_visibility(section: str) -> None:
             `;
             d.head.appendChild(s);
           }}
-          if ({js_apply} && w.__sbApply) w.__sbApply({js_open});
+          // 手機的側欄是全螢幕，進操作策略不自動打開，由底部「自選」開啟
+          if ({js_apply} && w.__sbApply) w.__sbApply(w.matchMedia('{mobile_app.PHONE_QUERY}').matches ? {js_auth} : {js_open});
         }})();
         </script>
         """,
@@ -8579,6 +8589,7 @@ render_auth_header_actions()
 current_section = render_site_navigation()
 render_auth_panel()
 sync_sidebar_visibility(current_section)
+mobile_app.inject(_NAV_ICONS, [(key, label) for key, label, _ in SITE_NAV if key not in ("home", "finance", "strategy")])
 
 if current_section != "strategy":
     st.session_state["_strategy_view"] = None  # 回到操作策略時重新以兩段式顯示
@@ -8603,7 +8614,7 @@ def _render_page_body(section: str) -> None:
             render_future_workspace()
         else:
             st.markdown('<div class="content-heading"><h1>未來分析</h1><p>此功能僅限登入使用者。</p></div>', unsafe_allow_html=True)
-            st.info("請點擊頁面右上角的「登入」或「申請帳號」，開啟左側選單。")
+            st.info("此功能僅限登入使用者。請按右上角的「登入」或「申請帳號」；手機請按底部的「更多」。")
     elif section == "finance":
         render_finance_workspace()
         with _sec_box("fin-celebrity"):
