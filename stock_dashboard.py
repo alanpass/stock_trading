@@ -8195,6 +8195,17 @@ _components.html(
       }
       d.body.classList.add('notranslate');
 
+      // Streamlit Cloud 右下角的標誌、頭像與 Manage app 在網站外層，只能從外層頁面隱藏（Render 等沒有外層時不做事）
+      try {
+        const shell = w.parent;
+        if (shell !== w && !shell.document.getElementById('hide-cloud-badge')) {
+          const s = shell.document.createElement('style');
+          s.id = 'hide-cloud-badge';
+          s.textContent = '[class*="viewerBadge"],[class*="profileContainer"],[data-testid="manage-app-button"],[class*="manageApp"]{display:none!important}';
+          shell.document.head.appendChild(s);
+        }
+      } catch (e) {}
+
       // 將首頁卡片與頁尾的 section 連結導向同一組 Streamlit 原生導覽按鈕，
       // 避免 href="?section=..." 讓瀏覽器整頁載入並重建 session。
       if (!w.__stockTradingSectionNavInstalled) {
