@@ -171,8 +171,10 @@ _RUNTIME = """<script>
   const scrollMainTop = () => { const m = d.querySelector('[data-testid="stMain"]'); if (m) m.scrollTo({top: 0, behavior: "smooth"}); };
 
   let wantWatch = 0;   // 從別頁按「自選」：等操作策略頁載入後才打開
+  let sidebarSeenAt = 0, userOpened = false;
   const openWatch = () => {
     closeSheet();
+    userOpened = true;
     if (d.querySelector('.st-key-page_strategy') && sidebar()) { setSidebar(!sidebarOpen()); return; }
     wantWatch = Date.now();
     const go = tabbar.querySelector('[data-s="strategy"]');
@@ -214,6 +216,14 @@ _RUNTIME = """<script>
   w.setInterval(function() {
     if (!phone.matches) { d.body.classList.remove("m-has-stock"); return; }
     const section = currentSection(), open = sidebarOpen();
+    // Streamlit 會在瀏覽器記住側欄上次的開關，側欄一出現就可能是打開的：除非是使用者自己開的，一律先收起
+    if (!sidebar()) {
+      sidebarSeenAt = 0;
+      if (!wantWatch) userOpened = false;
+    } else {
+      sidebarSeenAt = sidebarSeenAt || Date.now();
+      if (open && !wantWatch && !userOpened && Date.now() - sidebarSeenAt < 3000 && !d.querySelector(".st-key-auth_drawer")) setSidebar(false);
+    }
     tabbar.querySelectorAll("a.m-tab").forEach(function(a) { a.classList.toggle("on", !open && a.getAttribute("data-s") === section); });
     d.getElementById("m-tab-watch").classList.toggle("on", open);
     d.getElementById("m-tab-more").classList.toggle("on", !open && MORE.some(function(m) { return m[0] === section; }));
