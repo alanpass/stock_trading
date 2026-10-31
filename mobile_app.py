@@ -33,7 +33,7 @@ CSS = """<style>
   .stApp .st-key-auth_drawer [data-testid="stHorizontalBlock"]:first-of-type [data-testid="stColumn"]:last-child{flex:0 0 48px!important;min-width:48px!important;width:48px!important}
   .stApp .tp-table{display:block!important;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
   .stApp [data-testid="stMain"] .block-container{padding-top:0!important}
-  .stApp .st-key-stock_search_box [data-testid="stHorizontalBlock"]{flex-wrap:nowrap!important;gap:8px!important}
+  .stApp .st-key-stock_search_box [data-testid="stHorizontalBlock"]{flex-wrap:nowrap!important;gap:0!important}
   .stApp .st-key-stock_search_box [data-testid="stColumn"]:first-child{flex:1 1 auto!important;min-width:0!important;width:auto!important}
   .stApp .st-key-stock_search_box [data-testid="stColumn"]:last-child{flex:0 0 56px!important;min-width:56px!important;width:56px!important}
   .stApp .fin-strip{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}

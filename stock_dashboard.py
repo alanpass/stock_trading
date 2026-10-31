@@ -7316,7 +7316,7 @@ st.markdown(r'''<style>
    V15 搜尋欄新樣式 / 表單淺膚色 / 按鈕特效 / 漲跌停整列
    ============================================================ */
 
-/* ---------- 搜尋欄：灰框膠囊 + 藍色放大鏡端蓋 ---------- */
+/* ---------- 搜尋欄：灰框膠囊 + 主題紅放大鏡端蓋 ---------- */
 .stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"]{
   column-gap:0 !important;gap:0 !important;align-items:stretch !important;
 }
@@ -7336,7 +7336,7 @@ st.markdown(r'''<style>
 .stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-testid="stButton"] > button,
 .st-key-do_stock_search_site button{
   height:52px !important;min-height:52px !important;width:100% !important;
-  background:#0072c6 !important;border:0 !important;
+  background:#8e2b2f !important;border:0 !important;
   border-radius:0 999px 999px 0 !important;
   font-size:0 !important;color:transparent !important;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='20' cy='20' r='11' fill='none' stroke='white' stroke-width='5'/><line x1='28.5' y1='28.5' x2='40' y2='40' stroke='white' stroke-width='6' stroke-linecap='round'/></svg>") !important;
@@ -7344,7 +7344,7 @@ st.markdown(r'''<style>
   box-shadow:none !important;
 }
 .stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-testid="stButton"] > button:hover,
-.st-key-do_stock_search_site button:hover{background-color:#005fa8 !important;}
+.st-key-do_stock_search_site button:hover{background-color:#742126 !important;}
 /* 按鈕內任何文字／段落一律不顯示，只留放大鏡圖示 */
 .st-key-do_stock_search_site button *,
 .stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-testid="stButton"] > button *{
@@ -7353,8 +7353,15 @@ st.markdown(r'''<style>
 .st-key-do_stock_search_site button::before,
 .stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-testid="stButton"] > button::before{display:none !important;}
 .stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-baseweb="input"]:focus-within{
-  border-color:#0072c6 !important;
+  border-color:#8e2b2f !important;
 }
+/* 按鈕外層的提示框是行內元素，基線會多撐出幾 px，再加上靠下對齊就讓輸入框和按鈕高低不一 */
+.stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-testid="stColumn"]{margin-top:0 !important;}
+/* 不能改 stButton 底下那層的 display：觸控裝置靠它隱藏有提示框的版本，否則會出現兩顆按鈕 */
+.stApp .st-key-stock_search_box [data-testid="stButton"],
+.stApp .st-key-stock_search_box [data-testid="stButton"] > div{height:52px !important;}
+.stApp .st-key-stock_search_box [data-testid="stTooltipIcon"],
+.stApp .st-key-stock_search_box [data-testid="stTooltipHoverTarget"]{display:block !important;width:100% !important;height:52px !important;}
 
 /* ---------- 訂閱／聯絡表單：淺膚色（與頁面 blush 同色），去掉深色底 ---------- */
 [data-testid="stForm"]{background:#fff !important;}
@@ -7633,7 +7640,7 @@ body .stApp.stApp [class*="st-key-wc_"][class*="_ld"] [class*="st-key-wcdel_"] b
 /* ============================================================
    V19 淺色系：搜尋框、下拉選單、單選鈕、輸入框（不再出現深色底）
    ============================================================ */
-/* 搜尋框：白底灰框膠囊，右接藍色放大鏡 */
+/* 搜尋框：白底灰框膠囊，右接主題紅放大鏡 */
 .stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-testid="stTextInputRootElement"]{
   background:#fff !important;background-color:#fff !important;
   border:3px solid #c3ccd5 !important;border-right:0 !important;
@@ -7641,7 +7648,7 @@ body .stApp.stApp [class*="st-key-wc_"][class*="_ld"] [class*="st-key-wcdel_"] b
   box-shadow:none !important;overflow:hidden;
 }
 .stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-testid="stTextInputRootElement"]:focus-within{
-  border-color:#0072c6 !important;box-shadow:0 0 0 3px rgba(0,114,198,.14) !important;
+  border-color:#8e2b2f !important;box-shadow:0 0 0 3px rgba(142,43,47,.14) !important;
 }
 .stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-baseweb="input"],
 .stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] [data-baseweb="base-input"]{
@@ -7649,7 +7656,7 @@ body .stApp.stApp [class*="st-key-wc_"][class*="_ld"] [class*="st-key-wcdel_"] b
 }
 .stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] input{
   background:transparent !important;color:#263746 !important;-webkit-text-fill-color:#263746 !important;
-  caret-color:#0072c6;padding:0 22px !important;font-size:16px !important;
+  caret-color:#8e2b2f;padding:0 22px !important;font-size:16px !important;
 }
 .stApp .st-key-stock_search_box div[data-testid="stHorizontalBlock"] input::placeholder{color:#8a97a3 !important;-webkit-text-fill-color:#8a97a3 !important;}
 
