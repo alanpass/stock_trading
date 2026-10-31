@@ -765,7 +765,10 @@ def search_stock(keyword: str) -> pd.DataFrame:
     if not exact.empty:
         return exact.head(10)
     matched = df[code_s.str.contains(q, regex=False, na=False) | name_s.str.contains(q, regex=False, na=False)]
-    return matched.head(20)
+    # 開頭就符合的排前面，同級時一般股票（四碼）排在 ETF 前面；否則「聯」只會列出一堆 ETF、看不到聯電
+    starts = code_s[matched.index].str.startswith(q) | name_s[matched.index].str.startswith(q)
+    rank = pd.DataFrame({"starts": ~starts, "etf": code_s[matched.index].str.len() != 4, "code": code_s[matched.index]})
+    return matched.loc[rank.sort_values(["starts", "etf", "code"]).index].head(20)
 
 
 def get_quote(code: str) -> dict:
@@ -2851,6 +2854,24 @@ body .stApp.stApp .st-key-watchlist_bar div[data-testid="stButton"] button:hover
 body .stApp.stApp .st-key-watchlist_bar div[data-testid="stButton"] button:disabled{color:#d8cccc!important;background:transparent!important;opacity:1!important}
 body .stApp.stApp .st-key-watchlist_bar div[data-testid="stButton"] button::before{display:none!important}
 body .stApp.stApp .st-key-watchlist_bar div[data-testid="stButton"] button span{font-size:18px!important;color:inherit!important;-webkit-text-fill-color:currentColor!important}
+/* 直接加入：和名單列同樣的細列，放在名單列下方；不顯示 Streamlit 的「按 Enter 送出」提示 */
+body .stApp .st-key-watchlist_bar [data-testid="stForm"]{border:0!important;padding:0!important;margin:4px 0 0!important;background:transparent!important;box-shadow:none!important}
+body .stApp .st-key-watchlist_bar [data-testid="InputInstructions"]{display:none!important}
+body .stApp .st-key-watchlist_bar [data-testid="stTextInputRootElement"],
+body .stApp .st-key-watchlist_bar [data-baseweb="input"],
+body .stApp .st-key-watchlist_bar [data-baseweb="base-input"]{min-height:30px!important;height:30px!important;border:0!important;background:transparent!important;box-shadow:none!important}
+body .stApp .st-key-watchlist_bar input[type="text"]{height:30px!important;font-size:13.5px!important;padding:0 0 0 10px!important;background:transparent!important;color:#3f2f2f!important;-webkit-text-fill-color:#3f2f2f!important}
+body .stApp .st-key-watchlist_bar input[type="text"]::placeholder{color:#a08f8f!important;-webkit-text-fill-color:#a08f8f!important}
+body .stApp.stApp .st-key-watchlist_bar [data-testid="stFormSubmitButton"] button{width:28px!important;min-width:28px!important;height:28px!important;min-height:28px!important;padding:0!important;border:0!important;border-radius:6px!important;background:transparent!important;background-image:none!important;box-shadow:none!important;color:#8e2b2f!important;transform:none!important}
+body .stApp.stApp .st-key-watchlist_bar [data-testid="stFormSubmitButton"] button:hover{background:#f8e9e9!important}
+body .stApp.stApp .st-key-watchlist_bar [data-testid="stFormSubmitButton"] button::before{display:none!important}
+body .stApp.stApp .st-key-watchlist_bar [data-testid="stFormSubmitButton"] button span{font-size:18px!important;color:inherit!important;-webkit-text-fill-color:currentColor!important}
+/* 多檔候選：緊湊，可以一眼掃過 */
+body .stApp.stApp .st-key-wl_add_results{gap:4px!important}
+body .stApp.stApp .st-key-wl_add_results div[data-testid="stButton"] button{min-height:32px!important;height:32px!important;padding:0 10px!important;background:#fff!important;background-image:none!important;border:1px solid #e6d8d8!important;border-radius:7px!important;box-shadow:none!important;transform:none!important}
+body .stApp.stApp .st-key-wl_add_results div[data-testid="stButton"] button:hover{background:#f8e9e9!important}
+body .stApp.stApp .st-key-wl_add_results div[data-testid="stButton"] button::before{display:none!important}
+body .stApp.stApp .st-key-wl_add_results div[data-testid="stButton"] button *{font-size:13.5px!important;color:#5a2a2a!important;-webkit-text-fill-color:#5a2a2a!important}
 /* 名單對話框（不在 .stApp 底下，選擇器不能加 .stApp）：不要表單外框，一個主按鈕，刪除是紅色文字 */
 body [data-testid="stDialog"] [data-testid="stForm"]{border:0!important;padding:0!important;background:transparent!important;box-shadow:none!important}
 body [data-testid="stDialog"] h2{font-size:18px!important;color:#8e2b2f!important}
@@ -2867,6 +2888,65 @@ html body [data-testid="stDialog"] [class*="st-key-wl_dlg_delete"] div[data-test
 html body [data-testid="stDialog"] [class*="st-key-wl_dlg_delete"] div[data-testid="stButton"] button:hover{background:#fbeeee!important}
 html body [data-testid="stDialog"] [class*="st-key-wl_dlg_delete"] div[data-testid="stButton"] button::before{display:none!important}
 </style>"""
+
+
+def _watchlist_quick_add(code: str, name: str) -> None:
+    """把一檔股票加進目前名單（以資料庫最新內容為準）；名單原本是空的就順便看這一檔。"""
+    code = clean_symbol(code)
+    was_empty = not st.session_state.watchlist
+    list_name = _watchlist_name()
+    if code in st.session_state.watchlist:
+        st.session_state.wl_add_notice = f"{name}（{code}）已經在「{list_name}」裡。"
+    else:
+        def change(doc):
+            items = watchlist_store.active_list(doc)["items"]
+            if code not in items:
+                items.append(code)
+        _watchlist_change(change)
+        st.session_state.wl_add_notice = f"已把 {name}（{code}）加入「{list_name}」。"
+    if was_empty:
+        st.session_state.selected = code
+    st.session_state.wl_add_candidates = None
+    st.session_state.wl_add_error = None
+
+
+def _watchlist_submit_add(keyword: str) -> None:
+    """輸入框按 Enter：只找到一檔就直接加入，找到多檔列出來選。"""
+    keyword = str(keyword or "").strip()
+    st.session_state.wl_add_candidates = None
+    st.session_state.wl_add_error = None
+    if not keyword:
+        return
+    found = search_stock(keyword)
+    if found.empty:
+        st.session_state.wl_add_error = f"找不到「{keyword}」，請確認代號或名稱。"
+    elif len(found) == 1:
+        row = found.iloc[0]
+        _watchlist_quick_add(row["symbol"], row["name"])
+    else:
+        st.session_state.wl_add_candidates = found[["symbol", "name"]].head(8).to_dict("records")
+    st.rerun()
+
+
+def _render_watchlist_add_results() -> None:
+    """輸入框下方的訊息與候選股票；放在固定的工具列外面，不會佔住捲動範圍。"""
+    notice = st.session_state.pop("wl_add_notice", None)
+    if notice:
+        st.toast(notice)
+    if st.session_state.get("wl_add_error"):
+        st.warning(st.session_state.wl_add_error)
+    candidates = st.session_state.get("wl_add_candidates") or []
+    if not candidates:
+        return
+    with st.container(key="wl_add_results"):
+        st.caption("找到多檔，選一檔加入：")
+        for item in candidates:
+            if st.button(f"{item['symbol']}　{item['name']}", key=f"wl_add_pick_{item['symbol']}", use_container_width=True):
+                _watchlist_quick_add(item["symbol"], item["name"])
+                st.rerun()
+        if st.button("取消", key="wl_add_cancel", use_container_width=True):
+            st.session_state.wl_add_candidates = None
+            st.rerun()
 
 
 def _watchlist_step(delta: int) -> None:
@@ -2947,13 +3027,20 @@ def _render_watchlist_bar() -> None:
             if cols[3].button("", icon=":material/edit:", key="wl_edit", help="改名或刪除這份名單"):
                 st.session_state.wl_delete_asked = False
                 _watchlist_edit_dialog()
-            if cols[4].button("", icon=":material/add:", key="wl_add", help="新增名單"):
+            if cols[4].button("", icon=":material/playlist_add:", key="wl_add", help="新增名單"):
                 _watchlist_add_dialog()
+            with st.form("wl_quick_add", border=False, clear_on_submit=True):
+                add_cols = st.columns([6, 1], gap="small", vertical_alignment="center")
+                keyword = add_cols[0].text_input("加入自選股", placeholder="輸入代號或名稱，按 Enter 加入", label_visibility="collapsed", key="wl_add_text")
+                if add_cols[1].form_submit_button("", icon=":material/add:", help="加入目前名單"):
+                    _watchlist_submit_add(keyword)
+    if editable:
+        _render_watchlist_add_results()
 
 
 def _render_sidebar_watch() -> None:
     if not st.session_state.watchlist:
-        st.info("這份名單還沒有股票。用上方搜尋找到股票後，按「加入自選股」。")
+        st.info("這份名單還沒有股票。在上方輸入代號或名稱加入。" if is_authenticated() else "這份名單還沒有股票。登入後可以加入。")
         return
     render_watchlist(compact=True)
 
