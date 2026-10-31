@@ -5,7 +5,7 @@ ic.tpex.org.tw 依產品把上市櫃公司分到 47 個產業、數百個子產�
 每個產業一頁（introduce.php?ic=<代碼>），頁面內含所有子鏈名稱、上中下游位置與公司清單，47 次請求就能取得全市場分類。
 只保留上市、上櫃（含外國上市 KY 股）公司，不含興櫃與創櫃。
 
-輸出：data/value_chain_master.json
+輸出：data/value_chain_master.json，並發布到 GitHub（output/research_reports/value_chain_public.json），網站靠這份顯示公司主要業務
   {"generated_at", "source", "industries": [{"code", "name", "chains": [{"id", "name", "stage", "members": [...]}]}]}
 
   python value_chain.py            # 重新爬一次（約 1 分鐘）
@@ -26,6 +26,8 @@ import requests
 
 BASE = Path(__file__).resolve().parent
 OUT = BASE / "data" / "value_chain_master.json"
+PUBLIC_REPO_PATH = "output/research_reports/value_chain_public.json"
+PUBLIC_OUT = BASE / PUBLIC_REPO_PATH
 INTRO_URL = "https://ic.tpex.org.tw/introduce.php?ic={}"
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) TaiwanStockDashboard/1.0"}
 LISTED_HEADINGS = ("上市", "上櫃")        # 「本國上市」「本國上櫃」「外國上市」…；興櫃、創櫃不納入
@@ -132,16 +134,30 @@ def crawl(sleep_seconds: float = 0.8, log=print) -> dict:
     if sum(len(i["chains"]) for i in out) < 100:
         raise RuntimeError("子鏈太少，可能沒有解析到公司清單；不覆蓋舊檔")
     OUT.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
+    publish(data)
     return data
+
+
+def publish(data: dict) -> None:
+    """分類檔寫一份到公開路徑並發布；失敗時網站沿用上一版，不影響爬取結果。"""
+    try:
+        PUBLIC_OUT.parent.mkdir(parents=True, exist_ok=True)
+        PUBLIC_OUT.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        from trend_pattern_engine import _publish_to_github
+        _publish_to_github(data, PUBLIC_REPO_PATH, "更新產業價值鏈分類")
+    except Exception as exc:
+        print(f"產業價值鏈分類發布失敗：{exc}", file=sys.stderr)
 
 
 def load(max_age_days: float | None = None) -> dict:
     """讀取分類檔；超過 max_age_days 或不存在就重爬（重爬失敗時沿用舊檔）。"""
     data = {}
-    try:
-        data = json.loads(OUT.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        pass
+    for path in (OUT, PUBLIC_OUT):   # 雲端沒有 data/ 下的檔案，讀發布到 GitHub 的那份
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            break
+        except (OSError, ValueError):
+            pass
     if max_age_days is not None:
         try:
             age = (datetime.now(ZoneInfo("Asia/Taipei")) - datetime.fromisoformat(data["generated_at"])).days

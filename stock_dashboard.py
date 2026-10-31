@@ -449,41 +449,44 @@ def stock_name(code: str) -> str:
         return code
 
 
-@st.cache_data(ttl=1800, show_spinner=False)
 def previous_day_daily_quote(code):
     """開盤前以最近交易日的日K作為目前價格顯示資料。"""
-    code = clean_symbol(code)
     try:
-        end = (taiwan_now().tz_localize(None).normalize() - pd.Timedelta(days=1)).date()
-        start = (taiwan_now().tz_localize(None).normalize() - pd.Timedelta(days=10)).date()
-        h = client.historical_candles(code, start, end, "D")
-        if h.empty:
-            return {}
-        h = h.copy()
-        h["date"] = pd.to_datetime(h["date"], errors="coerce")
-        h = h.dropna(subset=["date"]).sort_values("date")
-        if h.empty:
-            return {}
-        last = h.iloc[-1]
-        prev = h.iloc[-2] if len(h) >= 2 else None
-        close = float(last["close"])
-        prev_close = float(prev["close"]) if prev is not None else np.nan
-        change = float(last["change"]) if pd.notna(last.get("change")) else (close-prev_close if pd.notna(prev_close) else np.nan)
-        cp = change / prev_close * 100 if pd.notna(change) and pd.notna(prev_close) and prev_close != 0 else np.nan
-        name = stock_name(code)
-        return {
-            "date": last["date"].date().isoformat(),
-            "symbol": code, "name": name,
-            "closePrice": close, "tradePrice": close, "lastPrice": close,
-            "previousClose": prev_close, "referencePrice": prev_close,
-            "change": change, "changePercent": cp,
-            "openPrice": last.get("open", np.nan), "highPrice": last.get("high", np.nan), "lowPrice": last.get("low", np.nan),
-            "limitUpPrice": np.nan, "limitDownPrice": np.nan,
-            "is_previous_trading_day": True,
-            "previous_trading_date": last["date"].date().isoformat(),
-        }
-    except Exception:
+        return _previous_day_daily_quote(clean_symbol(code))
+    except Exception:   # 例外不會進快取：撞到 Fugle 額度時下次再查，不會空白 30 分鐘
         return {}
+
+
+@st.cache_data(ttl=1800, show_spinner=False)
+def _previous_day_daily_quote(code):
+    end = (taiwan_now().tz_localize(None).normalize() - pd.Timedelta(days=1)).date()
+    start = (taiwan_now().tz_localize(None).normalize() - pd.Timedelta(days=10)).date()
+    h = client.historical_candles(code, start, end, "D")
+    if h.empty:
+        return {}
+    h = h.copy()
+    h["date"] = pd.to_datetime(h["date"], errors="coerce")
+    h = h.dropna(subset=["date"]).sort_values("date")
+    if h.empty:
+        return {}
+    last = h.iloc[-1]
+    prev = h.iloc[-2] if len(h) >= 2 else None
+    close = float(last["close"])
+    prev_close = float(prev["close"]) if prev is not None else np.nan
+    change = float(last["change"]) if pd.notna(last.get("change")) else (close-prev_close if pd.notna(prev_close) else np.nan)
+    cp = change / prev_close * 100 if pd.notna(change) and pd.notna(prev_close) and prev_close != 0 else np.nan
+    name = stock_name(code)
+    return {
+        "date": last["date"].date().isoformat(),
+        "symbol": code, "name": name,
+        "closePrice": close, "tradePrice": close, "lastPrice": close,
+        "previousClose": prev_close, "referencePrice": prev_close,
+        "change": change, "changePercent": cp,
+        "openPrice": last.get("open", np.nan), "highPrice": last.get("high", np.nan), "lowPrice": last.get("low", np.nan),
+        "limitUpPrice": np.nan, "limitDownPrice": np.nan,
+        "is_previous_trading_day": True,
+        "previous_trading_date": last["date"].date().isoformat(),
+    }
 
 if "watchlist_doc" not in st.session_state:
     st.session_state.watchlist_doc = load_watchlist_doc()
@@ -555,7 +558,20 @@ def _quote_bucket(live_seconds: int) -> int:
 def watch_rows(watchlist_key):
     if not watchlist_key:   # 新名單還沒有股票：欄位要在，呼叫端才能用 rows.code 篩選
         return pd.DataFrame(columns=["code", "name", "industry", "market", "price", "change", "change_pct", "data_date"]), []
-    return _watch_rows(watchlist_key, _quote_bucket(15))
+    bucket = _quote_bucket(15)
+    rows, errors = _watch_rows(watchlist_key, bucket)
+    # 有股票沒查到價（通常是撞到 Fugle 額度）：空值不留在快取，最快 15 秒後只重查缺的那幾檔
+    memo = _quote_memo()
+    if "price" in rows and rows["price"].isna().any() and time.time() - memo.get("_retry_at", 0) >= 15:
+        memo["_retry_at"] = time.time()
+        _watch_rows.clear(watchlist_key, bucket)
+    return rows, errors
+
+
+@st.cache_resource(show_spinner=False)
+def _quote_memo() -> dict:
+    """每檔最近查到的行情 {code: (時間格, quote)}，跨名單、跨使用者共用。"""
+    return {}
 
 
 @st.cache_data(ttl=600, show_spinner=False, max_entries=64)
@@ -601,10 +617,25 @@ def _watch_rows(watchlist_key, _bucket):
                 errors.append(f"{code}: {e}")
         return x
 
+    memo = _quote_memo()
+
+    def fetch_memo(code):
+        # 這個時間格查過就不再花額度；這次查不到就沿用上一筆（列上的資料日期仍是舊資料本身的日期）。
+        hit = memo.get(code)
+        if hit and hit[0] == _bucket:
+            return hit[1]
+        x = fetch_one(code) or {}
+        if any(pd.notna(pd.to_numeric(x.get(k), errors="coerce")) for k in ("lastPrice", "closePrice", "tradePrice", "avgPrice")):
+            memo[code] = (_bucket, x)
+            return x
+        if after_close:   # 盤後的空結果會留在 _get_quote 的快取，清掉才查得到
+            _get_quote.clear(code, 0)
+        return hit[1] if hit else x
+
     # 逐檔查詢改成並行：20 多檔的等待時間從「加總」變成「最慢一檔」。Fugle 額度由 stock_api 共用計數控管。
     watchlist = list(watchlist_key)
     with ThreadPoolExecutor(max_workers=8) as pool:
-        quotes = list(pool.map(fetch_one, watchlist))
+        quotes = list(pool.map(fetch_memo, watchlist))
     for code, x in zip(watchlist, quotes):
         x = x or {}
 
@@ -743,7 +774,7 @@ def get_all_tickers() -> pd.DataFrame:
 
 @st.cache_data(ttl=21600, show_spinner=False)
 def get_business_profiles_cached(symbols: tuple[str, ...]) -> dict:
-    """讀取／補齊公司主要業務與產業鏈子分類（含修復被誤存成 ETF 的股票）；只對 watchlist/目前研究標的做需要的查詢。"""
+    """讀取／補齊公司主要業務與產業鏈子分類（含修復被誤存成 ETF、待細分的股票）；只對 watchlist/目前研究標的做需要的查詢。"""
     path = DATA / "business_master.csv"
     try:
         return business_map_for_symbols(symbols, client=client, path=path, force=False)
@@ -3082,7 +3113,10 @@ def render_strategy_workspace() -> None:
     # 自選股固定在左側欄（Streamlit 側邊欄本身固定、可獨立捲動），不會蓋到右側的分析圖表。
     # 自選股的籌碼訊號在背景計算；還有沒算完的就每 5 秒重畫側欄一次，算好就自動出現
     chips_pending = any(v is None for v in chip_signals.get_nonblocking(st.session_state.watchlist).values())
-    side_every = max(live_every, 15) if live_every else (5 if chips_pending else None)
+    # 非交易時段平常不更新；有股票撞到 Fugle 額度而沒價格時，每 20 秒補抓一次
+    _side_rows, _ = watch_rows(tuple(st.session_state.watchlist))
+    prices_missing = "price" in _side_rows and _side_rows["price"].isna().any()
+    side_every = max(live_every, 15) if live_every else (5 if chips_pending else 20 if prices_missing else None)
     with st.sidebar:
         st.fragment(render_pinned_selected, run_every=side_every)()
         st.markdown('<div class="feature-section-title side-watch-title">自選股即時行情</div>', unsafe_allow_html=True)

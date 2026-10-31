@@ -3,9 +3,8 @@
 
 設計原則：
 1. 第一層仍使用 TWSE/TPEx 的官方產業代碼（24/25/26/...）。
-2. 第二層使用 TPEx「產業價值鏈資訊平台」的公司個體頁面，取得
-   「產業 > 子鏈」資訊；該平台同時涵蓋上市、上櫃等公司個體鏈。
-3. 若官方價值鏈尚無資料，再使用公司名稱/官方基本資料文字做保守分類。
+2. 第二層使用 TPEx「產業價值鏈資訊平台」的全市場分類（value_chain.py）取得「產業 > 子鏈」。
+3. 若官方價值鏈尚無資料，只顯示官方產業，不另外猜測。
 4. 不把 LLM 猜測當作正式分類；LLM 只能在研究報告中解釋。
 
 主檔：data/business_master.csv
@@ -13,15 +12,14 @@
 """
 from __future__ import annotations
 
-import html
 import re
 from datetime import datetime
 from pathlib import Path
 from typing import Iterable
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import pandas as pd
-import requests
+
+import value_chain
 
 try:
     from stock_api import INDUSTRIES, clean_symbol
@@ -68,6 +66,41 @@ BUSINESS_OVERRIDES: dict[str, dict[str, str]] = {
     "2308": {"business_group": "電源供應／AI電源", "primary_chain": "電源與電子零組件 > 電源供應器"},
     "2377": {"business_group": "電腦周邊／電競硬體", "primary_chain": "電腦及週邊設備 > 筆記型電腦／桌上型電腦及周邊"},
     "0050": {"business_group": "ETF／指數投資", "primary_chain": "ETF"},
+    # 橫跨多條產業鏈的公司：價值鏈分類列出十幾條，這裡標明主要業務
+    "1303": {"business_group": "塑化／銅箔基板材料", "primary_chain": "印刷電路板 > 銅箔基板"},
+    "2317": {"business_group": "電子代工／AI伺服器", "primary_chain": "電腦及週邊設備 > 伺服器"},
+    "2382": {"business_group": "伺服器／AI運算", "primary_chain": "電腦及週邊設備 > 伺服器"},
+    "2376": {"business_group": "主機板／伺服器", "primary_chain": "電腦及週邊設備 > 主機板"},
+    "4938": {"business_group": "電子代工／電腦整機", "primary_chain": "電腦及週邊設備 > 筆記型電腦"},
+    "2301": {"business_group": "電源供應／光電零組件", "primary_chain": "電腦及週邊設備 > 電源供應器"},
+    "2352": {"business_group": "電腦周邊／顯示器", "primary_chain": "電腦及週邊設備 > 顯示器模組"},
+    "2360": {"business_group": "半導體設備／測試", "primary_chain": "半導體 > 生產製程及檢測設備"},
+    "3653": {"business_group": "散熱／均熱片", "primary_chain": "半導體 > 導線架"},
+    "3105": {"business_group": "晶圓代工／化合物半導體", "primary_chain": "半導體 > IC/晶圓製造 > 晶圓製造"},
+    "3532": {"business_group": "半導體材料／矽晶圓", "primary_chain": "半導體 > IC/晶圓製造 > 晶圓製造"},
+    "5483": {"business_group": "半導體材料／矽晶圓", "primary_chain": "半導體 > IC/晶圓製造 > 晶圓製造"},
+    "6182": {"business_group": "半導體材料／矽晶圓", "primary_chain": "半導體 > IC/晶圓製造 > 晶圓製造"},
+    "6196": {"business_group": "半導體設備／廠務工程", "primary_chain": "其他 > 其他電子產品及電子服務產業"},
+    "6691": {"business_group": "半導體設備／廠務工程", "primary_chain": "其他 > 其他電子產品及電子服務產業"},
+    "2454": {"business_group": "IC設計／手機SoC", "primary_chain": "半導體 > IC設計"},
+    "3081": {"business_group": "光通訊／光元件", "primary_chain": "通信網路 > 主/被動元件"},
+    "3234": {"business_group": "光通訊／光元件", "primary_chain": "通信網路 > 主/被動元件"},
+    "4979": {"business_group": "光通訊／光元件", "primary_chain": "通信網路 > 主/被動元件"},
+}
+
+# 一檔股票屬於多條產業鏈時，優先選官方產業對應的鏈；都對不上時避開跨產業的應用主題。
+OFFICIAL_CHAIN_INDUSTRIES = {
+    "01": ("水泥",), "02": ("食品", "食品生技"), "03": ("石化及塑橡膠",), "04": ("紡織",),
+    "05": ("電機機械", "自動化"), "10": ("鋼鐵",), "11": ("石化及塑橡膠",), "12": ("汽車", "電動車輛產業"),
+    "14": ("建材營造",), "15": ("交通運輸及航運",), "17": ("金融",),
+    "22": ("製藥", "醫療器材", "食品生技", "再生醫療"), "23": ("油電燃氣",), "24": ("半導體",),
+    "25": ("電腦及週邊設備",), "26": ("平面顯示器", "觸控面板", "LED照明產業", "太陽能產業"),
+    "27": ("通信網路",), "28": ("印刷電路板", "被動元件", "連接器", "電腦及週邊設備"),
+    "30": ("軟體服務",), "32": ("文化創意業",),
+}
+THEME_CHAIN_INDUSTRIES = {
+    "電動車輛產業", "能源元件", "智慧電網", "區塊鏈", "金融科技", "人工智慧", "雲端運算", "資通訊安全",
+    "大數據", "體驗科技", "運動科技", "太空衛星科技",
 }
 
 # 已確認的常用標的名稱 fallback。這只用於避免 API 暫時沒有 name 時顯示 nan，
@@ -151,6 +184,12 @@ def build_business_research_context(profile: dict | None) -> dict:
     }
 
 ALIASES = [
+    ("半導體 > 基板", "PCB／IC載板"),
+    ("通信網路 > 主/被動元件", "通訊元件／主被動元件"),
+    ("銅箔基板", "CCL／銅箔基板"),
+    ("玻璃纖維", "玻纖布／玻纖紗"),
+    ("印刷電路板 > 銅箔", "銅箔"),
+    ("IC模組", "記憶體模組"),
     ("晶圓製造", "晶圓代工／晶圓製造"),
     ("IC封裝測試", "封裝測試／先進封裝"),
     ("生產製程及檢測設備", "半導體設備／測試"),
@@ -208,42 +247,40 @@ def _normalize_group(chain: str) -> str:
     for needle, group in ALIASES:
         if needle in s:
             return group
-    return s.split(" > ")[-1].strip() or "主要業務待建立"
+    # 子鏈名稱常帶很長的括號說明，例如「光通訊設備(如光纖電纜、光傳輸設備)」
+    return re.split(r"[(（]", s.split(" > ")[-1])[0].strip() or "主要業務待建立"
 
 
-def _strip_html(text: str) -> str:
-    text = re.sub(r"<script[\s\S]*?</script>", " ", text, flags=re.I)
-    text = re.sub(r"<style[\s\S]*?</style>", " ", text, flags=re.I)
-    text = re.sub(r"<[^>]+>", "\n", text)
-    return html.unescape(text)
+def chain_paths_by_symbol() -> dict[str, list[str]]:
+    """全市場分類檔換成 {股票: [產業 > 子鏈 ...]}；TPEx 的公司個體頁面已抓不到鏈路，改用這份。"""
+    out: dict[str, list[str]] = {}
+    for leaf in value_chain.leaf_groups(value_chain.load()):
+        for code in leaf["members"]:
+            paths = out.setdefault(code, [])
+            if leaf["path"] not in paths:
+                paths.append(leaf["path"])
+    return out
 
 
-def fetch_chain_paths(symbol: str, timeout: int = 6) -> tuple[list[str], str]:
-    """從 TPEx 產業價值鏈個體公司頁面抓取「► 產業 > 子鏈」。"""
-    code = clean_symbol(symbol)
-    url = TPEX_CHAIN_URL.format(code)
+def _pick_primary_chain(paths: list[str], industry: str) -> str:
+    for chain_industry in OFFICIAL_CHAIN_INDUSTRIES.get(str(industry).zfill(2), ()):
+        for path in paths:
+            if path.startswith(f"{chain_industry} > "):
+                return path
+    for path in paths:
+        if path.split(" > ")[0] not in THEME_CHAIN_INDUSTRIES:
+            return path
+    return paths[0]
+
+
+def _official_industries(path: Path) -> dict[str, dict]:
+    """全市場產業主檔（industry_master.csv）：TPEx 沒列的股票也有官方產業與名稱。"""
     try:
-        r = requests.get(url, timeout=timeout, headers={"User-Agent": "Mozilla/5.0 TaiwanStockDashboard/1.0"})
-        r.raise_for_status()
-        text = _strip_html(r.text)
-        # 文字化後可能仍是多行；抓「半導體 > ...」這類鏈路。
-        paths = []
-        for line in re.split(r"[\r\n]+", text):
-            line = re.sub(r"\s+", " ", line).strip(" \t►")
-            if " > " in line and len(line) < 120 and not line.startswith("http"):
-                if re.search(r"(半導體|電腦及週邊設備|印刷電路板|被動元件|通信網路|平面顯示器|電機機械|金融|汽車|食品|鋼鐵|航運|生技|油電燃氣|建材營造|軟體服務|貿易百貨)", line):
-                    paths.append(line)
-        # 去重並保留順序
-        out = []
-        seen = set()
-        for p in paths:
-            p = p.replace("►", "").strip()
-            if p not in seen:
-                out.append(p)
-                seen.add(p)
-        return out, url
+        df = pd.read_csv(path.parent / "industry_master.csv", dtype=str)
+        df["symbol"] = df["symbol"].map(clean_symbol)
+        return {r["symbol"]: r for r in df.to_dict("records")}
     except Exception:
-        return [], url
+        return {}
 
 
 def _fallback_group(industry: str, name: str) -> str:
@@ -260,7 +297,6 @@ def _fallback_group(industry: str, name: str) -> str:
         "15": [("航", "航運／物流")],
         "17": [("銀", "銀行／金融"), ("保", "保險／金融")],
         "22": [("藥", "製藥／新藥"), ("醫", "醫療器材")],
-        "24": [("晶", "半導體／待細分")],
         "25": [("電", "電腦／伺服器／周邊")],
         "26": [("面", "面板／顯示器")],
         "28": [("連", "連接器／高速互連"), ("PCB", "PCB／IC載板")],
@@ -275,7 +311,9 @@ def _fallback_group(industry: str, name: str) -> str:
     for needle, group in rules.get(str(industry).zfill(2), []):
         if needle.lower() in text.lower():
             return group
-    return f"{INDUSTRIES.get(str(industry).zfill(2), '其他')}／待細分"
+    # 查不到子鏈就只顯示官方產業
+    code = str(industry).zfill(2)
+    return INDUSTRIES.get(code, "其他") if code != "00" else "其他／未分類"
 
 
 def _is_bad_etf_group(symbol: str, group: str) -> bool:
@@ -300,28 +338,19 @@ def enrich_profiles(symbols: Iterable[str], path: Path, client=None, force: bool
 
     codes = list(dict.fromkeys(clean_symbol(s) for s in symbols if clean_symbol(s)))
 
-    # 即使 business_master.csv 已經存在，也重新從目前 Fugle ticker 取得
-    # symbol/name/industry 的短資料，讓舊版 "00 / nan" 快取可以被修復。
-    live_meta: dict[str, dict] = {}
-    if client is not None:
+    # 舊版 "00 / nan" 快取先用全市場產業主檔修復，主檔也沒有的股票才查 Fugle ticker。
+    official = _official_industries(path)
+    live_meta: dict[str, dict] = {c: official[c] for c in codes if c in official}
+    if client is not None and any(c not in official for c in codes):
         for exchange in ("TWSE", "TPEx"):
             try:
                 for row in client.tickers(exchange):
                     code = clean_symbol(row.get("symbol", ""))
-                    if code in codes:
+                    if code in codes and code not in live_meta:
                         live_meta[code] = row
             except Exception:
                 continue
-    fetched: dict[str, tuple[list[str], str]] = {}
-    # 目前頁面只對 watchlist/目前研究標的做增量抓取；並行 6 個請求避免啟動等待過久。
-    with ThreadPoolExecutor(max_workers=min(6, max(1, len(codes)))) as ex:
-        futures = {ex.submit(fetch_chain_paths, symbol): symbol for symbol in codes}
-        for fut in as_completed(futures):
-            symbol = futures[fut]
-            try:
-                fetched[symbol] = fut.result()
-            except Exception:
-                fetched[symbol] = ([], TPEX_CHAIN_URL.format(symbol))
+    chains = chain_paths_by_symbol()
 
     for symbol in codes:
         old = records.get(symbol, {})
@@ -331,23 +360,18 @@ def enrich_profiles(symbols: Iterable[str], path: Path, client=None, force: bool
         name = live_name if live_name and live_name.lower() != "nan" else (old_name if old_name and old_name.lower() != "nan" else NAME_OVERRIDES.get(symbol, ""))
         raw_industry = meta.get("industry", old.get("industry", "00"))
         industry = INDUSTRY_OVERRIDES.get(symbol, normalize_industry(raw_industry))
-        paths, url = fetched.get(symbol, ([], TPEX_CHAIN_URL.format(symbol)))
+        paths, url = chains.get(symbol, []), TPEX_CHAIN_URL.format(symbol)
         override = BUSINESS_OVERRIDES.get(symbol, {})
         if paths:
-            # 優先與官方產業碼對得上的鏈路；否則第一條。
-            primary = paths[0]
-            desired_industry_name = INDUSTRIES.get(industry, "")
-            for pth in paths:
-                if desired_industry_name and desired_industry_name in pth:
-                    primary = pth
-                    break
+            primary = _pick_primary_chain(paths, industry)
             group = _normalize_group(primary)
         else:
             primary = override.get("primary_chain", old.get("primary_chain", ""))
             old_group = str(old.get("business_group", "") or "")
-            if _is_bad_etf_group(symbol, old_group) or old_group.lower() == "nan":
-                old_group = ""   # 舊版把查不到產業的股票存成 ETF，不沿用
-            group = override.get("business_group", old_group) or _fallback_group(industry, name)
+            if _is_bad_etf_group(symbol, old_group) or old_group.lower() == "nan" or "待細分" in old_group:
+                old_group = ""   # 舊版把查不到產業的股票存成 ETF 或待細分，不沿用
+            etf_group = "ETF／指數投資" if symbol.startswith("00") else ""
+            group = override.get("business_group", old_group) or etf_group or _fallback_group(industry, name)
 
         if override:
             group = override.get("business_group", group)
@@ -422,7 +446,8 @@ def business_map_for_symbols(symbols: Iterable[str], client=None, path: Path | N
             if code in INDUSTRY_OVERRIDES and ind != INDUSTRY_OVERRIDES[code]:
                 stale.append(code)
                 continue
-            if _is_bad_etf_group(code, str(by.loc[code].get("business_group", ""))) or (ind == "00" and not code.startswith("00")):
+            group = str(by.loc[code].get("business_group", ""))
+            if _is_bad_etf_group(code, group) or "待細分" in group or (ind == "00" and not code.startswith("00")):
                 stale.append(code)
                 continue
             name = str(by.loc[code].get("name", ""))
