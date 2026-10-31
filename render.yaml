@@ -1,0 +1,51 @@
+# Render Blueprint：股票網站（和倉管系統 WMS 相同：GitHub main 推送後自動部署）
+# 密鑰不放在 repo；sync: false 的項目在 Render 建立服務時填入。
+services:
+  - type: web
+    name: tpe-stock-dashboard
+    runtime: python
+    plan: free
+    region: singapore
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m streamlit run stock_dashboard.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
+    healthCheckPath: /_stcore/health
+    envVars:
+      - key: TZ
+        value: Asia/Taipei
+      - key: PYTHON_VERSION
+        value: "3.13.15"   # 和本機測試相同
+      - key: FUGLE_API_KEY
+        sync: false
+      - key: ACCOUNT_DB_URL
+        sync: false
+      - key: ACCOUNT_DB_SERVICE_ROLE_KEY
+        sync: false
+      - key: ACCOUNT_PUBLIC_BASE_URL   # Render 給的網址，例如 https://tpe-stock-dashboard.onrender.com/
+        sync: false
+      - key: AUTH_SESSION_SECRET
+        sync: false
+      - key: AUTH_USERS_JSON
+        sync: false
+      - key: SUBSCRIBER_SYNC_URL
+        sync: false
+      - key: SUBSCRIBER_SYNC_TOKEN
+        sync: false
+      - key: EMAIL_ENABLED
+        sync: false
+      - key: EMAIL_AUTO_SEND
+        sync: false
+      - key: EMAIL_SENDER
+        sync: false
+      - key: EMAIL_APP_PASSWORD
+        sync: false
+      - key: EMAIL_RECIPIENT
+        sync: false
+      - key: EMAIL_SMTP_HOST
+        sync: false
+      - key: EMAIL_SMTP_PORT
+        sync: false
+      - key: EMAIL_USE_SSL
+        sync: false
+      - key: EMAIL_ATTACH_REPORT
+        sync: false
