@@ -3875,7 +3875,7 @@ def _render_published_rotation(payload: dict) -> None:
     def _set_rotation_groups(labels: list[str]) -> None:
         st.session_state[selection_key] = labels
 
-    period_col, quadrant_col, filter_col = st.columns([2.1, 2.5, 1], vertical_alignment="bottom")
+    period_col, quadrant_col = st.columns([1, 1.2], vertical_alignment="bottom")
     period = period_col.radio("輪動軌跡", ["1 個月", "3 個月", "半年", "1 年"], index=0, horizontal=True, key="rotation_published_period_v3")
     quadrant_options = ["領先", "轉弱", "改善", "落後", "全選"]
     quadrant_filter = quadrant_col.radio(
@@ -3886,9 +3886,9 @@ def _render_published_rotation(payload: dict) -> None:
         key="rotation_published_quadrant_filter_v1",
         help="只顯示目前位於指定象限的產業軌跡；「全選」會顯示所有象限。",
     )
-    # 27 個主題收進彈出面板，平常不佔版面；名稱固定，面板才不會在勾選後關閉
-    with filter_col.popover("篩選主題", icon=":material/filter_list:", use_container_width=True, help="同時影響 03 產業輪動圖與 04 報酬表"):
-        select_actions = st.columns(2)
+    # 27 個主題收合起來，平常不佔版面。不用 st.popover：新版 Streamlit 打開時不會顯示已選的主題。
+    with st.expander("篩選主題（同時影響 03 產業輪動圖與 04 報酬表）", icon=":material/filter_list:"):
+        select_actions = st.columns([1, 1, 3])
         select_actions[0].button(f"全選 {len(all_labels)} 群", key="rotation_select_all_v3", use_container_width=True,
                                  on_click=_set_rotation_groups, args=(all_labels.copy(),))
         select_actions[1].button("清除選取", key="rotation_clear_selection_v3", use_container_width=True,
