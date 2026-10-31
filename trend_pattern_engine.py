@@ -29,6 +29,12 @@ GITHUB_REPO_DEFAULT = "alanpass/stock_trading"
 PUBLIC_REPO_PATH = "output/research_reports/trend_patterns_public.json"
 BACKTEST_REPO_PATH = "output/research_reports/trend_pattern_backtest.json"
 BACKTEST_HORIZON = 40          # 統計第 80～41 個交易日前那 40 根日 K（型態與期間內漲跌）
+INTEL_REPLAY_DAYS = 130       # 市場情報逐日重算的天數
+INTEL_BREADTH_DAYS = 60        # 多空溫度顯示的天數
+INTEL_EVENT_DAYS = 20          # 異動快訊保留的天數
+INTEL_SAMPLE_STEP = 5          # 後續表現每 5 個交易日取一次樣本，減少重疊
+INTEL_HORIZONS = (10, 20)      # 後續表現看訊號後第幾個交易日
+CONFIRMED_PATTERNS = {"雙底突破", "倒頭肩突破", "雙頂跌破", "頭肩頂跌破"}
 BACKTEST_MIN_SAMPLES = 5       # 檔數少於此數的分組只列出、不參與「最賺錢」排名
 USER_AGENT = "Mozilla/5.0 TaiwanStockTrendPatterns/1.0"
 
@@ -38,7 +44,9 @@ CATEGORY_ORDER = [
 ]
 ADJUSTMENT_METHOD = "Fugle 還原股價（adjusted=True）"
 SUSPICIOUS_GAP_THRESHOLD = 0.35
-ANALYSIS_VERSION = "pattern_window_40_trading_days_v1"
+ANALYSIS_VERSION = "pattern_window_40_trading_days_v2"
+DOUBLE_RECENT_BARS = 15        # 雙底／雙頂的第二個點要在最近 15 根內
+DOUBLE_PRIOR_MOVE = 0.08       # 雙底前要先跌 8%（雙頂前要先漲 8%）
 CONSOLIDATION_PATTERNS = {"杯柄", "多頭旗形", "空頭旗形", "上升三角形", "下降三角形", "對稱三角形", "箱型整理", "盤整待突破"}
 MATERIAL_EVENTS = {"箱頂突破", "近20日壓力突破", "連跌後轉穩（3日）", "上漲轉弱（3日）", "向下跌破支撐"}
 
@@ -144,38 +152,47 @@ def _slope(values: np.ndarray) -> float:
 
 
 def _find_double_pattern(highs: np.ndarray, lows: np.ndarray, close: np.ndarray, mode: str):
+    """雙底／雙頂；回傳最後一項是第二個低點／高點的位置，兩者都成立時取較新的。
+
+    要有前段跌勢（雙頂是漲勢）、第二個點夠新、之後沒有破底（過頂）。否則區間裡任兩個相近低點都算雙底，近半數股票都會被歸進去。
+    """
     if len(close) < 30:
         return None
+    recent_from = len(close) - DOUBLE_RECENT_BARS
     if mode == "bottom":
         points = _pivot_indices(lows, "low", 3)
         for p in reversed(points):
             for q in reversed(points[:-1]):
-                if not 8 <= p - q <= 38:
+                if not 8 <= p - q <= 38 or p < recent_from:
                     continue
                 a, b = float(lows[q]), float(lows[p])
                 if abs(a - b) / max((a + b) / 2, 1e-9) > 0.045:
+                    continue
+                if float(np.max(highs[:q + 1])) / max(a, 1e-9) - 1 < DOUBLE_PRIOR_MOVE or float(close[-1]) < min(a, b) * 0.98:
                     continue
                 middle = float(np.max(highs[q:p + 1]))
                 if middle / max(a, b) - 1 < 0.045:
                     continue
                 crossed = float(close[-1]) > middle * 1.005
                 return ("雙底突破" if crossed else "雙底", 0.82 if crossed else 0.68, middle,
-                        "雙底已站上中間反彈高點。" if crossed else "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。")
+                        "雙底已站上中間反彈高點。" if crossed else "兩個相近低點構成潛在雙底，仍需觀察中間壓力是否突破。", p)
     else:
         points = _pivot_indices(highs, "high", 3)
         for p in reversed(points):
             for q in reversed(points[:-1]):
-                if not 8 <= p - q <= 38:
+                if not 8 <= p - q <= 38 or p < recent_from:
                     continue
                 a, b = float(highs[q]), float(highs[p])
                 if abs(a - b) / max((a + b) / 2, 1e-9) > 0.04:
+                    continue
+                if a / max(float(np.min(lows[:q + 1])), 1e-9) - 1 < DOUBLE_PRIOR_MOVE or float(close[-1]) > max(a, b) * 1.02:
                     continue
                 middle = float(np.min(lows[q:p + 1]))
                 if min(a, b) / max(middle, 1e-9) - 1 < 0.04:
                     continue
                 crossed = float(close[-1]) < middle * 0.995
                 return ("雙頂跌破" if crossed else "雙頂", 0.82 if crossed else 0.67, middle,
-                        "雙頂已跌破中間回檔低點。" if crossed else "兩個相近高點顯示壓力可能存在，仍需觀察支撐是否跌破。")
+                        "雙頂已跌破中間回檔低點。" if crossed else "兩個相近高點顯示壓力可能存在，仍需觀察支撐是否跌破。", p)
     return None
 
 
@@ -299,10 +316,10 @@ def detect_pattern(history: pd.DataFrame) -> dict[str, Any]:
         pattern, confidence, resistance, note = hs
     elif hs and hs[0].startswith("頭肩頂"):
         pattern, confidence, resistance, note = hs
-    elif db:
-        pattern, confidence, resistance, note = db
+    elif db and (not dt or db[4] >= dt[4]):
+        pattern, confidence, resistance, note = db[:4]
     elif dt:
-        pattern, confidence, resistance, note = dt
+        pattern, confidence, resistance, note = dt[:4]
 
     if pattern == "箱型整理" and width >= 40:
         left_avg = float(np.mean(close[:10]))
@@ -415,7 +432,7 @@ def _is_material_change(old: dict[str, Any] | None, new: dict[str, Any]) -> tupl
     if old.get("adjustment_method") != ADJUSTMENT_METHOD:
         return True, "改用還原股價重新校正型態"
     if old.get("analysis_version") != ANALYSIS_VERSION:
-        return True, "型態判斷區間改為最近 40 個交易日，重新校正型態"
+        return True, "型態規則更新，重新校正型態"
     if old.get("classification") != new.get("classification"):
         return True, _event_for_change(old, new)
     if old.get("pattern_name") != new.get("pattern_name") and float(new.get("confidence") or 0) >= 0.64:
@@ -432,8 +449,8 @@ def _is_material_change(old: dict[str, Any] | None, new: dict[str, Any]) -> tupl
 def _build_symbol_record(symbol: str, name: str, data: dict[str, Any], old: dict[str, Any] | None, checked_at: str):
     changed, event = _is_material_change(old, data)
     if old and not changed:
-        # 保留上次重大變化的型態判讀；個股圖在使用者展開時即時查詢。
-        return old, False
+        # 型態與價位每天更新，最近一次重大變化的時間與內容不動。
+        return {**old, **data}, False
     row = {
         "symbol": clean_symbol(symbol),
         "name": str(name or NAME_FALLBACKS.get(clean_symbol(symbol), clean_symbol(symbol))),
@@ -646,8 +663,100 @@ def load_trend_backtest(base_dir: str | Path) -> dict[str, Any]:
         return {}
 
 
+def _price_levels(history: pd.DataFrame) -> dict[str, Any]:
+    """網站卡片用：最近 40 根收盤與前 20 日高低點（不含今天，判斷離突破／跌破多遠）。"""
+    data = _normalise_history(history)
+    return {
+        "spark": [round(float(v), 2) for v in data["close"].tail(40)],
+        "prior_high_20d": round(float(data["high"].iloc[-21:-1].max()), 2),
+        "prior_low_20d": round(float(data["low"].iloc[-21:-1].min()), 2),
+    }
+
+
+def _group_forward(samples: list[dict[str, Any]], key: str, horizons: tuple[int, ...]) -> list[dict[str, Any]]:
+    out = []
+    for name in sorted({s[key] for s in samples}):
+        group = [s for s in samples if s[key] == name]
+        row: dict[str, Any] = {key: name, "samples": len(group)}
+        for h in horizons:
+            values = [s[f"r{h}"] for s in group if f"r{h}" in s]
+            excess = [s[f"x{h}"] for s in group if f"x{h}" in s]
+            row[f"n_{h}d"] = len(values)
+            if values:
+                row[f"avg_{h}d"] = round(float(np.mean(values)), 2)
+                row[f"win_{h}d"] = round(float(np.mean(np.array(values) > 0)) * 100, 1)
+                row[f"excess_{h}d"] = round(float(np.mean(excess)), 2)
+        out.append(row)
+    return out
+
+
+def build_market_intel(histories: dict[str, pd.DataFrame]) -> dict[str, Any]:
+    """用同一套規則逐日重算：每天的多空分布、近期異動事件，以及各型態出現後的實際表現。
+
+    後續表現只用訊號當天之後的收盤計算，並和同一天全部樣本的平均相比（超額），扣掉大盤漲跌的影響。
+    """
+    daily: dict[str, dict[str, int]] = {}
+    events: list[dict[str, Any]] = []
+    samples: list[dict[str, Any]] = []
+    for symbol, history in histories.items():
+        data = _normalise_history(history)
+        closes = data["close"].to_numpy(dtype=float)
+        dates = data["date"].dt.strftime("%Y-%m-%d").tolist()
+        previous_pattern = ""
+        for end in range(max(60, len(data) - INTEL_REPLAY_DAYS), len(data) + 1):
+            signal = detect_pattern(data.iloc[:end])
+            classification, pattern = signal["classification"], signal["pattern_name"]
+            if classification == "資料調整檢查":
+                previous_pattern = pattern
+                continue
+            day = dates[end - 1]
+            counts = daily.setdefault(day, {})
+            counts[classification] = counts.get(classification, 0) + 1
+            event = signal["event"] if signal["event"] in MATERIAL_EVENTS else ""
+            if not event and pattern in CONFIRMED_PATTERNS and previous_pattern and pattern != previous_pattern:
+                event = f"{pattern}確認"
+            if event:
+                events.append({"date": day, "symbol": clean_symbol(symbol), "name": NAME_FALLBACKS.get(clean_symbol(symbol), clean_symbol(symbol)),
+                               "themes": sorted(THEME_BY_SYMBOL.get(clean_symbol(symbol), [])), "event": event,
+                               "classification": classification, "pattern_name": pattern, "close": round(float(closes[end - 1]), 2),
+                               "since_pct": round((float(closes[-1]) / float(closes[end - 1]) - 1) * 100, 2)})
+            previous_pattern = pattern
+            if (len(data) - end) % INTEL_SAMPLE_STEP == 0:
+                sample: dict[str, Any] = {"date": day, "classification": classification, "pattern_name": pattern}
+                for h in INTEL_HORIZONS:
+                    if end - 1 + h < len(data):
+                        sample[f"r{h}"] = (float(closes[end - 1 + h]) / float(closes[end - 1]) - 1) * 100
+                samples.append(sample)
+
+    # 超額＝減去同一天全部樣本的平均，比較的是「這個型態相對其他股票」
+    for h in INTEL_HORIZONS:
+        by_day: dict[str, list[float]] = {}
+        for s in samples:
+            if f"r{h}" in s:
+                by_day.setdefault(s["date"], []).append(s[f"r{h}"])
+        for s in samples:
+            if f"r{h}" in s:
+                s[f"x{h}"] = s[f"r{h}"] - float(np.mean(by_day[s["date"]]))
+    all_days = sorted(daily)
+    recent = set(all_days[-INTEL_EVENT_DAYS:])
+    usable = [s for s in samples if any(f"r{h}" in s for h in INTEL_HORIZONS)]
+    baseline = _group_forward([{**s, "all": "全部"} for s in usable], "all", INTEL_HORIZONS)
+    return {
+        "asof": all_days[-1] if all_days else "",
+        "breadth": [{"date": day, **daily[day]} for day in all_days[-INTEL_BREADTH_DAYS:]],
+        "events": sorted((e for e in events if e["date"] in recent), key=lambda e: (e["date"], e["symbol"]), reverse=True),
+        "forward": {
+            "horizons": list(INTEL_HORIZONS), "sample_step_days": INTEL_SAMPLE_STEP,
+            "start": min((s["date"] for s in usable), default=""), "end": max((s["date"] for s in usable), default=""),
+            "symbols": len(histories), "baseline": baseline[0] if baseline else {},
+            "by_classification": _group_forward(usable, "classification", INTEL_HORIZONS),
+            "by_pattern": _group_forward(usable, "pattern_name", INTEL_HORIZONS),
+        },
+    }
+
+
 def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bool = True) -> dict[str, Any]:
-    """每日檢查所有概念股；沒有重大型態變化時不改寫／發布公開快照。"""
+    """每日檢查所有概念股並發布快照：型態、價位與市場情報每天更新，重大變化另外記錄。"""
     base = Path(base_dir).resolve()
     now = _now()
     asof = pd.Timestamp(now.date())
@@ -708,6 +817,7 @@ def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bo
                 latest_dates.append(pd.Timestamp(history["date"].iloc[-1]).strftime("%Y-%m-%d"))
                 histories[symbol] = history
                 signals = detect_pattern(history)
+                signals.update(_price_levels(history))
                 old = prior.get(symbol)
                 row, changed = _build_symbol_record(symbol, NAME_FALLBACKS.get(symbol, symbol), signals, old, checked_at)
                 updated_rows[symbol] = row
@@ -737,16 +847,12 @@ def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bo
             "event": row.get("major_change", "初始型態建檔"), "last_bar_date": row.get("last_bar_date", ""),
         } for row in updated_rows.values()]
 
-    if not changes:
-        result = {
-            "ok": True, "skipped": True,
-            "reason": "沒有偵測到重大型態／趨勢狀態變化，保留既有公開快照，不建立 GitHub commit。",
-            "checked_at": checked_at, "tracked_symbols": len(symbols), "usable_symbols": len(updated_rows),
-            "errors_count": len(errors), "errors": errors[:20], "backtest": backtest,
-        }
-        with log_path.open("a", encoding="utf-8") as log:
-            log.write(f"[{_now().isoformat(timespec='seconds')}] NO_SIGNIFICANT_CHANGE {json.dumps(result, ensure_ascii=False)}\n")
-        return result
+    try:
+        market_intel = build_market_intel(histories)
+    except Exception as exc:
+        market_intel = {"error": f"{type(exc).__name__}: {exc}"}
+    with log_path.open("a", encoding="utf-8") as log:
+        log.write(f"[{_now().isoformat(timespec='seconds')}] INTEL events={len(market_intel.get('events', []))} error={market_intel.get('error', '')}\n")
 
     data_asof = max(latest_dates) if latest_dates else now.date().isoformat()
     rows = sorted(updated_rows.values(), key=lambda row: (
@@ -756,7 +862,7 @@ def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bo
     payload = {
         "schema_version": 1, "report_type": "trend_patterns_public",
         "updated_at": checked_at, "data_asof": data_asof,
-        "check_mode": "daily_check_publish_on_material_change",
+        "check_mode": "daily_publish",
         "publication_status": "published" if publish else "local_preview",
         "tracked_symbols": len(symbols), "usable_symbols": len(updated_rows), "changed_count": len(changes),
         "category_order": CATEGORY_ORDER,
@@ -764,10 +870,11 @@ def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bo
             "使用產業分析 ROTATION_THEMES 的全部概念股；所有分析 OHLC 都取 Fugle adjusted=True 還原股價，"
             "以避免除權息、股票股利與分割造成的價格基準斷層。最近 40 個交易日日 K 辨識頭肩、雙頂／雙底、圓底、杯柄、"
             "楔形、旗形與三角形，近 6 個月位置辨識由高點回落或由低點回升。若還原後仍出現巨大單日跳空，"
-            "先歸入資料調整檢查、不直接判斷趨勢；只在型態／趨勢狀態重大變化時更新快照。"
+            "先歸入資料調整檢查、不直接判斷趨勢；價位每天更新，重大變化另外記錄時間與內容。"
         ),
         "pattern_guide_url": "https://www.ig.com/cn/trading-strategies/10-chart-patterns-every-trader-needs-to-know-220907",
         "changes": changes[:160], "errors_count": len(errors), "errors": errors[:30], "stocks": rows,
+        "market_intel": market_intel,
     }
     serialized = json.dumps(payload, ensure_ascii=False, indent=2, allow_nan=False) + "\n"
     # 發布成功後才更新本機「上次已發布」快照。

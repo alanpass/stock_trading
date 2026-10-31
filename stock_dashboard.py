@@ -114,7 +114,6 @@ from auth_service import (authenticate, request_account, create_session_token, v
                          SESSION_COOKIE_NAME, SESSION_TTL_SECONDS)
 from industry_rotation import ROTATION_THEMES, ROTATION_DISPLAY_NAMES, NAME_FALLBACKS, load_published_rotation
 from trend_pattern_ui import render_trend_patterns_workspace
-from trend_pattern_engine import CATEGORY_ORDER as TREND_CATEGORY_ORDER
 from stock_notes_ui import render_stock_notes_workspace, render_stock_note_for_symbol
 from ai_backend import is_agent_status, status_label, AGENT_LABEL
 from us_industry_indicators import US_INDUSTRY_INDICATORS, get_us_indicator_symbols, fetch_us_indicators
@@ -2731,7 +2730,8 @@ SITE_NAV_SUB = {
                  ("輪動解讀與資料限制", "輪動解讀與資料限制")],
     "strategy": [("自選股盤中焦點", "自選股盤中焦點"), ("個股符合特徵", "個股符合特徵"), ("股價趨勢", "股價趨勢"), ("技術 K 線", "技術 K 線"), ("成交量", "成交量"), ("進場建議分析", "進場建議分析系統"),
                  ("大戶 VS 散戶", "大戶 VS 散戶"), ("交易明細", "交易明細"), ("三大法人", "三大法人")],
-    "trend": [("期間統計", "期間統計")] + [(c, c) for c in TREND_CATEGORY_ORDER],
+    "trend": [("今日型態情報", "今日型態情報"), ("型態異動快訊", "型態異動快訊"), ("族群型態地圖", "族群型態地圖"), ("關鍵價雷達", "關鍵價雷達"),
+              ("型態出現後的表現", "型態出現後的表現"), ("個股型態總覽", "個股型態總覽")],
     "future": [("最近系統推薦股票", "最近系統推薦股票"), ("AI 隔日預測", "AI 隔日預測"), ("市場情報與利多／利空", "市場情報"), ("模型研究 Agent", "模型研究 Agent"),
                ("AI 個股研究筆記", "AI 個股研究筆記")],
     "subscribe": [("聯絡資訊", "聯絡資訊"), ("訂閱／聯絡表單", "訂閱／聯絡表單")],
