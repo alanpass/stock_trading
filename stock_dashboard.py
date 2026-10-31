@@ -1765,8 +1765,8 @@ def _render_financial_strip(code: str) -> None:
     revenue = f"<b>{fin['revenue'] / 1e5:,.2f} 億</b>" if has("revenue") else "<b>--</b>"
     month, period = fin.get("rev_month", ""), fin.get("eps_period", "")
     tiles = (tile("本益比", pe, "倍" if has("pe") else "無資料或虧損") + tile("EPS", eps, f"{period} 累計・元")
-             + tile("月營收", revenue, month) + tile("月營收月增", pct("rev_mom"), "較上月")
-             + tile("月營收年增", pct("rev_yoy"), "較去年同月") + tile("累計營收年增", pct("rev_cum_yoy"), "今年累計"))
+             + tile("月營收", revenue, month) + tile("營收月增", pct("rev_mom"), "較上月")
+             + tile("營收年增", pct("rev_yoy"), "較去年同月") + tile("累計年增", pct("rev_cum_yoy"), "今年累計營收"))
     amounts = [(label, fin.get(key, np.nan)) for label, key in (("營收", "income_revenue"), ("營業利益", "income_operating"), ("稅後淨利", "income_net"))]
     detail = "、".join(f"{label} {v / 1e5:,.2f} 億" for label, v in amounts if pd.notna(v))
     note = f"<div class='fin-note'>{period} 累計財報：{detail}</div>" if detail else ""
@@ -7513,7 +7513,7 @@ body .stApp.stApp [class*="st-key-wc_"][class*="_ld"] [class*="st-key-wcdel_"] b
 .pin-vals{display:flex;align-items:baseline;gap:10px;font-variant-numeric:tabular-nums;font-weight:800;font-size:13px;}
 .pin-vals b{font-size:21px;font-weight:900;}
 .pin-meta{font-size:11.5px;color:#7a6a6a;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.fin-strip{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin:10px 0 4px;}
+.fin-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px;margin:10px 0 4px;}
 .fin-tile{background:#fff;border:1px solid #eadfdf;border-radius:8px;padding:8px 10px;min-width:0;}
 .fin-tile span{display:block;font-size:12px;color:#7d7474;white-space:nowrap;}
 .fin-tile b{display:block;font-size:17px;font-weight:800;color:#3b3535;margin:2px 0;font-variant-numeric:tabular-nums;white-space:nowrap;}
@@ -7521,7 +7521,6 @@ body .stApp.stApp [class*="st-key-wc_"][class*="_ld"] [class*="st-key-wcdel_"] b
 .fin-tile b.fin-down{color:#14874f;}
 .fin-tile small{display:block;font-size:11px;color:#9a9090;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .fin-note{font-size:12px;color:#7d7474;margin:0 0 12px;}
-@media(max-width:900px){.fin-strip{grid-template-columns:repeat(3,minmax(0,1fr));}}
 .pin-ix{display:flex;align-items:baseline;gap:8px;margin-top:5px;padding-top:5px;border-top:1px dashed #e6d3d3;font-size:12px;font-variant-numeric:tabular-nums;}
 .pin-ix b{font-size:13px;color:#1f2937;}.pin-ix-label{color:#7a6a6a;font-weight:700;}
 
