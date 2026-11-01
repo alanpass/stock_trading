@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-11-01",
-  "updated_at": "2026-11-01T10:48:06+08:00",
-  "finished_at": "2026-11-01T10:48:11+08:00",
-  "published_at": "2026-11-01T10:48:11+08:00",
+  "updated_at": "2026-11-01T11:00:02+08:00",
+  "finished_at": "2026-11-01T11:00:11+08:00",
+  "published_at": "2026-11-01T11:00:11+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -18,7 +18,7 @@
   "news_count": 127,
   "earnings_count": 16,
   "news_digest": {
-    "generated_at": "2026-11-01T10:48:06+08:00",
+    "generated_at": "2026-11-01T11:00:02+08:00",
     "headline": "最近 2 天共整理 127 則財經新聞：利多 32、利空 55、中性 17、混合 23；討論度最高的產業：AI／伺服器、國際股市、半導體。",
     "stats": {
       "total": 127,
@@ -306,7 +306,7 @@
     "agent_generated_at": "2026-11-01T10:47:19+08:00"
   },
   "earnings_digest": {
-    "generated_at": "2026-11-01T10:48:06+08:00",
+    "generated_at": "2026-11-01T11:00:02+08:00",
     "days": 5,
     "total": 16,
     "利多": 6,
@@ -591,7 +591,7 @@
     "source_method": "api",
     "reused_from_previous_run": 25,
     "window_start": "2026-10-31T00:00:00+08:00",
-    "window_end": "2026-11-01T10:48:11.055777+08:00"
+    "window_end": "2026-11-01T11:00:10.894183+08:00"
   },
   "agent_stats": {
     "input": 127,
@@ -3231,30 +3231,6 @@
       "source": "鉅亨網"
     },
     {
-      "article_id": "6642823",
-      "title": "Siri終於有AI外援！蘋果牽手阿里千問 中國用戶11月搶先體驗",
-      "url": "https://news.cnyes.com/news/id/6642823",
-      "category": "美股雷達",
-      "published": "2026-10-31 10:50:03",
-      "published_ts": "2026-10-31T10:50:03+08:00",
-      "ai_points": [
-        "蘋果宣布中國版Apple Intelligence將整合阿里巴巴「千問」，供Siri、寫作工具與視覺智能調用。",
-        "中國用戶最快11月4日可用iOS開發者Beta測試，預計12月隨iOS 27.3正式版推出。",
-        "蘋果 (Apple) (AAPL-US) 10月31日公布，首波Apple Intelligence功能將整合千問的文字與圖像理解能力，讓中國用戶能直接在Siri…"
-      ],
-      "summary": "蘋果宣布中國版Apple Intelligence將整合阿里巴巴「千問」，供Siri、寫作工具與視覺智能調用。；中國用戶最快11月4日可用iOS開發者Beta測試，預計12月隨iOS 27.3正式版推出。；蘋果 (Apple) (AAPL-US) 10月31日公布，首波Apple Intelligence功能將整合千問的文字與圖像理解能力，讓中國用戶能直接在Siri…",
-      "sentiment": "中性",
-      "sectors": [
-        "AI／伺服器"
-      ],
-      "stocks": [],
-      "highlights": [],
-      "why": "",
-      "importance": 5.0,
-      "ai_source": "rule",
-      "source": "鉅亨網"
-    },
-    {
       "article_id": "6642827",
       "title": "馬斯克豪砸逾4.45億美元挺共和黨 傳記作者：期中選舉成個人政治十字軍東征",
       "url": "https://news.cnyes.com/news/id/6642827",
@@ -3794,6 +3770,30 @@
         "30億美元",
         "川普"
       ],
+      "why": "",
+      "importance": 4.0,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6642823",
+      "title": "Siri終於有AI外援！蘋果牽手阿里千問 中國用戶11月搶先體驗",
+      "url": "https://news.cnyes.com/news/id/6642823",
+      "category": "美股雷達",
+      "published": "2026-10-31 10:50:03",
+      "published_ts": "2026-10-31T10:50:03+08:00",
+      "ai_points": [
+        "蘋果宣布中國版Apple Intelligence將整合阿里巴巴「千問」，供Siri、寫作工具與視覺智能調用。",
+        "中國用戶最快11月4日可用iOS開發者Beta測試，預計12月隨iOS 27.3正式版推出。",
+        "蘋果 (Apple) (AAPL-US) 10月31日公布，首波Apple Intelligence功能將整合千問的文字與圖像理解能力，讓中國用戶能直接在Siri…"
+      ],
+      "summary": "蘋果宣布中國版Apple Intelligence將整合阿里巴巴「千問」，供Siri、寫作工具與視覺智能調用。；中國用戶最快11月4日可用iOS開發者Beta測試，預計12月隨iOS 27.3正式版推出。；蘋果 (Apple) (AAPL-US) 10月31日公布，首波Apple Intelligence功能將整合千問的文字與圖像理解能力，讓中國用戶能直接在Siri…",
+      "sentiment": "中性",
+      "sectors": [
+        "AI／伺服器"
+      ],
+      "stocks": [],
+      "highlights": [],
       "why": "",
       "importance": 4.0,
       "ai_source": "rule",
