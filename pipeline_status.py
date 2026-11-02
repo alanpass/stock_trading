@@ -28,10 +28,12 @@ TAIPEI = ZoneInfo("Asia/Taipei")
 
 
 def _now() -> datetime:
+    """目前的台北時間。"""
     return datetime.now(TAIPEI)
 
 
 def _read(path: Path) -> Any:
+    """讀取 JSON；失敗時回傳 None。"""
     try:
         return json.loads(path.read_text(encoding="utf-8"))
     except Exception:
@@ -39,6 +41,7 @@ def _read(path: Path) -> Any:
 
 
 def _age_minutes(stamp: Any) -> float | None:
+    """時間戳距今幾分鐘；無法解析時回傳 None。"""
     try:
         dt = datetime.fromisoformat(str(stamp))
         if dt.tzinfo is None:
@@ -49,6 +52,7 @@ def _age_minutes(stamp: Any) -> float | None:
 
 
 def _log_tail(path: Path, lines: int = 6) -> list[str]:
+    """讀取紀錄檔最後幾行。"""
     try:
         return [x[:300] for x in path.read_text(encoding="utf-8", errors="replace").splitlines()[-lines:]]
     except OSError:
@@ -56,12 +60,14 @@ def _log_tail(path: Path, lines: int = 6) -> list[str]:
 
 
 def _job(name: str, day: str) -> dict[str, Any]:
+    """查詢工作資料夾是否已有研究包與筆記。"""
     d = JOBS / f"{name}_{day}"
     return {"job_dir": str(d), "package": (d / "package.json").exists(),
             "notes": any((d / f).exists() for f in ("agent_notes.json", "morning_notes.json"))}
 
 
 def afterclose_status(day: str) -> dict[str, Any]:
+    """檢查盤後研究的進度與問題。"""
     st = _read(LOGS / f"after_close_status_{day}.json") or {}
     runner = _read(LOGS / f"afterclose_status_{day}.json") or {}
     job = _job("afterclose", day)
@@ -82,6 +88,7 @@ def afterclose_status(day: str) -> dict[str, Any]:
 
 
 def morning_status(day: str) -> dict[str, Any]:
+    """檢查早報的進度與問題。"""
     st = _read(LOGS / f"morning_entry_status_{day}.json") or {}
     job = _job("morning", day)
     status = str(st.get("status", ""))
@@ -94,6 +101,7 @@ def morning_status(day: str) -> dict[str, Any]:
 
 
 def finance_status() -> dict[str, Any]:
+    """檢查財經新聞與法說會的更新狀況與問題。"""
     latest = _read(REPORTS / "finance_info_latest.json") or {}
     public = _read(REPORTS / "finance_info_public.json") or {}
     digest = latest.get("news_digest") or {}
@@ -121,6 +129,7 @@ def finance_status() -> dict[str, Any]:
 
 
 def windows_jobs(day: str) -> dict[str, Any]:
+    """讀取各 Windows 排程當日的執行狀態。"""
     out = {}
     for job in ("morning", "afterclose", "finance", "earnings"):
         st = _read(LOGS / f"{job}_status_{day}.json") or {}
@@ -167,6 +176,7 @@ def account_db_status() -> dict[str, Any]:
 
 
 def pipeline_status(day: str | None = None) -> dict[str, Any]:
+    """彙整各流程狀態，列出問題並判斷是否健康。"""
     day = day or _now().strftime("%Y-%m-%d")
     report = {
         "date": day,
@@ -183,6 +193,7 @@ def pipeline_status(day: str | None = None) -> dict[str, Any]:
 
 
 def main() -> int:
+    """命令列入口：印出研究流程健康狀態。"""
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="研究流程健康狀態")

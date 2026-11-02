@@ -40,6 +40,7 @@ INDUSTRY_OVERRIDES = {
 
 
 def normalize_industry(value) -> str:
+    """把產業代碼補成兩位數；空值轉成 00。"""
     try:
         if pd.isna(value):
             return "00"
@@ -55,6 +56,7 @@ MASTER_MAX_AGE_SECONDS = 86400   # 主檔超過一天就用 Fugle 重建，新�
 
 
 def _cached_rows(path: Path) -> int:
+    """快取 CSV 的資料筆數；讀不到時回傳 0。"""
     try:
         return len(pd.read_csv(path, dtype=str, usecols=["symbol"]))
     except Exception:
@@ -124,6 +126,7 @@ def build_master(client, path: Path, force: bool = False) -> pd.DataFrame:
 
 
 def apply_overrides(df: pd.DataFrame) -> pd.DataFrame:
+    """套用人工指定的產業代碼。"""
     if df is None or df.empty:
         return df
     out = df.copy()

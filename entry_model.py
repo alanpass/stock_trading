@@ -31,6 +31,7 @@ class EntryModel:
 
     def __init__(self, reg, clf, features, horizon_bars, train_samples, train_days, oof_mae,
                  oof_direction_accuracy, oof_opportunity_accuracy, **extra):
+        """保存迴歸與分類模型、特徵與前推驗證指標。"""
         self.reg = reg
         self.clf = clf
         self.features = features
@@ -51,12 +52,14 @@ class EntryModel:
 
 
 def _symbol_path(base, code, key):
+    """該股票模型檔的路徑（必要時建立資料夾）。"""
     p = Path(base) / "entry"
     p.mkdir(parents=True, exist_ok=True)
     return p / f"{code}_{key}_{MODEL_VERSION}.joblib"
 
 
 def load_training_intraday(client, code, days=140):
+    """分段下載歷史 5 分 K，合併去重後依時間排序。"""
     end = pd.Timestamp.now(tz="Asia/Taipei").tz_localize(None).normalize()
     start = end - pd.Timedelta(days=days)
     parts, cur, last_error = [], start, None
@@ -78,6 +81,7 @@ def load_training_intraday(client, code, days=140):
 # 資料整理與特徵
 # ---------------------------------------------------------------------------
 def _clean(d: pd.DataFrame) -> pd.DataFrame:
+    """轉換欄位型別、移除缺值並加上交易日欄位。"""
     x = d.copy()
     x["date"] = pd.to_datetime(x["date"], errors="coerce")
     for col in ("open", "high", "low", "close", "volume"):
@@ -94,6 +98,7 @@ def _valid(x: pd.DataFrame) -> pd.Series:
 
 
 def _features(d: pd.DataFrame, horizon: int = HORIZON_BARS) -> pd.DataFrame:
+    """計算 K 棒型態、報酬、均線、量能與 VWAP 等模型特徵及預測目標。"""
     x = _clean(d)
     c, o, h, l, v = x["close"], x["open"], x["high"], x["low"], x["volume"]
     rng = h - l
@@ -145,6 +150,7 @@ def detect_pattern(bars: pd.DataFrame) -> dict:
     rising, falling = prior > 0.003, prior < -0.003
 
     def big(i):
+        """判斷第 i 根是否為長紅或長黑 K。"""
         if size[i] >= 0.6 * r[i] and size[i] >= 0.8 * atr:
             return True
         # 實體比例不夠，但漲跌 ≥ 1 ATR 或 ≥ 3%、且收在振幅上（下）1/3，也算長紅（長黑）
@@ -239,6 +245,7 @@ def daily_trend(daily: pd.DataFrame | None, price: float) -> dict:
 # 模型訓練（含前推驗證）
 # ---------------------------------------------------------------------------
 def _rf(kind):
+    """建立隨機森林分類或迴歸模型。"""
     from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
     common = dict(n_estimators=200, max_depth=8, min_samples_leaf=20, random_state=42, n_jobs=-1)
     # 不用 class_weight="balanced"：評分使用的是機率，需要保持校準
@@ -246,6 +253,7 @@ def _rf(kind):
 
 
 def fit_model(hist, horizon_bars=HORIZON_BARS):
+    """以前推驗證評估後訓練進場模型；資料不足時拋出 RuntimeError。"""
     x = _features(hist, horizon_bars)
     data = x[_valid(x)].dropna(subset=["future_low_return", "ret6", "ma12", "position12"]).copy()
     if len(data) < 200:
@@ -289,6 +297,7 @@ def fit_model(hist, horizon_bars=HORIZON_BARS):
 
 
 def save_saved_model(code, key, model):
+    """把模型存檔。"""
     import joblib
     joblib.dump(model, _symbol_path(Path(__file__).resolve().parent / "models", code, key))
 
@@ -308,6 +317,7 @@ def load_latest_saved_model(code):
 
 
 def load_saved_model(code, key):
+    """載入模型；檔案不存在或版本不符時回傳 None。"""
     import joblib
     p = _symbol_path(Path(__file__).resolve().parent / "models", code, key)
     m = joblib.load(p) if p.exists() else None
@@ -318,6 +328,7 @@ def load_saved_model(code, key):
 # 進場判斷
 # ---------------------------------------------------------------------------
 def predict_entry(model, k5, live_price, daily=None, market_open=True):
+    """用模型與目前價格計算建議進場區間、預測低點與進場判斷。"""
     x = _features(k5, getattr(model, "horizon_bars", HORIZON_BARS))
     valid = x[_valid(x)]
     row = (valid if not valid.empty else x).iloc[-1]  # 最後一根「有實際波動」的 K 棒
@@ -340,6 +351,7 @@ def predict_entry(model, k5, live_price, daily=None, market_open=True):
     dtrend = daily_trend(daily, c)
 
     def flag(v):
+        """把數值轉成布林值，非有限值視為 False。"""
         return float(v) > 0 if np.isfinite(v) else False
     parts = {"VWAP": c > vwap, "MA6": flag(row["ma6"]), "MA12": flag(row["ma12"]), "動能": flag(row["ret6"])}
     intraday = 30 * parts["VWAP"] + 25 * parts["MA6"] + 20 * parts["MA12"] + 25 * parts["動能"]

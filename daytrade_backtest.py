@@ -33,6 +33,7 @@ DAYS = 140
 
 
 def _load_5m(client: FugleClient | None, s: str) -> pd.DataFrame:
+    """下載或讀取快取的 5 分 K，只保留盤中時段。"""
     CACHE.mkdir(parents=True, exist_ok=True)
     path = CACHE / f"{s}.csv"
     if client is not None:
@@ -50,6 +51,7 @@ def _load_5m(client: FugleClient | None, s: str) -> pd.DataFrame:
 
 
 def _daily_from_5m(k: pd.DataFrame) -> pd.DataFrame:
+    """把 5 分 K 合成日線，並算出只用前一日以前資料的 ATR、成交值與開盤量均值。"""
     g = k.groupby("day")
     out = pd.DataFrame({"open": g["open"].first(), "high": g["high"].max(), "low": g["low"].min(),
                         "close": g["close"].last(), "volume": g["volume"].sum()})
@@ -65,6 +67,7 @@ def _daily_from_5m(k: pd.DataFrame) -> pd.DataFrame:
 
 @dataclass
 class Cfg:
+    """一組當沖回測參數：策略、停損停利與進場過濾條件。"""
     strategy: str          # orb15 / sip5 / vwap_pull
     stop: float            # 停損 %（0.025 = 2.5%）
     target: float | None   # 停利 %；None＝不設停利
@@ -77,6 +80,7 @@ class Cfg:
 
 
 def _cost_pct(entry: float, exit_: float) -> float:
+    """一來一回的手續費與交易稅，換算成進場金額的比例。"""
     return (entry * FEE + exit_ * FEE + exit_ * TAX) / entry
 
 
@@ -173,6 +177,7 @@ def simulate_day(cfg: Cfg, day, bars: dict[str, pd.DataFrame], info: dict, idx: 
 
 
 def evaluate(trades: list[dict]) -> dict:
+    """彙整交易結果：勝率、平均報酬、獲利因子、最大回撤與上漲天數比例。"""
     if not trades:
         return {"n": 0}
     r = pd.Series([t["net_pct"] for t in trades])
@@ -186,6 +191,7 @@ def evaluate(trades: list[dict]) -> dict:
 
 
 def main() -> int:
+    """挑選候選股、跑各組策略參數的回測並輸出結果。"""
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser()

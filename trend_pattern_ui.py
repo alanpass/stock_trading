@@ -48,6 +48,7 @@ PATTERN_GUIDES: dict[str, dict[str, Any]] = {
 
 
 def _guide_key(pattern_name: str) -> str:
+    """找到型態對應的說明；找不到時用盤整待突破。"""
     if pattern_name in PATTERN_GUIDES:
         return pattern_name
     for known in PATTERN_GUIDES:
@@ -345,6 +346,7 @@ def _render_backtest(base: Path) -> None:
         cols[3].metric(f"平均最賺錢（≥{bt.get('min_samples', 5)} 檔）", best, f"平均 {pct(r['avg_return_pct'])}（{r['count']} 檔）", delta_color="off")
 
     def table(items: list[dict], key: str, label: str) -> pd.DataFrame:
+        """把回測結果轉成顯示用的表格。"""
         return pd.DataFrame([{
             label: r[key], "檔數": r["count"], "平均漲跌%": r["avg_return_pct"], "中位數%": r["median_return_pct"],
             "上漲檔數": r["up_count"], "上漲股平均漲幅%": r["up_avg_pct"],
@@ -443,6 +445,7 @@ _TREND_CSS = """<style>
 
 
 def _pct(value: Any, digits: int = 1) -> str:
+    """格式化百分比；無效值顯示破折號。"""
     try:
         number = float(value)
     except (TypeError, ValueError):
@@ -451,6 +454,7 @@ def _pct(value: Any, digits: int = 1) -> str:
 
 
 def _tone(value: Any) -> str:
+    """依數值正負回傳漲跌樣式。"""
     try:
         number = float(value)
     except (TypeError, ValueError):
@@ -459,6 +463,7 @@ def _tone(value: Any) -> str:
 
 
 def _stack_html(counts: dict[str, int]) -> str:
+    """組出各型態占比的堆疊長條。"""
     total = sum(int(counts.get(c, 0)) for c, _, _ in _BIAS) or 1
     return '<div class="tp-stack">' + "".join(
         f'<span style="width:{int(counts.get(c, 0)) / total * 100:.2f}%;background:{color}" title="{escape(label)} {int(counts.get(c, 0))} 檔"></span>'
@@ -466,6 +471,7 @@ def _stack_html(counts: dict[str, int]) -> str:
 
 
 def _share(row: dict[str, Any], names: set[str]) -> float:
+    """計算指定型態的占比（%）。"""
     total = sum(int(row.get(c, 0) or 0) for c, _, _ in _BIAS) or 1
     return sum(int(row.get(c, 0) or 0) for c in names) / total * 100
 
@@ -492,6 +498,7 @@ def _breadth_svg(breadth: list[dict[str, Any]]) -> str:
 
 
 def _theme_stats(stocks: list[dict[str, Any]], rotation: dict[str, Any]) -> list[dict[str, Any]]:
+    """統計每個族群的型態分布與多空淨占比。"""
     quadrants = {str(g.get("name")): str(g.get("quadrant") or "") for g in rotation.get("groups", []) if isinstance(g, dict)}
     groups: dict[str, list[dict[str, Any]]] = {}
     for row in stocks:
@@ -510,6 +517,7 @@ def _theme_stats(stocks: list[dict[str, Any]], rotation: dict[str, Any]) -> list
 
 
 def _render_brief(stocks: list[dict[str, Any]], intel: dict[str, Any], themes: list[dict[str, Any]]) -> None:
+    """顯示今日型態情報的摘要。"""
     _sec("01｜今日型態情報")
     counts: dict[str, int] = {}
     for row in stocks:
@@ -539,6 +547,7 @@ def _render_brief(stocks: list[dict[str, Any]], intel: dict[str, Any], themes: l
 
 
 def _render_feed(intel: dict[str, Any]) -> None:
+    """顯示型態異動快訊。"""
     _sec("02｜型態異動快訊")
     events = intel.get("events") or []
     if not events:
@@ -549,6 +558,7 @@ def _render_feed(intel: dict[str, Any]) -> None:
 
     @st.fragment
     def feed() -> None:
+        """依方向篩選異動，同日同種異動合併顯示。"""
         side = st.radio("異動方向", ["全部", "偏多", "偏空"], horizontal=True, key="trend_feed_side", label_visibility="collapsed")
         rows = [e for e in recent if side == "全部" or (e.get("event") in _BULL_EVENTS) == (side == "偏多")]
         summary: dict[str, int] = {}
@@ -581,6 +591,7 @@ def _render_feed(intel: dict[str, Any]) -> None:
 
 
 def _render_theme_map(themes: list[dict[str, Any]], has_rotation: bool) -> None:
+    """顯示族群型態地圖。"""
     _sec("03｜族群型態地圖")
     st.caption("每個族群裡的股票各屬於哪種型態，依「（偏多＋轉強候選）−（轉弱警示＋偏弱）」的占比排序。"
                + ("象限來自「產業分析」的輪動圖：型態和資金輪動方向一致時，訊號比較值得留意。" if has_rotation else ""))
@@ -596,6 +607,7 @@ def _render_theme_map(themes: list[dict[str, Any]], has_rotation: bool) -> None:
 
 
 def _radar_html(rows: list[dict[str, Any]], key: str) -> str:
+    """組出接近前高或前低的股票清單。"""
     html = ""
     for row in rows:
         high, low, close = float(row["prior_high_20d"]), float(row["prior_low_20d"]), float(row["close_at_assessment"])
@@ -609,6 +621,7 @@ def _radar_html(rows: list[dict[str, Any]], key: str) -> str:
 
 
 def _render_radar(stocks: list[dict[str, Any]]) -> None:
+    """顯示接近前 20 日高低點的股票。"""
     _sec("04｜關鍵價雷達")
     st.caption(f"收盤距離前 20 個交易日高點或低點 {_RADAR_DISTANCE_PCT:g}% 以內的股票，方便先知道哪些股票接近關鍵價。下方小條是收盤在前 20 日區間的位置。接近不代表一定會突破或跌破。")
     near_high, near_low = [], []
@@ -630,6 +643,7 @@ def _render_radar(stocks: list[dict[str, Any]]) -> None:
 
 
 def _forward_table(rows: list[dict[str, Any]], key: str, baseline: dict[str, Any]) -> str:
+    """組出型態出現後的報酬統計表。"""
     cell = lambda r, name: f'<td class="{_tone(r.get(name))}">{_pct(r.get(name), 2)}</td>'
     win = lambda r, name: f'<td>{float(r[name]):.0f}%</td>' if r.get(name) is not None else "<td>—</td>"
     line = lambda r, label, css="": (f'<tr class="{css}"><td>{escape(label)}</td><td>{int(r.get("samples", 0))}</td>'
@@ -641,6 +655,7 @@ def _forward_table(rows: list[dict[str, Any]], key: str, baseline: dict[str, Any
 
 
 def _render_forward(intel: dict[str, Any], base: Path) -> None:
+    """顯示型態出現後的表現與回測。"""
     _sec("05｜型態出現後的表現")
     forward = intel.get("forward") or {}
     rows = forward.get("by_classification") or []
@@ -667,6 +682,7 @@ def _render_forward(intel: dict[str, Any], base: Path) -> None:
 
 
 def _spark_svg(values: Any) -> str:
+    """組出迷你走勢圖；資料不足時回傳空字串。"""
     if not isinstance(values, list) or len(values) < 2:
         return ""
     low, high = min(values), max(values)
@@ -678,6 +694,7 @@ def _spark_svg(values: Any) -> str:
 
 
 def _stock_card(row: dict[str, Any]) -> str:
+    """組出單檔股票的型態卡片。"""
     colors = {c: (label, color) for c, label, color in _BIAS}
     label, color = colors.get(str(row.get("classification")), ("待確認", "#b9c2cb"))
     return (f'<div class="tp-card"><div class="tp-card-top"><span class="tp-card-name">{escape(str(row.get("name")))}</span><span class="tp-muted">{escape(str(row.get("symbol")))}</span></div>'
@@ -689,6 +706,7 @@ def _stock_card(row: dict[str, Any]) -> str:
 
 
 def _render_stock_detail(row: dict[str, Any]) -> None:
+    """顯示單檔股票的型態細節與走勢圖。"""
     symbol = str(row.get("symbol"))
     pattern_name = str(row.get("pattern_name") or "盤整待突破")
     themes = row.get("themes") if isinstance(row.get("themes"), list) else []
@@ -716,10 +734,12 @@ def _render_stock_detail(row: dict[str, Any]) -> None:
 
 
 def _render_explorer(stocks: list[dict[str, Any]]) -> None:
+    """顯示個股型態總覽。"""
     _sec("06｜個股型態總覽")
 
     @st.fragment
     def explorer() -> None:
+        """依題材、分類與排序條件篩選並顯示股票。"""
         theme_labels = {ROTATION_DISPLAY_NAMES.get(t, t): t for t in sorted({t for r in stocks for t in (r.get("themes") or [])})}
         class_labels = {label: c for c, label, _ in _BIAS if any(r.get("classification") == c for r in stocks)}
         if any(r.get("classification") == "資料調整檢查" for r in stocks):

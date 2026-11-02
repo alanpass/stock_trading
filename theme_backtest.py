@@ -29,11 +29,13 @@ SLIP = 2                                    # 零股買賣各 2 個 tick
 
 
 def _themes() -> dict[str, list[str]]:
+    """讀取股票對應的題材。"""
     rows = json.loads((BASE / "output" / "research_reports" / "trend_patterns_public.json").read_text(encoding="utf-8"))["stocks"]
     return {r["symbol"]: list(r.get("themes") or []) for r in rows if r.get("themes")}
 
 
 def fetch() -> None:
+    """下載題材股與大盤的多年日 K，已有快取的略過。"""
     from stock_api import FugleClient
     c = FugleClient(wait_on_limit=True)
     CACHE.mkdir(parents=True, exist_ok=True)
@@ -56,6 +58,7 @@ def fetch() -> None:
 
 
 def load() -> tuple[pd.DataFrame, dict]:
+    """讀取快取的日 K，組成收盤價表與其他價格資料。"""
     th = _themes()
     frames = {}
     for s in list(th) + [INDEX]:
@@ -86,6 +89,7 @@ def theme_scores(close: pd.DataFrame, th: dict, look: int) -> pd.DataFrame:
 
 
 def _cost(entry: float, exit_: float, tax: float) -> float:
+    """計入滑價、手續費與交易稅後的淨報酬。"""
     e2 = entry + SLIP * tick_size(entry); x2 = exit_ - SLIP * tick_size(exit_)
     return x2 / e2 - 1 - (e2 * FEE + x2 * FEE + x2 * tax) / e2
 
@@ -124,10 +128,12 @@ def swing(close, px, look=10, top=3, hold=3, require_trend=True, label=""):
 
 
 def summarize(t: pd.DataFrame, name: str) -> dict:
+    """印出全期與前中後三段的績效，並回傳統計。"""
     if t.empty:
         print(name, "無資料"); return {}
     days = sorted(t.day.unique()); cut1, cut2 = days[len(days) // 3], days[2 * len(days) // 3]
     def seg(x):
+        """統計一段交易的筆數、毛報酬、淨報酬與勝率。"""
         return {"n": int(len(x)), "gross": round(x.gross.mean() * 100, 2), "net": round(x.net.mean() * 100, 2),
                 "win": round((x.net > 0).mean() * 100, 0)}
     res = {"all": seg(t), "p1": seg(t[t.day < cut1]), "p2": seg(t[(t.day >= cut1) & (t.day < cut2)]), "p3": seg(t[t.day >= cut2])}
@@ -190,6 +196,7 @@ def portfolio(close, px, idx_close, look=10, top=3, k=6, hold=5, slip_pct=0.002,
 
 
 def run_portfolios() -> dict:
+    """比較各題材動能組合與大盤、等權基準的績效。"""
     close, px = load()
     idx_close = close[INDEX] if INDEX in close else pd.Series(dtype=float)
     close = close.drop(columns=[INDEX], errors="ignore")
@@ -229,6 +236,7 @@ def intraday(look: int = 10, top: int = 3) -> dict:
     days = [d for d in close.index[40:]]
 
     def trade(g, i, stop=0.05):
+        """模擬下一根開盤買進到停損或收盤的交易。"""
         if i + 1 >= len(g) or g.time.iloc[i + 1] >= "13:15":
             return None
         e = float(g.open.iloc[i + 1]); st = e * (1 - stop)
@@ -240,6 +248,7 @@ def intraday(look: int = 10, top: int = 3) -> dict:
         return e, float(g.close.iloc[-1])
 
     def first(mask):
+        """布林序列中第一個 True 的位置；沒有時回傳 None。"""
         w = np.flatnonzero(mask.values)
         return int(w[0]) if len(w) else None
 
@@ -252,6 +261,7 @@ def intraday(look: int = 10, top: int = 3) -> dict:
     }
 
     def pullback(g):           # 曾在 VWAP 之上 0.5% 以上，回到 VWAP 下方，再收回 VWAP 之上（強勢股拉回）
+        """強勢股拉回後收復 VWAP 的訊號。"""
         above = dipped = False
         for i in range(len(g)):
             c, v = g.close.iloc[i], g.vwap.iloc[i]
@@ -263,6 +273,7 @@ def intraday(look: int = 10, top: int = 3) -> dict:
         return None
 
     def deep_reclaim(g):
+        """跌深後收復 VWAP 的訊號。"""
         armed = False
         for i in range(len(g)):
             c, v = g.close.iloc[i], g.vwap.iloc[i]
@@ -317,6 +328,7 @@ def intraday(look: int = 10, top: int = 3) -> dict:
 
 
 def main() -> int:
+    """執行題材動能的波段回測並輸出結果。"""
     close, px = load()
     print(f"股票 {close.shape[1] - 1} 檔，{close.index[0].date()} ～ {close.index[-1].date()}，{len(close)} 天", flush=True)
     close = close.drop(columns=[INDEX], errors="ignore")

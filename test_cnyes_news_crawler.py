@@ -10,6 +10,7 @@ from agent_research_assistant import ResearchToolbox
 
 
 def main() -> None:
+    """用範例資料測試鉅亨爬蟲的解析與查詢。"""
     with TemporaryDirectory() as td:
         crawler = CnyesNewsCrawler(td)
 

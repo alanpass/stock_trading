@@ -38,6 +38,7 @@ _mem: dict[str, object] = {}
 
 
 def _num(v) -> float:
+    """把含逗號的字串轉成浮點數；失敗時回傳 NaN。"""
     try:
         return float(str(v).replace(",", "").strip() or "nan")
     except Exception:
@@ -107,6 +108,7 @@ def _market_day(kind: str, day: date) -> dict[str, dict] | None:
 
 
 def _series(symbol: str, kinds: tuple[str, str], fields: tuple[str, ...], days: list[date]) -> dict[str, list[tuple[date, float]]]:
+    """逐日取出指定欄位，組成每個欄位的 (日期, 數值) 序列。"""
     out: dict[str, list[tuple[date, float]]] = {f: [] for f in fields}
     for day in days:
         rec = None
@@ -124,6 +126,7 @@ def _series(symbol: str, kinds: tuple[str, str], fields: tuple[str, ...], days: 
 
 # ---------------- 主力進出（富邦 e-broker） ----------------
 def _main_force_day(symbol: str, day: date) -> float | None:
+    """查詢單日主力買賣超並快取；過去日期不重查，失敗回傳 None。"""
     path = CACHE / f"main_{symbol}.json"
     with _lock:
         store = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
@@ -157,6 +160,7 @@ def _main_force_day(symbol: str, day: date) -> float | None:
 
 
 def _main_force_series(symbol: str, days: list[date]) -> list[tuple[date, float]]:
+    """由新到舊取主力買賣超，方向改變就停止。"""
     out = []
     for day in days:                    # 從最新一天往回，方向一變就停（只需要算連續天數）
         v = _main_force_day(symbol, day)
@@ -170,6 +174,7 @@ def _main_force_series(symbol: str, days: list[date]) -> list[tuple[date, float]
 
 # ---------------- 集保大戶／散戶（TDCC 每週） ----------------
 def _tdcc_week(symbol: str, sca_date: str, session: requests.Session, token: str) -> dict | None:
+    """查詢集保單週的股權分散表，算出大戶與散戶持股比率並快取。"""
     path = CACHE / f"tdcc_{symbol}_{sca_date}.json"
     r = session.post("https://www.tdcc.com.tw/portal/zh/smWeb/qryStock", timeout=20, data={
         "SYNCHRONIZER_TOKEN": token, "SYNCHRONIZER_URI": "/portal/zh/smWeb/qryStock", "method": "submit",
@@ -197,6 +202,7 @@ def _tdcc_dates(session: requests.Session) -> tuple[list[str], str | None]:
 
 
 def _tdcc_two_weeks(symbol: str) -> list[dict]:
+    """取得最近兩週集保資料，優先用快取；失敗時回傳空清單。"""
     try:
         s = requests.Session(); s.headers.update(HEADERS)
         hit = _mem.get("tdcc_dates")
@@ -233,6 +239,7 @@ def _streak(series: list[tuple[date, float]]) -> int:
 
 
 def compute(symbol: str) -> dict:
+    """彙整法人、融資券、主力與集保資料，算出籌碼表格與訊號標籤。"""
     symbol = clean_symbol(symbol)
     days = recent_trading_days()
     insti = _series(symbol, ("twse_insti", "tpex_insti"), ("foreign", "trust"), days)
@@ -244,6 +251,7 @@ def compute(symbol: str) -> dict:
     signals = []    # 達門檻的訊號（自選股旁與個股頁的標籤）
 
     def add_flow(key: str, label: str, series, unit_div: float, unit: str, up_word: str, down_word: str, bull_when_up: bool):
+        """加入一列買賣流向資料；連續天數達門檻時產生訊號。"""
         s = _streak(series)
         latest = series[0][1] / unit_div if series else None
         rows.append({"key": key, "label": label, "streak": s, "latest": latest, "unit": unit,
@@ -307,6 +315,7 @@ def get_nonblocking(symbols: list[str]) -> dict[str, dict | None]:
 
 
 def get_blocking(symbol: str, timeout: float = 60) -> dict | None:
+    """取得籌碼結果，必要時等背景計算完成；逾時回傳舊結果。"""
     sym = clean_symbol(symbol)
     res = get_nonblocking([sym])[sym]
     if res is not None and time.time() - res["computed_at"] < RESULT_TTL:

@@ -54,6 +54,7 @@ GOOGLE_NEWS_RSS = "https://news.google.com/rss/search"
 
 
 def _env_bool(name: str, default: bool = False) -> bool:
+    """把環境變數解讀成布林值；未設定時回傳 default。"""
     value = str(os.getenv(name, ""))
     if not value:
         return default
@@ -144,6 +145,7 @@ INDUSTRY_CHAIN_SOURCES = {
 
 @dataclass
 class NewsItem:
+    """一則新聞及其情緒、查證與業務相關度。"""
     title: str
     link: str
     source: str
@@ -162,6 +164,7 @@ class NewsItem:
 
 @dataclass
 class SectorResearch:
+    """單一產業的新聞彙整結果。"""
     code: str
     name: str
     news_count: int
@@ -173,10 +176,12 @@ class SectorResearch:
 
 
 class ResearchAgent:
+    """盤後研究：蒐集官方資料與新聞、檢查模型健康度，組出研究報告。"""
     def __init__(
         self,
         base_dir: str | Path = ".",
     ):
+        """建立資料夾、Fugle 客戶端與 HTTP session。"""
         self.base = Path(base_dir).resolve()
         self.data_dir = self.base / "data"
         self.models_dir = self.base / "models"
@@ -195,6 +200,7 @@ class ResearchAgent:
     # ---------------------------- utils ----------------------------
     @staticmethod
     def _safe_float(v, default=np.nan):
+        """轉成有限浮點數；失敗時回傳 default。"""
         try:
             x = float(v)
             return x if np.isfinite(x) else default
@@ -203,12 +209,14 @@ class ResearchAgent:
 
     @staticmethod
     def _norm_text(s: Any) -> str:
+        """轉小寫並只保留英數與中文，供文字比對。"""
         text = str(s or "").lower()
         text = re.sub(r"[^0-9a-zA-Z一-龥]+", "", text)
         return text
 
     @staticmethod
     def _word_score(title: str, summary: str) -> float:
+        """依正負面字詞比例算出 -1 到 1 的分數。"""
         text = f"{title} {summary}"
         pos = sum(text.count(w) for w in POSITIVE_WORDS)
         neg = sum(text.count(w) for w in NEGATIVE_WORDS)
@@ -217,15 +225,18 @@ class ResearchAgent:
         return float(np.clip((pos - neg) / max(1, pos + neg), -1, 1))
 
     def _get_json(self, url: str, timeout: int = 20) -> Any:
+        """下載網址並解析 JSON。"""
         r = self.session.get(url, timeout=timeout)
         r.raise_for_status()
         return r.json()
 
     def _cache_json(self, path: Path, payload: Any):
+        """把資料寫成快取檔。"""
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(payload, ensure_ascii=False, default=str), encoding="utf-8")
 
     def _load_json(self, path: Path, default=None):
+        """讀取 JSON；不存在或損毀時回傳 default。"""
         if not path.exists():
             return default
         try:
@@ -235,6 +246,7 @@ class ResearchAgent:
 
     # ---------------------------- official market / company data ----------------------------
     def fetch_twse_announcements(self) -> pd.DataFrame:
+        """取得上市公司重大訊息；失敗時用快取。"""
         path = self.cache_dir / "twse_announcements.json"
         try:
             data = self._get_json(f"{TWSE_OPENAPI}/opendata/t187ap04_L")
@@ -244,6 +256,7 @@ class ResearchAgent:
         return pd.DataFrame(data if isinstance(data, list) else [])
 
     def fetch_twse_revenue(self) -> pd.DataFrame:
+        """取得上市公司月營收；失敗時用快取。"""
         path = self.cache_dir / "twse_monthly_revenue.json"
         try:
             data = self._get_json(f"{TWSE_OPENAPI}/opendata/t187ap05_L")
@@ -253,6 +266,7 @@ class ResearchAgent:
         return pd.DataFrame(data if isinstance(data, list) else [])
 
     def fetch_tpex_announcements(self) -> pd.DataFrame:
+        """取得上櫃公司重大訊息；失敗時用快取。"""
         path = self.cache_dir / "tpex_announcements.json"
         try:
             data = self._get_json(f"{TPEX_OPENAPI}/mopsfin_t187ap04_O")
@@ -262,6 +276,7 @@ class ResearchAgent:
         return pd.DataFrame(data if isinstance(data, list) else [])
 
     def fetch_tpex_revenue(self) -> pd.DataFrame:
+        """取得上櫃公司月營收；失敗時用快取。"""
         path = self.cache_dir / "tpex_monthly_revenue.json"
         try:
             data = self._get_json(f"{TPEX_OPENAPI}/mopsfin_t187ap05_O")
@@ -271,6 +286,7 @@ class ResearchAgent:
         return pd.DataFrame(data if isinstance(data, list) else [])
 
     def fetch_financial_statement(self, market: str, statement: str = "income") -> pd.DataFrame:
+        """取得上市或上櫃的損益表或資產負債表；失敗時用快取。"""
         key = f"{market.lower()}_{statement}_statement.json"
         path = self.cache_dir / key
         if market == "TWSE":
@@ -285,6 +301,7 @@ class ResearchAgent:
         return pd.DataFrame(data if isinstance(data, list) else [])
 
     def _load_focus_industry_map(self) -> dict[str, str]:
+        """組出股票代號對產業代碼的對照。"""
         mapping = dict(FOCUS_WATCHLIST_FALLBACK)
         path = self.data_dir / "industry_master.csv"
         if path.exists():
@@ -301,6 +318,7 @@ class ResearchAgent:
         return mapping
 
     def focus_watchlist_symbols(self, symbols: Iterable[str]) -> list[str]:
+        """只留下屬於重點產業的自選股。"""
         mapping = self._load_focus_industry_map()
         out = []
         for s in symbols:
@@ -311,6 +329,7 @@ class ResearchAgent:
 
     @staticmethod
     def _pick_symbol_row(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
+        """從表格找出該股票的資料列：先比對代號欄，再掃描全文。"""
         if df is None or df.empty:
             return pd.DataFrame()
         symbol = clean_symbol(symbol)
@@ -326,6 +345,7 @@ class ResearchAgent:
 
     @staticmethod
     def _numeric_field(row: dict[str, Any], keywords: list[str]) -> float:
+        """找出欄名含關鍵字的第一個數值；找不到時回傳 NaN。"""
         for key, value in row.items():
             k = str(key).replace(" ", "")
             if any(word in k for word in keywords):
@@ -335,6 +355,7 @@ class ResearchAgent:
         return np.nan
 
     def company_financial_snapshot(self, symbols: Iterable[str]) -> list[dict[str, Any]]:
+        """整理重點自選股的損益與營收快照。"""
         twse_inc = self.fetch_financial_statement("TWSE", "income")
         tpex_inc = self.fetch_financial_statement("TPEx", "income")
         twse_rev = self.fetch_twse_revenue()
@@ -373,6 +394,7 @@ class ResearchAgent:
         return rows
 
     def focus_peer_panel(self, symbols: Iterable[str], revenue_frames: tuple[pd.DataFrame, pd.DataFrame] | None = None) -> list[dict[str, Any]]:
+        """以自選股為核心，補上同產業營收較高的同業。"""
         mapping = self._load_focus_industry_map()
         focus_symbols = self.focus_watchlist_symbols(symbols)
         twse_rev, tpex_rev = revenue_frames if revenue_frames is not None else (self.fetch_twse_revenue(), self.fetch_tpex_revenue())
@@ -405,6 +427,7 @@ class ResearchAgent:
         return result
 
     def focus_theme_research(self, symbols: Iterable[str]) -> list[dict[str, Any]]:
+        """依重點題材查詢新聞，整理情緒與相關自選股。"""
         focus_symbols = self.focus_watchlist_symbols(symbols)
         if not focus_symbols:
             return []
@@ -458,6 +481,7 @@ class ResearchAgent:
 
     # ---------------------------- news ----------------------------
     def google_news(self, query: str, max_items: int = 8) -> list[NewsItem]:
+        """從 Google 新聞 RSS 查詢新聞；失敗時回傳空清單。"""
         url = f"{GOOGLE_NEWS_RSS}?q={quote_plus(query)}&hl=zh-TW&gl=TW&ceid=TW:zh-Hant"
         try:
             r = self.session.get(url, timeout=15)
@@ -479,6 +503,7 @@ class ResearchAgent:
         return out
 
     def _business_profiles_for_symbols(self, symbols: Iterable[str]) -> dict[str, dict[str, Any]]:
+        """取得股票的業務研究資料；失敗時回傳空字典。"""
         codes = [clean_symbol(s) for s in symbols if clean_symbol(s)]
         try:
             profiles = business_map_for_symbols(codes, path=self.data_dir / "business_master.csv", force=False)
@@ -487,6 +512,7 @@ class ResearchAgent:
             return {}
 
     def _company_research_queries(self, symbol: str, profile: dict[str, Any]) -> list[str]:
+        """組出單一公司的財報、接單與需求新聞查詢字串。"""
         name = str(profile.get("name") or symbol).strip()
         group = str(profile.get("business_group") or "").strip()
         chain = str(profile.get("primary_chain") or "").strip()
@@ -500,6 +526,7 @@ class ResearchAgent:
         return queries[:3]
 
     def _business_relevance(self, item: NewsItem, profiles: dict[str, dict[str, Any]]) -> tuple[float, str, bool]:
+        """評估新聞與公司業務的相關度，回傳分數、標籤與是否提到公司。"""
         text = self._norm_text(f"{item.title} {item.summary}")
         best = 0.0
         best_label = "一般產業相關"
@@ -533,6 +560,7 @@ class ResearchAgent:
         return best, best_label, entity_match
 
     def collect_news(self, symbols: Iterable[str] = (), sectors: Iterable[str] = (), max_per_query: int = 6) -> list[NewsItem]:
+        """依公司、業務群與產業組合查詢，蒐集新聞並評估情緒與相關度。"""
         profiles = self._business_profiles_for_symbols(symbols)
         queries: list[str] = []
         focused = list(profiles.keys())
@@ -578,6 +606,7 @@ class ResearchAgent:
         return items
 
     def _verify_news(self, items: list[NewsItem]):
+        """比對官方公告與多來源報導，標記每則新聞的查證等級。"""
         if not items:
             return
         norm_titles = [self._norm_text(x.title) for x in items]
@@ -628,15 +657,18 @@ class ResearchAgent:
 
     # ---------------------------- model health ----------------------------
     def list_model_bundles(self) -> list[Path]:
+        """列出所有產業模型檔。"""
         return sorted(self.models_dir.glob("ai_sector_*.joblib"))
 
     def _load_bundle(self, path: Path):
+        """載入模型檔；失敗時回傳含錯誤訊息的字典。"""
         try:
             return joblib.load(path)
         except Exception as exc:
             return {"_load_error": str(exc)}
 
     def model_health(self) -> list[dict[str, Any]]:
+        """整理各產業模型的績效、訓練時間與重要特徵。"""
         records = []
         now = pd.Timestamp.now(tz=TAIPEI_TZ)
         for path in self.list_model_bundles():
@@ -669,6 +701,7 @@ class ResearchAgent:
         return records
 
     def _retrains(self, records: list[dict[str, Any]], previous: dict[str, Any]) -> list[dict[str, Any]]:
+        """依準確率、模型天數等條件，列出建議重新訓練的模型。"""
         prev_models = previous.get("models", {}) if isinstance(previous, dict) else {}
         flags = []
         for rec in records:
@@ -696,6 +729,7 @@ class ResearchAgent:
 
     # ---------------------------- fundamentals / market evidence ----------------------------
     def _select_symbol_revenue(self, symbol: str, twse_df: pd.DataFrame, tpex_df: pd.DataFrame) -> dict[str, Any]:
+        """從上市櫃營收表找出該股票最近的資料。"""
         symbol = clean_symbol(symbol)
         frames = []
         for df, market in [(twse_df, "TWSE"), (tpex_df, "TPEx")]:
@@ -715,6 +749,7 @@ class ResearchAgent:
         return out
 
     def company_research_summary(self, symbols: Iterable[str], items: list[NewsItem]) -> list[dict[str, Any]]:
+        """整理每家公司的相關新聞與情緒摘要。"""
         profiles = self._business_profiles_for_symbols(symbols)
         rows = []
         for symbol, p in profiles.items():
@@ -747,6 +782,7 @@ class ResearchAgent:
         return rows
 
     def sector_news_summary(self, items: list[NewsItem]) -> list[SectorResearch]:
+        """依產業彙整新聞，算出加權情緒與信心。"""
         results = []
         for code, name in INDUSTRIES.items():
             if code == "00":
@@ -774,6 +810,7 @@ class ResearchAgent:
     # ---------------------------- final report ----------------------------
     def run_daily_research(self, symbols: Iterable[str] = (), sector_codes: Iterable[str] | None = None) -> dict[str, Any]:
         # 研究範圍：自選股優先，聚焦半導體/光電/電子零組件；只在需要時補同產業少量競品。
+        """執行每日盤後研究並儲存報告。"""
         requested_symbols = [clean_symbol(s) for s in symbols if clean_symbol(s)]
         symbols = self.focus_watchlist_symbols(requested_symbols)
         if sector_codes is None:
@@ -1068,6 +1105,7 @@ class ResearchAgent:
         return payload
 
     def to_markdown(self, p: dict[str, Any]) -> str:
+        """把研究報告轉成 Markdown。"""
         lines = [
             f"# 台股模型研究 Agent 報告｜{p.get('report_date', '')}",
             "",

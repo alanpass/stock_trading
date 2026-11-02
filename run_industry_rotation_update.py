@@ -17,6 +17,7 @@ LOG_FILE = BASE / "logs" / "industry_rotation_task.log"
 
 
 def log(message: str) -> None:
+    """印出訊息並寫入紀錄檔。"""
     stamp = datetime.now(TAIPEI).isoformat(timespec="seconds")
     line = f"[{stamp}] {message}"
     print(line, flush=True)
@@ -29,6 +30,7 @@ def log(message: str) -> None:
 
 
 def main() -> int:
+    """命令列入口：更新並發布產業輪動資料；失敗時回傳 1。"""
     parser = argparse.ArgumentParser(description="更新並發布台股產業分析輪動資料")
     parser.add_argument("--force", action="store_true", help="忽略 08:20／15:10 時段檢查；仍須取得可驗證的行情資料")
     parser.add_argument("--no-publish", action="store_true", help="只更新本機 JSON，不發布到 GitHub")

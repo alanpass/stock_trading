@@ -31,6 +31,7 @@ def vix_regime(v: float) -> tuple[str, str]:
 
 
 def fetch_indicator(symbol: str, rng: str = "3mo") -> dict:
+    """從 Yahoo Finance 取得指標的最新值、漲跌與走勢資料。"""
     r = requests.get(f"https://query1.finance.yahoo.com/v8/finance/chart/{requests.utils.quote(symbol)}",
                      params={"range": rng, "interval": "1d"}, headers=HEADERS, timeout=15)
     r.raise_for_status()

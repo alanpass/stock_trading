@@ -55,6 +55,7 @@ def _normalize_project_url(raw_url: str) -> str:
 
 
 def _config() -> tuple[str, str]:
+    """讀取帳號資料庫的網址與金鑰；未設定時拋出 AccountProvisioningError。"""
     raw_url = os.getenv("ACCOUNT_DB_URL", "").strip()
     key = os.getenv("ACCOUNT_DB_SERVICE_ROLE_KEY", "").strip()
     if not raw_url or not key:
@@ -62,9 +63,11 @@ def _config() -> tuple[str, str]:
     return _normalize_project_url(raw_url), key
 
 def is_configured() -> bool:
+    """帳號資料庫的環境變數是否都已設定。"""
     return bool(os.getenv("ACCOUNT_DB_URL", "").strip() and os.getenv("ACCOUNT_DB_SERVICE_ROLE_KEY", "").strip())
 
 def _headers(prefer: str | None = None) -> dict[str, str]:
+    """組出呼叫 Supabase REST API 的認證標頭。"""
     _, key = _config()
     result = {"apikey": key, "Authorization": "Bearer " + key, "Content-Type": "application/json"}
     if prefer:
@@ -73,6 +76,7 @@ def _headers(prefer: str | None = None) -> dict[str, str]:
 
 def _request(method: str, params: dict[str, str] | None = None, payload: dict[str, Any] | None = None,
              prefer: str | None = None) -> list[dict[str, Any]]:
+    """對帳號資料表發送 REST 請求並回傳資料列；連線或 HTTP 失敗時拋出 AccountProvisioningError。"""
     url, _ = _config()
     try:
         response = requests.request(method, f"{url}/rest/v1/{TABLE}", params=params, json=payload,
@@ -90,20 +94,25 @@ def _request(method: str, params: dict[str, str] | None = None, payload: dict[st
     return data if isinstance(data, list) else []
 
 def _utc_now() -> datetime:
+    """目前的 UTC 時間。"""
     return datetime.now(timezone.utc)
 
 def _iso(value: datetime) -> str:
+    """把時間轉成 UTC 的 ISO 8601 字串。"""
     return value.astimezone(timezone.utc).isoformat()
 
 def _hash_token(token: str) -> str:
+    """以 SHA-256 雜湊審核 token，資料庫不存明文。"""
     return hashlib.sha256(token.encode("utf-8")).hexdigest()
 
 def _hash_password(password: str) -> str:
+    """以隨機 salt 與 PBKDF2-SHA256 雜湊密碼。"""
     salt = secrets.token_bytes(16)
     digest = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, PASSWORD_ITERATIONS)
     return "pbkdf2_sha256$" + str(PASSWORD_ITERATIONS) + "$" + salt.hex() + "$" + digest.hex()
 
 def _generate_password(length: int = 8) -> str:
+    """產生同時含英文字母與數字的隨機密碼。"""
     alphabet = string.ascii_letters + string.digits
     while True:
         password = "".join(secrets.choice(alphabet) for _ in range(length))
@@ -226,6 +235,7 @@ def account_login_state(email: str) -> dict[str, Any]:
     }
 
 def public_review_url(decision: str, token: str) -> str:
+    """組出管理者核准或拒絕申請用的網站連結。"""
     base = os.getenv("ACCOUNT_PUBLIC_BASE_URL",
         "https://stocktrading-c66hschtsd2qh6vkyv4mtq.streamlit.app/").strip()
     if decision not in {"approve", "reject"}:

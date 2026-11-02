@@ -26,6 +26,7 @@ ARTICLES_PER_RUN = 30
 
 
 def _load() -> dict:
+    """讀取最新財經資料；找不到或格式錯誤時結束程式。"""
     if not LATEST.exists():
         raise SystemExit(f"ERROR: 找不到 {LATEST}，請先執行 run_finance_info_update.py")
     data = json.loads(LATEST.read_text(encoding="utf-8"))
@@ -35,6 +36,7 @@ def _load() -> dict:
 
 
 def export() -> int:
+    """匯出新聞與待撰寫重點的研究簡報。"""
     data = _load()
     lines = [f"# 財經資訊研究包｜資料更新 {data.get('updated_at', '')}", "",
              f"## 新聞（最近 {data.get('lookback_days', 2)} 天，共 {len(data.get('news', []) or [])} 則；依重要度排序）"]
@@ -64,6 +66,7 @@ def export() -> int:
 
 
 def _key(a: dict) -> str:
+    """文章的唯一鍵：編號、網址或標題。"""
     return str(a.get("article_id") or a.get("url") or a.get("title") or "")
 
 
@@ -106,10 +109,12 @@ def _apply_articles(data: dict, rows: list) -> int:
 
 
 def _clean_list(value, n: int) -> list[str]:
+    """取清單的前 n 項，清除空白並截斷長度。"""
     return [str(x).strip()[:200] for x in (value if isinstance(value, list) else []) if str(x).strip()][:n]
 
 
 def _merge(digest: dict, part: dict, max_points: int, stamp: str) -> dict:
+    """把 Claude 的今日重點併入摘要；沒有重點時保留原內容。"""
     if not isinstance(part, dict) or not _clean_list(part.get("key_points"), max_points):
         return digest
     return {
@@ -124,6 +129,7 @@ def _merge(digest: dict, part: dict, max_points: int, stamp: str) -> dict:
 
 
 def apply(notes_path: Path, publish: bool) -> int:
+    """檢查 Claude 寫好的重點品質，寫回網站資料並視需要發布。"""
     notes = json.loads(notes_path.read_text(encoding="utf-8"))
     if not isinstance(notes, dict):
         print("ERROR: notes 必須是 JSON 物件")
@@ -151,6 +157,7 @@ def apply(notes_path: Path, publish: bool) -> int:
 
 
 def main() -> int:
+    """命令列入口：匯出研究簡報或套用分析結果。"""
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description="財經資訊 AI 今日重點（Claude）")

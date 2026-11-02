@@ -18,6 +18,7 @@ from urllib.parse import urlsplit, urlunsplit
 
 
 def normalize_project_url(raw_url: str) -> str:
+    """驗證 Supabase 網址並去掉誤貼的 REST 路徑，回傳專案根網址。"""
     value = str(raw_url or "").strip()
     parsed = urlsplit(value)
     if parsed.scheme.lower() not in {"https", "http"} or not parsed.netloc:
@@ -57,6 +58,7 @@ def safe_error_body(response) -> str:
 
 
 def main() -> int:
+    """唯讀測試本機設定能否連上 Supabase；成功回傳 0，失敗回傳 1。"""
     parser = argparse.ArgumentParser(description="唯讀測試本機專案與 Supabase 的連線")
     parser.add_argument(
         "--project-dir", default=str(Path.cwd()),

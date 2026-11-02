@@ -51,17 +51,20 @@ SENTIMENTS = ("利多", "利空", "中性", "混合")
 
 
 def _flat(value: Any) -> str:
+    """把清單合併成一段文字。"""
     if isinstance(value, (list, tuple)):
         return "。".join(str(x).strip().rstrip("。") for x in value if str(x).strip())
     return str(value or "").strip()
 
 
 def _code(value: Any) -> str:
+    """從文字中取出台股代號。"""
     m = re.search(r"[1-9]\d{3}[A-Z]?", str(value or ""))
     return m.group(0) if m else ""
 
 
 def _row_key(row: dict[str, Any]) -> str:
+    """法說會項目的唯一鍵：優先用網址。"""
     return str(
         row.get("url")
         or row.get("source_url")
@@ -73,6 +76,7 @@ class EarningsSummaryAgent(FinanceNewsAgent):
     """沿用 FinanceNewsAgent 的摘要／畫重點／LLM 連線，只是把輸入換成法說會。"""
 
     def __init__(self, base_dir: str = ".", **kwargs: Any):
+        """初始化並使用獨立的法說會快取檔。"""
         super().__init__(base_dir, **kwargs)
         # 與新聞摘要分開存，避免互相覆蓋
         self.cache_path = self.out_dir / "earnings_summary_cache.json"
@@ -90,10 +94,12 @@ class EarningsSummaryAgent(FinanceNewsAgent):
 
     @staticmethod
     def _company(row: dict[str, Any]) -> str:
+        """取得法說會項目的公司名稱。"""
         return str(row.get("name") or row.get("company") or row.get("company_name") or row.get("symbol") or "").strip()
 
     # ---------------- 規則層 ----------------
     def _importance(self, row: dict[str, Any], text: str, now: datetime) -> float:
+        """依自選股、數字、重要字詞、展望與新舊程度評出重要性（最高 10 分）。"""
         score = 1.0
         if row.get("in_watchlist"):
             score += 2.0
@@ -114,6 +120,7 @@ class EarningsSummaryAgent(FinanceNewsAgent):
         return round(min(10.0, score), 2)
 
     def _rule_row(self, row: dict[str, Any], now: datetime) -> dict[str, Any]:
+        """以規則產生單場法說會的重點、多空與相關產業。"""
         structured, memo = self._texts(row)
         title = str(row.get("title") or "")
         body = structured if len(structured) >= 60 else f"{structured}。{memo[:3000]}"
@@ -140,6 +147,7 @@ class EarningsSummaryAgent(FinanceNewsAgent):
 
     @staticmethod
     def _fingerprint_row(row: dict[str, Any]) -> str:
+        """以標題與內容雜湊算出指紋，判斷是否需要重算。"""
         raw = f"{row.get('title', '')}|{row.get('content_hash', '')}|{len(str(row.get('memo_text') or ''))}|{len(_flat(row.get('one_line_summary')))}"
         return hashlib.md5(raw.encode("utf-8", "ignore")).hexdigest()[:12]
 
@@ -150,6 +158,7 @@ class EarningsSummaryAgent(FinanceNewsAgent):
         days: int = 5,
         now: datetime | None = None,
     ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+        """分析法說會清單，回傳逐場結果與整體摘要。"""
         now = now or datetime.now(TAIPEI)
         t0 = time.time()
         rows = [dict(x) for x in items if isinstance(x, dict)]
@@ -204,6 +213,7 @@ class EarningsSummaryAgent(FinanceNewsAgent):
 
     # ---------------- 總覽 ----------------
     def _earnings_digest(self, rows: list[dict[str, Any]], days: int, now: datetime) -> dict[str, Any]:
+        """統計多空與產業熱度，組出法說會整體摘要。"""
         total = len(rows)
         counts = {s: 0 for s in SENTIMENTS}
         sector_stat: dict[str, dict[str, int]] = {}
@@ -223,6 +233,7 @@ class EarningsSummaryAgent(FinanceNewsAgent):
         )[:10]
 
         def label(r: dict[str, Any]) -> str:
+            """組出「公司（代號）」的顯示名稱。"""
             name = self._company(r)
             sym = str(r.get("symbol") or "")
             return f"{name}（{sym}）" if sym and sym not in name else name or str(r.get("title", ""))
@@ -237,6 +248,7 @@ class EarningsSummaryAgent(FinanceNewsAgent):
                 })
 
         def theme(sent: str) -> list[dict[str, Any]]:
+            """取指定多空方向的前 4 場法說會作為主題。"""
             out = []
             for r in rows:
                 if r.get("sentiment") == sent and len(out) < 4:

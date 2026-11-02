@@ -22,6 +22,7 @@ EXIT = "13:15"
 
 
 def day_universe(d):
+    """當天波動與成交值達標的股票中，取成交值前 40 名。"""
     c = []
     for s, (k, dd) in data.items():
         if d not in dd.index: continue
@@ -60,11 +61,13 @@ def trade(g, i, stop=0.05):
 
 
 def net(e, x, slip, tax):
+    """計入滑價、手續費與交易稅後的單筆淨報酬（%）。"""
     e2 = e + slip * tick_size(e); x2 = x - slip * tick_size(x)
     return (x2 / e2 - 1 - (e2 * 0.001425 + x2 * 0.001425 + x2 * tax) / e2) * 100
 
 
 def evaluate(name, trades):
+    """印出一個訊號在前後半段的毛報酬、超額報酬與勝率。"""
     if not trades:
         print(f"{name} | 無交易"); return
     t = pd.DataFrame(trades)
@@ -74,6 +77,7 @@ def evaluate(name, trades):
     t["excess"] = t.gross - t.bench
 
     def seg(x):
+        """把一段交易的筆數與績效格式化成一段文字。"""
         if x.empty: return "n0"
         return f"n{len(x)} 毛{x.gross.mean():+.2f}% 超額{x.excess.mean():+.2f}% 勝{(x.gross > 0).mean() * 100:.0f}%"
     a, bb = t[t.day < half], t[t.day >= half]
@@ -92,6 +96,7 @@ def bench_from(u, tm):
 
 
 def run(name, signal, last="11:30", idx_cond=None, maxper=3):
+    """對每天的候選股套用訊號並模擬交易，回傳評估結果。"""
     trades = []
     for d, u in days.items():
         I = ix[d]
@@ -113,11 +118,13 @@ def run(name, signal, last="11:30", idx_cond=None, maxper=3):
 
 
 def first(mask):
+    """布林序列中第一個 True 的位置；沒有時回傳 None。"""
     w = np.flatnonzero(mask.values)
     return int(w[0]) if len(w) else None
 
 
 def sig_meanrev(g, I):
+    """09:25 時相對開盤跌超過 4% 且低於 VWAP 1% 的均值回歸訊號。"""
     i = g.index[g.time == "09:25"]
     if not len(i): return None
     i = i[0]; o = g.open.iloc[0]; c = g.close.iloc[i]
@@ -126,7 +133,9 @@ def sig_meanrev(g, I):
 
 def sig_second_leg(th):
     # 第二隻腳：先從開盤跌超過 th 形成低點 L，反彈 ≥1.5% 後回測不破 L（且在 L 的 2% 內），收盤突破前一根高點的紅 K
+    """產生第二隻腳訊號函式：th 是自開盤跌幅門檻。"""
     def f(g, I):
+        """低點反彈後回測不破，收盤突破前一根高點的紅 K 時回傳位置。"""
         o = g.open.iloc[0]; L = np.inf; bounced = False; pl = np.inf
         for i in range(len(g)):
             if g.time.iloc[i] > "11:30": return None
@@ -146,7 +155,9 @@ def sig_second_leg(th):
 
 
 def sig_vwap_reclaim(th):
+    """產生跌深後站回 VWAP 的訊號函式。"""
     def f(g, I):
+        """先出現跌深且遠低於 VWAP，之後收盤站回 VWAP 時回傳位置。"""
         o = g.open.iloc[0]; armed = False
         for i in range(len(g)):
             c = g.close.iloc[i]
@@ -157,7 +168,9 @@ def sig_vwap_reclaim(th):
 
 
 def sig_hammer(th):
+    """產生跌深後創新低錘子線的訊號函式。"""
     def f(g, I):
+        """跌幅達門檻且創新低的 K 棒呈長下影錘子線時回傳位置。"""
         o = g.open.iloc[0]; L = np.inf
         for i in range(len(g)):
             lo = g.low.iloc[i]; newlow = lo < L; L = min(L, lo)
@@ -170,6 +183,7 @@ def sig_hammer(th):
 
 
 def sig_orb(g, I):
+    """開盤 15 分鐘區間突破且站上 VWAP 的訊號。"""
     orb = g[g.time < "09:15"]
     if len(orb) < 3: return None
     h = orb.high.max()
@@ -177,22 +191,26 @@ def sig_orb(g, I):
 
 
 def sig_gapdown_fill(g, I):
+    """跳空下跌 2% 以上後，收盤回補一半缺口的訊號。"""
     pc = g.prev_close.iloc[0]; o = g.open.iloc[0]
     if o / pc - 1 > -0.02: return None
     return first(g.close > (o + pc) / 2)
 
 
 def _ivwap(m):
+    """計算大盤分時的 VWAP；沒有量時用典型價平均。"""
     tp = (m.high + m.low + m.close) / 3
     return (tp * m.volume).sum() / m.volume.sum() if m.volume.sum() > 0 else tp.mean()
 
 
 def idx_above_vwap(I, tm):
+    """大盤在該時間是否站上 VWAP；沒有資料時視為符合。"""
     m = I[I.time <= tm]
     return True if m.empty else m.close.iloc[-1] >= _ivwap(m)
 
 
 def idx_higher_low(I, tm):   # 大盤最近 30 分鐘沒有再創當日新低
+    """大盤最近 30 分鐘是否沒有再創當日新低。"""
     m = I[I.time <= tm]
     if len(m) < 7: return False
     return m.low.iloc[-6:].min() > m.low.min()
@@ -226,6 +244,7 @@ for d, u in days.items():
 
 
 def dist(x):
+    """統計訊號時間落在各時間點以前的比例。"""
     x = pd.Series(x)
     return " ".join(f"≤{c}:{(x <= c).mean() * 100:.0f}%" for c in ("09:00", "09:25", "09:55", "10:25", "11:00", "12:00", "13:00"))
 

@@ -28,7 +28,9 @@ GOOGLE_NEWS_RSS = "https://news.google.com/rss/search"
 
 
 class PostMarketAnalyzer:
+    """盤後分析：彙整股票的行情、基本面與新聞資料。"""
     def __init__(self, base_dir: str | Path = "."):
+        """建立資料夾、Fugle 客戶端與 HTTP session。"""
         self.base = Path(base_dir).resolve()
         self.data_dir = self.base / "data"
         self.output_dir = self.base / "output"
@@ -46,11 +48,13 @@ class PostMarketAnalyzer:
 
     @staticmethod
     def _norm_text(v: Any) -> str:
+        """轉小寫並只保留英數與中文，供文字比對。"""
         s = str(v or "").lower()
         return re.sub(r"[^0-9a-zA-Z一-龥]+", "", s)
 
     @staticmethod
     def _safe_float(v, default=np.nan):
+        """轉成有限浮點數；失敗時回傳 default。"""
         try:
             x = float(v)
             return x if np.isfinite(x) else default
@@ -58,18 +62,21 @@ class PostMarketAnalyzer:
             return default
 
     def _quote(self, symbol: str) -> dict[str, Any]:
+        """取得報價；失敗時回傳空字典。"""
         try:
             return self.client.quote(clean_symbol(symbol)) or {}
         except Exception:
             return {}
 
     def _ticker(self, symbol: str) -> dict[str, Any]:
+        """取得股票基本資料；失敗時回傳空字典。"""
         try:
             return self.client.ticker(clean_symbol(symbol)) or {}
         except Exception:
             return {}
 
     def _history(self, symbol: str, days: int = 40) -> pd.DataFrame:
+        """取得近期日 K；失敗時回傳空表。"""
         end = pd.Timestamp.now(tz=TAIPEI_TZ).tz_localize(None).normalize().date()
         start = (pd.Timestamp(end) - pd.Timedelta(days=days)).date()
         try:
@@ -78,6 +85,7 @@ class PostMarketAnalyzer:
             return pd.DataFrame()
 
     def _news(self, query: str, limit: int = 8) -> list[dict[str, Any]]:
+        """從 Google 新聞 RSS 查詢新聞；失敗時回傳空清單。"""
         try:
             from urllib.parse import quote_plus
             import xml.etree.ElementTree as ET
@@ -99,6 +107,7 @@ class PostMarketAnalyzer:
             return []
 
     def _business_profile(self, symbol: str) -> dict[str, Any]:
+        """取得公司的業務研究資料；失敗時回傳只有代號的預設值。"""
         try:
             path = self.data_dir / "business_master.csv"
             p = profile_for_symbol(symbol, path, force=False)
@@ -130,6 +139,7 @@ class PostMarketAnalyzer:
         return rows[-30:]
 
     def _price_context(self, symbol: str, industry_symbols: Iterable[str]) -> dict[str, Any]:
+        """整理當日漲跌、近期走勢，以及相對大盤與同業的表現。"""
         q = self._quote(symbol) or {}
         last_price = self._safe_float(q.get("lastPrice", q.get("closePrice")))
         change = self._safe_float(q.get("change"))
@@ -187,6 +197,7 @@ class PostMarketAnalyzer:
         }
 
     def _institution_context(self, symbol: str, market: str | None) -> dict[str, Any]:
+        """整理近 10 日法人買賣超；查不到時標記為不可用。"""
         try:
             inst = fetch_institution_daily(symbol, market=market or "TSE")
             if inst is None or inst.empty:
@@ -202,6 +213,7 @@ class PostMarketAnalyzer:
             return {"available": False, "error": str(exc), "rows": []}
 
     def _query_plan(self, symbol: str, profile: dict[str, Any]) -> list[str]:
+        """組出財報、法說、供應鏈與總經等新聞查詢字串。"""
         name = profile.get("name") or symbol
         group = profile.get("business_group") or ""
         chain = profile.get("primary_chain") or ""
@@ -216,6 +228,7 @@ class PostMarketAnalyzer:
         ]
 
     def _collect_targeted_news(self, symbol: str, profile: dict[str, Any]) -> list[dict[str, Any]]:
+        """依查詢計畫蒐集新聞，以標題去重，最多 60 則。"""
         all_items = []
         seen = set()
         for query in self._query_plan(symbol, profile):
@@ -228,6 +241,7 @@ class PostMarketAnalyzer:
         return all_items[:60]
 
     def _verify_events(self, symbol: str, profile: dict[str, Any], news: list[dict[str, Any]], official: list[dict[str, Any]], fundamentals: dict[str, Any]) -> list[dict[str, Any]]:
+        """依官方公告、公司比對與多來源印證，評估每則新聞的可信度。"""
         official_text = self._norm_text(" ".join(" ".join(str(v) for v in r.values()) for r in official))
         business_text = self._norm_text(" ".join([profile.get("business_group", ""), profile.get("primary_chain", ""), " ".join(profile.get("research_keywords", []))]))
         title_norms = [self._norm_text(x.get("title")) for x in news]
@@ -267,6 +281,7 @@ class PostMarketAnalyzer:
         return results
 
     def _fundamental_snapshot(self, symbol: str) -> dict[str, Any]:
+        """取得公司財務快照；失敗時回傳空字典。"""
         try:
             # 優先使用研究 Agent 已快取的官方資料，避免重複大量請求。
             from research_agent import ResearchAgent
@@ -277,6 +292,7 @@ class PostMarketAnalyzer:
             return {}
 
     def _reason_candidates(self, symbol: str, move: dict[str, Any], inst: dict[str, Any], verified: list[dict[str, Any]], fundamentals: dict[str, Any], profile: dict[str, Any]) -> list[dict[str, Any]]:
+        """列出可能的漲跌原因（相對表現、法人、新聞等），最多 12 項。"""
         candidates = []
         # 市場共振：個股是否明顯跑輸/跑贏大盤與同業
         rel = self._safe_float(move.get("relative_to_taiex_pct"))
@@ -315,6 +331,7 @@ class PostMarketAnalyzer:
         return candidates[:12]
 
     def analyze(self, symbol: str, market: str | None = None, industry_symbols: Iterable[str] = ()) -> dict[str, Any]:
+        """分析單一股票的盤後漲跌原因並儲存結果；沒有代號時拋出 ValueError。"""
         symbol = clean_symbol(symbol)
         if not symbol:
             raise ValueError("沒有選取股票")
@@ -358,6 +375,7 @@ class PostMarketAnalyzer:
         return payload
 
     def load(self, symbol: str) -> dict[str, Any] | None:
+        """讀取該股票最新的盤後分析；沒有時回傳 None。"""
         p = self.out_dir / f"{clean_symbol(symbol)}_latest.json"
         if not p.exists():
             return None

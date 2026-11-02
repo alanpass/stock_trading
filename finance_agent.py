@@ -91,6 +91,7 @@ _RATE_NOISE = re.compile(r"(毛利率|淨利率|營業利益率|營益率|稅率
 
 
 def _prep(text: str) -> str:
+    """去掉會干擾判斷的利率字樣。"""
     return _RATE_NOISE.sub(" ", str(text or ""))
 
 
@@ -102,6 +103,7 @@ def _has_word(text: str, word: str) -> bool:
 
 
 def _clean(text: Any) -> str:
+    """去掉 HTML 標籤與固定套語，並合併空白。"""
     t = str(text or "")
     t = re.sub(r"<[^>]+>", " ", t)
     t = BOILERPLATE.sub(" ", t)
@@ -109,6 +111,7 @@ def _clean(text: Any) -> str:
 
 
 def _split_sentences(text: str) -> list[str]:
+    """依標點切句，只保留長度 12 字以上的句子。"""
     parts = re.split(r"(?<=[。！？!?；;])|\n+", text)
     out = []
     for p in parts:
@@ -119,6 +122,7 @@ def _split_sentences(text: str) -> list[str]:
 
 
 def _parse_dt(value: Any) -> datetime | None:
+    """把各種日期字串解析成台北時間；失敗時回傳 None。"""
     if value in (None, ""):
         return None
     try:
@@ -141,19 +145,23 @@ def _parse_dt(value: Any) -> datetime | None:
 
 
 def _norm_title(title: str) -> str:
+    """去掉空白與符號並轉小寫，供標題比對。"""
     return re.sub(r"[\s\W_]+", "", str(title or "").lower())
 
 
 def _article_key(a: dict[str, Any]) -> str:
+    """文章的唯一鍵：編號、網址或標題。"""
     return str(a.get("article_id") or a.get("url") or a.get("title") or "")
 
 
 def _fingerprint(a: dict[str, Any]) -> str:
+    """以標題與內容長度算出指紋，判斷文章是否有變。"""
     raw = f"{a.get('title','')}|{len(str(a.get('content') or ''))}|{len(str(a.get('summary') or ''))}"
     return hashlib.md5(raw.encode("utf-8", "ignore")).hexdigest()[:12]
 
 
 def _dedupe_keep_order(items: list[str]) -> list[str]:
+    """去除空字串與重複項目，保留原順序。"""
     seen, out = set(), []
     for x in items:
         x = str(x).strip()
@@ -167,7 +175,9 @@ def _dedupe_keep_order(items: list[str]) -> list[str]:
 # Agent
 # ----------------------------------------------------------------------
 class FinanceNewsAgent:
+    """以規則分析新聞與法說會，並合併 Claude 已寫好的重點，組出摘要。"""
     def __init__(self, base_dir: str | Path = "."):
+        """設定輸出資料夾與摘要快取路徑。"""
         self.base = Path(base_dir).resolve()
         self.out_dir = self.base / "output" / "research_reports"
         self.out_dir.mkdir(parents=True, exist_ok=True)
@@ -176,6 +186,7 @@ class FinanceNewsAgent:
 
     # ---------------- 快取 ----------------
     def _load_cache(self) -> dict[str, Any]:
+        """讀取摘要快取；讀不到時回傳空字典。"""
         try:
             obj = json.loads(self.cache_path.read_text(encoding="utf-8"))
             return obj if isinstance(obj, dict) else {}
@@ -183,6 +194,7 @@ class FinanceNewsAgent:
             return {}
 
     def _save_cache(self, cache: dict[str, Any]) -> None:
+        """以暫存檔取代的方式寫入摘要快取。"""
         tmp = self.cache_path.with_suffix(".tmp")
         tmp.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
         os.replace(tmp, self.cache_path)
@@ -190,6 +202,7 @@ class FinanceNewsAgent:
     # ---------------- 規則層 ----------------
     @staticmethod
     def detect_sectors(text: str) -> list[str]:
+        """依關鍵字命中數找出最相關的 3 個產業。"""
         scored = []
         low = _prep(text)
         for sector, words in SECTOR_KEYWORDS.items():
@@ -201,6 +214,7 @@ class FinanceNewsAgent:
 
     @staticmethod
     def detect_sentiment(text: str) -> tuple[str, int]:
+        """比較利多與利空字詞數，判斷多空並回傳分數。"""
         pos = sum(text.count(w) for w in POSITIVE_WORDS)
         neg = sum(text.count(w) for w in NEGATIVE_WORDS)
         score = pos - neg
@@ -216,6 +230,7 @@ class FinanceNewsAgent:
 
     @staticmethod
     def detect_stocks(article: dict[str, Any], text: str) -> list[str]:
+        """從文章標記與內文找出股票代號，最多 8 檔。"""
         codes: list[str] = []
         for ref in article.get("stock_refs") or []:
             m = re.search(r"[1-9]\d{3}[A-Z]?", str(ref))
@@ -226,6 +241,7 @@ class FinanceNewsAgent:
         return _dedupe_keep_order(codes)[:8]
 
     def _score_sentence(self, sentence: str, idx: int, title: str) -> float:
+        """依數字、重要字詞、位置與標題相似度評估句子的重要性。"""
         score = 0.0
         score += min(3, len(NUMBER_PATTERN.findall(sentence))) * 1.2
         score += sum(1.0 for w in IMPORTANT_WORDS if w in sentence)
@@ -242,6 +258,7 @@ class FinanceNewsAgent:
         return score
 
     def extract_points(self, article: dict[str, Any], max_points: int = 3, max_chars: int = 90) -> list[str]:
+        """從文章挑出分數最高的句子，依原順序回傳重點。"""
         title = str(article.get("title") or "")
         body = _clean(article.get("content") or "")
         summ = _clean(article.get("summary") or "")
@@ -264,6 +281,7 @@ class FinanceNewsAgent:
         return _dedupe_keep_order(points)[:max_points]
 
     def extract_highlights(self, points: list[str], title: str, stocks: list[str], sectors: list[str]) -> list[str]:
+        """從重點找出數字、關鍵字與股票代號，作為畫重點的字詞。"""
         blob = " ".join(points)
         prepped = _prep(blob)
         found: list[str] = []
@@ -283,6 +301,7 @@ class FinanceNewsAgent:
         return found[:10]
 
     def importance(self, article: dict[str, Any], text: str, now: datetime) -> float:
+        """依股票標記、關鍵字、數字、頭條與新舊程度評出重要性（最高 10 分）。"""
         score = 1.0
         title = str(article.get("title") or "")
         if article.get("stock_refs"):
@@ -301,6 +320,7 @@ class FinanceNewsAgent:
         return round(min(10.0, score), 2)
 
     def _rule_analysis(self, article: dict[str, Any], now: datetime) -> dict[str, Any]:
+        """以規則產生單篇文章的重點、多空、產業與股票。"""
         title = str(article.get("title") or "")
         text = f"{title} {_clean(article.get('summary'))} {_clean(article.get('content'))}"
         points = self.extract_points(article)
@@ -387,6 +407,7 @@ class FinanceNewsAgent:
         return kept
 
     def analyze_news(self, articles: list[dict[str, Any]], now: datetime | None = None) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+        """去重並分析新聞，合併 Claude 寫好的重點，回傳逐篇結果與摘要。"""
         now = now or datetime.now(TAIPEI)
         t0 = time.time()
         rows = [dict(a) for a in articles if isinstance(a, dict) and a.get("title")]
@@ -460,6 +481,7 @@ class FinanceNewsAgent:
 
     # ---------------- 總覽 ----------------
     def _build_digest(self, rows: list[dict[str, Any]], now: datetime) -> dict[str, Any]:
+        """統計多空與產業熱度，組出新聞總覽。"""
         total = len(rows)
         counts = {"利多": 0, "利空": 0, "中性": 0, "混合": 0}
         sector_stat: dict[str, dict[str, int]] = {}
@@ -483,6 +505,7 @@ class FinanceNewsAgent:
                 key_points.append({"title": a.get("title", ""), "point": p, "sentiment": a.get("sentiment", "中性"), "url": a.get("url", ""), "highlights": a.get("highlights", [])[:6]})
 
         def theme(sent: str) -> list[dict[str, Any]]:
+            """取指定多空方向的前 4 篇文章作為主題。"""
             out = []
             for a in rows:
                 if a.get("sentiment") == sent and len(out) < 4:
@@ -515,6 +538,7 @@ class FinanceNewsAgent:
         counts = {"利多": 0, "利空": 0, "中性": 0, "混合": 0}
 
         def as_values(value: Any) -> list[str]:
+            """把單一值或清單統一成清理過的字串清單。"""
             if isinstance(value, (list, tuple)):
                 source = value
             elif value in (None, ""):

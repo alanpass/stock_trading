@@ -35,6 +35,7 @@ MAX_AGE_DAYS = 30                         # 分類很少變，一個月重爬一
 
 
 def _get(url: str) -> str:
+    """下載網頁，失敗時最多重試 3 次。"""
     for attempt in range(3):
         try:
             r = requests.get(url, headers=HEADERS, timeout=30)
@@ -118,6 +119,7 @@ def leaf_groups(data: dict) -> list[dict]:
 
 
 def crawl(sleep_seconds: float = 0.8, log=print) -> dict:
+    """爬取櫃買產業價值鏈的所有產業；清單太少時拋出 RuntimeError。"""
     first = _get(INTRO_URL.format("L000"))
     industries = industry_list(first)
     if len(industries) < 30:
@@ -172,6 +174,7 @@ def load(max_age_days: float | None = None) -> dict:
 
 
 def stats(data: dict) -> dict:
+    """統計產業、子鏈與股票數量。"""
     codes = {s for i in data.get("industries") or [] for c in i["chains"] for s in c["members"]}
     return {"industries": len(data.get("industries") or []),
             "chains": sum(len(i["chains"]) for i in data.get("industries") or []), "stocks": len(codes)}

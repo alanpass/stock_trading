@@ -31,20 +31,24 @@ ANALYSIS_SOURCE = "Claude 法說會 Agent"
 
 
 def _load() -> dict:
+    """讀取最新財經資料；找不到時結束程式。"""
     if not LATEST.exists():
         raise SystemExit(f"ERROR: 找不到 {LATEST}，請先執行 run_finance_info_update.py")
     return json.loads(LATEST.read_text(encoding="utf-8"))
 
 
 def _url(item: dict) -> str:
+    """取得法說會項目的網址。"""
     return str(item.get("url") or item.get("source_url") or "")
 
 
 def _pending(item: dict) -> bool:
+    """此場法說會是否還沒有 Claude 的分析。"""
     return item.get("analysis_source") != ANALYSIS_SOURCE and not item.get("agent_tool_used")
 
 
 def export() -> int:
+    """把待分析的法說會匯出成研究簡報 brief.md。"""
     data = _load()
     items = [x for x in data.get("earnings", []) or [] if isinstance(x, dict) and _pending(x) and _url(x)]
     lines = [f"# 待分析法說會｜{len(items)} 場｜資料更新 {data.get('updated_at', '')}", ""]
@@ -62,6 +66,7 @@ def export() -> int:
 
 
 def apply(notes_path: Path, publish: bool) -> int:
+    """檢查 Claude 寫好的備忘錄品質，寫回網站資料並視需要發布。"""
     notes = json.loads(notes_path.read_text(encoding="utf-8"))
     rows = notes.get("items") if isinstance(notes, dict) else None
     if not isinstance(rows, list):
@@ -114,6 +119,7 @@ def apply(notes_path: Path, publish: bool) -> int:
 
 
 def main() -> int:
+    """命令列入口：匯出待分析清單或套用分析結果。"""
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description="法說會備忘錄（Claude）")

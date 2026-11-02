@@ -25,6 +25,7 @@ def is_agent_status(status: object) -> bool:
 
 
 def status_label(status: object) -> str:
+    """把 Agent 狀態代碼轉成網站顯示的文字。"""
     s = str(status or "")
     if s == AGENT_STATUS:
         return AGENT_LABEL
@@ -55,6 +56,7 @@ def pending_agent_notes() -> dict[str, Any]:
 
 
 def pending_news_digest() -> dict[str, Any]:
+    """Claude 尚未完成新聞研究時使用的空白摘要。"""
     return {
         "agent_status": PENDING_STATUS,
         "model": AGENT_MODEL,

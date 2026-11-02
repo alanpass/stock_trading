@@ -28,6 +28,7 @@ TAIPEI = ZoneInfo("Asia/Taipei")
 
 
 def _safe_float(value: Any, default: float | None = None) -> float | None:
+    """轉成有限浮點數；失敗時回傳 default。"""
     try:
         x = float(value)
         return x if x == x and abs(x) != float("inf") else default
@@ -36,6 +37,7 @@ def _safe_float(value: Any, default: float | None = None) -> float | None:
 
 
 def _clean_text(value: Any, limit: int = 1200) -> str:
+    """合併多餘空白並截斷到指定長度。"""
     return re.sub(r"\s+", " ", str(value or "")).strip()[:limit]
 
 
@@ -43,10 +45,12 @@ class CnyesNewsDigestAgent:
     """從已快取的 CNYES 新聞挑出研究候選，交給 Claude 研究。"""
 
     def __init__(self, base_dir: str | Path = "."):
+        """記下專案根目錄。"""
         self.base = Path(base_dir).resolve()
 
     @staticmethod
     def _article_blob(article: dict[str, Any]) -> str:
+        """把標題、摘要、內文與標籤併成小寫字串，供關鍵字比對。"""
         return " ".join([
             str(article.get("title", "")),
             str(article.get("summary", "")),
@@ -56,6 +60,7 @@ class CnyesNewsDigestAgent:
         ]).lower()
 
     def _select_articles(self, articles: list[dict[str, Any]], payload: dict[str, Any], limit: int = 100) -> list[dict[str, Any]]:
+        """依自選股、熱門股與重點關鍵字挑選最相關的新聞。"""
         movers = (payload.get("market_movers", {}) or {}).get("movers", []) or []
         focus_symbols = [str(x).strip().upper() for x in payload.get("symbols", []) or []]
         focus_keywords = [
@@ -123,6 +128,7 @@ class CnyesNewsDigestAgent:
         return chosen[:limit]
 
     def _fallback(self, selected: list[dict[str, Any]], cache_meta: dict[str, Any], error: str = "") -> dict[str, Any]:
+        """Claude 尚未研究時，用文章內容組成保守的待查證摘要。"""
         findings = []
         for a in selected[:8]:
             findings.append({
@@ -151,6 +157,7 @@ class CnyesNewsDigestAgent:
         }
 
     def run(self, payload: dict[str, Any], limit: int = 100) -> dict[str, Any]:
+        """挑選新聞並產生等待 Claude 研究的摘要；沒有新聞快取時回傳對應狀態。"""
         corpus = payload.get("cnyes_news", {}) or {}
         articles = [x for x in (corpus.get("articles", []) or []) if isinstance(x, dict)]
         cache_dates = corpus.get("cache_dates", []) or ([corpus.get("crawl_date")] if corpus.get("crawl_date") else [])

@@ -39,12 +39,14 @@ END = date(2026, 10, 23)
 
 
 def universe() -> pd.DataFrame:
+    """全市場一般股票清單（排除未分類）。"""
     d = pd.read_csv(BASE / "data" / "industry_master.csv", dtype=str)
     d = d[d.symbol.str.fullmatch(r"[1-9]\d{3}") & (d.industry != "00")]
     return d.drop_duplicates("symbol").set_index("symbol")
 
 
 def fetch() -> None:
+    """下載回測用的日 K，可沿用舊快取。"""
     from stock_api import FugleClient
     c = FugleClient(wait_on_limit=True)
     CACHE.mkdir(parents=True, exist_ok=True)
@@ -162,6 +164,7 @@ _H = {"User-Agent": "Mozilla/5.0"}
 
 
 def _num_s(x) -> float:
+    """把含逗號的文字轉成數字；失敗時回傳 NaN。"""
     try:
         return float(str(x).replace(",", "").strip())
     except Exception:
@@ -305,11 +308,13 @@ WARMUP = 60
 
 
 def tick_size(p):
+    """依股價回傳升降單位（支援陣列）。"""
     p = np.asarray(p, dtype=float)
     return np.select([p < 10, p < 50, p < 100, p < 500, p < 1000], [0.01, 0.05, 0.1, 0.5, 1.0], 5.0)
 
 
 def load(min_rows: int = 60) -> dict:
+    """讀取快取的日 K，組成開高低收量的寬表。"""
     uni = universe()
     fr = {}
     for p in CACHE.glob("*.csv"):
@@ -334,6 +339,7 @@ def load(min_rows: int = 60) -> dict:
 
 
 def prepare(px: dict, min_turnover: float) -> dict:
+    """計算均線、動能、流動性與產業動能等選股欄位。"""
     c, v = px["close"], px["volume"]
     f = dict(px)
     f["ma20"] = c.rolling(20, min_periods=20).mean()
@@ -410,6 +416,7 @@ def _trade(f, s, a, last, stop, tp, gap, value, stop_close=False, slip=SLIP, fee
 
 
 def load_raw(dates, cols):
+    """讀取未還原的開盤與收盤價；沒有快取時回傳 None。"""
     if not RAW_CACHE.exists():
         return None, None
     o, c = {}, {}
@@ -561,6 +568,7 @@ def simulate(f: dict, cfg: dict, offset: int = 0, seed: int = 0):
 
 
 def stats(curve: pd.Series) -> dict:
+    """由淨值曲線算出總報酬、年化報酬與最大回撤。"""
     if curve.empty:
         return {}
     eq = curve / CAPITAL
@@ -571,10 +579,12 @@ def stats(curve: pd.Series) -> dict:
 
 
 def fname(name: str) -> str:
+    """把名稱中的 > < 換成檔名可用的文字。"""
     return name.replace(">", "超過").replace("<", "低於")
 
 
 def _gate():
+    """載入策略驗證關卡的檢查模組。"""
     import importlib.util
     p = BASE / ".claude" / "skills" / "strategy-gate" / "scripts" / "gate_check.py"
     spec = importlib.util.spec_from_file_location("gate_check", p)
@@ -583,6 +593,7 @@ def _gate():
 
 
 def tdf(trades) -> pd.DataFrame:
+    """把交易清單轉成表格，報酬改成百分比。"""
     if not trades:
         return pd.DataFrame(columns=["day", "symbol", "net", "gross", "reason"])
     t = pd.DataFrame([{k: v for k, v in x.items() if k != "path"} for x in trades])
@@ -591,6 +602,7 @@ def tdf(trades) -> pd.DataFrame:
 
 
 def variants() -> dict:
+    """列出要回測的策略參數組合。"""
     v = {}
     for sel, sn in (("mom", "個股動能"), ("ind", "產業動能")):
         for hold in (5, 10, 20):
@@ -632,6 +644,7 @@ def run(min_turnover: float = 5e8, n_seeds: int = 20, tag: str = "") -> int:
                              "maxdd": round(((ib / ib.cummax()) - 1).min() * 100, 1)}
 
     def evaluate(name, cfg, seeds=(0,)):
+        """用不同起始日回測一組參數，彙整績效與驗證結果。"""
         out = {"cfg": {k: v for k, v in cfg.items()}, "offsets": []}
         hold = cfg["hold"]
         offs = range(hold)
@@ -683,6 +696,7 @@ LOT3 = {"slip": 1, "fee_min": 20.0, "lot": 1000, "k": 3}       # 整股 3 檔：
 
 
 def variants_v3() -> dict:
+    """列出第三版的選股、停損與成本組合。"""
     v = {}
     sels = {"個股動能20日": {"sel": "mom"}, "個股動能60日": {"sel": "mom60"}, "產業動能": {"sel": "ind"},
             "動能20日+法人買超": {"sel": "mom", "insti": True}, "動能20日+營收YoY>0": {"sel": "mom", "rev": 0.0},
@@ -716,6 +730,7 @@ def variants_v4() -> dict:
 
 
 def _bench(series: pd.Series, start: pd.Timestamp, end: pd.Timestamp, cost: float = 0.006) -> float | None:
+    """計算基準在期間內扣成本後的報酬；資料不足時回傳 None。"""
     if series is None:
         return None
     s = series.dropna()

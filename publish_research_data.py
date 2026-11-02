@@ -26,14 +26,17 @@ TAIPEI = ZoneInfo("Asia/Taipei")
 
 
 def safe_text(value, limit=1200):
+    """合併空白並截斷長度。"""
     return " ".join(str(value or "").split())[:limit]
 
 
 def safe_list(value):
+    """不是清單時回傳空清單。"""
     return value if isinstance(value, list) else []
 
 
 def clean_news(x):
+    """只保留可公開的新聞欄位並限制長度。"""
     return {
         "article_id": safe_text(x.get("article_id"),80),
         "title": safe_text(x.get("title") or x.get("headline"),300),
@@ -55,6 +58,7 @@ def clean_news(x):
 
 
 def clean_earnings(x):
+    """只保留可公開的法說會欄位並限制長度。"""
     return {
         "title": safe_text(x.get("title") or x.get("event_title"),300),
         "symbol": safe_text(x.get("symbol") or x.get("code") or x.get("stock_code"),30),
@@ -74,6 +78,7 @@ def clean_earnings(x):
 
 
 def api_request(method, url, token, body=None):
+    """呼叫 GitHub API 並回傳 JSON；HTTP 錯誤時拋出 RuntimeError。"""
     payload = None if body is None else json.dumps(body, ensure_ascii=False).encode("utf-8")
     req = urllib.request.Request(url, data=payload, method=method, headers={
         "Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json",
@@ -89,6 +94,7 @@ def api_request(method, url, token, body=None):
 
 
 def main():
+    """檢查本機財經資料後，發布公開版到 GitHub。"""
     token = os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN")
     if not token:
         print("ERROR: 請設定環境變數 GITHUB_TOKEN（GitHub fine-grained token，Contents: Read and write）。")

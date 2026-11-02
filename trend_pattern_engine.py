@@ -57,10 +57,12 @@ for _theme, _codes in ROTATION_THEMES.items():
 
 
 def _now() -> datetime:
+    """目前的台北時間。"""
     return datetime.now(TAIPEI)
 
 
 def _normalise_history(frame: pd.DataFrame | None) -> pd.DataFrame:
+    """整理日 K：統一日期與數值欄位、去重並依時間排序。"""
     if frame is None or frame.empty or "date" not in frame.columns or "close" not in frame.columns:
         return pd.DataFrame()
     out = frame.copy()
@@ -117,6 +119,7 @@ def load_symbol_history(base: Path, client: FugleClient, symbol: str, asof: pd.T
 
 
 def _pivot_indices(values: np.ndarray, kind: str, order: int = 3) -> list[int]:
+    """找出區域高點或低點的位置，並去掉太靠近的點。"""
     points: list[int] = []
     if len(values) < order * 2 + 3:
         return points
@@ -142,6 +145,7 @@ def _pivot_indices(values: np.ndarray, kind: str, order: int = 3) -> list[int]:
 
 
 def _slope(values: np.ndarray) -> float:
+    """計算序列的線性斜率（以平均值標準化）。"""
     values = np.asarray(values, dtype=float)
     good = np.isfinite(values)
     if good.sum() < 5:
@@ -197,6 +201,7 @@ def _find_double_pattern(highs: np.ndarray, lows: np.ndarray, close: np.ndarray,
 
 
 def _find_head_shoulders(highs: np.ndarray, lows: np.ndarray, close: np.ndarray):
+    """尋找頭肩頂或頭肩底；回傳型態、信心、頸線與說明，沒有時回傳 None。"""
     ph = _pivot_indices(highs, "high", 3)
     for k in range(len(ph) - 1, 1, -1):
         left, head, right = ph[k - 2:k + 1]
@@ -416,6 +421,7 @@ def detect_pattern(history: pd.DataFrame) -> dict[str, Any]:
 
 
 def _event_for_change(old: dict[str, Any] | None, new: dict[str, Any]) -> str:
+    """描述型態或趨勢狀態的變化。"""
     raw = str(new.get("event") or "")
     if raw in MATERIAL_EVENTS:
         return raw
@@ -427,6 +433,7 @@ def _event_for_change(old: dict[str, Any] | None, new: dict[str, Any]) -> str:
 
 
 def _is_material_change(old: dict[str, Any] | None, new: dict[str, Any]) -> tuple[bool, str]:
+    """判斷型態是否有重大變化，回傳結果與原因。"""
     if old is None:
         return True, "初始型態建檔"
     if old.get("adjustment_method") != ADJUSTMENT_METHOD:
@@ -447,6 +454,7 @@ def _is_material_change(old: dict[str, Any] | None, new: dict[str, Any]) -> tupl
 
 
 def _build_symbol_record(symbol: str, name: str, data: dict[str, Any], old: dict[str, Any] | None, checked_at: str):
+    """組出單檔型態紀錄；沒有重大變化時保留上次的變化資訊。"""
     changed, event = _is_material_change(old, data)
     if old and not changed:
         # 型態與價位每天更新，最近一次重大變化的時間與內容不動。
@@ -464,6 +472,7 @@ def _build_symbol_record(symbol: str, name: str, data: dict[str, Any], old: dict
 
 
 def _atomic_write(path: Path, content: str) -> None:
+    """先寫暫存檔再取代，避免留下寫到一半的檔案。"""
     path.parent.mkdir(parents=True, exist_ok=True)
     temp = path.with_suffix(path.suffix + ".tmp")
     temp.write_text(content, encoding="utf-8")
@@ -529,6 +538,7 @@ def _fetch_remote_public_snapshot() -> tuple[dict[str, Any] | None, str]:
 
 
 def _publish_to_github(payload: dict[str, Any], repo_path: str = PUBLIC_REPO_PATH, message: str = "") -> dict[str, Any]:
+    """把快照發布到 GitHub，遇到版本衝突時重試。"""
     token = _get_github_token()
     if not token:
         raise RuntimeError("找不到 GITHUB_TOKEN。請設定具有 Repository Contents 讀寫權限的 Token。")
@@ -599,6 +609,7 @@ def backtest_patterns(histories: dict[str, pd.DataFrame], names: dict[str, str] 
     frame = pd.DataFrame(rows)
 
     def stats(ret: pd.Series) -> dict[str, Any]:
+        """統計一組報酬的平均、中位數與漲跌分布。"""
         up, down = ret[ret > 0], ret[ret <= 0]
         return {
             "count": int(len(ret)),
@@ -608,6 +619,7 @@ def backtest_patterns(histories: dict[str, pd.DataFrame], names: dict[str, str] 
         }
 
     def summarise(column: str) -> list[dict[str, Any]]:
+        """依指定欄位分組統計型態回測結果。"""
         out = []
         for key, group in frame.groupby(column):
             ranked = group.sort_values("window_return_pct", ascending=False).to_dict("records")
@@ -656,6 +668,7 @@ def update_trend_backtest(base: Path, histories: dict[str, pd.DataFrame], publis
 
 
 def load_trend_backtest(base_dir: str | Path) -> dict[str, Any]:
+    """讀取型態回測結果；失敗時回傳空字典。"""
     try:
         payload = json.loads((Path(base_dir).resolve() / BACKTEST_REPO_PATH).read_text(encoding="utf-8"))
         return payload if isinstance(payload, dict) else {}
@@ -674,6 +687,7 @@ def _price_levels(history: pd.DataFrame) -> dict[str, Any]:
 
 
 def _group_forward(samples: list[dict[str, Any]], key: str, horizons: tuple[int, ...]) -> list[dict[str, Any]]:
+    """依分類統計型態出現後各期間的報酬、勝率與超額報酬。"""
     out = []
     for name in sorted({s[key] for s in samples}):
         group = [s for s in samples if s[key] == name]
@@ -890,6 +904,7 @@ def update_trend_patterns(base_dir: str | Path, force: bool = False, publish: bo
 
 
 def load_published_trend_patterns(base_dir: str | Path) -> dict[str, Any]:
+    """讀取已發布的型態快照；失敗時回傳空字典。"""
     path = Path(base_dir).resolve() / PUBLIC_REPO_PATH
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))

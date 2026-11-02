@@ -9,14 +9,19 @@ from cnyes_news_crawler import CnyesNewsCrawler
 
 
 def main() -> None:
+    """測試爬不到新資料時仍能正確保存快取。"""
     class FakeCrawler(CnyesNewsCrawler):
+        """不連網路的假爬蟲。"""
         def crawl_api(self, days):
+            """假裝 API 沒有資料。"""
             return [], {}
 
         def _get(self, *args, **kwargs):
+            """測試中禁止連網路。"""
             raise RuntimeError("network disabled in unit test")
 
         def _selenium_listing(self):
+            """假裝瀏覽器沒有抓到清單。"""
             return []
 
     with tempfile.TemporaryDirectory() as td:

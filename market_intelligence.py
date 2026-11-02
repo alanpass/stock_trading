@@ -23,6 +23,7 @@ from stock_notes_ui import render_stock_note_for_symbol
 
 
 def _latest_report(output_dir: Path) -> dict[str, Any] | None:
+    """讀取最新的研究報告；沒有或損毀時回傳 None。"""
     report_dir = output_dir / "research_reports"
     if not report_dir.exists():
         return None
@@ -36,6 +37,7 @@ def _latest_report(output_dir: Path) -> dict[str, Any] | None:
 
 
 def _industry_for_symbol(symbol: str, base_dir: Path) -> str:
+    """查股票的產業代碼：人工指定優先，其次產業主檔。"""
     symbol = clean_symbol(symbol)
     override = INDUSTRY_OVERRIDES.get(symbol)
     if override:
@@ -54,6 +56,7 @@ def _industry_for_symbol(symbol: str, base_dir: Path) -> str:
 
 
 def _label(score: float) -> str:
+    """依情緒分數回傳利多、利空或中性。"""
     if pd.isna(score):
         return "中性 / 待判定"
     score = float(score)
@@ -65,6 +68,7 @@ def _label(score: float) -> str:
 
 
 def _verification_class(text: str) -> str:
+    """把查證說明歸類成可信度等級。"""
     text = str(text or "")
     if text.startswith("高可信"):
         return "高可信"
@@ -76,6 +80,7 @@ def _verification_class(text: str) -> str:
 
 
 def _prepare_news(report: dict[str, Any]) -> pd.DataFrame:
+    """把報告中的新聞整理成表格，補上影響與可信度欄位。"""
     rows = report.get("news", []) or []
     if not rows:
         return pd.DataFrame()
@@ -95,6 +100,7 @@ def _prepare_news(report: dict[str, Any]) -> pd.DataFrame:
 
 
 def _selected_news(df: pd.DataFrame, symbol: str, industry_code: str) -> pd.DataFrame:
+    """篩選提到該股票或所屬產業的新聞。"""
     if df.empty:
         return df
     symbol = clean_symbol(symbol)

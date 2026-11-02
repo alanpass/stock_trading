@@ -90,6 +90,7 @@ def _pull_site_watchlist() -> None:
 
 
 def load_watchlist() -> list[str]:
+    """同步並讀取自選股；沒有資料時用預設名單。"""
     _pull_site_watchlist()
     try:
         if WATCHLIST_FILE.exists():
@@ -104,14 +105,17 @@ def load_watchlist() -> list[str]:
 
 
 def now_taipei() -> pd.Timestamp:
+    """目前的台北時間。"""
     return pd.Timestamp.now(tz=TAIPEI_TZ)
 
 
 def report_log_path(report_date: str) -> Path:
+    """當日紀錄檔的路徑。"""
     return LOG_DIR / f"after_close_research_{report_date or 'unknown'}.log"
 
 
 def write_log(report_date: str, message: str) -> None:
+    """印出訊息並寫入當日紀錄檔。"""
     line = f"[{now_taipei().isoformat(timespec='seconds')}] {message}"
     print(line, flush=True)
     try:
@@ -122,6 +126,7 @@ def write_log(report_date: str, message: str) -> None:
 
 
 def write_status(report_date: str, status: str, **extra: Any) -> None:
+    """寫入當日的流程狀態檔；失敗時略過。"""
     payload = {
         "report_date": report_date,
         "status": status,
@@ -138,6 +143,7 @@ def write_status(report_date: str, status: str, **extra: Any) -> None:
 
 
 def _safe_float(value: Any, default: float | None = None) -> float | None:
+    """把含逗號或百分號的文字轉成有限浮點數；失敗時回傳 default。"""
     try:
         text = str(value).replace(",", "").replace("%", "").strip()
         if text in {"", "-", "--", "None", "none", "nan", "NaN", "null"}:
@@ -175,6 +181,7 @@ def _date_text(value: Any) -> str:
 
 
 def _row_symbol(row: dict[str, Any]) -> str:
+    """從資料列的代號欄取出股票代號。"""
     for key in row:
         k = str(key).strip().lower()
         if k in {"公司代號", "證券代號", "股票代號", "公司代碼", "code", "symbol", "securitiescompanycode"}:
@@ -185,6 +192,7 @@ def _row_symbol(row: dict[str, Any]) -> str:
 
 
 def _row_name(row: dict[str, Any]) -> str:
+    """從資料列的名稱欄取出公司名稱。"""
     for key in row:
         k = str(key).strip().lower()
         if k in {"公司名稱", "證券名稱", "股票名稱", "name", "companyname"}:
@@ -195,6 +203,7 @@ def _row_name(row: dict[str, Any]) -> str:
 
 
 def _field(row: dict[str, Any], keywords: list[str]) -> Any:
+    """回傳欄名包含關鍵字的第一個欄位值。"""
     norm_keys = [(str(k).replace(" ", "").strip().lower(), k) for k in row]
     wanted = [str(x).replace(" ", "").strip().lower() for x in keywords]
     # 先找完全包含關鍵字的欄位，避免 Revenue 與其他欄位誤配。
@@ -206,6 +215,7 @@ def _field(row: dict[str, Any], keywords: list[str]) -> Any:
 
 
 def _field_float(row: dict[str, Any], keywords: list[str]) -> float | None:
+    """回傳欄名包含關鍵字的第一個欄位數值。"""
     return _safe_float(_field(row, keywords), None)
 
 
@@ -213,6 +223,7 @@ def _field_float(row: dict[str, Any], keywords: list[str]) -> float | None:
 # 官方 OpenAPI recovery
 # ============================================================================
 def _fetch_json(session: requests.Session, url: str, label: str, attempts: int = 3) -> tuple[list[dict[str, Any]], list[str]]:
+    """下載官方 JSON 並重試，回傳資料列與錯誤訊息。"""
     errors: list[str] = []
     for attempt in range(1, attempts + 1):
         try:
@@ -264,6 +275,7 @@ def _fetch_twse_rwd_daily(session: requests.Session, report_date: str) -> tuple[
 
 
 def _match_rows(rows: list[dict[str, Any]], symbols: set[str]) -> dict[str, list[dict[str, Any]]]:
+    """把資料列依股票代號分組，只保留指定股票。"""
     out: dict[str, list[dict[str, Any]]] = {s: [] for s in symbols}
     for row in rows:
         symbol = _row_symbol(row)
@@ -273,6 +285,7 @@ def _match_rows(rows: list[dict[str, Any]], symbols: set[str]) -> dict[str, list
 
 
 def _latest_row(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """取期間最新的一列資料。"""
     if not rows:
         return {}
     scored = []
@@ -287,6 +300,7 @@ def _latest_row(rows: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def _official_financial_recovery(symbols: list[str]) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """直接抓官方公告、營收與財報，補回缺少的財務快照。"""
     session = requests.Session()
     symbol_set = set(symbols)
     all_errors: list[str] = []
@@ -417,6 +431,7 @@ def _official_financial_recovery(symbols: list[str]) -> tuple[list[dict[str, Any
 # CNYES cache recovery
 # ============================================================================
 def _load_cnyes_from_morning(report_date: str) -> tuple[dict[str, Any], dict[str, Any], str]:
+    """從當日早報取回鉅亨新聞與摘要；沒有時回傳空值。"""
     path = REPORT_DIR / f"morning_{report_date}.json"
     if not path.exists():
         return {}, {}, ""
@@ -531,6 +546,7 @@ def _load_cnyes_cache(report_date: str) -> tuple[dict[str, Any], dict[str, Any],
 # Market recovery
 # ============================================================================
 def _market_recovery(base: Path, watchlist: list[str], report_date: str) -> tuple[dict[str, Any], dict[str, Any]]:
+    """市場資料補救：先重跑分析器，失敗時直接抓官方日行情。"""
     analyzer = MarketMoverAnalyzer(base)
     try:
         direct = analyzer.analyze(watchlist_symbols=watchlist, max_candidates=40)
@@ -692,6 +708,7 @@ def _market_recovery(base: Path, watchlist: list[str], report_date: str) -> tupl
 # 報告保存
 # ============================================================================
 def save_recovered_report(report: dict[str, Any]) -> None:
+    """把補救後的報告存成 JSON 與 Markdown。"""
     report_date = str(report.get("report_date", ""))[:10]
     json_path = Path(str(report.get("json_path") or REPORT_DIR / f"research_{report_date}.json"))
     md_path = Path(str(report.get("markdown_path") or REPORT_DIR / f"research_{report_date}.md"))
@@ -778,6 +795,7 @@ STOCK_NOTES_REMOTE_PATH = "output/research_reports/stock_notes_public.json"
 
 
 def job_dir(report_date: str) -> Path:
+    """當日研究工作的資料夾。"""
     return JOB_ROOT / f"afterclose_{report_date}"
 
 
@@ -1004,6 +1022,7 @@ def _pre_checks(now: pd.Timestamp, watchlist: list[str]) -> int | None:
 # Claude 模式：prepare → Claude 撰寫筆記 → finalize
 # ----------------------------------------------------------------------------
 def _fmt_pct(value: Any) -> str:
+    """格式化百分比；沒有值時顯示破折號。"""
     v = _safe_float(value, None)
     return f"{v:+.2f}%" if v is not None else "—"
 
@@ -1020,6 +1039,7 @@ def build_brief(report: dict[str, Any]) -> str:
     profiles = report.get("business_profiles", {}) if isinstance(report.get("business_profiles"), dict) else {}
 
     def mover_line(x: dict[str, Any]) -> str:
+        """組出一檔漲跌股的簡報文字。"""
         return (f"- {x.get('name', x.get('symbol'))}（{clean_symbol(x.get('symbol'))}）今日 {_fmt_pct(x.get('today_change_percent'))}"
                 f"｜5日 {_fmt_pct(x.get('ret_5d'))}"
                 f"｜20日 {_fmt_pct(x.get('ret_20d'))}"
@@ -1055,6 +1075,7 @@ def build_brief(report: dict[str, Any]) -> str:
 
 
 def prepare(now: pd.Timestamp, watchlist: list[str]) -> int:
+    """檢查前置條件並建立研究包，等待 Claude 撰寫筆記。"""
     today = now.strftime("%Y-%m-%d")
     early = _pre_checks(now, watchlist)
     if early is not None:
@@ -1073,9 +1094,11 @@ def prepare(now: pd.Timestamp, watchlist: list[str]) -> int:
 
 
 def _clean_stock_notes(raw: Any, report: dict[str, Any]) -> list[dict[str, Any]]:
+    """清理 Claude 寫的個股筆記：只保留有代號與摘要的項目。"""
     names = {clean_symbol(x.get("symbol")): x.get("name", "") for x in (report.get("market_movers", {}) or {}).get("movers", []) if isinstance(x, dict)}
 
     def as_list(value: Any, n: int) -> list[str]:
+        """取清單的前 n 項並清除空白。"""
         return [str(x).strip()[:300] for x in (value if isinstance(value, list) else []) if str(x).strip()][:n]
 
     out = []
@@ -1104,6 +1127,7 @@ def _clean_stock_notes(raw: Any, report: dict[str, Any]) -> list[dict[str, Any]]
 
 
 def publish_stock_notes(report_date: str, generated_at: str, stock_notes: list[dict[str, Any]]) -> dict[str, Any]:
+    """寫入並發布個股研究筆記，回傳發布結果。"""
     payload = {
         "schema_version": 1,
         "report_type": "stock_notes_public",
@@ -1125,6 +1149,7 @@ def publish_stock_notes(report_date: str, generated_at: str, stock_notes: list[d
 
 
 def finalize(report_date: str, dry_run: bool = False) -> int:
+    """讀入 Claude 筆記，通過檢查後儲存、發布並寄信。"""
     d = job_dir(report_date)
     package_path, notes_path = d / "package.json", d / "agent_notes.json"
     if not package_path.exists():
@@ -1197,6 +1222,7 @@ def finalize(report_date: str, dry_run: bool = False) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """命令列入口：--prepare 建立研究包，--finalize 完成報告。"""
     import argparse
     parser = argparse.ArgumentParser(description="AI 台股盤後研究")
     mode = parser.add_mutually_exclusive_group()

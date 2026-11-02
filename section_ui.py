@@ -22,6 +22,7 @@ _local = threading.local()   # Streamlit 每個 session 的腳本在自己的執
 
 
 def _state() -> dict:
+    """取得目前執行緒的區塊狀態。"""
     if not hasattr(_local, "s"):
         _local.s = {"n": 0, "open": None, "depth": None}
     return _local.s
@@ -42,6 +43,7 @@ def section_box(name: str, tone: int | None = None):
 
 
 def section(title: str, *, html: bool = False) -> None:
+    """開始一個新區塊並顯示標題；先收掉上一個區塊。"""
     s = _state()
     section_end()
     if s["depth"] is not None and len(context_dg_stack.get()) == s["depth"]:
@@ -52,6 +54,7 @@ def section(title: str, *, html: bool = False) -> None:
 
 
 def section_end() -> None:
+    """收掉目前開啟的區塊容器。"""
     s = _state()
     box = s.get("open")
     if box is not None:

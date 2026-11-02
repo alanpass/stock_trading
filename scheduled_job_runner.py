@@ -31,23 +31,28 @@ FINANCE_JOBS = {"finance", "cnyes", "earnings"}
 
 
 def today() -> str:
+    """台北時區的今天日期。"""
     return datetime.now(TAIPEI).date().isoformat()
 
 
 def log_path(job: str) -> Path:
+    """該工作當日紀錄檔的路徑。"""
     return LOG_DIR / f"{job}_{today()}.log"
 
 
 def write_line(handle, text: str) -> None:
+    """寫入一行紀錄並立即存檔。"""
     handle.write(str(text).rstrip() + "\n")
     handle.flush()
 
 
 def status_path(job: str) -> Path:
+    """該工作當日狀態檔的路徑。"""
     return LOG_DIR / f"{job}_status_{today()}.json"
 
 
 def write_status(job: str, status: str, **extra: object) -> None:
+    """寫入工作狀態檔；失敗時略過。"""
     payload = {
         "job": job,
         "status": status,
@@ -62,6 +67,7 @@ def write_status(job: str, status: str, **extra: object) -> None:
 
 
 def validate_output(job: str) -> tuple[bool, str]:
+    """檢查工作是否產出今天的結果，回傳是否通過與說明。"""
     d = today()
     research_dir = BASE / "output" / "research_reports"
 
@@ -132,6 +138,7 @@ def validate_output(job: str) -> tuple[bool, str]:
 
 
 def _finance_cache_age_minutes() -> float | None:
+    """財經快取距今幾分鐘；讀不到時回傳 None。"""
     path = BASE / "output" / "research_reports" / "finance_info_latest.json"
     try:
         updated = datetime.fromisoformat(str(json.loads(path.read_text(encoding="utf-8")).get("updated_at")))
@@ -141,6 +148,7 @@ def _finance_cache_age_minutes() -> float | None:
 
 
 def main() -> int:
+    """排程入口：執行指定工作、處理逾時並驗證產出。"""
     args = [a for a in sys.argv[1:]]
     stale_minutes = None
     if "--if-stale-minutes" in args:
@@ -207,6 +215,7 @@ def main() -> int:
             timed_out = {"v": False}
 
             def _kill() -> None:
+                """逾時時標記並終止子程序。"""
                 timed_out["v"] = True
                 proc.kill()
 

@@ -85,6 +85,7 @@ OR_END, LAST_ENTRY, FORCE_EXIT = "09:15", "12:30", "13:20"
 
 
 def tick_size(p: float) -> float:
+    """依股價回傳台股升降單位。"""
     return 0.01 if p < 10 else 0.05 if p < 50 else 0.1 if p < 100 else 0.5 if p < 500 else 1.0 if p < 1000 else 5.0
 
 
@@ -96,6 +97,7 @@ def to_tick(price: float, up: bool) -> float:
 
 
 def now_tpe() -> datetime:
+    """目前的台北時間。"""
     return datetime.now(TAIPEI)
 
 
@@ -129,6 +131,7 @@ def eligibility(t: dict) -> dict:
 
 
 def _trend_patterns() -> dict:
+    """讀取趨勢型態公開資料；讀不到時回傳空字典。"""
     try:
         rows = json.loads((BASE / "output" / "research_reports" / "trend_patterns_public.json").read_text(encoding="utf-8"))["stocks"]
         return {clean_symbol(r["symbol"]): r for r in rows}
@@ -137,6 +140,7 @@ def _trend_patterns() -> dict:
 
 
 def build_plan(client: FugleClient, symbols: list[str]) -> dict:
+    """盤前逐檔檢查可否當沖並計算參考價位，組成今日交易計畫。"""
     patterns = _trend_patterns()
     rows = []
     for s in symbols:
@@ -195,6 +199,7 @@ def build_plan(client: FugleClient, symbols: list[str]) -> dict:
 # ---------------------------------------------------------------- 盤中判斷與紙上成交
 @dataclass
 class Position:
+    """一筆紙上部位：方向、股數、進出場價、停損停利與損益。"""
     symbol: str
     side: int                 # +1 多、-1 空
     shares: int               # 零股：股數
@@ -215,6 +220,7 @@ class Position:
 
 @dataclass
 class Engine:
+    """紙上當沖引擎：管理部位、判斷進出場、記錄事件與績效。"""
     plan: dict
     day: str
     positions: list[Position] = field(default_factory=list)
@@ -243,6 +249,7 @@ class Engine:
         self.market_note = f"加權 {last:,.0f}（VWAP {v:,.0f}，較開盤 {last / prev - 1:+.2%}）{'偏多' if self.market_ok else '轉弱，暫停做多'}"
 
     def log(self, t: str, symbol: str, kind: str, msg: str, **extra):
+        """記錄一筆事件並印出；不進場與警示的相同理由只記一次。"""
         if kind in ("不進場", "警示"):  # 同一檔同一個理由只記一次（風險金額這類數字會小幅變動，只比對理由前段）
             key = re.sub(r"[\d,.\s]+", "", msg.split("（")[0].split("，")[0])
             if self.last_reason.get(symbol) == key:
@@ -253,9 +260,11 @@ class Engine:
         print(f"[{t}] {symbol} {kind}：{msg}", flush=True)
 
     def open_positions(self):
+        """尚未出場的部位。"""
         return [p for p in self.positions if p.exit is None]
 
     def _close(self, p: Position, price: float, t: str, reason: str):
+        """以對齊升降單位並含滑價的價格平倉，扣除成本後記入損益。"""
         if reason == "停利":   # 停利視為掛在停利價的限價單
             fill = to_tick(price, up=p.side > 0)
         else:                  # 其他出場用市價：對齊升降單位後再差 1 個 tick
@@ -271,6 +280,7 @@ class Engine:
                  pnl=p.pnl, price=fill)
 
     def _info(self, s: str) -> dict | None:
+        """取得計畫中可交易股票的資料；不可交易時回傳 None。"""
         info = next((r for r in self.plan["stocks"] if r["symbol"] == s), None)
         return info if info and (info.get("tradable") or info.get("mr_eligible")) else None
 
@@ -311,6 +321,7 @@ class Engine:
                 self._close(p, last, t, "13:20 時間出場")
 
     def on_bar(self, s: str, t: str, bars: pd.DataFrame, last: float, vwap: float, locked: str = ""):
+        """每根 K 棒完成時先管理部位，再判斷是否進場。"""
         self.manage(s, t, last, locked)
         self.try_entry(s, t, bars, last, vwap)
 
@@ -494,6 +505,7 @@ class Engine:
                      f"{'［學習模式：' + veto + '，照常進場］' if veto else ''}", side=1, shares=shares, price=p.entry)
 
     def _count(self, strategy: str) -> int:
+        """指定策略目前的持倉數。"""
         return sum(1 for p in self.open_positions() if p.strategy == strategy)
 
     def _veto(self, s: str) -> str:
@@ -507,11 +519,13 @@ class Engine:
 
     @staticmethod
     def _stats(closed: list) -> dict:
+        """統計已平倉部位的筆數、勝場、損益與勝率。"""
         wins = [p for p in closed if p.pnl > 0]
         return {"trades": len(closed), "wins": len(wins), "pnl": round(sum(p.pnl for p in closed)),
                 "win_rate": round(len(wins) / len(closed) * 100, 1) if closed else None}
 
     def summary(self) -> dict:
+        """組出當日績效摘要，包含分策略與 Claude 標記的統計。"""
         closed = [p for p in self.positions if p.exit is not None]
         wins = [p for p in closed if p.pnl > 0]
         return {"date": self.day, "capital": CAPITAL, "trades": len(closed), "wins": len(wins),
@@ -525,6 +539,7 @@ class Engine:
                 "positions": [asdict(p) for p in self.positions], "skipped": self.skipped}
 
     def save(self):
+        """把交易計畫、事件與摘要寫入當日資料夾。"""
         folder = OUT / self.day
         folder.mkdir(parents=True, exist_ok=True)
         (folder / "plan.json").write_text(json.dumps(self.plan, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -533,6 +548,7 @@ class Engine:
 
 
 def _prepare(engine: Engine, client: FugleClient):
+    """載入可交易股票的進場模型與歷史日 K。"""
     for r in engine.plan["stocks"]:
         if not (r.get("tradable") or r.get("mr_eligible")):
             continue
@@ -543,6 +559,7 @@ def _prepare(engine: Engine, client: FugleClient):
 
 
 def _bars_today(df: pd.DataFrame) -> pd.DataFrame:
+    """把 K 線時間轉成台北時間並只留今日盤中。"""
     if df is None or df.empty:
         return pd.DataFrame()
     d = df.copy()
@@ -554,6 +571,7 @@ def _bars_today(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _vwap(done: pd.DataFrame) -> float:
+    """以典型價計算成交量加權平均價；沒有量時回傳最後一筆收盤價。"""
     vol = float(done["volume"].sum())
     return float(((done["high"] + done["low"] + done["close"]) / 3 * done["volume"]).sum() / vol) if vol else float(done["close"].iloc[-1])
 
@@ -607,6 +625,7 @@ class PriceStream:
     URL = "wss://api.fugle.tw/marketdata/v1.0/stock/streaming"
 
     def __init__(self, symbols: list[str], on_trade=None):
+        """記下訂閱的股票與回呼，準備背景執行緒。"""
         import threading
         self.symbols, self.on_trade = symbols, on_trade
         self.last: dict[str, dict] = {}
@@ -615,6 +634,7 @@ class PriceStream:
         self._thread = threading.Thread(target=self._run, daemon=True)
 
     def start(self):
+        """啟動背景連線，最多等 30 秒；回傳是否已連上。"""
         self._thread.start()
         for _ in range(300):          # 開盤前伺服器回應較慢，最多等 30 秒
             if self.connected:
@@ -623,6 +643,7 @@ class PriceStream:
         return self.connected
 
     def stop(self):
+        """停止重連並關閉連線。"""
         self._stop = True
         try:
             self._ws.close()
@@ -630,14 +651,17 @@ class PriceStream:
             pass
 
     def _run(self):
+        """背景迴圈：連線、認證與訂閱，斷線後以遞增間隔重連。"""
         import websocket
         from stock_api import _read_fugle_api_key
         backoff = 1
         while not self._stop:
             def on_open(ws):
+                """連線建立後送出認證。"""
                 ws.send(json.dumps({"event": "auth", "data": {"apikey": _read_fugle_api_key()}}))
 
             def on_message(ws, raw):
+                """處理認證、訂閱與成交訊息，並把成交價交給回呼。"""
                 msg = json.loads(raw)
                 ev = msg.get("event")
                 if ev == "authenticated":
@@ -657,6 +681,7 @@ class PriceStream:
                             self.on_trade(sym, d)
 
             def on_close(ws, *_):
+                """連線關閉時標記為未連線。"""
                 self.connected = False
 
             self._ws = websocket.WebSocketApp(self.URL, on_open=on_open, on_message=on_message, on_close=on_close)
@@ -686,6 +711,7 @@ def live() -> dict:
     lock = threading.Lock()
 
     def locked_state(r: dict, d: dict) -> str:
+        """判斷漲停或跌停鎖死：回傳 up、down 或空字串。"""
         price, bid, ask = d.get("price"), d.get("bid"), d.get("ask")
         if r["limit_up"] and price is not None and price >= r["limit_up"] and not ask:
             return "up"
@@ -694,6 +720,7 @@ def live() -> dict:
         return ""
 
     def on_trade(sym: str, d: dict):
+        """有持倉的股票成交時立即檢查出場條件。"""
         if not any(p.symbol == sym for p in engine.open_positions()):
             return
         r = next(x for x in tradable if x["symbol"] == sym)
@@ -777,6 +804,7 @@ def live() -> dict:
 
 
 def _watchlist() -> list[str]:
+    """讀取自選股清單。"""
     return [str(s) for s in json.loads((BASE / "user_watchlist.json").read_text(encoding="utf-8"))]
 
 
@@ -787,6 +815,7 @@ def _universe() -> list[str]:
 
 
 def main() -> int:
+    """命令列入口：產生計畫（plan）、盤中執行（live）或重播（replay）。"""
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="即時當沖判斷引擎（紙上交易）")

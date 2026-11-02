@@ -15,6 +15,7 @@ TZ = ZoneInfo("Asia/Taipei")
 
 
 def load(p: Path):
+    """讀取 JSON；失敗時回傳含錯誤訊息的字典。"""
     try:
         return json.loads(p.read_text(encoding="utf-8"))
     except Exception as exc:
@@ -22,6 +23,7 @@ def load(p: Path):
 
 
 def main() -> None:
+    """檢查爬蟲程式、鉅亨快取與更新紀錄，印出財經新聞診斷結果。"""
     print("=" * 70, "\n財經新聞診斷", datetime.now(TZ).isoformat(timespec="seconds"), "\n" + "=" * 70)
 
     src = (BASE / "cnyes_news_crawler.py").read_text(encoding="utf-8")

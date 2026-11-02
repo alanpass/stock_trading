@@ -54,6 +54,7 @@ USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) TaiwanStockResearchAgent
 
 @dataclass
 class CnyesArticle:
+    """一篇鉅亨新聞的欄位。"""
     article_id: str
     title: str
     url: str
@@ -75,6 +76,7 @@ class CnyesArticle:
 
 
 class CnyesNewsCrawler:
+    """抓取鉅亨新聞：優先用 API，不足時以 Selenium 補抓，並存成快取。"""
     def __init__(
         self,
         base_dir: str | Path = ".",
@@ -83,6 +85,7 @@ class CnyesNewsCrawler:
         max_articles: int = DEFAULT_MAX_ARTICLES,
         max_scrolls: int = DEFAULT_MAX_SCROLLS,
     ):
+        """設定逾時、抓取上限與共用的 HTTP session。"""
         self.base = Path(base_dir).resolve()
         self.timeout = timeout
         self.sleep_seconds = sleep_seconds
@@ -103,6 +106,7 @@ class CnyesNewsCrawler:
     # ------------------------------------------------------------------
     @staticmethod
     def _clean_text(value: Any, limit: int = 10000) -> str:
+        """解碼 HTML、去標籤、合併空白並截斷。"""
         text = html_lib.unescape(str(value or ""))
         text = BeautifulSoup(text, "html.parser").get_text(" ", strip=True)
         text = re.sub(r"\s+", " ", text).strip()
@@ -110,15 +114,18 @@ class CnyesNewsCrawler:
 
     @staticmethod
     def _article_id(url: str) -> str:
+        """從新聞網址取出文章編號。"""
         m = re.search(r"/news/id/(\d+)", str(url))
         return m.group(1) if m else ""
 
     @staticmethod
     def _to_url(href: str) -> str:
+        """轉成完整網址並去掉 # 錨點。"""
         return urljoin(BASE_URL, str(href or "").strip()).split("#", 1)[0]
 
     @staticmethod
     def _parse_datetime(value: Any) -> datetime | None:
+        """把時間戳或日期字串解析成台北時間；失敗回傳 None。"""
         if value is None or value == "":
             return None
         if isinstance(value, (int, float)):
@@ -165,6 +172,7 @@ class CnyesNewsCrawler:
 
     @staticmethod
     def _date_window(days: int) -> tuple[datetime, datetime]:
+        """回傳最近 days 天的起訖時間（從起始日零點到現在）。"""
         now = datetime.now(TAIPEI)
         days = max(1, int(days))
         start = datetime(now.year, now.month, now.day, tzinfo=TAIPEI) - timedelta(days=days - 1)
@@ -172,6 +180,7 @@ class CnyesNewsCrawler:
         return start, end
 
     def _within_window(self, value: Any, days: int) -> bool:
+        """時間是否落在最近 days 天內。"""
         dt = self._parse_datetime(value)
         if not dt:
             return False
@@ -179,6 +188,7 @@ class CnyesNewsCrawler:
         return start <= dt <= end + timedelta(minutes=2)
 
     def _get(self, url: str, params: dict[str, Any] | None = None, accept_json: bool = False) -> requests.Response:
+        """發送 GET，失敗時重試一次；仍失敗就拋出 RuntimeError。"""
         last_exc: Exception | None = None
         for attempt in range(2):
             try:
@@ -197,6 +207,7 @@ class CnyesNewsCrawler:
     # CNYES API：頁面實際使用的新聞列表介面
     # ------------------------------------------------------------------
     def _api_page(self, start: datetime, end: datetime, page: int, limit: int, category: str = "headline") -> dict[str, Any]:
+        """向鉅亨 API 取一頁新聞清單。"""
         params = {
             "page": page,
             "limit": min(30, max(10, int(limit))),
@@ -217,6 +228,7 @@ class CnyesNewsCrawler:
 
     @staticmethod
     def _api_data(payload: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+        """從 API 回應取出文章列與分頁資訊，相容兩種回應格式。"""
         items = payload.get("items")
         if isinstance(items, dict):
             data = items.get("data")
@@ -230,6 +242,7 @@ class CnyesNewsCrawler:
         return rows, meta if isinstance(meta, dict) else {}
 
     def _api_item_to_article(self, row: dict[str, Any]) -> CnyesArticle | None:
+        """把 API 的一筆資料轉成 CnyesArticle；缺編號或標題時回傳 None。"""
         article_id = str(row.get("newsId") or row.get("id") or "").strip()
         if not article_id:
             return None
@@ -276,6 +289,7 @@ class CnyesNewsCrawler:
         )
 
     def crawl_api(self, days: int, category: str = "headline") -> tuple[list[CnyesArticle], dict[str, Any]]:
+        """逐頁抓取 API 新聞，回傳文章與抓取統計。"""
         start, end = self._date_window(days)
         articles: list[CnyesArticle] = []
         errors: list[str] = []
@@ -401,6 +415,7 @@ class CnyesNewsCrawler:
     # HTML/Selenium fallback
     # ------------------------------------------------------------------
     def _extract_links(self, html: str) -> list[dict[str, str]]:
+        """從 HTML 取出不重複的新聞連結與標題提示。"""
         soup = BeautifulSoup(html, "html.parser")
         rows: list[dict[str, str]] = []
         seen: set[str] = set()
@@ -416,6 +431,7 @@ class CnyesNewsCrawler:
         return rows
 
     def _selenium_listing(self) -> list[dict[str, str]]:
+        """用無頭瀏覽器捲動鉅亨頁面取得新聞連結；無法使用 Selenium 時回傳含 error 的清單。"""
         try:
             from selenium import webdriver
             from selenium.webdriver.chrome.options import Options
@@ -462,6 +478,7 @@ class CnyesNewsCrawler:
                     pass
 
     def _parse_article_html(self, html: str, url: str, title_hint: str = "") -> CnyesArticle | None:
+        """解析新聞頁 HTML，取出標題、時間、內文與標籤組成 CnyesArticle。"""
         soup = BeautifulSoup(html, "html.parser")
         title = ""
         for attrs in [
@@ -478,6 +495,7 @@ class CnyesNewsCrawler:
             title = self._clean_text(h1.get_text(" ", strip=True), 300) if h1 else title_hint
 
         def meta(*pairs: tuple[str, str]) -> str:
+            """依序找指定的 meta 標籤，回傳第一個有內容的值。"""
             for attr, value in pairs:
                 node = soup.find("meta", attrs={attr: value})
                 if node and node.get("content"):
@@ -537,6 +555,7 @@ class CnyesNewsCrawler:
         )
 
     def _fetch_detail(self, row: dict[str, str]) -> CnyesArticle | None:
+        """下載並解析單篇新聞；失敗時回傳 None。"""
         try:
             response = self._get(row.get("url", ""))
             return self._parse_article_html(response.text, row.get("url", ""), row.get("title_hint", ""))
@@ -573,6 +592,7 @@ class CnyesNewsCrawler:
             return rows, errors
 
         def fetch_one(row: dict[str, Any]) -> tuple[dict[str, Any], str | None]:
+            """抓單篇全文，品質不低於原資料才合併；回傳文章與錯誤訊息。"""
             try:
                 detail = self._fetch_detail({
                     "url": str(row.get("url") or ""),
@@ -612,6 +632,7 @@ class CnyesNewsCrawler:
     # ------------------------------------------------------------------
     @staticmethod
     def _atomic_write(path: Path, text: str) -> None:
+        """先寫暫存檔再取代，避免寫到一半留下損毀的檔案。"""
         tmp = path.with_suffix(path.suffix + ".tmp")
         tmp.write_text(text, encoding="utf-8")
         os.replace(tmp, path)
@@ -629,6 +650,7 @@ class CnyesNewsCrawler:
             return {}
 
     def _html_fallback_articles(self, days: int, errors: list[str]) -> list[CnyesArticle]:
+        """API 不可用時改抓 HTML 與 Selenium 清單，再逐篇下載新聞。"""
         listing: list[dict[str, str]] = []
         try:
             response = self._get(BASE_URL)
@@ -765,6 +787,7 @@ class CnyesNewsCrawler:
         return result
 
     def load_latest(self) -> dict[str, Any]:
+        """讀取最新一次的新聞快取；讀不到時回傳空字典。"""
         path = self.output_dir / "cnyes_news_latest.json"
         try:
             obj = json.loads(path.read_text(encoding="utf-8"))
@@ -776,6 +799,7 @@ class CnyesNewsCrawler:
     # main crawl + cache
     # ------------------------------------------------------------------
     def crawl(self, days: int = DEFAULT_DAYS, force: bool = False, max_articles: int | None = None) -> dict[str, Any]:
+        """抓取最近 days 天的新聞並寫入快取；當日快取品質夠好時直接沿用（force 可強制重抓）。"""
         days = max(1, int(days))
         if max_articles is not None:
             self.max_articles = max(30, int(max_articles))

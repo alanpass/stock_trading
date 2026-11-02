@@ -55,6 +55,7 @@ _CSS = """<style>
 
 @st.cache_data(ttl=600, show_spinner=False)
 def load_system_picks(base_dir: str) -> dict:
+    """讀取系統推薦名單：優先用公開網址，失敗時用本機檔案。"""
     try:
         req = urllib.request.Request(f"{PUBLIC_URL}?v={int(time.time() // 600)}", headers={"User-Agent": "Mozilla/5.0"})
         with urllib.request.urlopen(req, timeout=10) as res:
@@ -71,18 +72,22 @@ def load_system_picks(base_dir: str) -> dict:
 
 
 def _cls(v) -> str:
+    """依數值正負回傳漲跌顏色的 class。"""
     return "sp-flat" if v is None else "sp-up" if v > 0 else "sp-down" if v < 0 else "sp-flat"
 
 
 def _pct(v) -> str:
+    """格式化百分比；None 顯示破折號。"""
     return "—" if v is None else f"{v:+.2f}%"
 
 
 def _price(v) -> str:
+    """格式化價格；None 顯示破折號。"""
     return "—" if v is None else f"{v:,.2f}"
 
 
 def _card(i: int, p: dict) -> str:
+    """組出單檔推薦股票的 HTML 卡片。"""
     themes = "".join(f"<span>{escape(t)}</span>" for t in p.get("themes") or [])
     why = "".join(f'<li><span class="sp-cat c-{escape(r["cat"])}">{escape(r["cat"])}</span><span>{escape(r["text"])}</span></li>'
                   for r in p.get("reasons") or [])
@@ -95,6 +100,7 @@ def _card(i: int, p: dict) -> str:
 
 
 def render_system_picks(base_dir: str | Path) -> None:
+    """顯示系統推薦名單，可切換推薦期間。"""
     data = load_system_picks(str(base_dir))
     latest = data.get("latest") or {}
     if not latest.get("picks"):

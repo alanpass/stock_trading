@@ -7,6 +7,7 @@ from email_agent import EmailAgent
 
 
 def main():
+    """驗收鉅亨新聞摘要併入報告的格式。"""
     digest = {
         "agent_status": "qwen3_cnyes_news_agent",
         "overview": "電子零組件新聞集中在高階載板與 AI 伺服器需求。",

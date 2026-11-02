@@ -1,14 +1,18 @@
 ﻿#requires -Version 5.1
 $ErrorActionPreference = "Stop"
 
+# 建立每日趨勢型態檢查的 Windows 排程。
+# 專案位置、排程名稱與要執行的程式。
 $ProjectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $TaskName = "StockTrading-TrendPatterns-1900"
 $Updater = Join-Path $ProjectRoot "run_trend_pattern_update.py"
 
+# 找不到程式就停止，避免建立無法執行的排程。
 if (!(Test-Path -LiteralPath $Updater)) {
     throw "找不到 $Updater。請先同步最新版專案檔案。"
 }
 
+# 優先使用專案虛擬環境；否則使用 PATH 中的 Python。
 $VenvPython = Join-Path $ProjectRoot ".venv\Scripts\python.exe"
 if (Test-Path -LiteralPath $VenvPython) {
     $PythonExe = $VenvPython
@@ -20,13 +24,16 @@ if (Test-Path -LiteralPath $VenvPython) {
     $PythonExe = $PythonCommand.Source
 }
 
+# 排程內容：週一至週五 19:00 執行、用目前使用者身分、錯過時補跑、最久 2 小時、不重複執行。
 $Action = New-ScheduledTaskAction -Execute $PythonExe -Argument ('"' + $Updater + '"') -WorkingDirectory $ProjectRoot
 $Trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At ([datetime]::Today.AddHours(19))
 $Principal = New-ScheduledTaskPrincipal -UserId "$env:USERDOMAIN\$env:USERNAME" -LogonType Interactive -RunLevel Limited
 $Settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -WakeToRun -ExecutionTimeLimit (New-TimeSpan -Hours 2) -MultipleInstances IgnoreNew
 
+# 註冊排程（已存在就覆蓋）。
 Register-ScheduledTask -TaskName $TaskName -Action $Action -Trigger $Trigger -Principal $Principal -Settings $Settings -Description "台灣時間每週一至週五 19:00 檢查全部產業概念股趨勢型態；非交易日跳過，交易日每天發布。" -Force | Out-Null
 
+# 顯示結果與使用前要確認的事項。
 Write-Host ""
 Write-Host "已建立排程：$TaskName" -ForegroundColor Green
 Write-Host "執行時間：每週一至週五 19:00（程式會再以官方交易日曆排除休市日）"

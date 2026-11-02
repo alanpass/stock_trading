@@ -21,18 +21,21 @@ TAIL = (39.4, 39.4, 47, 47)
 
 
 def candle_svg(i: int, attrs: str = 'fill="%s" stroke="%s"' % (COLOR, COLOR)) -> str:
+    """組出第 i 根 K 棒的 SVG。"""
     x, top, bottom, wick_top, wick_bottom = CANDLES[i]
     return (f'<g {attrs}><line x1="{x}" x2="{x}" y1="{wick_top}" y2="{wick_bottom}" stroke-width="{WICK_WIDTH}" stroke-linecap="round"/>'
             f'<rect x="{x - CANDLE_WIDTH / 2}" y="{top}" width="{CANDLE_WIDTH}" height="{bottom - top}" rx=".6" stroke="none"/></g>')
 
 
 def ring_svg(attrs: str = "") -> str:
+    """組出放大鏡外圈的 SVG。"""
     a, cx, cy = RING_ROTATE
     return (f'<polygon {attrs} points="{RING_POINTS}" transform="rotate({a} {cx} {cy})" fill="none" '
             f'stroke="{COLOR}" stroke-width="{STROKE}" stroke-linejoin="round"/>')
 
 
 def tail_svg(attrs: str = "") -> str:
+    """組出放大鏡手把的 SVG。"""
     x1, y1, x2, y2 = TAIL
     return f'<line {attrs} x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{COLOR}" stroke-width="{STROKE}" stroke-linecap="round"/>'
 
@@ -54,6 +57,7 @@ def render_png(size: int, background=None):
     rgb = tuple(int(COLOR[i:i + 2], 16) for i in (1, 3, 5)) + (255,)
 
     def line(x1, y1, x2, y2, w):
+        """畫一條兩端圓頭的線。"""
         d.line([(x1 * k, y1 * k), (x2 * k, y2 * k)], fill=rgb, width=max(1, round(w * k)))
         for x, y in ((x1, y1), (x2, y2)):
             r = w * k / 2
@@ -75,6 +79,7 @@ def render_png(size: int, background=None):
 
 
 def write_assets(folder: Path | None = None) -> None:
+    """輸出 Logo 的 SVG、PNG 與 favicon 檔案。"""
     folder = folder or Path(__file__).resolve().parent / "assets" / "logo"
     folder.mkdir(parents=True, exist_ok=True)
     (folder / "logo.svg").write_text(svg_markup(512), encoding="utf-8")

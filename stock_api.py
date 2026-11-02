@@ -26,6 +26,7 @@ try:
 except Exception:
     INDUSTRY_OVERRIDES = {}
     def normalize_industry(value):
+        """把產業代碼補成兩位數。"""
         return str(value or "00").zfill(2)
 
 BASE = "https://api.fugle.tw/marketdata/v1.0/stock"
@@ -72,6 +73,7 @@ INDUSTRIES = {
 
 
 class APIError(RuntimeError):
+    """Fugle API 或設定錯誤。"""
     pass
 
 
@@ -87,6 +89,7 @@ _RATE_TIMES: deque[float] = deque()
 
 
 def _acquire_rate_slot(wait: bool) -> None:
+    """取得每分鐘額度：用完時依 wait 等待，或拋出 RateLimited。"""
     while True:
         with _RATE_LOCK:
             now = time.monotonic()
@@ -111,6 +114,7 @@ def rate_slots_free() -> int:
 
 
 class FugleClient:
+    """Fugle 行情 API 客戶端，內建每分鐘額度控制與重試。"""
     def __init__(self, api_key: str | None = None, timeout: int = 20, wait_on_limit: bool = True):
         """wait_on_limit=False（網站用）：額度用完時立即放棄這次請求，不讓頁面等待；
         True（排程腳本用）：等到有額度再送出。"""
@@ -124,6 +128,7 @@ class FugleClient:
             self.session.headers.update({"X-API-KEY": self.api_key})
 
     def _get(self, path: str, params: dict[str, Any] | None = None, retry: int = 3) -> dict:
+        """送出 GET 並處理額度與重試；失敗時拋出 APIError。"""
         if not self.api_key:
             raise APIError("FUGLE_API_KEY 尚未設定：請寫在專案 .env（本機）或 Streamlit Secrets（雲端）。")
         url = f"{BASE}/{path.lstrip('/')}"
@@ -152,13 +157,16 @@ class FugleClient:
         raise APIError(last or "Fugle API 請求失敗")
 
     def quote(self, symbol: str) -> dict:
+        """取得個股即時報價。"""
         return self._get(f"intraday/quote/{clean_symbol(symbol)}")
 
     def ticker(self, symbol: str) -> dict:
+        """取得個股基本資料。"""
         return self._get(f"intraday/ticker/{clean_symbol(symbol)}")
 
     def tickers(self, exchange: str) -> list[dict]:
         # 不加 isNormal：那會漏掉注意、處置等股票，查不到產業就被當成 00。
+        """取得交易所全部股票，並校正產業代碼。"""
         p = {"type": "EQUITY", "exchange": exchange}
         data = self._get("intraday/tickers", p)
         rows = data.get("data", []) or []
@@ -171,6 +179,7 @@ class FugleClient:
     _snapshot_forbidden = False  # 這把 key 沒有 snapshot 權限（HTTP 403）時記住，不再每次重試
 
     def snapshot_quotes(self, market: str) -> list[dict]:
+        """取得全市場快照；未開通（HTTP 403）後不再重試。"""
         if FugleClient._snapshot_forbidden:
             raise APIError("Fugle snapshot 未開通（HTTP 403），改用逐檔 Quote")
         try:
@@ -195,6 +204,7 @@ class FugleClient:
         return self._candles_df(rows, symbol)
 
     def historical_candles(self, symbol: str, start: date, end: date, timeframe: str = "D", adjusted: bool = False) -> pd.DataFrame:
+        """取得歷史 K 線，回傳整理好的 DataFrame。"""
         params = {
             "from": start.isoformat(),
             "to": end.isoformat(),
@@ -209,6 +219,7 @@ class FugleClient:
 
     @staticmethod
     def _candles_df(rows: list[dict], symbol: str) -> pd.DataFrame:
+        """把 K 線資料轉成數值欄位、依時間排序的 DataFrame。"""
         df = pd.DataFrame(rows)
         if df.empty:
             return pd.DataFrame(columns=["date", "open", "high", "low", "close", "volume", "average", "change", "stock_code"])
@@ -225,6 +236,7 @@ class FugleClient:
 
 
 def clean_symbol(s: str) -> str:
+    """去掉市場後綴並轉大寫，得到統一的股票代號。"""
     s = str(s).strip().upper()
     if "." in s:
         s = s.split(".")[0]
@@ -232,6 +244,7 @@ def clean_symbol(s: str) -> str:
 
 
 def _num(s: Any) -> float:
+    """把含逗號或百分號的文字轉成數字；無資料時回傳 NaN。"""
     try:
         if s is None or (isinstance(s, float) and np.isnan(s)):
             return np.nan
@@ -244,6 +257,7 @@ def _num(s: Any) -> float:
 
 
 def _extract_json_rows(payload: Any) -> list[dict]:
+    """從清單或 {data: [...]} 取出字典清單。"""
     if isinstance(payload, list):
         return [x for x in payload if isinstance(x, dict)]
     if isinstance(payload, dict):
@@ -270,6 +284,7 @@ def _find_numeric_by_exact_or_suffix(record: dict, names: list[str]) -> float:
 
 
 def _tpex_record_from_json(row: dict) -> dict | None:
+    """把櫃買法人 JSON 的一列轉成統一格式；沒有代號時回傳 None。"""
     code = clean_symbol(row.get("SecuritiesCompanyCode", ""))
     if not code:
         return None
@@ -387,6 +402,7 @@ def _tpex_legacy_download(day: date, symbol: str) -> dict | None:
         row = row.iloc[0].to_dict()
 
         def pick_contains(*parts: str) -> float:
+            """回傳欄名包含所有關鍵字的第一個數值。"""
             for k, v in row.items():
                 kk = str(k).replace(" ", "")
                 if all(p.replace(" ", "") in kk for p in parts):
@@ -451,6 +467,7 @@ def fetch_institution_daily(symbol: str, d: date | None = None, market: str | No
                     if not row or clean_symbol(row[idx.get("證券代號", 0)]) != symbol:
                         continue
                     def fld(name: str) -> float:
+                        """依欄名取出該列的數值。"""
                         pos = idx.get(name)
                         return _num(row[pos]) if pos is not None and pos < len(row) else np.nan
                     # 官方 T86 把外資及陸資（不含外資自營商）與外資自營商分欄。
@@ -552,6 +569,7 @@ def _download_tdcc_csv() -> pd.DataFrame:
 
 
 def _read_tdcc_cache() -> pd.DataFrame:
+    """讀取集保資料快取，相容 UTF-8 與 CP950；失敗時回傳空表。"""
     if not TDCC_CACHE_CSV.exists():
         return pd.DataFrame()
     try:

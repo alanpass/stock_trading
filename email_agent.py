@@ -54,6 +54,7 @@ DEFAULT_RECIPIENT = "a1113359@mail.nuk.edu.tw"
 
 
 def engine_label() -> str:
+    """報告中顯示的 AI 引擎名稱。"""
     return AGENT_LABEL
 
 
@@ -61,6 +62,7 @@ def engine_label() -> str:
 # .env loader
 # ---------------------------------------------------------------------------
 def load_local_env(path: Path) -> dict[str, str]:
+    """讀取本機 .env 檔，回傳鍵值對；檔案不存在時回傳空字典。"""
     values: dict[str, str] = {}
     if not path.exists():
         return values
@@ -90,10 +92,12 @@ def load_local_env(path: Path) -> dict[str, str]:
 
 
 def _cfg_value(env_values: dict[str, str], key: str, default: str = "") -> str:
+    """設定值：環境變數優先，其次 .env，最後預設值。"""
     return os.getenv(key, env_values.get(key, default)).strip()
 
 
 def _as_bool(value: str, default: bool = False) -> bool:
+    """把設定字串解讀成布林值；空字串時回傳 default。"""
     if value == "":
         return default
     return value.lower() in {"1", "true", "yes", "y", "on"}
@@ -101,6 +105,7 @@ def _as_bool(value: str, default: bool = False) -> bool:
 
 @dataclass
 class EmailConfig:
+    """寄信設定：SMTP 連線、寄件者、收件者與主旨前綴。"""
     enabled: bool
     auto_send: bool
     smtp_host: str
@@ -118,6 +123,7 @@ class EmailAgent:
     """盤後研究 Email Agent：先摘要，再寄送。"""
 
     def __init__(self, base_dir: str | Path = "."):
+        """讀取 .env、建立資料夾並載入寄信設定。"""
         self.base = Path(base_dir).resolve()
         self.env_path = self.base / ".env"
         self.env = load_local_env(self.env_path)
@@ -157,7 +163,9 @@ class EmailAgent:
     # Config / status
     # =======================================================================
     def _load_config(self) -> EmailConfig:
+        """從環境變數組出寄信設定，連接埠無效時用預設值。"""
         def first(*keys: str, default: str = "") -> str:
+            """回傳多個設定名稱中第一個有值的設定。"""
             for key in keys:
                 value = _cfg_value(self.env, key, "")
                 if value:
@@ -184,6 +192,7 @@ class EmailAgent:
         )
 
     def status(self) -> dict[str, Any]:
+        """回傳寄信功能的設定狀態與缺少的欄位。"""
         c = self.config
         missing: list[str] = []
 
@@ -215,10 +224,12 @@ class EmailAgent:
     # =======================================================================
     @staticmethod
     def _esc(value: Any) -> str:
+        """轉義 HTML 特殊字元；None 轉成空字串。"""
         return html.escape(str(value if value is not None else ""))
 
     @staticmethod
     def _safe_float(value: Any, default: float | None = None) -> float | None:
+        """轉成浮點數；失敗或 NaN 時回傳 default。"""
         try:
             x = float(value)
             if x != x:  # NaN
@@ -249,6 +260,7 @@ class EmailAgent:
         return text.strip()
 
     def _table(self, headers: list[str], rows: list[list[Any]], row_classes: list[str] | None = None) -> str:
+        """把表頭與資料列組成 HTML 表格；沒有資料時回傳提示。"""
         if not rows:
             return "<p class='muted'>目前沒有可用資料。</p>"
 
@@ -463,6 +475,7 @@ class EmailAgent:
 
     @staticmethod
     def _as_list(value: Any) -> list[str]:
+        """把 None、字串或清單統一成去空白的字串清單。"""
         if value is None:
             return []
         if isinstance(value, list):
@@ -499,10 +512,12 @@ class EmailAgent:
             return None
 
     def _previous_day_to_now_window(self) -> tuple[datetime.date, datetime.date]:
+        """回傳台北時間昨天到今天的日期範圍。"""
         now = datetime.now(ZoneInfo(TAIPEI_TZ))
         return now.date() - timedelta(days=1), now.date()
 
     def _filter_previous_day_to_now(self, items: list[dict[str, Any]], date_keys: tuple[str, ...]) -> list[dict[str, Any]]:
+        """只保留日期在昨天到今天之間的項目，並去除重複。"""
         start_date, end_date = self._previous_day_to_now_window()
         result = []
         seen = set()
@@ -580,6 +595,7 @@ class EmailAgent:
     def _digest_html(self, digest: dict[str, Any], report: dict[str, Any]) -> str:
         """Email 最上方的 Agent 研究摘要；不放法說會重複訊號、不放模型健康度。"""
         def bullet_list(items: list[str], css_class: str = "") -> str:
+            """把文字清單組成最多 10 項的 HTML 項目。"""
             if not items:
                 return "<li>目前沒有可用資料。</li>"
             return "".join(
@@ -769,6 +785,7 @@ class EmailAgent:
     # Market section
     # =======================================================================
     def _market_section(self, report: dict[str, Any]) -> str:
+        """組出報告的市場區塊：上漲與下跌前 5 名及產業概況。"""
         mm = report.get("market_movers", {}) or {}
         movers = self._reportable_market_rows(report)
 
@@ -787,6 +804,7 @@ class EmailAgent:
         data_date = data_asof[:10] if len(data_asof) >= 10 else ""
 
         def industry_business(x: dict[str, Any]) -> str:
+            """取得股票的業務分類；查不到時顯示未分類。"""
             symbol = str(x.get("symbol", "")).strip().upper().replace(".TW", "")
             p = profiles.get(symbol, {}) if isinstance(profiles, dict) else {}
             business = str(
@@ -879,6 +897,7 @@ class EmailAgent:
         """
 
     def _colored_table(self, headers: list[str], rows: list[list[Any]], signal: str) -> str:
+        """組出漲跌欄位有顏色的 HTML 表格。"""
         if not rows:
             return "<p class='muted'>目前沒有可用資料。</p>"
 
@@ -972,6 +991,7 @@ class EmailAgent:
         stock_evidence: dict[str, list[dict[str, Any]]] = {}
 
         def values(value: Any) -> list[str]:
+            """把字串或清單統一成去空白的字串清單。"""
             if isinstance(value, (list, tuple, set)):
                 return [str(v).strip() for v in value if str(v).strip()]
             if isinstance(value, str) and value.strip():
@@ -979,6 +999,7 @@ class EmailAgent:
             return []
 
         def normalized_code(value: Any) -> str:
+            """從文字取出四碼股票代號；找不到時回傳空字串。"""
             match = re.search(r"(?<!\d)(\d{4}[A-Z]?)(?!\d)", str(value or "").upper().replace(".TW", ""))
             return match.group(1) if match else ""
 
@@ -1141,6 +1162,7 @@ class EmailAgent:
         )
 
     def _themes_section(self, report: dict[str, Any]) -> str:
+        """組出強度前 3 名的主要利多題材區塊。"""
         themes = [x for x in report.get("bullish_themes", []) if isinstance(x, dict)]
         themes = sorted(
             themes,
@@ -1209,6 +1231,7 @@ class EmailAgent:
         )[:10]
 
         def period_label(value: Any) -> str:
+            """整理財報期間文字；沒有資料時顯示期間未標示。"""
             text = str(value or "").strip()
             if not text or text.lower() in {"none", "nan", "nat", "null", "unknown"}:
                 return "期間未標示"
@@ -1282,6 +1305,7 @@ class EmailAgent:
     # Model health
     # =======================================================================
     def _source_section(self, report: dict[str, Any]) -> str:
+        """組出報告使用的資料來源與筆數區塊。"""
         sources = report.get("official_sources", {}) or {}
         source_text = (
             f"TWSE公告 {sources.get('twse_announcements_rows', 0)} 筆、"
@@ -1306,6 +1330,7 @@ class EmailAgent:
     # Full HTML / text
     # =======================================================================
     def build_html(self, report: dict[str, Any]) -> str:
+        """組出盤後研究報告的完整 HTML 郵件。"""
         report_date = self._esc(report.get("report_date", ""))
         watchlist = report.get("research_scope", {}).get("watchlist_symbols", []) or []
         digest = self._agent_digest(report)
@@ -1384,6 +1409,7 @@ a:hover{{text-decoration:underline}}
 </html>"""
 
     def build_text(self, report: dict[str, Any]) -> str:
+        """組出盤後研究報告的純文字版本。"""
         digest = self._agent_digest(report)
         lines = [
             f"AI 台股盤後財報｜{report.get('report_date', '')}",
@@ -1542,6 +1568,7 @@ a:hover{{text-decoration:underline}}
         return digest_html + "<div class='earnings-list'>" + "".join(blocks) + "</div>"
 
     def build_morning_html(self, report: dict[str, Any]) -> str:
+        """組出早報 HTML 郵件；推薦資料不足時從財經快取補上。"""
         report_date = self._esc(report.get("report_date", ""))
         watchlist = report.get("symbols", []) or report.get("research_scope", {}).get("watchlist_symbols", []) or []
         morning = report.get("morning_agent", {}) or {}
@@ -1681,6 +1708,7 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
         return "\n".join(lines)
 
     def _smtp_send_once(self, message: EmailMessage, host: str, port: int, use_ssl: bool) -> list[str]:
+        """以指定主機與連線方式寄一次信，回傳連線紀錄。"""
         logs: list[str] = []
         context = ssl.create_default_context()
         logs.append(f"CONNECT {host}:{port} {'SSL' if use_ssl else 'STARTTLS'}")
@@ -1714,12 +1742,14 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
         return logs
 
     def _smtp_candidates(self) -> list[tuple[str, int, bool]]:
+        """回傳要嘗試的 SMTP 連線：原設定與 465／587 的備援。"""
         c = self.config
         primary = (c.smtp_host, c.smtp_port, c.use_ssl or c.smtp_port == 465)
         fallback = (c.smtp_host, 587, False) if c.smtp_port == 465 else (c.smtp_host, 465, True)
         return [primary] if primary == fallback else [primary, fallback]
 
     def _smtp_send(self, message: EmailMessage) -> list[str]:
+        """依序嘗試各連線方式寄信；帳密錯誤立即拋出，全部失敗時拋出彙整錯誤。"""
         errors: list[str] = []
         for host, port, use_ssl in self._smtp_candidates():
             try:
@@ -1731,6 +1761,7 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
         raise smtplib.SMTPServerDisconnected(" | ".join(errors) or "SMTP connection failed")
 
     def diagnose_smtp(self) -> dict[str, Any]:
+        """測試各 SMTP 連線方式並回傳診斷結果。"""
         result: dict[str, Any] = {
             "sender": self.config.sender,
             "smtp_host": self.config.smtp_host,
@@ -1787,6 +1818,7 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
     # =======================================================================
     def _write_marker(self, report_date: str, payload: dict[str, Any]) -> None:
         # 只做最後一次寄送紀錄；不再阻止下一次寄信。
+        """寫入最後一次寄送紀錄；失敗時略過。"""
         marker = self.email_dir / f"sent_{report_date or 'unknown'}.json"
         try:
             marker.write_text(
@@ -2227,6 +2259,7 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
             return {"sent": False, "error": f"SMTP 寄送訂閱成功信失敗：{type(exc).__name__}: {exc}"}
 
     def load_latest_morning_report(self) -> dict[str, Any] | None:
+        """讀取最新的早報 JSON；沒有或損毀時回傳 None。"""
         files = sorted(self.output_dir.glob("morning_*.json"))
         if not files:
             return None
@@ -2237,12 +2270,14 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
             return None
 
     def send_latest_morning_report(self, force: bool = False) -> dict[str, Any]:
+        """寄出最新一份早報；沒有早報時回傳略過原因。"""
         report = self.load_latest_morning_report()
         if not report:
             return {"sent": False, "skipped": True, "reason": "目前沒有已保存的早報。", "status": self.status()}
         return self.send_report(report, force=force)
 
     def load_latest_report(self) -> dict[str, Any] | None:
+        """讀取最新的盤後研究 JSON；沒有或損毀時回傳 None。"""
         files = sorted(self.output_dir.glob("research_*.json"))
         if not files:
             return None
@@ -2253,6 +2288,7 @@ h1{{margin:0 0 4px;font-size:28px;color:#111827}} h2{{margin-top:28px;border-bot
             return None
 
     def send_latest_report(self, force: bool = False) -> dict[str, Any]:
+        """寄出最新一份盤後研究；沒有報告時回傳略過原因。"""
         report = self.load_latest_report()
         if not report:
             return {

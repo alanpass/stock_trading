@@ -58,6 +58,7 @@ _mem: dict[str, tuple[float, object]] = {}
 
 
 def _num(v) -> float:
+    """把含逗號或百分號的文字轉成數字；無資料時回傳 NaN。"""
     try:
         s = str(v).replace(",", "").replace("%", "").strip()
         return float(s) if s not in ("", "--", "-", "N/A") else float("nan")
@@ -71,6 +72,7 @@ def _is_stock(code: str) -> bool:
 
 
 def _memo(key: str, ttl: float, fn):
+    """在記憶體快取函式結果，超過 ttl 秒才重算。"""
     with _lock:
         hit = _mem.get(key)
         if hit and time.time() - hit[0] < ttl:
@@ -82,6 +84,7 @@ def _memo(key: str, ttl: float, fn):
 
 
 def _rwd_tables(kind: str, day: date, url: str, params: dict) -> list[dict]:
+    """讀取官方日報並統一成資料表清單。"""
     text = _daily_report_text(kind, day, url, params, HEADERS, 30)
     try:
         js = json.loads(text or "{}")
@@ -95,6 +98,7 @@ def _rwd_tables(kind: str, day: date, url: str, params: dict) -> list[dict]:
 def _openapi(name: str, url: str) -> list[dict]:
     """OpenAPI 只提供最新一期；成功就存一份到磁碟，連不上時沿用上次的資料。"""
     def load():
+        """下載 OpenAPI 資料並存檔；失敗時讀上次的檔案。"""
         path = CACHE / f"openapi_{name}.json"
         try:
             r = requests.get(url, headers=HEADERS, timeout=30)
@@ -114,6 +118,7 @@ def _openapi(name: str, url: str) -> list[dict]:
 
 # ---------------- 全市場日資料 ----------------
 def _quotes(day: date) -> dict[str, dict]:
+    """取得當日上市櫃收盤價、成交量與成交金額。"""
     out = {}
     for t in _rwd_tables("twse_mi_index", day, "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX",
                          {"date": f"{day:%Y%m%d}", "type": "ALLBUT0999", "response": "json"}):
@@ -135,6 +140,7 @@ def _quotes(day: date) -> dict[str, dict]:
 
 
 def _institutions(day: date) -> dict[str, dict]:
+    """取得當日上市櫃三大法人買賣超。"""
     out = {}
     for t in _rwd_tables("twse_t86", day, "https://www.twse.com.tw/rwd/zh/fund/T86",
                          {"date": f"{day:%Y%m%d}", "selectType": "ALLBUT0999", "response": "json"}):
@@ -155,6 +161,7 @@ def _institutions(day: date) -> dict[str, dict]:
 
 
 def _daytrade(day: date) -> dict[str, float]:
+    """取得當日上市櫃現股當沖比率。"""
     out = {}
     tables = _rwd_tables("twse_twtb4u", day, "https://www.twse.com.tw/rwd/zh/dayTrading/TWTB4U",
                          {"date": f"{day:%Y%m%d}", "selectType": "All", "response": "json"})
@@ -196,6 +203,7 @@ def _margin_usage(day: date) -> dict[str, float]:
 
 
 def _foreign_hold(day: date) -> dict[str, float]:
+    """取得外資持股比率。"""
     out = {}
     for t in _rwd_tables("twse_qfiis", day, "https://www.twse.com.tw/rwd/zh/fund/MI_QFIIS",
                          {"date": f"{day:%Y%m%d}", "selectType": "ALLBUT0999", "response": "json"}):
@@ -219,6 +227,7 @@ def _rank_sets(values: dict[str, float], n: int = HOT_RANK) -> tuple[set, set]:
 def market_snapshot() -> dict:
     """最近一個有收盤資料的交易日的全市場特徵資料；同一天只算一次，記憶體保留 30 分鐘。"""
     def build():
+        """找到最近有完整資料的交易日，彙整全市場行情與籌碼。"""
         day = None
         quotes = {}
         for d in recent_trading_days(6):
@@ -244,6 +253,7 @@ def market_snapshot() -> dict:
 def fundamentals() -> dict[str, dict]:
     """本益比、殖利率、股價淨值比、月營收年增率、實收資本額、處置／注意（OpenAPI 最新一期）。"""
     def build():
+        """彙整本益比、殖利率、股價淨值比、營收與注意處置資料。"""
         out: dict[str, dict] = {}
         put = lambda code, **kw: out.setdefault(clean_symbol(code), {}).update(kw)
         for r in _openapi("twse_bwibbu", f"{TWSE_OPENAPI}/exchangeReport/BWIBBU_ALL"):
@@ -283,6 +293,7 @@ def company_financials() -> dict[str, dict]:
                "twse_eps": f"{TWSE_OPENAPI}/opendata/t187ap14_L", "tpex_eps": f"{TPEX_OPENAPI}/mopsfin_t187ap14_O"}
 
     def build():
+        """下載官方資料，組出每檔股票的財務數字。"""
         with ThreadPoolExecutor(max_workers=len(sources)) as pool:
             data = dict(zip(sources, pool.map(lambda kv: _openapi(*kv), sources.items())))
         out: dict[str, dict] = {}
@@ -509,6 +520,7 @@ def holder_since_tag(since: dict) -> tuple[str, str, str]:
 
 
 def _news(symbol: str, name: str, news: list[dict], earnings: list[dict], fund: dict) -> list[dict]:
+    """依處置、注意、法說會與新聞提及產生消息面標籤。"""
     out = []
     if fund.get("disposal"):
         out.append(_tag("處置股", f"處置期間 {fund['disposal']}", "bear"))

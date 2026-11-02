@@ -24,6 +24,7 @@ EXPECTED = {
 
 
 def _payload(result) -> object:
+    """取出 MCP 工具回傳的內容，能解析就轉成 JSON。"""
     if getattr(result, "structured_content", None):
         return result.structured_content
     text = "".join(getattr(c, "text", "") for c in result.content)
@@ -34,6 +35,7 @@ def _payload(result) -> object:
 
 
 async def main(report_date: str) -> int:
+    """啟動 MCP 伺服器，檢查工具都存在並逐一呼叫。"""
     params = StdioServerParameters(command=sys.executable, args=[str(ROOT / "mcp_server" / "tw_stock_server.py")],
                                    env={"PYTHONIOENCODING": "utf-8"}, cwd=str(ROOT))
     async with stdio_client(params) as (read, write):

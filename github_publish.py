@@ -13,6 +13,7 @@ from publish_research_data import BRANCH, REPO, api_request
 
 
 def publish_json(remote_path: str, content: str, message: str) -> dict:
+    """透過 GitHub API 發布檔案；內容相同時不提交，沒有 token 時略過。"""
     token = os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN")
     if not token:
         return {"ok": False, "skipped": True, "reason": "GITHUB_TOKEN 未設定"}

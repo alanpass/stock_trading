@@ -28,14 +28,17 @@ NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")
 
 
 def _result(errors: list[str], warnings: list[str], **stats: Any) -> dict[str, Any]:
+    """組出檢查結果：是否通過、錯誤、警告與統計。"""
     return {"ok": not errors, "errors": errors, "warnings": warnings, "stats": stats}
 
 
 def _load(path: Path) -> Any:
+    """讀取 JSON 檔。"""
     return json.loads(path.read_text(encoding="utf-8"))
 
 
 def _text(*parts: Any) -> str:
+    """把多個字串或清單併成一段文字。"""
     out = []
     for p in parts:
         if isinstance(p, (list, tuple)):
@@ -46,6 +49,7 @@ def _text(*parts: Any) -> str:
 
 
 def _advice_hits(text: str) -> list[str]:
+    """找出文字中違規的投資建議字詞。"""
     return [p for p in ADVICE_PHRASES if p in text]
 
 
@@ -58,6 +62,7 @@ def _package_urls(package: dict[str, Any]) -> set[str]:
 
 
 def _to_float(value: Any) -> float | None:
+    """轉成浮點數；失敗或 NaN 時回傳 None。"""
     try:
         v = float(value)
         return v if v == v else None
@@ -83,6 +88,7 @@ def quality_gate(check: dict, write_status_fn=None) -> int | None:
 # 盤後研究
 # ----------------------------------------------------------------------------
 def validate_afterclose(report_date: str) -> dict[str, Any]:
+    """檢查盤後研究筆記的格式、完整度與涵蓋範圍。"""
     d = JOB_ROOT / f"afterclose_{report_date}"
     if not (d / "package.json").exists():
         return _result([f"找不到研究包 {d / 'package.json'}，請先執行 --prepare"], [])
@@ -170,6 +176,7 @@ def validate_afterclose(report_date: str) -> dict[str, Any]:
 # 早報
 # ----------------------------------------------------------------------------
 def validate_morning(report_date: str) -> dict[str, Any]:
+    """檢查早報筆記的格式與內容。"""
     d = JOB_ROOT / f"morning_{report_date}"
     if not (d / "package.json").exists():
         return _result([f"找不到研究包 {d / 'package.json'}，請先執行 --prepare"], [])
@@ -213,6 +220,7 @@ def validate_morning(report_date: str) -> dict[str, Any]:
 # 財經 AI 重點 / 法說會
 # ----------------------------------------------------------------------------
 def validate_finance_digest(notes_path: str | Path, latest_path: str | Path | None = None) -> dict[str, Any]:
+    """檢查財經今日重點與逐篇重點是否對得上目前新聞。"""
     notes = _load(Path(notes_path))
     latest = _load(Path(latest_path or REPORT_DIR / "finance_info_latest.json"))
     errors: list[str] = []
@@ -239,6 +247,7 @@ def validate_finance_digest(notes_path: str | Path, latest_path: str | Path | No
 
 
 def validate_earnings_memo(notes_path: str | Path, latest_path: str | Path | None = None) -> dict[str, Any]:
+    """檢查法說會備忘錄是否對得上目前的法說會資料。"""
     notes = _load(Path(notes_path))
     latest = _load(Path(latest_path or REPORT_DIR / "finance_info_latest.json"))
     memos = {str(x.get("url") or x.get("source_url") or ""): x for x in latest.get("earnings", []) or [] if isinstance(x, dict)}

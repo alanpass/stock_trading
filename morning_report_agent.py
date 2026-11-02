@@ -54,6 +54,7 @@ DEFAULT_WATCHLIST = [
 
 
 def _clean_symbol(v: Any) -> str:
+    """去掉 .TW 並轉大寫，得到統一的股票代號。"""
     s = str(v or "").strip().upper()
     if s.endswith(".TW"):
         s = s[:-3]
@@ -61,10 +62,12 @@ def _clean_symbol(v: Any) -> str:
 
 
 def _clean_text(v: Any, limit: int = 2000) -> str:
+    """合併空白並截斷到指定長度。"""
     return re.sub(r"\s+", " ", str(v or "")).strip()[:limit]
 
 
 def _safe_float(v: Any, default: float | None = None) -> float | None:
+    """轉成有限浮點數；失敗時回傳 default。"""
     try:
         x = float(v)
         if x != x or x in (float("inf"), float("-inf")):
@@ -91,6 +94,7 @@ def _first_meaningful_text(item: dict[str, Any], limit: int = 900) -> str:
 
 
 def _news_fallback_summary(item: dict[str, Any]) -> str:
+    """取得新聞的摘要文字；都沒有時回傳提醒回看原文的說明。"""
     text = _first_meaningful_text(item, 1000)
     title = _clean_text(item.get("title") or item.get("headline") or "財經事件", 160)
     if text and text != title:
@@ -102,12 +106,15 @@ def _news_fallback_summary(item: dict[str, Any]) -> str:
 
 
 class MorningResearchAgent:
+    """組出早報研究包與 Claude 尚未完成時使用的保守版早報。"""
     def __init__(self, base_dir: str | Path = "."):
+        """設定輸出資料夾。"""
         self.base = Path(base_dir).resolve()
         self.output_dir = self.base / "output" / "research_reports"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
     def _load_latest_research(self) -> dict[str, Any]:
+        """由新到舊找到第一份可讀的盤後研究。"""
         files = sorted(self.output_dir.glob("research_*.json"))
         for p in reversed(files):
             try:
@@ -128,6 +135,7 @@ class MorningResearchAgent:
         cutoff = today - timedelta(days=max(0, int(days) - 1))
 
         def _extract_recent(raw_items: list[dict[str, Any]], source: str) -> list[dict[str, Any]]:
+            """篩出時間範圍內的法說會並去除重複。"""
             out: list[dict[str, Any]] = []
             seen: set[tuple[str, str, str]] = set()
             for item in raw_items:
@@ -283,6 +291,7 @@ class MorningResearchAgent:
             }
 
     def _fallback_news_from_raw_cache(self, payload: dict[str, Any], watchlist: list[str]) -> list[dict[str, Any]]:
+        """從原始新聞快取組出早報用的新聞清單。"""
         articles = [x for x in (payload.get("cnyes_news", {}).get("articles", []) or []) if isinstance(x, dict)]
         rows: list[dict[str, Any]] = []
         for article in articles[:60]:
@@ -306,6 +315,7 @@ class MorningResearchAgent:
         return rows
 
     def _build_payload(self, watchlist: list[str]) -> dict[str, Any]:
+        """彙整盤後研究、法說會、新聞與公司資料，組出早報研究包。"""
         now = datetime.now(TAIPEI)
         report_date = now.strftime("%Y-%m-%d")
         research = self._load_latest_research()
@@ -427,6 +437,7 @@ class MorningResearchAgent:
         seen_news: set[str] = set()
 
         def resolve_news_date(item: dict[str, Any], title: str) -> str:
+            """從新聞欄位或原始文章比對出發布日期。"""
             for key in ("published_at", "published_time", "date", "created_at", "updated_at", "publishedAt"):
                 value = str(item.get(key, "") or "").strip()
                 if re.search(r"20\d{2}-\d{2}-\d{2}", value):
@@ -530,6 +541,7 @@ class MorningResearchAgent:
         stock_evidence: dict[str, list[dict[str, Any]]] = {}
 
         def add_stock_evidence(sym: str, item: dict[str, Any]) -> None:
+            """把新聞加入自選股的證據清單。"""
             sym = _clean_symbol(sym)
             if sym not in watchlist or sym not in profile_lookup:
                 return
@@ -863,6 +875,7 @@ class MorningResearchAgent:
         return result
 
     def run(self, watchlist: list[str], payload: dict[str, Any] | None = None) -> dict[str, Any]:
+        """回傳等待 Claude 撰寫的保守版早報。"""
         payload = payload if isinstance(payload, dict) else self._build_payload(watchlist)
         # 早報研究由 Claude 排程任務完成（morning-report skill），此處只回傳程式化 fallback。
         return {**self._fallback(payload, "等待 Claude 早報研究"), "agent_status": PENDING_STATUS}

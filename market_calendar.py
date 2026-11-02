@@ -54,12 +54,14 @@ KNOWN_TWSE_CLOSED_2026 = {
 
 
 def _cache_path(base_dir: str | Path, year: int) -> Path:
+    """該年度休市日快取檔的路徑。"""
     p = Path(base_dir).resolve() / "data" / "cache"
     p.mkdir(parents=True, exist_ok=True)
     return p / f"twse_holidays_{year}.json"
 
 
 def _parse_rows(payload) -> dict[str, str]:
+    """從證交所休市資料解析出 {日期: 名稱}。"""
     out: dict[str, str] = {}
     rows = []
     if isinstance(payload, dict):
@@ -97,6 +99,7 @@ def _with_known(closed: dict[str, str], year: int) -> dict[str, str]:
 
 
 def get_twse_closed_dates(base_dir: str | Path = ".", year: int | None = None, force: bool = False) -> dict[str, str]:
+    """取得該年度休市日：優先用快取，否則向證交所查詢。"""
     year = int(year or datetime.now(TAIPEI_TZ).year)
     path = _cache_path(base_dir, year)
     if path.exists() and not force:
@@ -128,6 +131,7 @@ def get_twse_closed_dates(base_dir: str | Path = ".", year: int | None = None, f
 
 
 def is_twse_trading_day(value=None, base_dir: str | Path = ".") -> bool:
+    """指定時間（預設現在）是否為台股交易日。"""
     if value is None:
         ts = pd.Timestamp.now(tz=TAIPEI_TZ)
     else:
@@ -143,6 +147,7 @@ def is_twse_trading_day(value=None, base_dir: str | Path = ".") -> bool:
 
 
 def market_status_text(value=None, base_dir: str | Path = ".") -> str:
+    """組出市場狀態文字：週末、休市、盤中或盤後。"""
     if value is None:
         ts = pd.Timestamp.now(tz=TAIPEI_TZ)
     else:

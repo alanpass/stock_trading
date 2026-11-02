@@ -32,6 +32,7 @@ _client: FugleClient | None = None
 
 
 def _fugle() -> FugleClient:
+    """建立並重用 Fugle 客戶端。"""
     global _client
     if _client is None:
         _client = FugleClient(wait_on_limit=True)
@@ -39,6 +40,7 @@ def _fugle() -> FugleClient:
 
 
 def _num(v):
+    """轉成四捨五入的有限數字；否則回傳 None。"""
     try:
         v = float(v)
         return round(v, 4) if np.isfinite(v) else None
@@ -47,6 +49,7 @@ def _num(v):
 
 
 def _model_for(symbol: str, hist: pd.DataFrame):
+    """載入當日訓練過的進場模型；沒有時重新訓練並存檔。"""
     key = str(pd.to_datetime(hist["date"]).dt.date.max())
     model = em.load_saved_model(symbol, key)
     if model is None:
@@ -56,6 +59,7 @@ def _model_for(symbol: str, hist: pd.DataFrame):
 
 
 def _model_metrics(model) -> dict:
+    """整理模型的樣本外績效指標。"""
     return {
         "brier_skill": _num(getattr(model, "brier_skill", None)),
         "prob_has_skill": bool(getattr(model, "has_skill", False)),
@@ -67,6 +71,7 @@ def _model_metrics(model) -> dict:
 
 
 def analyze(symbol: str) -> dict:
+    """分析單一股票的進場建議：盤中使用今日 5 分 K，並附上模型績效。"""
     symbol = clean_symbol(symbol)
     client = _fugle()
     hist = em.load_training_intraday(client, symbol, days=140)
@@ -97,6 +102,7 @@ def analyze(symbol: str) -> dict:
 
 
 def audit(symbols: list[str] | None = None, save: bool = True) -> dict:
+    """重新檢驗股票的進場模型，並與上次結果比較預測力變化。"""
     if not symbols:
         symbols = [str(s) for s in json.loads((BASE / "user_watchlist.json").read_text(encoding="utf-8"))]
     previous, previous_at = {}, None
@@ -142,6 +148,7 @@ def audit(symbols: list[str] | None = None, save: bool = True) -> dict:
 
 
 def main() -> int:
+    """命令列入口：分析單檔（analyze）或稽核模型（audit）。"""
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="進場分析與模型稽核")

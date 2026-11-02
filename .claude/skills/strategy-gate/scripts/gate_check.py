@@ -30,6 +30,7 @@ def check(t: pd.DataFrame, hindsight: bool, max_dd: float | None = MAX_DD) -> di
     res = {"trades": int(len(t)), "days": len(days), "checks": []}
 
     def add(name, ok, detail):
+        """記錄一項檢查的名稱、是否通過與說明。"""
         res["checks"].append({"name": name, "ok": bool(ok), "detail": detail})
 
     add("樣本數", len(t) >= MIN_TRADES and len(days) >= MIN_DAYS, f"{len(t)} 筆／{len(days)} 天（需 ≥{MIN_TRADES} 筆、≥{MIN_DAYS} 天）")
@@ -61,6 +62,7 @@ def check(t: pd.DataFrame, hindsight: bool, max_dd: float | None = MAX_DD) -> di
 
 
 def main() -> int:
+    """解析命令列參數，檢查回測 CSV 並輸出驗證結果；通過回傳 0，否則回傳 1。"""
     ap = argparse.ArgumentParser()
     ap.add_argument("csv")
     ap.add_argument("--name", required=True)

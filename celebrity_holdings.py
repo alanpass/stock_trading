@@ -79,6 +79,7 @@ POLITICIANS = [
 
 
 def _get(url: str, timeout: int = 20) -> bytes:
+    """以 SEC 要求的標頭下載網址內容。"""
     req = urllib.request.Request(url, headers=SEC_HEADERS)
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         return resp.read()
@@ -143,6 +144,7 @@ def _parse_info_table(cik: int, accession: str) -> dict[str, dict]:
 
 
 def _change_label(cur: dict | None, prev: dict | None) -> str:
+    """比較本季與上季持股，回傳新進、出清、加碼、減碼或持平。"""
     if prev is None:
         return "新進"
     if cur is None:
@@ -156,6 +158,7 @@ def _change_label(cur: dict | None, prev: dict | None) -> str:
 
 
 def fetch_guru_portfolio(cik: int, person: str, firm: str, top_n: int = 10) -> dict:
+    """解析最近兩期 13F，回傳投資大師的前幾大持股與增減變化。"""
     filings = _latest_13f_filings(cik)
     if not filings:
         return {"cik": cik, "person": person, "firm": firm, "error": "查無 13F-HR 申報"}
@@ -210,6 +213,7 @@ def fetch_all_gurus(cache_path: Path | None = None, max_age_hours: float = 12) -
         cached = None
 
     def one(g):
+        """抓取單一投資大師的持股；失敗時回傳含錯誤訊息的結果。"""
         try:
             return fetch_guru_portfolio(*g)
         except Exception as exc:

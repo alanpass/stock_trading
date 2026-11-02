@@ -162,6 +162,7 @@ def get_us_indicator_symbols(industry_names: list[str] | tuple[str, ...] | None 
 
 
 def _num(value: Any) -> float | None:
+    """轉成有限浮點數；否則回傳 None。"""
     try:
         number = float(value)
         return number if math.isfinite(number) else None

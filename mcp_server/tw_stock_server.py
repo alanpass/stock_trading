@@ -55,10 +55,12 @@ _packages: dict[str, tuple[float, dict[str, Any]]] = {}
 
 
 def _today() -> str:
+    """台北時區的今天日期。"""
     return datetime.now(TAIPEI).strftime("%Y-%m-%d")
 
 
 def _fugle() -> FugleClient:
+    """建立並重用 Fugle 客戶端。"""
     global _client
     if _client is None:
         _client = FugleClient(wait_on_limit=True)
@@ -66,10 +68,12 @@ def _fugle() -> FugleClient:
 
 
 def _jsonable(value: Any) -> Any:
+    """把資料轉成可序列化成 JSON 的型別。"""
     return json.loads(json.dumps(value, ensure_ascii=False, default=str))
 
 
 def _frame(df) -> list[dict[str, Any]]:
+    """把 DataFrame 轉成可序列化的資料列清單。"""
     if df is None or getattr(df, "empty", True):
         return []
     return _jsonable(df.to_dict("records"))
@@ -85,6 +89,7 @@ def _clip(value: Any, max_chars: int = MAX_CHARS) -> Any:
 
 
 def _package(job: str, report_date: str) -> dict[str, Any]:
+    """讀取研究包並依檔案修改時間快取；找不到時拋出例外。"""
     path = JOBS / f"{job}_{report_date or _today()}" / "package.json"
     if not path.exists():
         raise FileNotFoundError(f"找不到研究包 {path}；請先執行對應的 --prepare")
@@ -96,6 +101,7 @@ def _package(job: str, report_date: str) -> dict[str, Any]:
 
 
 def _research(tool: str, args: dict[str, Any], job: str, report_date: str) -> Any:
+    """用研究包呼叫研究工具，並截斷過長的結果。"""
     return _clip(_toolbox._tool(tool, args, _package(job, report_date)))
 
 

@@ -28,8 +28,10 @@ except Exception:
     INDUSTRIES = {}
     INDUSTRY_OVERRIDES = {}
     def normalize_industry(v):
+        """把產業代碼補成兩位數字。"""
         return str(v or "00").strip().zfill(2)
     def clean_symbol(s):
+        """去掉市場後綴並轉大寫，得到統一的股票代號。"""
         return str(s).strip().upper().split(".")[0]
 
 TPEX_CHAIN_URL = "https://ic.tpex.org.tw/company_chain.php?stk_code={}"
@@ -242,6 +244,7 @@ ALIASES = [
 
 
 def _normalize_group(chain: str) -> str:
+    """把產業鏈路徑轉成網站顯示的業務分類名稱。"""
     s = str(chain or "").strip()
     if not s:
         return "主要業務待建立"
@@ -264,6 +267,7 @@ def chain_paths_by_symbol() -> dict[str, list[str]]:
 
 
 def _pick_primary_chain(paths: list[str], industry: str) -> str:
+    """從多條產業鏈路徑中選主要的一條：優先符合官方產業，其次避開主題分類。"""
     for chain_industry in OFFICIAL_CHAIN_INDUSTRIES.get(str(industry).zfill(2), ()):
         for path in paths:
             if path.startswith(f"{chain_industry} > "):
@@ -285,6 +289,7 @@ def _official_industries(path: Path) -> dict[str, dict]:
 
 
 def _fallback_group(industry: str, name: str) -> str:
+    """查不到產業鏈時，依官方產業與公司名稱推測業務分類。"""
     text = f"{name}"
     rules = {
         "01": [("水泥", "水泥／建材")],
@@ -323,6 +328,7 @@ def _is_bad_etf_group(symbol: str, group: str) -> bool:
 
 
 def enrich_profiles(symbols: Iterable[str], path: Path, client=None, force: bool = False, sleep_seconds: float = 0.15) -> pd.DataFrame:
+    """補齊或更新股票的產業與業務資料，寫回 CSV 後回傳結果。"""
     path.parent.mkdir(parents=True, exist_ok=True)
     existing = pd.DataFrame()
     if path.exists() and not force:
@@ -401,6 +407,7 @@ def enrich_profiles(symbols: Iterable[str], path: Path, client=None, force: bool
 
 
 def load_business_master(path: Path) -> pd.DataFrame:
+    """讀取業務主檔並校正代號與產業欄位；讀不到時回傳空表。"""
     columns = ["symbol", "name", "industry", "industry_name", "business_group", "primary_chain", "all_chain_paths", "source_url", "source_type", "updated_at"]
     if not path.exists():
         return pd.DataFrame(columns=columns)
@@ -429,6 +436,7 @@ def load_business_master(path: Path) -> pd.DataFrame:
 
 
 def business_map_for_symbols(symbols: Iterable[str], client=None, path: Path | None = None, force: bool = False) -> dict[str, dict]:
+    """回傳股票的業務資料對照表；缺公司、錯產業或缺名稱時先增量修復。"""
     if path is None:
         raise ValueError("business_master.csv 路徑不可為空")
     codes = list(dict.fromkeys(clean_symbol(s) for s in symbols if clean_symbol(s)))
@@ -485,6 +493,7 @@ def business_map_for_symbols(symbols: Iterable[str], client=None, path: Path | N
 
 
 def profile_for_symbol(symbol: str, path: Path, client=None, force: bool = False) -> dict:
+    """取得單一股票的業務資料；查不到時回傳未分類的預設值。"""
     symbol = clean_symbol(symbol)
     mapping = business_map_for_symbols([symbol], client=client, path=path, force=force)
     return mapping.get(symbol, {

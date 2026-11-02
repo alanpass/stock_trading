@@ -280,6 +280,7 @@ BOOT_MIN_SECONDS = 1.2   # 頁面很快跑完時也至少播這麼久，否則�
 
 def _boot_css(extra: str) -> str:
     # 網站名稱的字體；網站本身的 @import 要到腳本後段才送出，動畫得自己先載入。display=block：字體到之前先留白，不會閃過別的字體
+    """組出載入動畫的 CSS。"""
     font = '@import url("https://fonts.googleapis.com/css2?family=Yuji+Boku&family=Yuji+Syuku&display=block");'
     return "<style>" + font + _BOOT_BASE_CSS + extra + "</style>"
 
@@ -288,6 +289,7 @@ def _boot_loader_html(done: bool = False) -> str:
     """動畫用 site_logo 的真實圖形，最後一格就是網站 logo。整段不能有換行，否則 markdown 會把 HTML 拆開。"""
     def layer(cls: str, inner: str, style: str = "") -> str:
         # 動畫一定要掛在外層 div：掛在 <svg> 上 Chrome 不會交給 GPU（trace 的 compositeFailed=1024），主執行緒一忙就停
+        """組出載入動畫的一層 SVG。"""
         return f'<div class="boot-layer {cls}" style="{style}"><svg viewBox="0 0 54 54" aria-hidden="true">{inner}</svg></div>'
 
     colors = ("#c0392f", "#1f8a58", "#c0392f")   # 台股慣例：紅漲綠跌；最後淡入 logo 色的同一根 K 線取代變色動畫
@@ -326,6 +328,7 @@ elif _boot_started - st.session_state.get("_site_booted_at", 0) < 6:
 
 
 def _finish_boot_loader() -> None:
+    """確保動畫播滿最短時間後淡出，並記錄網站已載入。"""
     if _boot_active:
         time.sleep(max(0.0, BOOT_MIN_SECONDS - (time.time() - _boot_started)))
         _boot_css_slot.markdown(_boot_css(_BOOT_DONE_CSS), unsafe_allow_html=True)
@@ -340,6 +343,7 @@ def _finish_boot_loader() -> None:
 # 久了就 maximum recursion depth exceeded（舊程序中已疊好的包裝也會因此被丟掉）。
 _plotly_chart_orig = getattr(getattr(st, "_main", None), "plotly_chart", None) or st.plotly_chart
 def _light_plotly_chart(fig, *args, **kwargs):
+    """所有圖表統一套用網站淺色主題後再畫出。"""
     try:
         fig.update_layout(
             template="plotly_white",
@@ -364,6 +368,7 @@ st.plotly_chart = _light_plotly_chart
 @st.cache_resource(show_spinner=False)
 def get_client(api_version: float = 0.0):
     # 網站用：Fugle 每分鐘額度用完時立即放棄該次請求（顯示上一份快取），不讓整頁等待重試。
+    """建立網站用的 Fugle 客戶端。"""
     return FugleClient(wait_on_limit=False)
 
 # 帶 stock_api 的檔案時間：模組重新載入後換新的 client，否則還在用舊版的方法。
@@ -377,6 +382,7 @@ AGENT_SUPERVISOR = MarketSupervisorAgent(AGENT_LOG_DIR)
 # 台股集中市場正常盤中：09:00～13:30。
 # 只有在盤中才啟用每 2 秒自動刷新；盤前、盤後與週末不自動輪詢。
 def is_taiwan_cash_session_open() -> bool:
+    """目前是否為台股現股交易時段。"""
     now = datetime.now(TW_TZ)
     if not is_twse_trading_day(now, BASE):
         return False
@@ -404,9 +410,11 @@ MARKET_OPEN = dt_time(9, 0)
 MARKET_CLOSE = dt_time(13, 30)
 
 def taiwan_now():
+    """目前的台灣時間。"""
     return pd.Timestamp.now(tz=TW_TZ)
 
 def is_market_open_now():
+    """目前是否為交易日的開盤時間內。"""
     now = taiwan_now()
     return is_twse_trading_day(now, BASE) and MARKET_OPEN <= now.time() <= MARKET_CLOSE
 
@@ -468,6 +476,7 @@ def previous_day_daily_quote(code):
 
 @st.cache_data(ttl=1800, show_spinner=False)
 def _previous_day_daily_quote(code):
+    """用日 K 組出最近完成交易日的報價。"""
     end = (taiwan_now().tz_localize(None).normalize() - pd.Timedelta(days=1)).date()
     start = (taiwan_now().tz_localize(None).normalize() - pd.Timedelta(days=10)).date()
     h = client.historical_candles(code, start, end, "D")
@@ -522,12 +531,15 @@ def _watchlist_change(change) -> str | None:
 
 
 def _watchlist_set_items(items: list[str]) -> None:
+    """更新目前名單的股票並去除重複。"""
     def change(doc):
+        """把新股票清單寫入目前名單。"""
         watchlist_store.active_list(doc)["items"] = list(dict.fromkeys(items))
     _watchlist_change(change)
 
 
 def persist_selected_symbol():
+    """把目前分析標的存到本機檔案；失敗時略過。"""
     try:
         (DATA / "last_selected_symbol.json").write_text(
             json.dumps({"symbol": clean_symbol(st.session_state.selected), "saved_at": taiwan_now().isoformat()}, ensure_ascii=False),
@@ -565,6 +577,7 @@ def _quote_bucket(live_seconds: int) -> int:
 
 
 def watch_rows(watchlist_key):
+    """取得自選股行情列；有缺價時最快 15 秒後重查。"""
     if not watchlist_key:   # 新名單還沒有股票：欄位要在，呼叫端才能用 rows.code 篩選
         return pd.DataFrame(columns=["code", "name", "industry", "market", "price", "change", "change_pct", "data_date"]), []
     bucket = _quote_bucket(15)
@@ -586,6 +599,7 @@ def _quote_memo() -> dict:
 # 時間格參數不能以底線開頭：st.cache_data 不把底線開頭的參數算進快取鍵，資料會一直放到 ttl 才更新。
 @st.cache_data(ttl=320, show_spinner=False, max_entries=64)
 def _watch_rows(watchlist_key, bucket):
+    """輪流更新自選股報價並組成表格，同時回傳錯誤訊息。"""
     rows, errors, maps = [], [], {}
     market_open = is_market_open_now()
     now = taiwan_now()
@@ -614,6 +628,7 @@ def _watch_rows(watchlist_key, bucket):
     def fetch_one(code):
         # 盤後是本次問題的關鍵：不要使用可能停留在前一交易日的 snapshot。
         # 直接走「今日 Quote -> 今日分K -> 今日日K」的嚴格日期驗證流程。
+        """依盤前、盤中、盤後選擇資料來源，取得單檔報價。"""
         if after_close:
             return get_quote(code) or {}
         if not trading_day or now.time() < MARKET_OPEN:
@@ -634,6 +649,7 @@ def _watch_rows(watchlist_key, bucket):
         # 逐檔查價每檔都花一次額度，整份名單每 15 秒重查會超過上限：改成每輪只查最久沒更新的幾檔。
         # 沒有今天行情的股票一定要查，否則開盤後會把昨天的價格當成現價。
         def fetched_at(code):
+            """該股票今日報價的查詢時間，用來挑出最久沒更新的。"""
             hit = memo.get(code)
             return hit[2] if hit and str(hit[1].get("date", today.isoformat()))[:10] == today.isoformat() else 0
         oldest = sorted(watchlist, key=fetched_at)
@@ -642,6 +658,7 @@ def _watch_rows(watchlist_key, bucket):
 
     def fetch_memo(code):
         # 這個時間格查過就不再花額度；這次查不到就沿用上一筆（列上的資料日期仍是舊資料本身的日期）。
+        """有快取就沿用；否則查詢，查不到時保留上一筆。"""
         hit = memo.get(code)
         if hit and (hit[0] == bucket or code not in refresh):
             return hit[1]
@@ -761,6 +778,7 @@ def _watch_rows(watchlist_key, bucket):
 @st.cache_data(ttl=21600, show_spinner=False)
 def get_all_tickers() -> pd.DataFrame:
     # 6 小時讀一次全市場產業主檔（主檔超過一天才重建）；盤中 2 秒刷新不會反覆查詢全市場。
+    """取得全市場股票主檔，失敗時改向 API 查詢。"""
     cache_path = DATA / "industry_master.csv"
     try:
         df = build_master(client, cache_path, force=False)
@@ -803,6 +821,7 @@ def get_business_profiles_cached(symbols: tuple[str, ...]) -> dict:
 
 
 def search_stock(keyword: str) -> pd.DataFrame:
+    """依代號或名稱搜尋；找不到時重建主檔再找一次。"""
     q = str(keyword or "").strip().upper()
     if not q:
         return pd.DataFrame()
@@ -819,6 +838,7 @@ def search_stock(keyword: str) -> pd.DataFrame:
 
 
 def _match_stock(df: pd.DataFrame, q: str) -> pd.DataFrame:
+    """先找完全相符；否則找部分相符，開頭相符與一般股票排前面。"""
     if df.empty:
         return df
     code_s = df["symbol"].astype(str).str.upper()
@@ -834,6 +854,7 @@ def _match_stock(df: pd.DataFrame, q: str) -> pd.DataFrame:
 
 
 def get_quote(code: str) -> dict:
+    """取得目前時間格的快取報價。"""
     return _get_quote(code, _quote_bucket(QUOTE_REFRESH_SECONDS))
 
 
@@ -956,6 +977,7 @@ class _NoData(Exception):
 
 
 def get_intraday(code: str, timeframe: str) -> pd.DataFrame:
+    """取得盤中 K 線；沒有資料時回傳空表。"""
     try:
         return _get_intraday_cached(clean_symbol(code), str(timeframe), _quote_bucket(CHART_REFRESH_SECONDS))
     except _NoData:
@@ -1020,6 +1042,7 @@ def _fetch_intraday(code: str, timeframe: str) -> pd.DataFrame:
     return pd.DataFrame()
 
 def get_trades(code: str) -> pd.DataFrame:
+    """取得成交明細；沒有資料時回傳空表。"""
     try:
         return _get_trades_cached(clean_symbol(code), _quote_bucket(CHART_REFRESH_SECONDS))
     except _NoData:
@@ -1028,6 +1051,7 @@ def get_trades(code: str) -> pd.DataFrame:
 
 @st.cache_data(ttl=320, show_spinner=False, max_entries=16)
 def _get_trades_cached(code: str, bucket: int) -> pd.DataFrame:
+    """查詢並快取成交明細；失敗時拋出 _NoData，避免快取空結果。"""
     try:
         payload = client._get(f"intraday/trades/{code}")
     except Exception as exc:
@@ -1036,18 +1060,22 @@ def _get_trades_cached(code: str, bucket: int) -> pd.DataFrame:
 
 @st.cache_data(ttl=5, show_spinner=False)
 def get_taiex() -> pd.DataFrame:
+    """取得加權指數的盤中資料。"""
     return fetch_taiex_intraday()
 
 @st.cache_data(ttl=60, show_spinner=False)
 def get_ticker(code: str) -> dict:
+    """取得股票基本資料。"""
     return client.ticker(code)
 
 @st.cache_data(ttl=1800, show_spinner=False)
 def get_institutions(code: str, market_name: str) -> pd.DataFrame:
+    """取得三大法人買賣超。"""
     return fetch_institution_daily(code, market=market_name)
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def get_tdcc(code: str) -> pd.DataFrame:
+    """取得集保大戶與散戶資料。"""
     return fetch_tdcc_big_retail(code)
 
 @st.cache_data(ttl=60, show_spinner=False)
@@ -1098,6 +1126,7 @@ def get_history(code: str, days: int, adjusted: bool = False) -> pd.DataFrame:
 
 
 def taipei_time(value):
+    """把時間戳或時間字串轉成台北時間；失敗時回傳 NaT。"""
     if value is None or (isinstance(value, float) and np.isnan(value)):
         return pd.NaT
     try:
@@ -1115,6 +1144,7 @@ def taipei_time(value):
 
 
 def normalize_intraday(df: pd.DataFrame) -> pd.DataFrame:
+    """把 K 線轉成台北時間，只保留盤中並依時間排序。"""
     if df.empty:
         return df
     d = df.copy()
@@ -1125,6 +1155,7 @@ def normalize_intraday(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def color_for_value(v):
+    """依數值正負回傳漲跌文字的樣式。"""
     try:
         x = float(v)
         if x > 0: return "color:#ef4444;font-weight:800"
@@ -1425,6 +1456,7 @@ def _stock_svg(variant: int = 0, wide: bool = False, dark: bool = False) -> str:
 
 
 def _site_header_svg() -> str:
+    """組出網站頁首的 Logo 與名稱。"""
     return f'''
     <div class="brand-block" aria-label="台股即時互動式分析系統">
       <div class="brand-mark">{site_logo.svg_markup()}</div>
@@ -1741,6 +1773,7 @@ def render_strategy_search() -> None:
 
 
 def _stock_financials(code: str) -> dict:
+    """取得股票的財務數字；失敗時回傳空字典。"""
     try:
         import stock_features
         return stock_features.company_financials().get(clean_symbol(code), {})
@@ -1767,6 +1800,7 @@ def _render_financial_strip(code: str) -> None:
         return
     has = lambda key: pd.notna(fin.get(key, np.nan))
     def pct(key):
+        """組出帶漲跌顏色的百分比。"""
         if not has(key):
             return "<b>--</b>"
         tone = "fin-up" if fin[key] > 0 else "fin-down" if fin[key] < 0 else ""
@@ -1787,6 +1821,7 @@ def _render_financial_strip(code: str) -> None:
 
 
 def _collect_json_candidates(patterns: list[str]) -> list[Path]:
+    """找出符合檔名的 JSON，新的排前面並去除重複。"""
     roots = [OUTPUT, OUTPUT / "research_reports", BASE / "data"]
     found: list[Path] = []
     for root in roots:
@@ -1804,6 +1839,7 @@ def _collect_json_candidates(patterns: list[str]) -> list[Path]:
 
 
 def _read_json_file(path: Path):
+    """讀取 JSON；失敗時回傳 None。"""
     try:
         return json.loads(path.read_text(encoding="utf-8"))
     except Exception:
@@ -1811,6 +1847,7 @@ def _read_json_file(path: Path):
 
 
 def _as_date(value):
+    """轉成日期；失敗或空值時回傳 None。"""
     try:
         if value is None or str(value).strip() == "":
             return None
@@ -1820,6 +1857,7 @@ def _as_date(value):
 
 
 def _flatten_records(obj):
+    """從各種 JSON 結構取出字典清單。"""
     if isinstance(obj, list):
         return [x for x in obj if isinstance(x, dict)]
     if isinstance(obj, dict):
@@ -1907,6 +1945,7 @@ def _recent_earnings_items(days: int = 5):
     items = cache.get("earnings", []) if isinstance(cache, dict) else []
 
     def parse_item(item):
+        """解析一場法說會；不在時間範圍內時回傳 None。"""
         if not isinstance(item, dict):
             return None
         dt = _as_date(
@@ -1960,6 +1999,7 @@ def _recent_news_items(days: int = 2):
     items = cache.get("news", []) if isinstance(cache, dict) else []
 
     def parse_item(item):
+        """解析一則新聞；不在時間範圍內時回傳 None。"""
         if not isinstance(item, dict):
             return None
         dt = _as_date(
@@ -2003,6 +2043,7 @@ def _recent_news_items(days: int = 2):
 
 
 def _record_company(item: dict) -> str:
+    """組出「公司（代號）」的顯示名稱，必要時從標題取得公司名。"""
     code = clean_symbol(item.get("symbol") or item.get("code") or item.get("stock_code") or "")
     name = str(item.get("name") or item.get("company") or item.get("company_name") or "").strip()
     if not name or name == code:
@@ -2046,17 +2087,20 @@ def _fin_hl(text, terms) -> str:
 
 
 def _fin_badge(sentiment: str) -> str:
+    """組出多空標籤。"""
     s = str(sentiment or "中性")
     cls = {"利多": "up", "利空": "down", "混合": "mix"}.get(s, "flat")
     return f'<span class="fin-badge {cls}">{s}</span>'
 
 
 def _fin_chips(items, cls: str = "") -> str:
+    """組出一排小標籤。"""
     from html import escape as _esc
     return "".join(f'<span class="fin-chip {cls}">{_esc(str(x))}</span>' for x in items if str(x).strip())
 
 
 def _digest_author(digest: dict) -> str:
+    """組出摘要的來源文字。"""
     by = digest.get("generated_by")
     if by == "claude":
         at = str(digest.get("agent_generated_at", ""))[11:16]
@@ -2065,6 +2109,7 @@ def _digest_author(digest: dict) -> str:
 
 
 def _render_news_digest(digest: dict, total_news: int) -> None:
+    """顯示 AI 今日重點：標題、統計、多空主題與追蹤事項。"""
     if not digest:
         return
     stats = digest.get("stats", {}) or {}
@@ -2093,6 +2138,7 @@ def _render_news_digest(digest: dict, total_news: int) -> None:
     bull, bear = digest.get("bullish", []) or [], digest.get("bearish", []) or []
     if bull or bear:
         def col(title, rows, cls):
+            """組出多空主題的一欄。"""
             body = "".join(f'<li>{_fin_hl(x.get("theme", ""), [])}</li>' for x in rows[:4]) or "<li>—</li>"
             return f'<div><div class="fin-sub">{_fin_badge(cls)}{title}</div><ul class="fin-list">{body}</ul></div>'
         parts.append('<div class="fin-two">' + col("利多主題", bull, "利多") + col("利空主題", bear, "利空") + "</div>")
@@ -2107,6 +2153,7 @@ def _render_news_digest(digest: dict, total_news: int) -> None:
     watch, risks = digest.get("watch_items", []) or [], digest.get("risks", []) or []
     if watch or risks:
         def col2(title, rows):
+            """組出文字清單的一欄。"""
             body = "".join(f"<li>{_fin_hl(x, [])}</li>" for x in rows) or "<li>—</li>"
             return f'<div><div class="fin-sub">{title}</div><ul class="fin-list">{body}</ul></div>'
         parts.append('<div class="fin-two">' + col2("👀 待追蹤", watch) + col2("⚠️ 風險", risks) + "</div>")
@@ -2147,6 +2194,7 @@ def _render_earnings_digest(digest: dict, days: int = 5) -> None:
     watch, risks = digest.get("watch_items", []) or [], digest.get("risks", []) or []
     if watch or risks:
         def col(title, rows):
+            """組出文字清單的一欄。"""
             body = "".join(f"<li>{_fin_hl(x, [])}</li>" for x in rows) or "<li>—</li>"
             return f'<div><div class="fin-sub">{title}</div><ul class="fin-list">{body}</ul></div>'
         parts.append('<div class="fin-two">' + col("👀 待追蹤", watch) + col("⚠️ 風險", risks) + "</div>")
@@ -2155,12 +2203,14 @@ def _render_earnings_digest(digest: dict, days: int = 5) -> None:
 
 
 def _safe_url(url) -> str:
+    """只接受 http(s) 網址並轉義；其他回傳空字串。"""
     from html import escape as _esc
     u = str(url or "").strip()
     return _esc(u, quote=True) if u.startswith(("http://", "https://")) else ""
 
 
 def _news_item_html(item: dict, is_open: bool = False) -> str:
+    """組出單則新聞的可展開卡片。"""
     from html import escape as _esc
     title = str(item.get("title") or item.get("headline") or "未命名新聞").strip()
     hl = item.get("highlights") or []
@@ -2318,6 +2368,7 @@ def _earning_item_html(item: dict, label: str, is_open: bool = False) -> str:
 
 
 def render_finance_workspace() -> None:
+    """顯示財經資訊頁。"""
     st.markdown(
         '<div class="content-heading"><div class="eyebrow">DAILY FINANCE</div><h1>財經資訊</h1></div>',
         unsafe_allow_html=True,
@@ -2331,6 +2382,7 @@ def render_finance_workspace() -> None:
 # 180 秒資料快取到期後會重新向 GitHub 取最新 JSON。
 @st.fragment(run_every=60)
 def _render_finance_body() -> None:
+    """顯示新聞與法說會內容。"""
     cache = _load_finance_info_cache()
     earnings = _recent_earnings_items(days=5)
     news = _recent_news_items(days=2)
@@ -2437,10 +2489,12 @@ def _cached_guru_holdings() -> dict:
 
 
 def _fmt_usd(v: float) -> str:
+    """把美元金額格式化成 B 或 M。"""
     return f"${v / 1e9:,.1f}B" if v >= 1e9 else f"${v / 1e6:,.0f}M"
 
 
 def _render_politician_card(p: dict) -> None:
+    """顯示政治人物持股卡片。"""
     color = {"買進": "#c62828", "賣出": "#2e7d32"}
     rows = "".join(
         f'<tr><td><span style="color:{color.get(a, "#555")};font-weight:700">{_esc(a)}</span></td>'
@@ -2464,6 +2518,7 @@ def _render_politician_card(p: dict) -> None:
 
 
 def _render_guru_portfolios() -> None:
+    """顯示投資大師 13F 持股；取不到時顯示提示。"""
     with st.spinner("讀取 SEC 13F 申報…"):
         data = _cached_guru_holdings()
     gurus = [g for g in data.get("gurus", []) if not g.get("error")]
@@ -2713,6 +2768,7 @@ def _cached_subscription_status() -> dict:
 
 
 def render_subscription_workspace() -> None:
+    """顯示聯絡資訊與訂閱頁。"""
     st.markdown(
         f'<div class="page-image-banner contact-page-banner">{_site_image_html(11, wide=True)}'
         '<div class="page-image-shade"></div><div class="page-image-title">聯絡資訊</div></div>',
@@ -2798,6 +2854,7 @@ def render_subscription_workspace() -> None:
         pass
 
 def _get_nav_section() -> str:
+    """從網址或工作階段取得目前頁面；不在允許清單時回到首頁。"""
     default = str(st.session_state.get("nav_section", "home"))
     try:
         value = st.query_params.get("section", default)
@@ -2812,6 +2869,7 @@ def _get_nav_section() -> str:
 
 def _set_nav_section(section: str) -> None:
     # 按鈕的 on_click 在重跑之前執行：同一次重跑就直接畫新頁面，不必再 st.rerun() 多跑一整輪。
+    """切換頁面並同步網址。"""
     st.session_state["nav_section"] = section
     try:
         st.query_params["section"] = section
@@ -2930,6 +2988,7 @@ _SKELETON_HTML = '<div class="skeleton"><span></span><span></span><span class="s
 
 
 def _watchlist_name() -> str:
+    """目前名單的名稱。"""
     return watchlist_store.active_list(st.session_state.watchlist_doc)["name"]
 
 
@@ -2944,6 +3003,7 @@ def _watchlist_after_switch() -> None:
 
 
 def _watchlist_on_pick() -> None:
+    """切換到下拉選單選的名單；登入時記住這個選擇。"""
     doc = st.session_state.watchlist_doc
     doc["active"] = st.session_state.watchlist_pick
     st.session_state.watchlist = watchlist_store.active_list(doc)["items"]
@@ -3019,6 +3079,7 @@ def _watchlist_quick_add(code: str, name: str) -> None:
         st.session_state.wl_add_notice = f"{name}（{code}）已經在「{list_name}」裡。"
     else:
         def change(doc):
+            """把股票加入目前名單（已存在就略過）。"""
             items = watchlist_store.active_list(doc)["items"]
             if code not in items:
                 items.append(code)
@@ -3070,6 +3131,7 @@ def _render_watchlist_add_results() -> None:
 
 
 def _watchlist_step(delta: int) -> None:
+    """切換到上一份或下一份名單。"""
     ids = [x["id"] for x in st.session_state.watchlist_doc["lists"]]
     st.session_state.watchlist_pick = ids[(ids.index(st.session_state.watchlist_doc["active"]) + delta) % len(ids)]
     _watchlist_on_pick()
@@ -3077,6 +3139,7 @@ def _watchlist_step(delta: int) -> None:
 
 @st.dialog("新增自選股名單", width="small")
 def _watchlist_add_dialog() -> None:
+    """新增名單的對話框。"""
     doc = st.session_state.watchlist_doc
     with st.form("wl_add_form", border=False):
         name = st.text_input("名稱", value=watchlist_store.next_default_name(doc), max_chars=watchlist_store.MAX_NAME_LENGTH)
@@ -3092,6 +3155,7 @@ def _watchlist_add_dialog() -> None:
 
 @st.dialog("編輯自選股名單", width="small")
 def _watchlist_edit_dialog() -> None:
+    """改名或刪除名單的對話框。"""
     doc = st.session_state.watchlist_doc
     current = watchlist_store.active_list(doc)
     with st.form("wl_edit_form", border=False):
@@ -3159,6 +3223,7 @@ def _render_watchlist_bar() -> None:
 
 
 def _render_sidebar_watch() -> None:
+    """顯示側欄的自選股；空名單時顯示提示。"""
     if not st.session_state.watchlist:
         st.info("這份名單還沒有股票。在上方輸入代號或名稱加入。" if is_authenticated() else "這份名單還沒有股票。登入後可以加入。")
         return
@@ -3219,6 +3284,7 @@ def render_strategy_workspace() -> None:
             st.fragment(render, run_every=every)()
 
 def render_future_workspace() -> None:
+    """顯示未來分析頁：系統推薦、AI 預測、市場情報與研究筆記。"""
     st.markdown(f'<div class="page-image-banner">{_site_image_html(8, wide=True)}</div>', unsafe_allow_html=True)
     st.markdown('<div class="content-heading"><div class="eyebrow">FUTURE ANALYSIS</div><h1>未來分析</h1><p>把預測、市場情報與研究 Agent 集中在同一頁，讓操作策略之後的判斷有明確出口。</p></div>', unsafe_allow_html=True)
 
@@ -3392,10 +3458,12 @@ def _render_flow_heatmap(payload: dict) -> None:
     peak_down = max((-r["change"] for r in ranks if r["change"] < 0), default=1.0)
 
     def depth(v: float) -> float:
+        """依資金增減幅度算出顏色深度（0 到 1）。"""
         return min(1.0, abs(v) / (peak_up if v > 0 else peak_down)) ** 0.6
 
     def color(v: float) -> str:
         # 台股慣例：資金增加紅、減少綠；增減越多越深（深紅→淺紅、深綠→淺綠）
+        """依增減方向與幅度回傳熱力圖顏色。"""
         t = depth(v)
         base = (139, 26, 26) if v > 0 else (14, 90, 50)
         light = (244, 178, 178) if v > 0 else (168, 220, 188)
@@ -3445,6 +3513,7 @@ def _render_flow_heatmap(payload: dict) -> None:
             names[str(c.get("symbol"))] = c.get("name") or str(c.get("symbol"))
 
     def top_list(side: str, title: str) -> str:
+        """組出資金增加或減少前幾名的清單。"""
         rows = [r for r in ranks if r["side"] == side and r["top"]]
         rows.sort(key=lambda r: r["rank"])
         items = []
@@ -3525,6 +3594,7 @@ def _render_published_rotation(payload: dict) -> None:
     by_name = {str(g.get("name", "")): g for g in groups}
 
     def rotation_label(name: str) -> str:
+        """取得族群的顯示名稱。"""
         return ROTATION_DISPLAY_NAMES.get(str(name), str(name))
 
     def sign_style(value: object) -> str:
@@ -3823,6 +3893,7 @@ def _render_published_rotation(payload: dict) -> None:
         chart_height = max(620, len(average_rows) * 25)
 
         def build_industry_return_chart(rows, *, us_market: bool):
+            """畫出產業報酬的長條圖。"""
             values = [
                 row["return_pct"] if us_market else row["metric_value"]
                 for row in rows
@@ -3996,6 +4067,7 @@ def _render_published_rotation(payload: dict) -> None:
         st.session_state[selection_key] = all_labels.copy()
 
     def _set_rotation_groups(labels: list[str]) -> None:
+        """設定選取的族群。"""
         st.session_state[selection_key] = labels
 
     period_col, quadrant_col = st.columns([1, 1.2], vertical_alignment="bottom")
@@ -4149,6 +4221,7 @@ def _render_published_rotation(payload: dict) -> None:
     table_groups = [g for g in groups if g.get("name") in selected]
     table_groups.sort(key=lambda g: g.get(field) if g.get(field) is not None else -999999, reverse=True)
     def pct(g, k):
+        """格式化百分比；沒有值時顯示破折號。"""
         value = g.get(k)
         return f"{float(value):+.2f}%" if value is not None and np.isfinite(float(value)) else "—"
     table_rows = []
@@ -4703,6 +4776,7 @@ button[title^='從自選股移除']:hover{background-color:rgba(239,68,68,.16)!i
 """, unsafe_allow_html=True)
 
 def _watch_select(code: str) -> None:
+    """切換目前分析標的並重跑頁面。"""
     st.session_state.selected = code
     st.session_state.ai_selected = None
     st.session_state.ai_result = None
@@ -4710,6 +4784,7 @@ def _watch_select(code: str) -> None:
 
 
 def _watch_remove(code: str) -> None:
+    """從目前名單移除股票（需登入）；移除的是分析標的時改看第一檔。"""
     if not is_authenticated():
         st.warning("請先登入，才能刪除自選股。")
         return
@@ -4723,6 +4798,7 @@ def _watch_remove(code: str) -> None:
 
 
 def render_watchlist(compact: bool = False):
+    """顯示自選股行情：compact 用於側欄卡片，否則用表格。"""
     rows, errors = watch_rows(tuple(st.session_state.watchlist))
     chip_map = chip_signals.get_nonblocking(st.session_state.watchlist) if compact else {}
     if not compact:
@@ -4958,6 +5034,7 @@ def _chart_time_labels(d: pd.DataFrame, daily: bool = False):
 
 
 def render_trend():
+    """顯示股價趨勢，可切換日內到一年的期間。"""
     selected = st.session_state.selected
     period = st.radio("期間", ["日內", "五日", "近月", "三月", "一年"], horizontal=True, key="period")
     try:
@@ -5008,6 +5085,7 @@ _LWC_URL = "https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.3/dist/lightweig
 
 
 def _kline_chart_html(d: pd.DataFrame, daily: bool, mas: list, reset_version: int = 0) -> str:
+    """組出 K 線與成交量圖的 HTML（Lightweight Charts）。"""
     stamps = pd.to_datetime(d["date"], errors="coerce")
     if daily:
         times = stamps.dt.strftime("%Y-%m-%d").tolist()
@@ -5210,6 +5288,7 @@ def render_kline():
 # 成交量概況
 # ============================================================
 def render_volume_snapshot():
+    """顯示成交量圖：盤中用 5 分 K，其餘時間用近 45 日。"""
     selected = st.session_state.selected
     try:
         if is_market_open_now():
@@ -5301,6 +5380,7 @@ def get_entry_model(selected: str, training_end_key: str):
 
 
 def render_entry_prediction():
+    """顯示進場建議分析：模型預測與 Agent 協作結果。"""
     selected = st.session_state.selected
 
     try:
@@ -5495,6 +5575,7 @@ def _flow_chips_html(code: str, limit: int = 2) -> str:
 
 
 def _signal_chips_html(res: dict | None, empty_text: str = "目前沒有連續 3 日以上的籌碼訊號", pending_text: str = "籌碼計算中…") -> str:
+    """組出籌碼訊號標籤；計算中或沒有訊號時顯示對應文字。"""
     if res is None:
         return f'<span class="sig-wait">{pending_text}</span>' if pending_text else ""
     sigs = res.get("signals") or []
@@ -5533,6 +5614,7 @@ def _focus_daily(code: str, day_iso: str) -> pd.DataFrame:
 
 @st.cache_data(ttl=920, show_spinner=False, max_entries=128)
 def _focus_minutes(code: str, bucket: int) -> pd.DataFrame:
+    """查詢並快取 1 分 K；額度不足或沒資料時拋出 _NoData，不快取空結果。"""
     if _stock_api.rate_slots_free() < FOCUS_RATE_RESERVE:
         raise _NoData(code)   # 不快取，每分鐘重畫時再補
     k = _fetch_intraday(code, "1")
@@ -5542,6 +5624,7 @@ def _focus_minutes(code: str, bucket: int) -> pd.DataFrame:
 
 
 def _focus_one(code: str, bucket: int, meta: dict) -> dict | None:
+    """掃描單檔今日的價量事件；失敗時回傳 None。"""
     try:
         k = _focus_minutes(code, bucket).copy()
         k["date"] = k["date"].map(taipei_time)
@@ -5563,6 +5646,7 @@ def _focus_one(code: str, bucket: int, meta: dict) -> dict | None:
 
 
 def _focus_feed(watchlist: tuple, meta: dict) -> tuple[list[dict], list[str]]:
+    """平行掃描自選股，回傳結果與查不到的代號。"""
     bucket = int(time.time() // (FOCUS_REFRESH_SECONDS if is_market_open_now() else 900))
     codes = [clean_symbol(c) for c in watchlist]
     with ThreadPoolExecutor(max_workers=6) as pool:
@@ -5716,6 +5800,7 @@ def render_watch_focus():
         hist = ""
         if prior:
             def ev_html(p):
+                """組出一個事件時間點的 HTML。"""
                 side = p["side"] if p["side"] in ("bull", "bear") else ""
                 txt = "<i>・</i>".join(f'<b>{_esc(e["text"])}</b>' for e in p["events"])
                 return f'<span class="fx-ev {side}"><time>{p["time"]:%H:%M}</time>{txt}</span>'
@@ -5750,6 +5835,7 @@ _FEAT_CLASS = {"消息面": "news", "籌碼面": "chip", "價量面": "pv", "基
 
 @st.cache_data(ttl=900, show_spinner=False, max_entries=128)
 def _cached_stock_features(code: str, flow_metric: str = "share20") -> dict:
+    """計算並快取個股的特徵標籤。"""
     tickers = get_all_tickers()
     hit = tickers.loc[tickers["symbol"] == code, "name"] if "symbol" in tickers.columns else pd.Series(dtype=str)
     return stock_features.compute(
@@ -5799,6 +5885,7 @@ def render_stock_features():
 
 
 def render_chip_signals(show_chips: bool = True):
+    """顯示籌碼訊號標籤與連續買賣超表格。"""
     selected = st.session_state.selected
     with st.spinner("計算籌碼訊號…（第一次約 5～20 秒）"):
         res = chip_signals.get_blocking(selected, timeout=90)
@@ -5841,6 +5928,7 @@ def render_chip_signals(show_chips: bool = True):
 
 @st.cache_data(ttl=900, show_spinner=False)
 def _cached_global_indicator(symbol: str) -> dict:
+    """快取國際指標資料。"""
     return fetch_indicator(symbol)
 
 
@@ -5884,6 +5972,7 @@ def render_global_markets() -> None:
 
 
 def render_tdcc():
+    """顯示大戶與散戶持股比例及圓餅圖。"""
     selected = st.session_state.selected
     try:
         tdcc = get_tdcc(selected)
@@ -5905,6 +5994,7 @@ def render_tdcc():
 # Trades - Taiwan time + colored bid/ask
 # ============================================================
 def render_trades():
+    """顯示最新 300 筆成交明細。"""
     selected = st.session_state.selected
     try:
         td = get_trades(selected)
@@ -5930,6 +6020,7 @@ def render_trades():
 # Institutions
 # ============================================================
 def render_institutions():
+    """顯示三大法人買賣超圖表。"""
     selected = st.session_state.selected
     rows, _ = watch_rows(tuple(st.session_state.watchlist)); sr=rows[rows.code==selected]
     try: info=get_ticker(selected)
@@ -6078,6 +6169,7 @@ def history_with_latest_market_bar(code: str, history_days: int = 1100, adjusted
 
 
 def train_selected_ai(selected, industry_code, industry_name):
+    """訓練或重用該產業的 AI 模型，預測指定股票。"""
     from ai_engine import add_features, train, save_model_bundle, load_model_bundle, bundle_is_usable, predict_from_bundle
     selected = clean_symbol(selected)
     industry_code = str(industry_code).zfill(2)
@@ -6184,6 +6276,7 @@ def train_selected_ai(selected, industry_code, industry_name):
 
 
 def render_ai():
+    """顯示 AI 隔日預測與產業模型訓練按鈕。"""
     selected=st.session_state.selected
     st.subheader("AI 隔日預測（優先任務）")
     # 首頁載入時不先呼叫 Fugle ticker；先讀本機產業主檔／預設分類。
@@ -7841,6 +7934,7 @@ def _inject_scroll_reveal() -> None:
 
 
 def is_authenticated() -> bool:
+    """目前是否已登入。"""
     return bool(st.session_state.get("auth_user"))
 
 
@@ -7916,6 +8010,7 @@ def _flush_auth_cookie_op(cookie_manager=None) -> None:
 
 
 def _toggle_auth_panel(mode: str) -> None:
+    """開關帳號面板；按同一模式時收起。"""
     same_panel = (
         bool(st.session_state.get("auth_panel_open", False))
         and str(st.session_state.get("auth_panel_mode", "login")) == mode
@@ -8601,6 +8696,7 @@ mobile_app.inject(_NAV_ICONS, [(key, label) for key, label, _ in SITE_NAV if key
 if current_section != "strategy":
     st.session_state["_strategy_view"] = None  # 回到操作策略時重新以兩段式顯示
 def _render_page(section: str) -> None:
+    """重設區塊狀態並畫出指定頁面。"""
     section_ui.reset()
     st.markdown(section_ui.CSS, unsafe_allow_html=True)
     try:
@@ -8610,6 +8706,7 @@ def _render_page(section: str) -> None:
 
 
 def _render_page_body(section: str) -> None:
+    """依頁面代號呼叫對應的畫面。"""
     if section == "home":
         render_home_workspace()
     elif section == "strategy":

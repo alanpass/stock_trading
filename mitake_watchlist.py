@@ -32,12 +32,14 @@ GROUP_TITLE = "AI"
 
 
 def mitake_running() -> bool:
+    """三竹股市是否正在執行。"""
     out = subprocess.run(["tasklist", "/FI", "IMAGENAME eq 三竹股市.exe", "/FO", "CSV", "/NH"],
                          capture_output=True, text=True, encoding="cp950", errors="replace").stdout
     return "三竹股市.exe" in out
 
 
 def account_dir() -> Path:
+    """找到唯一的三竹帳號資料夾；不唯一時拋出 RuntimeError。"""
     dirs = [d for d in MK_DIR.iterdir() if d.is_dir() and d.name.isdigit()]
     if len(dirs) != 1:
         raise RuntimeError(f"找不到唯一的三竹帳號資料夾：{[d.name for d in dirs]}")
@@ -46,10 +48,12 @@ def account_dir() -> Path:
 
 def _write_utf16(path: Path, lines: list[str]) -> None:
     # 與三竹原檔相同：UTF-16 LE 加 BOM、每行 CRLF 結尾
+    """以三竹使用的編碼寫入檔案。"""
     path.write_bytes(b"\xff\xfe" + "".join(line + "\r\n" for line in lines).encode("utf-16-le"))
 
 
 def picks() -> tuple[str, list[tuple[str, str]]]:
+    """取得最新推薦股票，回傳日期與去重後的 (代號, 名稱)。"""
     data = json.loads(PICKS.read_text(encoding="utf-8"))
     latest = data.get("latest") or {}
     seen, out = set(), []
@@ -62,6 +66,7 @@ def picks() -> tuple[str, list[tuple[str, str]]]:
 
 
 def sync(dry_run: bool = False, allow_running: bool = False) -> dict:
+    """把推薦股票寫入三竹自選股群組，寫入前先備份。"""
     day, stocks = picks()
     if not stocks:
         return {"ok": False, "reason": "沒有推薦股票"}
@@ -91,6 +96,7 @@ def sync(dry_run: bool = False, allow_running: bool = False) -> dict:
 
 
 def main() -> int:
+    """命令列入口：同步推薦股票並印出結果。"""
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="系統推薦股票寫入三竹自選股群組四（AI）")

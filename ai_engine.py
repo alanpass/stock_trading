@@ -58,6 +58,7 @@ def _normalise_metrics(metrics):
 
 
 def _rsi(s, n=14):
+    """計算 n 日 RSI（Wilder 平滑）。"""
     d=s.diff(); up=d.clip(lower=0); dn=-d.clip(upper=0)
     ag=up.ewm(alpha=1/n, adjust=False, min_periods=n).mean()
     al=dn.ewm(alpha=1/n, adjust=False, min_periods=n).mean()
@@ -66,12 +67,14 @@ def _rsi(s, n=14):
 
 
 def _atr(df,n=14):
+    """計算 n 日平均真實波幅 ATR。"""
     prev=df["close"].shift(1)
     tr=pd.concat([(df.high-df.low),(df.high-prev).abs(),(df.low-prev).abs()],axis=1).max(axis=1)
     return tr.rolling(n).mean()
 
 
 def add_features(df, benchmark=None):
+    """依股票分組計算報酬、均線、MACD、RSI、波動與量能等模型特徵。"""
     x=df.copy(); x["date"]=pd.to_datetime(x["date"],errors="coerce")
     if "stock_code" not in x.columns: x["stock_code"]="UNKNOWN"
     x=x.dropna(subset=["date","close"]).sort_values(["stock_code","date"]).reset_index(drop=True)
@@ -102,14 +105,17 @@ def add_features(df, benchmark=None):
 
 
 def _reg():
+    """建立預測報酬率的隨機森林迴歸模型。"""
     from sklearn.ensemble import RandomForestRegressor
     return RandomForestRegressor(n_estimators=500,max_depth=14,min_samples_leaf=3,max_features=0.75,random_state=42,n_jobs=-1)
 def _clf():
+    """建立預測漲跌方向的隨機森林分類模型。"""
     from sklearn.ensemble import RandomForestClassifier
     return RandomForestClassifier(n_estimators=500,max_depth=14,min_samples_leaf=3,max_features=0.75,class_weight="balanced",random_state=42,n_jobs=-1)
 
 
 def train(df, selected=None):
+    """以時間序列交叉驗證評估後訓練迴歸與分類模型，回傳模型、績效與融合權重。"""
     from sklearn.metrics import mean_absolute_error, mean_squared_error, accuracy_score, precision_score, recall_score, f1_score
     from sklearn.model_selection import TimeSeriesSplit
     x=df.copy(); x=x[np.isfinite(x[FEATURES].replace([np.inf,-np.inf],np.nan)).all(axis=1)].copy(); x=x.dropna(subset=["target_return","target_price"])
@@ -159,8 +165,10 @@ def train(df, selected=None):
     return {"reg":reg,"clf":clf,"features":FEATURES,"result":result,"residuals":[q10,q90],"regression_weight":rw,"classification_weight":cw,"training_samples":int(len(x)),"training_stock_count":int(x.stock_code.nunique()),"feature_profile":feature_profile}
 
 
+# 該產業模型檔的路徑。
 def _bundle_path(models_dir, industry_code): return Path(models_dir)/f"ai_sector_{industry_code}.joblib"
 def save_model_bundle(models_dir, industry_code, out, sector, training_date):
+    """把模型與訓練資訊存成 joblib 檔，回傳路徑。"""
     p=_bundle_path(models_dir,industry_code); p.parent.mkdir(parents=True,exist_ok=True)
     bundle=dict(out)
     bundle.update({
@@ -174,10 +182,12 @@ def save_model_bundle(models_dir, industry_code, out, sector, training_date):
     return p
 
 def load_model_bundle(models_dir,industry_code):
+    """載入該產業的模型檔；不存在時回傳 None。"""
     p=_bundle_path(models_dir,industry_code)
     return joblib.load(p) if p.exists() else None
 
 def bundle_is_usable(bundle, sector, training_date):
+    """模型檔的成分股與訓練日是否相符、必要欄位是否齊全。"""
     if not bundle:
         return False
     required = ["reg", "clf", "result", "residuals", "regression_weight", "classification_weight"]
@@ -188,6 +198,7 @@ def bundle_is_usable(bundle, sector, training_date):
     )
 
 def predict_from_bundle(bundle, feat, selected):
+    """用模型預測指定股票最新一筆的報酬、價格與區間。"""
     d=feat[feat.stock_code.astype(str)==str(selected)].copy().sort_values("date")
     if d.empty: raise RuntimeError(f"找不到 {selected} 的最新特徵")
     row=d.iloc[-1]; X=row[FEATURES].to_frame().T.fillna(0)

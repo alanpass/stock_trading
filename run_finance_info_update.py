@@ -49,6 +49,7 @@ EARN_DATE_KEYS = ("event_date", "eventDate", "published_date", "modified_date", 
 
 
 def now_taipei() -> datetime:
+    """目前的台北時間。"""
     return datetime.now(TAIPEI)
 
 
@@ -56,13 +57,16 @@ _T0 = time.time()
 
 
 def log(msg: str) -> None:
+    """印出帶時間與已耗時間的訊息。"""
     print(f"[{now_taipei().strftime('%H:%M:%S')} +{time.time() - _T0:5.0f}s] {msg}", flush=True)
 
 
 def _run_with_timeout(fn, timeout: int):
+    """在背景執行緒執行函式，超過時限就放棄等待。"""
     box: dict[str, Any] = {}
 
     def target() -> None:
+        """執行函式並保存回傳值或例外。"""
         try:
             box["value"] = fn()
         except BaseException as exc:  # noqa: BLE001
@@ -79,6 +83,7 @@ def _run_with_timeout(fn, timeout: int):
 
 
 def _parse_date(value: Any):
+    """把日期值解析成台北時區的日期；失敗時回傳 None。"""
     if value is None or value == "":
         return None
     try:
@@ -122,6 +127,7 @@ def _filter_recent_calendar_days(items: list[dict[str, Any]], days: int, date_ke
 
 
 def _extract_list(data: Any, keys: tuple[str, ...]) -> list[dict[str, Any]]:
+    """從清單或字典的指定鍵取出字典清單。"""
     if isinstance(data, list):
         return [x for x in data if isinstance(x, dict)]
     if isinstance(data, dict):
@@ -133,12 +139,14 @@ def _extract_list(data: Any, keys: tuple[str, ...]) -> list[dict[str, Any]]:
 
 
 def _atomic_write_json(path: Path, payload: Any) -> None:
+    """先寫暫存檔再取代，避免留下寫到一半的 JSON。"""
     tmp = path.with_suffix(path.suffix + ".tmp")
     tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
     os.replace(tmp, path)
 
 
 def _read_json(path: Path) -> dict[str, Any]:
+    """讀取 JSON 物件；失敗時回傳空字典。"""
     try:
         obj = json.loads(path.read_text(encoding="utf-8"))
         return obj if isinstance(obj, dict) else {}
@@ -233,6 +241,7 @@ def _crawl_news(base: Path, errors: list[str]) -> tuple[list[dict[str, Any]], di
 # 法說會
 # ----------------------------------------------------------------------
 def _load_earnings(base: Path, previous: dict[str, Any], watchlist: list[str], errors: list[str]) -> list[dict[str, Any]]:
+    """更新法說會資料：新分析的項目併入舊結果，只留回看期間內的。"""
     prev_items = [x for x in (previous.get("earnings") or []) if isinstance(x, dict)]
     prev_items = _filter_recent_calendar_days(prev_items, EARNINGS_LOOKBACK_DAYS, EARN_DATE_KEYS)
     force = os.getenv("EARNINGS_FORCE_REFRESH", "false").strip().lower() in {"1", "true", "yes", "on"}
@@ -252,6 +261,7 @@ def _load_earnings(base: Path, previous: dict[str, Any], watchlist: list[str], e
         deadline = time.time() + max(60, timeout - 150)  # 到時間自己停，留時間給最後一場收尾
 
         def work():
+            """執行法說會每日流程。"""
             agent = EarningsCallAgent(base)
             return agent.daily_run(
                 days=EARNINGS_LOOKBACK_DAYS, limit=per_run, force=force, watchlist=[], skip_urls=skip or None,
@@ -291,6 +301,7 @@ def _load_earnings(base: Path, previous: dict[str, Any], watchlist: list[str], e
 # 主流程
 # ----------------------------------------------------------------------
 def load_watchlist(base: Path = BASE) -> list[str]:
+    """讀取自選股；沒有或損毀時回傳空清單。"""
     path = base / "user_watchlist.json"
     if not path.exists():
         return []
@@ -304,6 +315,7 @@ def load_watchlist(base: Path = BASE) -> list[str]:
 
 
 def update_finance_info(base_dir: str | Path = BASE, watchlist: list[str] | None = None, refresh_news: bool = True) -> dict[str, Any]:
+    """更新新聞與法說會並寫入最新資料，爬取失敗時沿用上次結果。"""
     base = Path(base_dir).resolve()
     report_dir = base / "output" / "research_reports"
     report_dir.mkdir(parents=True, exist_ok=True)
@@ -315,6 +327,7 @@ def update_finance_info(base_dir: str | Path = BASE, watchlist: list[str] | None
     errors: list[str] = []
 
     def build_payload(news, news_digest, earnings, earnings_digest, crawl_info, stale, agent_stats):
+        """組出寫入 finance_info_latest.json 的內容。"""
         return {
             "report_type": "finance_info",
             "report_date": started.date().isoformat(),
@@ -414,6 +427,7 @@ def carry_claude_digest(new: dict, old: dict) -> dict:
 
 
 def main() -> int:
+    """命令列入口：更新財經資訊並印出結果；失敗時回傳 2。"""
     print("=" * 72)
     print("AI TW STOCK FINANCE INFO UPDATE")
     print(f"TIME={now_taipei().isoformat()}")

@@ -25,10 +25,12 @@ JOB_ROOT = BASE / "output" / "claude_jobs"
 
 
 def _today() -> str:
+    """台北時區的今天日期。"""
     return datetime.now(ZoneInfo("Asia/Taipei")).strftime("%Y-%m-%d")
 
 
 def _load_package(job: str, date: str) -> dict:
+    """讀取指定工作與日期的研究包；找不到時結束程式。"""
     path = JOB_ROOT / f"{job}_{date}" / "package.json"
     if not path.exists():
         raise SystemExit(f"ERROR: 找不到研究包 {path}")
@@ -36,6 +38,7 @@ def _load_package(job: str, date: str) -> dict:
 
 
 def main() -> int:
+    """命令列入口：列出或呼叫研究工具。"""
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description="Claude 研究工具")

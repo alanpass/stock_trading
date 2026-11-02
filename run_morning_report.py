@@ -40,6 +40,7 @@ DEFAULT_WATCHLIST = [
 
 
 def now_taipei() -> datetime:
+    """目前的台北時間。"""
     return datetime.now(TAIPEI)
 
 
@@ -48,14 +49,17 @@ REPORT_DATE = ""
 
 
 def _report_day() -> str:
+    """報告日期：指定日期或今天。"""
     return REPORT_DATE or now_taipei().date().isoformat()
 
 
 def log_file() -> Path:
+    """當日紀錄檔的路徑。"""
     return LOG_DIR / f"morning_entry_{_report_day()}.log"
 
 
 def write_log(message: str) -> None:
+    """印出訊息並寫入當日紀錄檔。"""
     line = f"[{now_taipei().isoformat(timespec='seconds')}] {message}"
     print(line, flush=True)
     with log_file().open("a", encoding="utf-8", errors="replace") as fh:
@@ -63,6 +67,7 @@ def write_log(message: str) -> None:
 
 
 def write_status(status: str, **extra: object) -> None:
+    """寫入當日的早報狀態檔；失敗時略過。"""
     path = LOG_DIR / f"morning_entry_status_{_report_day()}.json"
     payload = {
         "status": status,
@@ -85,6 +90,7 @@ def _pull_site_watchlist() -> None:
 
 
 def load_watchlist() -> list[str]:
+    """同步並讀取自選股；沒有資料時用預設名單。"""
     _pull_site_watchlist()
     path = BASE / "user_watchlist.json"
     if not path.exists():
@@ -105,6 +111,7 @@ def load_watchlist() -> list[str]:
 
 
 def validate_report(report: dict, expected_date: str = "") -> tuple[bool, str]:
+    """檢查早報的日期與內容是否足以寄出，回傳結果與說明。"""
     date_text = str(report.get("report_date", ""))[:10]
     today = expected_date or now_taipei().date().isoformat()
     if date_text != today:
@@ -133,6 +140,7 @@ def validate_report(report: dict, expected_date: str = "") -> tuple[bool, str]:
 def refresh_finance_cache() -> None:
     # 財經資訊由 08:10 的排程先更新；晨報（08:30）若發現資料還很新就直接使用，不重爬，
     # 避免兩個工作同時寫入同一份快取。資料過舊（例如 08:10 排程沒跑）才補更新一次。
+    """財經快取過舊時補更新一次；還很新就直接沿用。"""
     write_log("[0/2] 檢查財經資訊快取")
     fresh_minutes = int(os.getenv("MORNING_FINANCE_FRESH_MINUTES", "90"))
     latest_finance = BASE / "output" / "research_reports" / "finance_info_latest.json"
@@ -170,6 +178,7 @@ def refresh_finance_cache() -> None:
 
 
 def send_morning(report: dict, expected_date: str = "") -> int:
+    """檢查早報後保存並寄信，回傳結果代碼。"""
     ok, message = validate_report(report, expected_date)
     write_log(f"REPORT_VALIDATION={ok}")
     write_log(f"REPORT_VALIDATION_MESSAGE={message}")
@@ -246,10 +255,12 @@ def send_morning(report: dict, expected_date: str = "") -> int:
 # Claude 模式：prepare → Claude 撰寫早報 → finalize
 # ----------------------------------------------------------------------------
 def job_dir(report_date: str) -> Path:
+    """當日早報工作的資料夾。"""
     return BASE / "output" / "claude_jobs" / f"morning_{report_date}"
 
 
 def prepare(watchlist: list[str]) -> int:
+    """更新快取並建立早報研究包，等待 Claude 撰寫。"""
     refresh_finance_cache()
     write_log("[1/2] 建立早報研究包（等待 Claude 撰寫）")
     agent = MorningResearchAgent(BASE)
@@ -265,6 +276,7 @@ def prepare(watchlist: list[str]) -> int:
 
 
 def finalize(report_date: str, dry_run: bool = False) -> int:
+    """讀入 Claude 寫好的早報，保存並寄信。"""
     d = job_dir(report_date)
     package_path, notes_path = d / "package.json", d / "morning_notes.json"
     for path in (package_path, notes_path):
@@ -309,6 +321,7 @@ def finalize(report_date: str, dry_run: bool = False) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """命令列入口：--prepare 建立研究包，--finalize 完成早報。"""
     import argparse
     parser = argparse.ArgumentParser(description="AI 台股早報")
     mode = parser.add_mutually_exclusive_group()

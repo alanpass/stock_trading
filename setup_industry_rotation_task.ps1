@@ -1,10 +1,13 @@
 ﻿#requires -Version 5.1
 $ErrorActionPreference = "Stop"
 
+# 建立產業輪動更新的 Windows 排程。
+# 專案位置、排程名稱與要執行的程式。
 $ProjectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $TaskName = "StockTrading-IndustryAnalysis-1510"
 $Updater = Join-Path $ProjectRoot "run_industry_rotation_update.py"
 
+# 找不到程式就停止，避免建立無法執行的排程。
 if (!(Test-Path -LiteralPath $Updater)) {
     throw "找不到 $Updater。請先同步最新版專案檔案。"
 }
@@ -26,11 +29,14 @@ $Action = New-ScheduledTaskAction -Execute $PythonExe -Argument ('"' + $Updater 
 $MorningTrigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At ([datetime]::Today.AddHours(8).AddMinutes(20))
 $CloseTrigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At ([datetime]::Today.AddHours(15).AddMinutes(10))
 $Triggers = @($MorningTrigger, $CloseTrigger)
+# 用目前使用者身分執行；錯過時補跑、最久 2 小時、不重複執行。
 $Principal = New-ScheduledTaskPrincipal -UserId "$env:USERDOMAIN\$env:USERNAME" -LogonType Interactive -RunLevel Limited
 $Settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -WakeToRun -ExecutionTimeLimit (New-TimeSpan -Hours 2) -MultipleInstances IgnoreNew
 
+# 註冊排程（已存在就覆蓋）。
 Register-ScheduledTask -TaskName $TaskName -Action $Action -Trigger $Triggers -Principal $Principal -Settings $Settings -Description "台股交易日 08:20 盤前刷新與 15:10 盤後更新產業分析輪動資料並發布到 GitHub。" -Force | Out-Null
 
+# 顯示結果與使用前要確認的事項。
 Write-Host ""
 Write-Host "已建立排程：$TaskName" -ForegroundColor Green
 Write-Host "執行時間：每週一至週五 08:20、15:10（休市日由程式自動略過）"

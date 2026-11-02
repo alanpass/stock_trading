@@ -24,6 +24,7 @@ TAIPEI = ZoneInfo("Asia/Taipei")
 
 
 def upsert(path: Path, publish: bool) -> int:
+    """檢查並新增或更新個股研究筆記，可選擇發布；回傳結果代碼。"""
     raw = json.loads(path.read_text(encoding="utf-8"))
     items = raw if isinstance(raw, list) else [raw]
     notes = _clean_stock_notes(items, {})
@@ -61,6 +62,7 @@ def upsert(path: Path, publish: bool) -> int:
 
 
 def main() -> int:
+    """命令列入口：新增或更新個股研究筆記。"""
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="個股研究筆記新增／更新")

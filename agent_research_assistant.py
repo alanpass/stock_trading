@@ -50,6 +50,7 @@ GOOGLE_NEWS_RSS = "https://news.google.com/rss/search"
 
 
 def _env_bool(name: str, default: bool = False) -> bool:
+    """把環境變數解讀成布林值；未設定時回傳 default。"""
     value = str(os.getenv(name, ""))
     if not value:
         return default
@@ -58,6 +59,7 @@ def _env_bool(name: str, default: bool = False) -> bool:
 
 
 def _tool_schema(name: str, description: str, properties: dict[str, Any], required: list[str] | None = None) -> dict[str, Any]:
+    """組出 function calling 格式的工具定義。"""
     params: dict[str, Any] = {"type": "object", "properties": properties}
     if required:
         params["required"] = required
@@ -158,6 +160,7 @@ TOOLS = [
 
 
 def _safe_float(v: Any, default: float | None = None) -> float | None:
+    """轉成有限浮點數；無法轉換或非有限值時回傳 default。"""
     try:
         x = float(v)
         return x if np.isfinite(x) else default
@@ -166,10 +169,12 @@ def _safe_float(v: Any, default: float | None = None) -> float | None:
 
 
 def _clean_symbol(v: Any) -> str:
+    """去掉 .TW 並轉大寫，得到統一的股票代號。"""
     return str(v or "").strip().upper().replace(".TW", "")
 
 
 def _as_list(value: Any) -> list[str]:
+    """把 None、字串或清單統一成去空白的字串清單。"""
     if value is None:
         return []
     if isinstance(value, list):
@@ -191,6 +196,7 @@ CNYES_QUERY_EXPANSIONS = {
 }
 
 def _cnyes_query_terms(query: str) -> list[str]:
+    """拆解查詢字串並加入同義詞，回傳去重後的鉅亨搜尋關鍵字。"""
     raw_terms = [x.strip().lower() for x in re.findall(r"[0-9A-Za-z一-龥]+", str(query or "")) if len(x.strip()) >= 2]
     expanded = []
     for term in raw_terms:
@@ -203,6 +209,7 @@ def _cnyes_query_terms(query: str) -> list[str]:
 
 
 def _normalize(raw: dict[str, Any], tool_history: list[dict[str, Any]], model: str) -> dict[str, Any]:
+    """整理模型回傳的研究結果：補預設值、校正重要性與信心分數。"""
     notes = []
     for item in raw.get("research_notes") or []:
         if not isinstance(item, dict):
@@ -304,6 +311,7 @@ def _merge_cnyes_digest(result: dict[str, Any], payload: dict[str, Any]) -> dict
 
 
 def _memory_path(base: Path) -> Path:
+    """研究記憶檔的路徑（必要時建立資料夾）。"""
     p = base / "output" / "research_reports"
     p.mkdir(parents=True, exist_ok=True)
     return p / MEMORY_FILE_NAME
@@ -313,10 +321,12 @@ class ResearchToolbox:
     """盤後研究工具（市場、財務、法說會、新聞、題材、公司研究）與跨日研究記憶。"""
 
     def __init__(self, base_dir: str | Path = "."):
+        """記下專案根目錄；法說會 Agent 等用到才建立。"""
         self.base = Path(base_dir).resolve()
         self._earnings_agent = None
 
     def _load_memory(self) -> dict[str, Any]:
+        """讀取研究記憶；檔案不存在或損毀時回傳空字典。"""
         path = _memory_path(self.base)
         if not path.exists():
             return {}
@@ -327,6 +337,7 @@ class ResearchToolbox:
             return {}
 
     def _save_memory(self, notes: dict[str, Any]) -> None:
+        """把這次研究摘要加入歷史紀錄並寫回記憶檔。"""
         path = _memory_path(self.base)
         existing = self._load_memory()
         history = existing.get("history", []) if isinstance(existing, dict) else []
@@ -366,12 +377,14 @@ class ResearchToolbox:
         )
 
     def _get_earnings_agent(self):
+        """延遲建立並重用法說會 Agent。"""
         if self._earnings_agent is None:
             from earnings_call_agent import EarningsCallAgent
             self._earnings_agent = EarningsCallAgent(self.base)
         return self._earnings_agent
 
     def _tool(self, name: str, args: dict[str, Any], payload: dict[str, Any]) -> dict[str, Any]:
+        """依工具名稱從研究包取資料並回傳結果；未知工具回傳錯誤。"""
         mm = payload.get("market_movers", {}) or {}
 
         if name == "get_market_overview":

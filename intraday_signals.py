@@ -41,6 +41,7 @@ RULES = [
 
 
 def _f(v) -> float:
+    """轉成有限浮點數；否則回傳 NaN。"""
     try:
         x = float(v)
         return x if math.isfinite(x) else math.nan
@@ -49,6 +50,7 @@ def _f(v) -> float:
 
 
 def _tick(price: float) -> float:
+    """依股價回傳台股升降單位。"""
     for bound, tick in ((10, 0.01), (50, 0.05), (100, 0.1), (500, 0.5), (1000, 1.0)):
         if price < bound:
             return tick
@@ -98,6 +100,7 @@ def scan(k1: pd.DataFrame, prev_close: float, daily: pd.DataFrame | None = None,
     once: set[str] = set()
 
     def fire(i: int, key: str, text: str, side: str, price: float, cooldown: int | None = None) -> None:
+        """記錄一個事件：沒給冷卻時間的只觸發一次，否則要間隔足夠根數。"""
         if cooldown is None:
             if key in once:
                 return

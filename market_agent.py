@@ -20,6 +20,7 @@ TW_TZ = "Asia/Taipei"
 
 
 def _safe_float(v, default=np.nan):
+    """轉成有限浮點數；失敗時回傳 default。"""
     try:
         x = float(v)
         return x if np.isfinite(x) else default
@@ -28,6 +29,7 @@ def _safe_float(v, default=np.nan):
 
 
 def _atr(df, n=12):
+    """計算最新的 n 期平均真實波幅。"""
     if df is None or df.empty:
         return np.nan
     x = df.copy().sort_values("date")
@@ -41,6 +43,7 @@ def _atr(df, n=12):
 
 
 def _vwap(df):
+    """計算成交量加權平均價；沒有量時回傳最後收盤價。"""
     if df is None or df.empty:
         return np.nan
     x = df.copy().sort_values("date")
@@ -56,6 +59,7 @@ def _vwap(df):
 
 @dataclass
 class AgentContext:
+    """各 Agent 共用的輸入：報價、K 線、進場結果與籌碼資料。"""
     symbol: str
     as_of: str
     market_open: bool
@@ -70,6 +74,7 @@ class AgentContext:
 
 @dataclass
 class AgentFinding:
+    """單一 Agent 的判斷：狀態、分數、信心、原因與證據。"""
     agent: str
     status: str
     score: float
@@ -79,16 +84,20 @@ class AgentFinding:
 
 
 class BaseAgent:
+    """決策 Agent 的基底類別。"""
     name = "base"
 
     def run(self, ctx: AgentContext) -> AgentFinding:
+        """子類別實作：回傳這個 Agent 的判斷。"""
         raise NotImplementedError
 
 
 class DataQualityAgent(BaseAgent):
+    """檢查報價與 K 線資料是否完整、夠新。"""
     name = "data_quality"
 
     def run(self, ctx):
+        """依資料缺漏與新舊程度扣分，回傳資料品質判斷。"""
         reasons = []
         evidence = {}
         score = 100.0
@@ -113,9 +122,11 @@ class DataQualityAgent(BaseAgent):
 
 
 class TechnicalAgent(BaseAgent):
+    """依均線、VWAP 與動能評估盤中技術面。"""
     name = "technical"
 
     def run(self, ctx):
+        """由 5 分 K 計算趨勢分數；沒有資料時回傳 blocked。"""
         d = ctx.intraday
         if d is None or d.empty:
             return AgentFinding(self.name, "blocked", 0, 0, ["沒有可用的5分K"], {})
@@ -155,9 +166,11 @@ class TechnicalAgent(BaseAgent):
 
 
 class FlowAgent(BaseAgent):
+    """以法人與籌碼資料作為輔助訊號。"""
     name = "flow"
 
     def run(self, ctx):
+        """依法人買賣超等資料調整分數，回傳籌碼判斷。"""
         score = 50.0
         reasons = ["法人/籌碼資料作為輔助訊號"]
         evidence = {}
@@ -181,9 +194,11 @@ class FlowAgent(BaseAgent):
 
 
 class RiskGuardAgent(BaseAgent):
+    """檢查追高、趨勢與進場分數等風險。"""
     name = "risk_guard"
 
     def run(self, ctx):
+        """依風險條件扣分；分數低於 60 時標記為 warning。"""
         score = 100.0
         reasons = []
         evidence = {}
@@ -208,9 +223,11 @@ class RiskGuardAgent(BaseAgent):
 
 
 class DecisionAgent(BaseAgent):
+    """綜合其他 Agent 的判斷，做出最後決定。"""
     name = "decision"
 
     def run(self, ctx):
+        """合併進場分數、技術面與風險，回傳最後的決定。"""
         findings = self._findings
         tech = findings.get("technical")
         risk = findings.get("risk_guard")
@@ -241,6 +258,7 @@ class DecisionAgent(BaseAgent):
         return AgentFinding(self.name, "ok", float(np.clip(score, 0, 100)), confidence, reasons or ["依現有量化結果綜合判斷"], evidence)
 
     def attach_findings(self, findings):
+        """存入其他 Agent 的判斷，供 run 使用。"""
         self._findings = findings
 
 
@@ -248,6 +266,7 @@ class MarketSupervisorAgent:
     """Deterministic supervisor + optional LLM explanation layer."""
 
     def __init__(self, log_dir: Path | None = None):
+        """建立各 Agent 與決策 Agent，並準備紀錄資料夾。"""
         self.agents = [DataQualityAgent(), TechnicalAgent(), FlowAgent(), RiskGuardAgent()]
         self.decision = DecisionAgent()
         self.log_dir = log_dir
@@ -255,6 +274,7 @@ class MarketSupervisorAgent:
             log_dir.mkdir(parents=True, exist_ok=True)
 
     def run(self, ctx: AgentContext) -> dict[str, Any]:
+        """依序執行各 Agent，組出最後的決策結果。"""
         findings = {}
         for agent in self.agents:
             findings[agent.name] = agent.run(ctx)
@@ -274,6 +294,7 @@ class MarketSupervisorAgent:
         return result
 
     def _write_log(self, result: dict[str, Any]):
+        """把決策結果附加到 jsonl 紀錄；失敗時略過。"""
         if not self.log_dir:
             return
         path = self.log_dir / "agent_decisions.jsonl"

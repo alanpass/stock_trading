@@ -50,7 +50,9 @@ def parse_tw_date(value: Any) -> str:
 
 
 class MarketMoverAnalyzer:
+    """找出當日大漲大跌股，彙整產業概況並以新聞推測原因。"""
     def __init__(self, base_dir: str | Path = ".", client: FugleClient | None = None):
+        """建立快取資料夾、Fugle 客戶端與 HTTP session。"""
         self.base = Path(base_dir).resolve()
         self.cache_dir = self.base / "data" / "research" / "movers"
         self.cache_dir.mkdir(parents=True, exist_ok=True)
@@ -60,6 +62,7 @@ class MarketMoverAnalyzer:
 
     @staticmethod
     def _float(value):
+        """把含逗號或百分號的文字轉成數字；失敗時回傳 NaN。"""
         try:
             s = str(value).replace(",", "").replace("%", "").strip()
             if s in {"", "-", "--", "None", "nan"}:
@@ -69,6 +72,7 @@ class MarketMoverAnalyzer:
             return np.nan
 
     def _industry_map_from_local(self) -> dict[str, str]:
+        """由人工指定與本機產業主檔組出代號對產業的對照。"""
         mapping = dict(INDUSTRY_OVERRIDES)
         path = self.base / "data" / "industry_master.csv"
         if path.exists():
@@ -84,6 +88,7 @@ class MarketMoverAnalyzer:
         return mapping
 
     def _load_cached_snapshot(self) -> tuple[pd.DataFrame, str]:
+        """讀取最近一次的市場快照與資料時間。"""
         path = self.cache_dir / "market_snapshot_latest.json"
         if not path.exists():
             return pd.DataFrame(), ""
@@ -96,6 +101,7 @@ class MarketMoverAnalyzer:
             return pd.DataFrame(), ""
 
     def _save_snapshot(self, df: pd.DataFrame, asof: str) -> None:
+        """把市場快照存成最新檔與帶時間的檔案；失敗時略過。"""
         try:
             rows = df.to_dict("records")
             payload = {"asof": asof, "rows": rows, "source": "Fugle snapshot_quotes"}
@@ -110,6 +116,7 @@ class MarketMoverAnalyzer:
             pass
 
     def _enrich_industries(self, df: pd.DataFrame) -> pd.DataFrame:
+        """補齊並校正快照中的產業代碼。"""
         if df.empty:
             return df
         local_map = self._industry_map_from_local()
@@ -151,6 +158,7 @@ class MarketMoverAnalyzer:
         request_date = pd.Timestamp.now(tz="Asia/Taipei").strftime("%Y%m%d")
 
         def build_frame(label: str, rows: list, fields: list[str] | None = None) -> pd.DataFrame:
+            """把上市或上櫃的官方資料轉成統一欄位的表格。"""
             if not rows:
                 return pd.DataFrame()
             if fields and all(isinstance(x, (list, tuple)) for x in rows):
@@ -276,6 +284,7 @@ class MarketMoverAnalyzer:
 
     @staticmethod
     def _cache_date(asof: str) -> str:
+        """從時間字串取出日期。"""
         text = str(asof or "")
         m = __import__("re").search(r"(20\d{2}-\d{2}-\d{2})", text)
         return m.group(1) if m else ""
@@ -583,6 +592,7 @@ class MarketMoverAnalyzer:
         return empty
 
     def _history(self, symbol: str) -> pd.DataFrame:
+        """取得近期日 K，每日只下載一次；失敗時回傳空表。"""
         path = self.cache_dir / f"{clean_symbol(symbol)}.csv"
         try:
             # 每日只抓一次，避免排程與前端重複拉資料。
@@ -602,6 +612,7 @@ class MarketMoverAnalyzer:
 
     @staticmethod
     def _returns(df: pd.DataFrame) -> tuple[float | None, float | None]:
+        """計算 5 日與 20 日報酬；資料不足時回傳 None。"""
         if df is None or df.empty or "close" not in df.columns:
             return None, None
         d = df.sort_values("date").dropna(subset=["close"]).reset_index(drop=True)
@@ -613,6 +624,7 @@ class MarketMoverAnalyzer:
         return r5, r20
 
     def _news(self, symbol: str, name: str, business: str = "") -> list[dict[str, Any]]:
+        """從 Google 新聞 RSS 查詢股票漲跌相關新聞。"""
         query = f'"{name}" {symbol} {business} 股票 漲跌 原因'
         try:
             r = self.session.get(GOOGLE_NEWS_RSS, params={"q": query, "hl": "zh-TW", "gl": "TW", "ceid": "TW:zh-Hant"}, timeout=15)
@@ -632,6 +644,7 @@ class MarketMoverAnalyzer:
 
     @staticmethod
     def _word_score(text: str) -> float:
+        """依正負面字詞比例算出 -1 到 1 的分數。"""
         p = sum(text.count(x) for x in POSITIVE_WORDS)
         n = sum(text.count(x) for x in NEGATIVE_WORDS)
         if p == n == 0:
@@ -639,6 +652,7 @@ class MarketMoverAnalyzer:
         return float(np.clip((p-n)/max(1, p+n), -1, 1))
 
     def _reason(self, news: list[dict[str, Any]], direction: str) -> tuple[str, str, float]:
+        """依漲跌方向挑最相符的新聞，回傳原因、證據類型與信心。"""
         if not news:
             return "缺少足夠公司/產業新聞，無法直接歸因", "無原始新聞證據", 0.0
         pos = [x for x in news if x["score"] >= 0.20]
@@ -656,6 +670,7 @@ class MarketMoverAnalyzer:
         return reason, kind, conf
 
     def analyze(self, watchlist_symbols: Iterable[str] = (), max_candidates: int = 30) -> dict[str, Any]:
+        """分析當日大漲大跌股與產業概況；非交易日回傳空結果。"""
         universe = self._snapshot_universe()
         if not universe.empty and "is_trading_day" in universe.columns:
             flags = pd.to_numeric(universe["is_trading_day"], errors="coerce").dropna()

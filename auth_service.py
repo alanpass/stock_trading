@@ -28,6 +28,7 @@ SESSION_TTL_SECONDS = 14 * 24 * 60 * 60
 
 
 def _users() -> dict[str, Any]:
+    """從 AUTH_USERS_JSON 讀取帳號表，email 一律轉小寫；格式錯誤時回傳空字典。"""
     raw = os.getenv("AUTH_USERS_JSON", "").strip()
     if not raw:
         return {}
@@ -39,12 +40,14 @@ def _users() -> dict[str, Any]:
 
 
 def hash_password(password: str, salt_hex: str | None = None, iterations: int = ITERATIONS) -> str:
+    """以 PBKDF2-SHA256 雜湊密碼；沒給 salt 時隨機產生。"""
     salt = bytes.fromhex(salt_hex) if salt_hex else secrets.token_bytes(16)
     digest = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, int(iterations))
     return "pbkdf2_sha256$" + str(int(iterations)) + "$" + salt.hex() + "$" + digest.hex()
 
 
 def verify_password(password: str, record: Any) -> bool:
+    """以固定時間比對密碼與雜湊紀錄；格式不符一律視為失敗。"""
     if not isinstance(record, str):
         return False
     try:
@@ -58,6 +61,7 @@ def verify_password(password: str, record: Any) -> bool:
 
 
 def _in_secrets(email: str) -> bool:
+    """此 email 是否設定在 secrets 帳號表裡。"""
     record = _users().get(str(email or "").strip().lower())
     return isinstance(record, str) and bool(record)
 
@@ -107,6 +111,7 @@ def _credential_record(email: str) -> str | None:
 
 
 def authenticate(email: str, password: str) -> bool:
+    """驗證 email 與密碼，並確認帳號目前可以登入。"""
     email = str(email or "").strip().lower()
     record = _credential_record(email)
     if not (EMAIL_RE.fullmatch(email) and password and verify_password(password, record)):

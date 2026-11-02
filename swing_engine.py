@@ -51,14 +51,17 @@ LIVE = BASE / "data" / "swing_live"
 
 
 def _now() -> str:
+    """目前時間的顯示字串。"""
     return datetime.now().strftime("%Y-%m-%d %H:%M")
 
 
 def _paths(out: Path) -> dict:
+    """波段資料檔的路徑。"""
     return {"state": out / "state.json", "trades": out / "trades.csv", "nav": out / "nav.csv"}
 
 
 def load_state(out: Path = OUT) -> dict:
+    """讀取組合狀態；沒有時用初始本金建立。"""
     p = _paths(out)["state"]
     if p.exists():
         st = json.loads(p.read_text(encoding="utf-8"))
@@ -72,11 +75,13 @@ def load_state(out: Path = OUT) -> dict:
 
 
 def save_state(st: dict, out: Path = OUT) -> None:
+    """寫入組合狀態。"""
     out.mkdir(parents=True, exist_ok=True)
     _paths(out)["state"].write_text(json.dumps(st, ensure_ascii=False, indent=1), encoding="utf-8")
 
 
 def _append_csv(out: Path, name: str, row: dict) -> None:
+    """附加一列到 CSV，新檔會先寫表頭。"""
     out.mkdir(parents=True, exist_ok=True)
     path = out / name
     new = not path.exists()
@@ -90,6 +95,7 @@ def _append_csv(out: Path, name: str, row: dict) -> None:
 # ---------------------------------------------------------------- 資料
 
 def _candles(client: FugleClient, s: str, days: int, adjusted: bool) -> pd.DataFrame:
+    """取得日 K，遇到額度限制時等待重試；失敗時回傳空表。"""
     end = date.today()
     for attempt in range(3):
         try:
@@ -157,6 +163,7 @@ def refresh(client: FugleClient, syms: list[str], days: int = 130, adjusted_too:
 
 
 def _atr_pct(d: pd.DataFrame) -> float:
+    """計算 14 日 ATR 占收盤價的比例；無效時回傳 0.03。"""
     pc = d.close.shift(1)
     tr = pd.concat([d.high - d.low, (d.high - pc).abs(), (d.low - pc).abs()], axis=1).max(axis=1)
     v = tr.rolling(14).mean().iloc[-1] / d.close.iloc[-1]
@@ -166,6 +173,7 @@ def _atr_pct(d: pd.DataFrame) -> float:
 # ---------------------------------------------------------------- 選股
 
 def pick_targets(client: FugleClient, nav: float) -> tuple[list[dict], pd.Timestamp | None, dict]:
+    """更新資料並依策略條件挑出換股目標。"""
     uni = ub.universe()
     print("更新月營收（MOPS）…", flush=True)
     ub.fetch_revenue(start_year=date.today().year - 2)
@@ -265,6 +273,7 @@ def _update_positions(client: FugleClient, st: dict) -> pd.Timestamp | None:
 
 
 def signal(dry_run: bool = False, out: Path = OUT) -> int:
+    """收盤後更新部位、判斷停損與換股，產生隔日委託。"""
     client = FugleClient(wait_on_limit=True)
     st = load_state(out)
     today = date.today()
@@ -323,11 +332,13 @@ def signal(dry_run: bool = False, out: Path = OUT) -> int:
 
 
 def _cost(value: float, sell: bool) -> float:
+    """計算手續費，賣出時加上交易稅。"""
     fee_min = 20 if STRATEGY["lot"] > 1 else 1
     return max(fee_min, value * FEE) + (value * TAX if sell else 0)
 
 
 def execute(out: Path = OUT) -> int:
+    """以開盤價模擬成交待執行的委託（先賣後買）。"""
     st = load_state(out)
     if not st["pending"]:
         print("沒有待執行委託。"); return 0
@@ -393,6 +404,7 @@ def execute(out: Path = OUT) -> int:
 
 
 def status(out: Path = OUT) -> int:
+    """印出組合淨值、持股與待執行委託。"""
     st = load_state(out)
     print(f"策略 {STRATEGY['name']}（{STRATEGY['status']}）")
     print(f"本金 {st['capital']:,}，淨值 {st['nav']:,}（{(st['nav'] / st['capital'] - 1) * 100:+.2f}%），現金 {st['cash']:,.0f}，"

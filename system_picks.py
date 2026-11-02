@@ -53,6 +53,7 @@ RULES = [
 
 
 def _read(path: Path, default=None):
+    """讀取 JSON；失敗時回傳 default。"""
     try:
         return json.loads(path.read_text(encoding="utf-8"))
     except (OSError, ValueError):
@@ -60,6 +61,7 @@ def _read(path: Path, default=None):
 
 
 def _f(v) -> float:
+    """轉成有限浮點數；否則回傳 NaN。"""
     try:
         x = float(v)
         return x if math.isfinite(x) else math.nan
@@ -68,6 +70,7 @@ def _f(v) -> float:
 
 
 def _universe() -> dict[str, dict]:
+    """候選股：趨勢型態股票加上自選股。"""
     trend = _read(REPORTS / "trend_patterns_public.json", {}) or {}
     uni = {str(s["symbol"]): dict(s) for s in trend.get("stocks") or [] if s.get("symbol")}
     for code in _read(BASE / "user_watchlist.json", []) or []:
@@ -76,11 +79,13 @@ def _universe() -> dict[str, dict]:
 
 
 def _theme_state() -> dict[str, dict]:
+    """取得各題材的產業輪動狀態。"""
     rot = _read(REPORTS / "industry_rotation_public.json", {}) or {}
     return {g["name"]: g for g in rot.get("groups") or [] if g.get("name")}
 
 
 def _swing_engine_symbols() -> set[str]:
+    """波段引擎最近選出的股票。"""
     out = set()
     for path in OUT.glob("swing/**/state.json"):
         out |= {str(p.get("symbol")) for p in (_read(path, {}) or {}).get("last_picks") or []}
@@ -88,17 +93,20 @@ def _swing_engine_symbols() -> set[str]:
 
 
 def _note_points() -> dict[str, dict]:
+    """取得各股票的研究筆記。"""
     notes = (_read(REPORTS / "stock_notes_public.json", {}) or {}).get("notes") or []
     return {str(n.get("symbol")): n for n in notes}
 
 
 def _history(client, symbol: str) -> pd.DataFrame:
+    """取得近一年日 K。"""
     end = date.today()
     h = client.historical_candles(symbol, end - timedelta(days=364), end, "D")   # Fugle 一次最多一年（約 245 根）
     return h.sort_values("date").reset_index(drop=True) if not h.empty else h
 
 
 def _tech(h: pd.DataFrame) -> dict:
+    """計算收盤、均線與各期間報酬。"""
     c = h["close"].astype(float)
     ma = lambda n: c.rolling(n).mean().iloc[-1] if len(c) >= n else math.nan
     ret = lambda n: (c.iloc[-1] / c.iloc[-n - 1] - 1) * 100 if len(c) > n else math.nan
@@ -107,6 +115,7 @@ def _tech(h: pd.DataFrame) -> dict:
 
 
 def _swing_reasons(s: dict, t: dict, fund: dict, themes: dict, engine: set) -> tuple[list[dict], bool]:
+    """列出波段看多原因，回傳原因與是否符合核心條件。"""
     reasons, core = [], False
     for th in s.get("themes") or []:
         g = themes.get(th) or {}
@@ -131,6 +140,7 @@ def _swing_reasons(s: dict, t: dict, fund: dict, themes: dict, engine: set) -> t
 
 
 def _long_reasons(t: dict, fund: dict, div_years) -> list[dict] | None:
+    """列出長期看多原因；不符合基本條件時回傳 None。"""
     yoy, pe, yld = _f(fund.get("rev_yoy")), _f(fund.get("pe")), _f(fund.get("yld"))
     if not (yoy >= REV_GROWTH and t["close"] > t["ma240"] and t["ma60"] > t["ma240"]):
         return None
@@ -179,6 +189,7 @@ def _extra_reasons(symbol: str, name: str, hist: pd.DataFrame, notes: dict) -> l
 
 
 def screen(limit: int = 8) -> dict:
+    """篩選波段與長期推薦股票。"""
     from stock_api import FugleClient
     import stock_features
 
@@ -223,6 +234,7 @@ def screen(limit: int = 8) -> dict:
 
 
 def _with_returns(history: list[dict], closes: dict[str, tuple[str, float]]) -> list[dict]:
+    """計算歷史推薦至今的報酬。"""
     rows = []
     for day in history:
         for p in day["picks"]:
@@ -234,6 +246,7 @@ def _with_returns(history: list[dict], closes: dict[str, tuple[str, float]]) -> 
 
 
 def update(limit: int = 8, publish: bool = True) -> dict:
+    """更新今日推薦與歷史報酬，並視需要發布。"""
     today = screen(limit)
     history = [d for d in _read(HISTORY_PATH, []) or [] if d.get("date") != today["date"]]
     history = sorted(history + [{"date": today["date"], "picks": today["picks"]}], key=lambda d: d["date"])[-HISTORY_DAYS:]
@@ -282,6 +295,7 @@ EMAIL_STATE = REPORTS / "system_picks_email_state.json"
 
 
 def _email_html(data: dict) -> tuple[str, str]:
+    """組出推薦股票郵件的 HTML 與純文字。"""
     from html import escape
 
     latest = data["latest"]
@@ -352,6 +366,7 @@ def send_email(force: bool = False) -> dict:
 
 
 def main() -> int:
+    """命令列入口：更新推薦名單並寄信。"""
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="波段／長期系統推薦股票與看多原因，發布到網站")

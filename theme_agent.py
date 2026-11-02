@@ -93,6 +93,7 @@ NEGATIVE_TERMS = [
 
 @dataclass
 class ThemeResult:
+    """一個題材的彙整結果：強度、影響公司與各類證據數量。"""
     theme: str
     strength: float
     status: str
@@ -114,14 +115,17 @@ class ThemeResult:
 
 
 def _norm(v: Any) -> str:
+    """去空白並轉小寫。"""
     return str(v or "").strip().lower()
 
 
 def _contains(text: str, token: str) -> bool:
+    """忽略大小寫比對是否包含字詞。"""
     return _norm(token) in _norm(text)
 
 
 def _theme_profile_match(profile: dict[str, Any], theme: dict[str, Any]) -> bool:
+    """公司的產業與業務是否符合題材。"""
     blob = " ".join([
         profile.get("business_group", ""),
         profile.get("primary_chain", ""),
@@ -136,10 +140,12 @@ def _theme_profile_match(profile: dict[str, Any], theme: dict[str, Any]) -> bool
 
 
 def _news_text(row: dict[str, Any]) -> str:
+    """組出新聞的比對文字。"""
     return f"{row.get('title','')} {row.get('summary','')} {row.get('query','')}"
 
 
 def _news_matches_theme(row: dict[str, Any], theme: dict[str, Any]) -> bool:
+    """新聞是否提到題材關鍵字。"""
     text = _news_text(row)
     return any(_contains(text, k) for k in theme.get("keywords", []))
 
@@ -148,6 +154,7 @@ def _score_theme(
     *, affected_count: int, positive_ratio: float, official: int, corroboration: int,
     order_evidence: int, revenue_support: int, contradiction: int,
 ) -> float:
+    """依廣度、正面比例與各類證據算出 0 到 100 的題材強度。"""
     breadth = min(1.0, affected_count / 5.0)
     official_score = min(1.0, official / 3.0)
     corroboration_score = min(1.0, corroboration / 6.0)
@@ -167,6 +174,7 @@ def _score_theme(
 
 
 def _status(score: float, positive_ratio: float, contradiction: int, evidence: int) -> str:
+    """依強度、正面比例與矛盾證據判斷題材狀態。"""
     if evidence == 0:
         return "無足夠證據"
     if contradiction >= 3 and score < 60:

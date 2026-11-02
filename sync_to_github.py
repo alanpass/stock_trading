@@ -28,6 +28,7 @@ KEY_PATTERN = re.compile(r'FUGLE_API_KEY\s*=\s*["\']?[A-Za-z0-9+/=]{40,}')
 
 
 def git(*args: str, repo: Path = CLONE, check: bool = True) -> str:
+    """在指定資料夾執行 git；失敗時結束程式。"""
     out = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True, encoding="utf-8", errors="replace")
     if check and out.returncode != 0:
         raise SystemExit(f"git {' '.join(args)} 失敗：{out.stderr.strip()}")
@@ -35,10 +36,12 @@ def git(*args: str, repo: Path = CLONE, check: bool = True) -> str:
 
 
 def tracked(repo: Path) -> list[str]:
+    """列出 git 追蹤的檔案。"""
     return [f for f in git("ls-files", "-z", repo=repo).split("\0") if f]
 
 
 def main() -> int:
+    """把本機程式碼同步到 GitHub clone，預覽差異，加 --push 才提交推送。"""
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser(description="同步程式碼到 GitHub main")

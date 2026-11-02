@@ -20,17 +20,22 @@
  * 版本化 deployment 適合正式使用。
  */
 
+// 管理者 Email：新訂閱時寄通知給這個信箱。
 const OWNER_EMAIL = 'a1113359@mail.nuk.edu.tw';
+// 呼叫這個服務要帶的密語；還是預設值時一律拒絕。
 const SYNC_TOKEN = 'CHANGE_THIS_TO_A_LONG_RANDOM_TOKEN';
+// 名單所在的工作表名稱，以及記錄試算表 ID 的指令碼屬性名稱。
 const SHEET_NAME = 'Subscribers';
 const SPREADSHEET_PROPERTY = 'SUBSCRIBER_SPREADSHEET_ID';
 
+// 把資料包成 JSON 回應。
 function jsonOutput_(payload) {
   return ContentService
     .createTextOutput(JSON.stringify(payload))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
+// 檢查網址或內容裡的 token 是否正確。
 function authorized_(e, payload) {
   const queryToken = e && e.parameter ? String(e.parameter.token || '') : '';
   const bodyToken = payload && payload.token ? String(payload.token) : '';
@@ -38,6 +43,7 @@ function authorized_(e, payload) {
   return token && token === SYNC_TOKEN && SYNC_TOKEN !== 'CHANGE_THIS_TO_A_LONG_RANDOM_TOKEN';
 }
 
+// 取得訂閱名單工作表；還沒有或已失效時建立新的試算表。
 function ensureSheet_() {
   const props = PropertiesService.getScriptProperties();
   let spreadsheetId = props.getProperty(SPREADSHEET_PROPERTY);
@@ -69,6 +75,7 @@ function ensureSheet_() {
   return sheet;
 }
 
+// 讀取名單，只回傳仍在訂閱中的資料列。
 function readSubscribers_() {
   const sheet = ensureSheet_();
   const values = sheet.getDataRange().getValues();
@@ -93,6 +100,7 @@ function readSubscribers_() {
   return rows.filter(r => r.active && r.subscribed && r.email);
 }
 
+// 依 Email 找資料列（從 1 起算）；找不到時回傳 -1。
 function findRowByEmail_(sheet, email) {
   const values = sheet.getDataRange().getValues();
   const target = String(email || '').trim().toLowerCase();
@@ -104,10 +112,12 @@ function findRowByEmail_(sheet, email) {
   return -1;
 }
 
+// 檢查 Email 格式。
 function validEmail_(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim());
 }
 
+// GET：回傳訂閱名單。
 function doGet(e) {
   if (!authorized_(e, null)) {
     return jsonOutput_({ ok: false, error: 'unauthorized' });
@@ -119,6 +129,7 @@ function doGet(e) {
   });
 }
 
+// POST：查詢名單（list），或新增、更新一筆訂閱（upsert）。
 function doPost(e) {
   let payload = {};
 
@@ -145,6 +156,7 @@ function doPost(e) {
     return jsonOutput_({ ok: false, error: 'unknown_action' });
   }
 
+  // 整理欄位並限制長度。
   const name = String(payload.name || '').trim().slice(0, 120);
   const email = String(payload.email || '').trim().toLowerCase().slice(0, 200);
   const message = (String(payload.message || '').trim() || '訂閱每日晨報與盤後分析').slice(0, 5000);
@@ -158,6 +170,7 @@ function doPost(e) {
     });
   }
 
+  // 同一個 Email 更新原本那列（保留建立時間），否則新增一列。
   const sheet = ensureSheet_();
   const row = findRowByEmail_(sheet, email);
   let createdAt = now;

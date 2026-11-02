@@ -48,11 +48,13 @@ NEGATIVE_WORDS = [
 ]
 
 def clean(v: Any) -> str:
+    """解碼 HTML 實體並合併空白。"""
     s = html.unescape(str(v or "")).replace("\u00a0", " ")
     return re.sub(r"\s+", " ", s).strip()
 
 
 def parse_date(v: Any) -> str:
+    """從文字中找出日期，回傳 YYYY-MM-DD；找不到時回傳空字串。"""
     s = str(v or "")
     for p in (r"(20\d{2})[./-](\d{1,2})[./-](\d{1,2})", r"(20\d{2})(\d{2})(\d{2})"):
         m = re.search(p, s)
@@ -65,12 +67,15 @@ def parse_date(v: Any) -> str:
 
 
 def symbol_from_url(url: str) -> str:
+    """從法說會文章網址取出股票代號。"""
     m = re.search(r"earnings-call-([0-9A-Za-z]+)(?:-20\d{2}-\d{2}-\d{2})?$", url.rstrip("/"))
     return m.group(1).upper() if m else ""
 
 
 class FugleMemoCrawler:
+    """抓取 Fugle 法說會備忘錄：探索文章、下載內文並存入 SQLite。"""
     def __init__(self, base_dir: str | Path = "."):
+        """建立資料夾、HTTP session 與資料庫。"""
         self.base = Path(base_dir).resolve()
         self.root = self.base / "data" / "research" / "fugle_memo_agent"
         self.root.mkdir(parents=True, exist_ok=True)
@@ -89,6 +94,7 @@ class FugleMemoCrawler:
         self._init_db()
 
     def _looks_like_block_or_error(self, raw: str) -> bool:
+        """頁面內容是否太短或像錯誤、阻擋頁。"""
         t = clean(raw)[:12000].lower()
         bad = (
             "cache miss", "internal server error", "bad gateway",
@@ -99,6 +105,7 @@ class FugleMemoCrawler:
         return len(t) < 700 or any(x in t for x in bad)
 
     def _fetch_requests(self, url: str, timeout: int = 35):
+        """用 requests 下載頁面；取得錯誤或阻擋頁時拋出例外。"""
         r = self.session.get(url, timeout=timeout, allow_redirects=True)
         r.raise_for_status()
         if self._looks_like_block_or_error(r.text):
@@ -106,6 +113,7 @@ class FugleMemoCrawler:
         return r.text, r.url, "requests"
 
     def _fetch_curl_cffi(self, url: str, timeout: int = 35):
+        """用 curl_cffi 模擬 Chrome 下載頁面；未安裝或被阻擋時拋出例外。"""
         try:
             from curl_cffi import requests as c_requests
         except Exception as exc:
@@ -123,6 +131,7 @@ class FugleMemoCrawler:
         return r.text, str(r.url), "curl_cffi"
 
     def _get_driver(self):
+        """建立並重用無頭 Chrome。"""
         if self._driver is not None:
             return self._driver
         from selenium import webdriver
@@ -167,12 +176,14 @@ class FugleMemoCrawler:
         return raw,driver.current_url,"selenium"
 
     def close(self):
+        """關閉瀏覽器。"""
         if self._driver is not None:
             try: self._driver.quit()
             except Exception: pass
             self._driver = None
 
     def _init_db(self):
+        """建立備忘錄資料表。"""
         con = sqlite3.connect(self.db_path)
         con.execute("""CREATE TABLE IF NOT EXISTS memos(
             url TEXT PRIMARY KEY, symbol TEXT, title TEXT, published_date TEXT, modified_date TEXT,
@@ -389,6 +400,7 @@ class FugleMemoCrawler:
         return cache[url]
 
     def _extract_article_uncached(self, url: str) -> dict[str, Any]:
+        """依序以瀏覽器、curl_cffi、requests 下載文章並解析內容。"""
         if not url.startswith(POST_PREFIX): raise ValueError("只允許讀取 Fugle earnings-call 詳細文章")
         errors=[]; raw=""; final_url=url; fetch_method=""; self._last_rendered_text=""
         for fn in (
@@ -421,9 +433,11 @@ class FugleMemoCrawler:
         return {"url":final_url,"symbol":symbol_from_url(final_url),"title":title,"published_date":published,"modified_date":modified,"memo_text":text[:40000],"sections":sections,"content_hash":hashlib.sha256(text.encode("utf-8","ignore")).hexdigest(),"read_at":datetime.now().isoformat(),"reader_method":fetch_method,"article_reader":reader,"detail_read_verified":True,"memo_chars":len(text),"read_errors":errors}
 
     def db_get(self,url:str):
+        """查詢文章已存的內容雜湊與分析結果。"""
         con=sqlite3.connect(self.db_path); row=con.execute("SELECT content_hash,analysis_json FROM memos WHERE url=?",(url,)).fetchone(); con.close(); return row or ("","")
 
     def db_save(self,article:dict[str,Any],analysis:dict[str,Any]|None):
+        """新增或更新一篇備忘錄及其分析結果。"""
         con=sqlite3.connect(self.db_path)
         con.execute("""INSERT INTO memos(url,symbol,title,published_date,modified_date,content_hash,last_seen,last_analyzed,impact,confidence,analysis_json,memo_text)
         VALUES(?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(url) DO UPDATE SET symbol=excluded.symbol,title=excluded.title,published_date=excluded.published_date,modified_date=excluded.modified_date,content_hash=excluded.content_hash,last_seen=excluded.last_seen,last_analyzed=COALESCE(excluded.last_analyzed,memos.last_analyzed),impact=COALESCE(excluded.impact,memos.impact),confidence=COALESCE(excluded.confidence,memos.confidence),analysis_json=COALESCE(excluded.analysis_json,memos.analysis_json),memo_text=excluded.memo_text""",
@@ -431,16 +445,20 @@ class FugleMemoCrawler:
         con.commit(); con.close()
 
     def read_memo_tool(self,url:str):
+        """研究工具用：讀取文章、存入資料庫並回傳主要欄位。"""
         article=self.extract_article(url); self.db_save(article,None)
         return {"ok":True,**{k:article[k] for k in ("url","symbol","title","published_date","modified_date","content_hash","sections","memo_text","reader_method","detail_read_verified")}}
 
 
 class FugleEarningsCallAgent:
+    """法說會每日流程：挑選近期文章、整理分析結果與總覽。"""
     def __init__(self, base_dir="."):
+        """建立文章爬蟲。"""
         self.base = Path(base_dir).resolve(); self.crawler = FugleMemoCrawler(self.base)
 
     @staticmethod
     def _fallback(article):
+        """Claude 尚未分析時，以關鍵字規則組出保守的摘要與多空判斷。"""
         t = str(article.get("memo_text") or "").strip()
         sections = article.get("sections") or {}
         base_text = str(sections.get("營運摘要") or sections.get("財務表現") or t).strip()
@@ -454,6 +472,7 @@ class FugleEarningsCallAgent:
         n = [x for x in NEGATIVE_WORDS if x in t]
         impact = "利多" if len(p) > len(n) + 2 else ("利空" if len(n) > len(p) + 2 else "混合")
         def first_sentence(value: Any, limit: int = 100) -> str:
+            """取第一個夠長的句子並截斷到指定長度。"""
             text = re.sub(r"\s+", " ", clean(value))
             fragments = [x.strip(" ：:；;，,") for x in re.split(r"(?<=[。！？；])\s*|(?<=\n)", text) if x.strip()]
             chosen = next((x for x in fragments if len(x) >= 12), text)
@@ -500,9 +519,11 @@ class FugleEarningsCallAgent:
 
     @staticmethod
     def _validate(a):
+        """校正分析結果的多空、信心分數與各欄位長度。"""
         impact=str(a.get("impact","混合")); impact=impact if impact in {"利多","利空","中性","混合"} else "混合"
         try:conf=max(0,min(100,float(a.get("confidence",0))))
         except Exception:conf=0
+        # 取清單欄位並清理、截斷每個項目。
         def arr(k,n):return [clean(x)[:n] for x in (a.get(k) or []) if clean(x)]
         summary = clean(a.get("one_line_summary", ""))[:600]
         key_points = arr("key_points", 140)[:5]
@@ -527,6 +548,7 @@ class FugleEarningsCallAgent:
         }
 
     def daily_run(self, days=14, limit=80, force=False, watchlist=None, skip_urls=None, deadline_ts=None, on_item=None, log_fn=None):
+        """探索文章並處理時間範圍內的法說會，回傳結果與總覽。"""
         _log = log_fn or (lambda msg: None)
         _t0 = time.time()
         _log("法說會：開始探索 Fugle 主題頁（可能開瀏覽器，最久約 2 分鐘）")
@@ -636,6 +658,7 @@ class FugleEarningsCallAgent:
 
     @staticmethod
     def _digest(items,watch):
+        """統計多空與產業分布，組出法說會總覽。"""
         counts={k:0 for k in ("利多","利空","中性","混合")}
         for x in items:counts[x.get("impact","混合")]=counts.get(x.get("impact","混合"),0)+1
         inds={}
@@ -645,4 +668,5 @@ class FugleEarningsCallAgent:
 
 # Compatibility class used by ResearchAgent.
 class EarningsCallAgent(FugleEarningsCallAgent):
+    """對外使用的法說會 Agent 名稱。"""
     pass

@@ -24,6 +24,7 @@ import cnyes_news_crawler as cc  # noqa: E402
 
 # ---------------- 假的鉅亨 API ----------------
 def _fake_rows(prefix: str, n: int, hours_back_start: int, step_min: int):
+    """產生測試用的假新聞資料。"""
     now = datetime.now(TAIPEI)
     rows = []
     for i in range(n):
@@ -49,11 +50,15 @@ DATA = {
 
 
 class FakeResp:
+    """假的 HTTP 回應。"""
+    # 保存要回傳的資料。
     def __init__(self, payload): self._p = payload
+    # 回傳資料。
     def json(self): return self._p
 
 
 def fake_get(self, url, params=None, accept_json=False):
+    """取代網路請求：依分類與分頁回傳假新聞。"""
     cat = "headline" if url.endswith("/headline") else url.rsplit("/", 1)[-1]
     if cat not in DATA:
         raise RuntimeError("404 unknown category")
@@ -70,6 +75,7 @@ cc.CnyesNewsCrawler._get = fake_get
 
 
 def main() -> int:
+    """以假資料走完財經更新流程並驗證結果。"""
     import run_finance_info_update as run
     import finance_digest as fd
 
@@ -119,6 +125,7 @@ def main() -> int:
         assert latest2["updated_at"] >= latest["updated_at"]
 
         # 第 3 次：爬蟲整個壞掉，要保留上一版而不是變空
+        # 模擬網路中斷。
         def boom(self, *a, **k): raise RuntimeError("network down")
         cc.CnyesNewsCrawler._get = boom
         for f in reports.glob("cnyes_news_*.json"):

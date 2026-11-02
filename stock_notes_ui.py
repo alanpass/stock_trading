@@ -64,6 +64,7 @@ def load_stock_notes(base_dir: str) -> dict:
 
 
 def _fmt_time(value: str) -> str:
+    """把時間轉成台北時間的顯示文字。"""
     try:
         dt = datetime.fromisoformat(str(value))
         if dt.tzinfo is None:
@@ -74,11 +75,13 @@ def _fmt_time(value: str) -> str:
 
 
 def _ul(items: list) -> str:
+    """組出 HTML 項目清單；沒有內容時顯示破折號。"""
     rows = [f"<li>{html.escape(str(x))}</li>" for x in items or [] if str(x).strip()]
     return "<ul>" + "".join(rows) + "</ul>" if rows else "<ul><li>—</li></ul>"
 
 
 def note_card_html(note: dict) -> str:
+    """組出單檔研究筆記的 HTML 卡片。"""
     links = [str(u) for u in note.get("source_links", []) or [] if str(u).startswith("http")]
     link_html = "、".join(f'<a href="{html.escape(u)}" target="_blank" rel="noopener">來源 {i}</a>' for i, u in enumerate(links, 1))
     evidence = "；".join(html.escape(str(x)) for x in note.get("evidence", []) or [])
@@ -112,6 +115,7 @@ def render_stock_note_for_symbol(base_dir: str | Path, symbol: str) -> None:
 
 
 def render_stock_notes_workspace(base_dir: str | Path, selected_symbol: str = "") -> None:
+    """顯示個股研究筆記，可選擇股票；沒有筆記時顯示提示。"""
     data = load_stock_notes(str(base_dir))
     notes = [n for n in data.get("notes", []) if isinstance(n, dict)]
     if not notes:

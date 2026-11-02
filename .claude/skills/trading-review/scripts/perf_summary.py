@@ -19,6 +19,7 @@ if hasattr(sys.stdout, "reconfigure"):
 
 
 def daytrade() -> tuple[pd.DataFrame, pd.DataFrame]:
+    """讀取每日當沖 summary.json，整理成逐日績效表與逐筆交易表。"""
     days, trades = [], []
     for f in sorted(DT.glob("*/summary.json")):
         s = json.loads(f.read_text(encoding="utf-8"))
@@ -35,6 +36,7 @@ def daytrade() -> tuple[pd.DataFrame, pd.DataFrame]:
 
 
 def swing() -> tuple[pd.DataFrame, pd.DataFrame, dict]:
+    """讀取波段組合的淨值、交易紀錄與目前狀態。"""
     nav = pd.read_csv(SW / "nav.csv", encoding="utf-8-sig") if (SW / "nav.csv").exists() else pd.DataFrame()
     tr = pd.read_csv(SW / "trades.csv", encoding="utf-8-sig") if (SW / "trades.csv").exists() else pd.DataFrame()
     st = json.loads((SW / "state.json").read_text(encoding="utf-8")) if (SW / "state.json").exists() else {}
@@ -42,6 +44,7 @@ def swing() -> tuple[pd.DataFrame, pd.DataFrame, dict]:
 
 
 def md(df: pd.DataFrame) -> str:
+    """把 DataFrame 轉成 Markdown 表格；沒有資料時回傳提示文字。"""
     if df.empty:
         return "（無資料）"
     cols = list(df.columns)
@@ -52,6 +55,7 @@ def md(df: pd.DataFrame) -> str:
 
 
 def main() -> int:
+    """印出當沖與波段的累計績效摘要。"""
     d, t = daytrade()
     nav, tr, st = swing()
     print("## 當沖（逐日）\n" + md(d))

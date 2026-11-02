@@ -50,6 +50,7 @@ def _secret(name: str) -> str:
 
 
 def _endpoint() -> tuple[str, dict[str, str]] | None:
+    """組出資料庫的網址與標頭；未設定時回傳 None。"""
     raw_url, key = _secret("ACCOUNT_DB_URL"), _secret("ACCOUNT_DB_SERVICE_ROLE_KEY")
     if not raw_url or not key:
         return None
@@ -59,6 +60,7 @@ def _endpoint() -> tuple[str, dict[str, str]] | None:
 
 
 def _clean(items) -> list[str]:
+    """統一股票代號格式並去除重複。"""
     out = []
     for value in items or []:
         code = str(value).strip().upper().replace(".TW", "")
@@ -68,6 +70,7 @@ def _clean(items) -> list[str]:
 
 
 def _read(key: str):
+    """從資料庫讀取設定值；失敗時回傳 None。"""
     ep = _endpoint()
     if not ep:
         return None
@@ -83,6 +86,7 @@ def _read(key: str):
 
 
 def single_list_doc(items) -> dict:
+    """把舊的單一名單轉成多名單格式。"""
     return {"active": "l1", "lists": [{"id": "l1", "name": "1", "items": _clean(items)}]}
 
 
@@ -125,6 +129,7 @@ def save_doc(doc: dict) -> bool:
 
 
 def active_list(doc: dict) -> dict:
+    """取得目前選的名單；找不到時用第一份。"""
     return next((x for x in doc["lists"] if x["id"] == doc["active"]), doc["lists"][0])
 
 
@@ -134,6 +139,7 @@ def all_items(doc: dict) -> list[str]:
 
 
 def clean_name(name) -> str:
+    """合併空白並限制名單名稱長度。"""
     return " ".join(str(name or "").split())[:MAX_NAME_LENGTH]
 
 
@@ -147,6 +153,7 @@ def next_default_name(doc: dict) -> str:
 
 
 def name_taken(doc: dict, name: str, ignore_id: str = "") -> bool:
+    """名單名稱是否已被使用。"""
     return any(x["name"] == name and x["id"] != ignore_id for x in doc["lists"])
 
 
@@ -167,6 +174,7 @@ def add_list(doc: dict, name="") -> str | None:
 
 
 def rename_list(doc: dict, list_id: str, name) -> str | None:
+    """改名單名稱；成功回傳 None，否則回傳錯誤訊息。"""
     name = clean_name(name)
     if not name:
         return "名稱不能空白。"
@@ -180,6 +188,7 @@ def rename_list(doc: dict, list_id: str, name) -> str | None:
 
 
 def delete_list(doc: dict, list_id: str) -> str | None:
+    """刪除名單，至少保留一份；成功回傳 None，否則回傳錯誤訊息。"""
     if len(doc["lists"]) <= 1:
         return "至少要留一份名單。"
     if not any(x["id"] == list_id for x in doc["lists"]):
@@ -207,6 +216,7 @@ def pull_to_file(path: Path = WATCHLIST_FILE) -> list[str] | None:
 
 
 def main() -> int:
+    """命令列入口：--pull 把資料庫名單寫到本機，否則印出名單。"""
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     if "--pull" in sys.argv[1:]:

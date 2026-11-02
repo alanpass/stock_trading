@@ -150,10 +150,12 @@ NAME_FALLBACKS = {
 
 
 def now_taipei() -> datetime:
+    """目前的台北時間。"""
     return datetime.now(TAIPEI)
 
 
 def _parse_number(value: Any) -> float:
+    """把含逗號或百分號的文字轉成數字；無資料時回傳 NaN。"""
     if value is None:
         return np.nan
     text = str(value).strip().replace(",", "").replace("%", "")
@@ -166,6 +168,7 @@ def _parse_number(value: Any) -> float:
 
 
 def _parse_twse_date(value: Any) -> pd.Timestamp:
+    """解析證交所日期，支援民國年格式。"""
     text = str(value or "").strip()
     if not text:
         return pd.NaT
@@ -230,6 +233,7 @@ def _fetch_tpex_market_turnover_month(session: requests.Session, month: pd.Times
     diagnostics: list[str] = []
 
     def add_row(row: Any) -> None:
+        """從一列資料取出日期與成交金額，有效時存入結果。"""
         if isinstance(row, dict):
             lowered = {str(k).strip().lower(): v for k, v in row.items()}
             raw_date = next((v for k, v in lowered.items() if k in {"日期", "資料日期", "date", "trade_date"}), None)
@@ -244,6 +248,7 @@ def _fetch_tpex_market_turnover_month(session: requests.Session, month: pd.Times
             output[pd.Timestamp(dt).strftime("%Y-%m-%d")] = float(value)
 
     def harvest_json(payload: Any) -> None:
+        """從櫃買 JSON 的各種資料鍵收集每一列資料。"""
         if isinstance(payload, dict):
             # TPEx 官方既有介面使用 aaData；也容忍其餘常見的資料鍵。
             for key in ("aaData", "data", "rows", "items", "result"):
@@ -313,6 +318,7 @@ def _fetch_tpex_market_turnover_month(session: requests.Session, month: pd.Times
     )
 
 def _atomic_write(path: Path, content: str) -> None:
+    """先寫暫存檔再取代，避免留下寫到一半的檔案。"""
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".tmp")
     tmp.write_text(content, encoding="utf-8")
@@ -320,6 +326,7 @@ def _atomic_write(path: Path, content: str) -> None:
 
 
 def _fetch_taiex_month(session: requests.Session, month: pd.Timestamp) -> pd.DataFrame:
+    """向證交所取得一個月的加權指數收盤價。"""
     params = {"date": month.strftime("%Y%m") + "01", "response": "json"}
     response = session.get(TAIEX_MONTHLY_URL, params=params, timeout=25)
     response.raise_for_status()
@@ -451,6 +458,7 @@ def _load_symbol_history(client: FugleClient, base: Path, symbol: str, end_date:
 
 
 def _ticker_names(client: FugleClient, symbols: set[str]) -> dict[str, str]:
+    """取得股票名稱，查不到時用預設名稱或代號。"""
     names = {code: NAME_FALLBACKS.get(code, code) for code in symbols}
     for exchange in ("TWSE", "TPEx"):
         try:
@@ -465,6 +473,7 @@ def _ticker_names(client: FugleClient, symbols: set[str]) -> dict[str, str]:
 
 
 def _return_between(close: pd.Series, current_date: pd.Timestamp, base_date: pd.Timestamp) -> float:
+    """計算兩個日期之間的報酬率（%）；缺資料時回傳 NaN。"""
     if current_date not in close.index or base_date not in close.index:
         return np.nan
     current, base_value = _parse_number(close.loc[current_date]), _parse_number(close.loc[base_date])
@@ -474,6 +483,7 @@ def _return_between(close: pd.Series, current_date: pd.Timestamp, base_date: pd.
 
 
 def _quadrant(rs: float, momentum: float) -> str:
+    """依相對強度與動能判斷輪動象限：領先、轉弱、落後或改善。"""
     if not np.isfinite(rs) or not np.isfinite(momentum):
         return "資料不足"
     if rs >= 100 and momentum >= 100:
@@ -486,6 +496,7 @@ def _quadrant(rs: float, momentum: float) -> str:
 
 
 def _mean_pct(values: list[float]) -> float | None:
+    """計算有效數值的平均；沒有有效值時回傳 None。"""
     good = [float(v) for v in values if np.isfinite(v)]
     return round(float(np.mean(good)), 3) if good else None
 
@@ -947,6 +958,7 @@ def add_share_flows(payload: dict[str, Any], base: Path) -> None:
     totals = {d: sum(v["value"] for v in quotes[d].values() if v["value"] == v["value"]) for d in days}
 
     def share(members: list[str], d) -> float:
+        """計算成分股某日的成交金額合計占比。"""
         return sum(quotes[d][c]["value"] for c in members if c in quotes[d] and quotes[d][c]["value"] == quotes[d][c]["value"]) / totals[d] * 100
 
     for kind in ("groups", "official_industries", "value_chains"):

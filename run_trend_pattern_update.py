@@ -17,6 +17,7 @@ LOG_FILE = BASE / "output" / "scheduler_logs" / "trend_patterns_runner.log"
 
 
 def log(message: str) -> None:
+    """印出訊息並寫入紀錄檔。"""
     stamp = datetime.now(TAIPEI).isoformat(timespec="seconds")
     line = f"[{stamp}] {message}"
     print(line, flush=True)
@@ -29,6 +30,7 @@ def log(message: str) -> None:
 
 
 def main() -> int:
+    """命令列入口：檢查趨勢型態，僅重大變化時發布；失敗時回傳 1。"""
     parser = argparse.ArgumentParser(description="每日檢查產業概念股趨勢型態；僅重大變化時發布")
     parser.add_argument("--force", action="store_true", help="忽略非交易日檢查，使用目前可用日 K 建立／檢查快照")
     parser.add_argument("--no-publish", action="store_true", help="僅更新本機快照，不發布到 GitHub")

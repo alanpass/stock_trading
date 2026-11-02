@@ -24,14 +24,17 @@ EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
 def _now_iso() -> str:
+    """目前本地時間的 ISO 字串。"""
     return datetime.now().astimezone().isoformat(timespec="seconds")
 
 
 def _clean_email(value: Any) -> str:
+    """去除空白並轉小寫。"""
     return str(value or "").strip().lower()
 
 
 def _load_local(path: Path) -> list[dict[str, Any]]:
+    """讀取本機訂閱名單；失敗時回傳空清單。"""
     if not path.exists():
         return []
     try:
@@ -46,6 +49,7 @@ def _load_local(path: Path) -> list[dict[str, Any]]:
 
 
 def _save_local(path: Path, rows: list[dict[str, Any]]) -> None:
+    """寫入本機訂閱名單。"""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(rows, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
 
@@ -90,18 +94,22 @@ def _setting(base: Path, name: str) -> str:
 
 
 def _remote_url(base: Path) -> str:
+    """遠端訂閱名單的網址設定。"""
     return _setting(base, "SUBSCRIBER_SYNC_URL")
 
 
 def _remote_token(base: Path) -> str:
+    """遠端訂閱名單的 token 設定。"""
     return _setting(base, "SUBSCRIBER_SYNC_TOKEN")
 
 
 def _remote_headers() -> dict[str, str]:
+    """呼叫遠端服務使用的標頭。"""
     return {"Content-Type": "application/json; charset=utf-8"}
 
 
 def load_remote_subscribers(base: str | Path = ".") -> tuple[list[dict[str, Any]], str]:
+    """讀取遠端訂閱名單，回傳名單與錯誤訊息。"""
     base = Path(base).resolve()
     url = _remote_url(base)
     token = _remote_token(base)
@@ -123,6 +131,7 @@ def load_remote_subscribers(base: str | Path = ".") -> tuple[list[dict[str, Any]
 
 
 def load_subscribers(base: str | Path = ".", include_remote: bool = True) -> list[dict[str, Any]]:
+    """合併本機與遠端名單，同一 email 取最新紀錄。"""
     base = Path(base).resolve()
     local_path = base / "data" / "subscribers.json"
     local = _load_local(local_path)
@@ -139,6 +148,7 @@ def load_subscribers(base: str | Path = ".", include_remote: bool = True) -> lis
             continue
         # 以 updated_at 較新的來源為準，避免雲端舊紀錄覆蓋本機剛更新的訂閱狀態。
         def stamp(v: Any) -> str:
+            """轉成可比較的時間字串。"""
             return str(v or "")
         if stamp(row.get("updated_at")) >= stamp(old.get("updated_at")):
             merged[email] = {**old, **row, "email": email}
@@ -152,6 +162,7 @@ def load_subscribers(base: str | Path = ".", include_remote: bool = True) -> lis
 
 
 def report_recipient_emails(base: str | Path = ".") -> list[str]:
+    """所有應收到報告的 email（排序去重）。"""
     return sorted({
         _clean_email(x.get("email"))
         for x in load_subscribers(base, include_remote=True)
@@ -167,6 +178,7 @@ def register_subscriber(
     message: str,
     subscribed: bool,
 ) -> dict[str, Any]:
+    """驗證並登記訂閱或留言，同步遠端後通知，回傳處理結果。"""
     base = Path(base).resolve()
     clean_name = re.sub(r"[\r\n\t]+", " ", str(name or "")).strip()[:120]  # 姓名會用在信件標題，不能含換行
     clean_email = _clean_email(email)
@@ -302,6 +314,7 @@ def register_subscriber(
 
 
 def subscription_status(base: str | Path = ".") -> dict[str, Any]:
+    """回傳目前訂閱人數與 email。"""
     rows = load_subscribers(base, include_remote=True)
     return {
         "active_count": len(rows),
