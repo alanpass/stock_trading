@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-11-07",
-  "updated_at": "2026-11-07T10:44:58+08:00",
-  "finished_at": "2026-11-07T10:45:49+08:00",
-  "published_at": "2026-11-07T10:45:50+08:00",
+  "updated_at": "2026-11-07T10:48:53+08:00",
+  "finished_at": "2026-11-07T10:49:09+08:00",
+  "published_at": "2026-11-07T10:49:10+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -18,7 +18,7 @@
   "news_count": 598,
   "earnings_count": 18,
   "news_digest": {
-    "generated_at": "2026-11-07T10:44:58+08:00",
+    "generated_at": "2026-11-07T10:48:53+08:00",
     "headline": "最近 2 天共整理 598 則財經新聞：利多 175、利空 319、中性 48、混合 56；討論度最高的產業：AI／伺服器、半導體、國際股市。",
     "stats": {
       "total": 598,
@@ -296,7 +296,7 @@
     }
   },
   "earnings_digest": {
-    "generated_at": "2026-11-07T10:44:58+08:00",
+    "generated_at": "2026-11-07T10:48:53+08:00",
     "days": 5,
     "total": 18,
     "利多": 7,
@@ -540,15 +540,15 @@
       "future": 27
     },
     "source_method": "api",
-    "reused_from_previous_run": 59,
+    "reused_from_previous_run": 148,
     "window_start": "2026-11-06T00:00:00+08:00",
-    "window_end": "2026-11-07T10:45:48.599832+08:00"
+    "window_end": "2026-11-07T10:49:08.384982+08:00"
   },
   "agent_stats": {
     "input": 599,
     "after_dedupe": 598,
     "ai_cached": 23,
-    "seconds": 0.8,
+    "seconds": 1.0,
     "earnings": {
       "total": 18,
       "ai_cached": 0,
@@ -2350,7 +2350,7 @@
       "article_id": "6651860",
       "title": "鉅亨速報 - Factset 最新調查：穎崴(6515-TW)目標價調降至8175元，幅度約4.66%",
       "url": "https://news.cnyes.com/news/id/6651860",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-07 08:10:25",
       "published_ts": "2026-11-07T08:10:25+08:00",
       "ai_points": [
@@ -2391,7 +2391,7 @@
       "article_id": "6651912",
       "title": "鉅亨速報 - Factset 最新調查：環宇-KY(4991-TW)目標價調降至580.5元，幅度約12.44%",
       "url": "https://news.cnyes.com/news/id/6651912",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-07 10:10:25",
       "published_ts": "2026-11-07T10:10:25+08:00",
       "ai_points": [
@@ -3765,7 +3765,7 @@
       "article_id": "6651384",
       "title": "鉅亨速報 - Factset 最新調查：Advanced Drainage Systems IncWMS-US的目標價調降至177元，幅度約4.32%",
       "url": "https://news.cnyes.com/news/id/6651384",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:21",
       "published_ts": "2026-11-06T20:15:21+08:00",
       "ai_points": [
@@ -3802,7 +3802,7 @@
       "article_id": "6651385",
       "title": "鉅亨速報 - Factset 最新調查：泰瑟國際AXON-US的目標價調降至675元，幅度約3.57%",
       "url": "https://news.cnyes.com/news/id/6651385",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:23",
       "published_ts": "2026-11-06T20:15:23+08:00",
       "ai_points": [
@@ -3841,7 +3841,7 @@
       "article_id": "6651386",
       "title": "鉅亨速報 - Factset 最新調查：Zillow集團Z-US的目標價調降至38元，幅度約5%",
       "url": "https://news.cnyes.com/news/id/6651386",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:24",
       "published_ts": "2026-11-06T20:15:24+08:00",
       "ai_points": [
@@ -3879,7 +3879,7 @@
       "article_id": "6651388",
       "title": "鉅亨速報 - Factset 最新調查：聯邦信號公司FSS-US的目標價調降至140元，幅度約3.45%",
       "url": "https://news.cnyes.com/news/id/6651388",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:26",
       "published_ts": "2026-11-06T20:15:26+08:00",
       "ai_points": [
@@ -3916,7 +3916,7 @@
       "article_id": "6651389",
       "title": "鉅亨速報 - Factset 最新調查：StandardAero, Inc.SARO-US的目標價調升至34元，幅度約3.03%",
       "url": "https://news.cnyes.com/news/id/6651389",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:28",
       "published_ts": "2026-11-06T20:15:28+08:00",
       "ai_points": [
@@ -3953,7 +3953,7 @@
       "article_id": "6651391",
       "title": "鉅亨速報 - Factset 最新調查：康耐視CGNX-US的目標價調降至76元，幅度約5%",
       "url": "https://news.cnyes.com/news/id/6651391",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:30",
       "published_ts": "2026-11-06T20:15:30+08:00",
       "ai_points": [
@@ -3992,7 +3992,7 @@
       "article_id": "6651393",
       "title": "鉅亨速報 - Factset 最新調查：Celsius控股CELH-US的目標價調升至42元，幅度約5%",
       "url": "https://news.cnyes.com/news/id/6651393",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:31",
       "published_ts": "2026-11-06T20:15:31+08:00",
       "ai_points": [
@@ -4027,7 +4027,7 @@
       "article_id": "6651396",
       "title": "鉅亨速報 - Factset 最新調查：Duolingo Inc - Class ADUOL-US的目標價調升至148.5元，幅度約8%",
       "url": "https://news.cnyes.com/news/id/6651396",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:33",
       "published_ts": "2026-11-06T20:15:33+08:00",
       "ai_points": [
@@ -4064,7 +4064,7 @@
       "article_id": "6651398",
       "title": "鉅亨速報 - Factset 最新調查：億磐系統EPAM-US的目標價調升至151元，幅度約4.14%",
       "url": "https://news.cnyes.com/news/id/6651398",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:35",
       "published_ts": "2026-11-06T20:15:35+08:00",
       "ai_points": [
@@ -4101,7 +4101,7 @@
       "article_id": "6651400",
       "title": "鉅亨速報 - Factset 最新調查：Millicom International Cellular S.A.TIGO-US的目標價調升至100元，幅度約5.26%",
       "url": "https://news.cnyes.com/news/id/6651400",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:37",
       "published_ts": "2026-11-06T20:15:37+08:00",
       "ai_points": [
@@ -4140,7 +4140,7 @@
       "article_id": "6651402",
       "title": "鉅亨速報 - Factset 最新調查：那提拉NTRA-US的目標價調降至444元，幅度約3.27%",
       "url": "https://news.cnyes.com/news/id/6651402",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:38",
       "published_ts": "2026-11-06T20:15:38+08:00",
       "ai_points": [
@@ -4177,7 +4177,7 @@
       "article_id": "6651403",
       "title": "鉅亨速報 - Factset 最新調查：Atlassian Corporation - Class ATEAM-US的目標價調降至204元，幅度約9.33%",
       "url": "https://news.cnyes.com/news/id/6651403",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:39",
       "published_ts": "2026-11-06T20:15:39+08:00",
       "ai_points": [
@@ -4212,7 +4212,7 @@
       "article_id": "6651405",
       "title": "鉅亨速報 - Factset 最新調查：莫爾森庫爾斯TAP-US的目標價調升至43元，幅度約4.88%",
       "url": "https://news.cnyes.com/news/id/6651405",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:41",
       "published_ts": "2026-11-06T20:15:41+08:00",
       "ai_points": [
@@ -4250,7 +4250,7 @@
       "article_id": "6651407",
       "title": "鉅亨速報 - Factset 最新調查：Veeva系統VEEV-US的目標價調升至322.5元，幅度約4.88%",
       "url": "https://news.cnyes.com/news/id/6651407",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:42",
       "published_ts": "2026-11-06T20:15:42+08:00",
       "ai_points": [
@@ -4287,7 +4287,7 @@
       "article_id": "6651408",
       "title": "鉅亨速報 - Factset 最新調查：德州鮮切牛排TXRH-US的目標價調升至213元，幅度約3.9%",
       "url": "https://news.cnyes.com/news/id/6651408",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:43",
       "published_ts": "2026-11-06T20:15:43+08:00",
       "ai_points": [
@@ -4325,7 +4325,7 @@
       "article_id": "6651410",
       "title": "鉅亨速報 - Factset 最新調查：Paylocity Holding CorpPCTY-US的目標價調升至191元，幅度約6.11%",
       "url": "https://news.cnyes.com/news/id/6651410",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:44",
       "published_ts": "2026-11-06T20:15:44+08:00",
       "ai_points": [
@@ -4362,7 +4362,7 @@
       "article_id": "6651411",
       "title": "鉅亨速報 - Factset 最新調查：嘉德諾健康集團CAH-US的目標價調升至290元，幅度約3.57%",
       "url": "https://news.cnyes.com/news/id/6651411",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:45",
       "published_ts": "2026-11-06T20:15:45+08:00",
       "ai_points": [
@@ -4399,7 +4399,7 @@
       "article_id": "6651413",
       "title": "鉅亨速報 - Factset 最新調查：吉爾登運動服GIL-US的目標價調降至52.5元，幅度約21.5%",
       "url": "https://news.cnyes.com/news/id/6651413",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:46",
       "published_ts": "2026-11-06T20:15:46+08:00",
       "ai_points": [
@@ -4437,7 +4437,7 @@
       "article_id": "6651415",
       "title": "鉅亨速報 - Factset 最新調查：Iris Energy LtdIREN-US的目標價調降至65元，幅度約12.16%",
       "url": "https://news.cnyes.com/news/id/6651415",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:47",
       "published_ts": "2026-11-06T20:15:47+08:00",
       "ai_points": [
@@ -4474,7 +4474,7 @@
       "article_id": "6651423",
       "title": "鉅亨速報 - Factset 最新調查：ITT公司ITT-US的目標價調降至255元，幅度約4.14%",
       "url": "https://news.cnyes.com/news/id/6651423",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:54",
       "published_ts": "2026-11-06T20:15:54+08:00",
       "ai_points": [
@@ -4513,7 +4513,7 @@
       "article_id": "6651424",
       "title": "鉅亨速報 - Factset 最新調查：沃達丰電信公司VOD-US的目標價調降至16.84元，幅度約3.02%",
       "url": "https://news.cnyes.com/news/id/6651424",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:56",
       "published_ts": "2026-11-06T20:15:56+08:00",
       "ai_points": [
@@ -4548,7 +4548,7 @@
       "article_id": "6651426",
       "title": "鉅亨速報 - Factset 最新調查：索尼SONY-US的目標價調升至31.67元，幅度約4.18%",
       "url": "https://news.cnyes.com/news/id/6651426",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:57",
       "published_ts": "2026-11-06T20:15:57+08:00",
       "ai_points": [
@@ -4585,7 +4585,7 @@
       "article_id": "6651428",
       "title": "鉅亨速報 - Factset 最新調查：康明斯CMI-US的目標價調降至708元，幅度約4.71%",
       "url": "https://news.cnyes.com/news/id/6651428",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:59",
       "published_ts": "2026-11-06T20:15:59+08:00",
       "ai_points": [
@@ -4624,7 +4624,7 @@
       "article_id": "6651429",
       "title": "鉅亨速報 - Factset 最新調查：超捷國際MCHP-US的目標價調降至100元，幅度約7.41%",
       "url": "https://news.cnyes.com/news/id/6651429",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:16:01",
       "published_ts": "2026-11-06T20:16:01+08:00",
       "ai_points": [
@@ -4661,7 +4661,7 @@
       "article_id": "6651431",
       "title": "鉅亨速報 - Factset 最新調查：淡水河谷VALE-US的目標價調降至15元，幅度約3.23%",
       "url": "https://news.cnyes.com/news/id/6651431",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:16:02",
       "published_ts": "2026-11-06T20:16:02+08:00",
       "ai_points": [
@@ -4693,7 +4693,7 @@
       "article_id": "6651432",
       "title": "鉅亨速報 - Factset 最新調查：暉致VTRS-US的目標價調升至22元，幅度約10%",
       "url": "https://news.cnyes.com/news/id/6651432",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:16:03",
       "published_ts": "2026-11-06T20:16:03+08:00",
       "ai_points": [
@@ -4731,7 +4731,7 @@
       "article_id": "6651436",
       "title": "鉅亨速報 - Factset 最新調查：愛彼迎ABNB-US的目標價調升至197.5元，幅度約5.05%",
       "url": "https://news.cnyes.com/news/id/6651436",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:16:06",
       "published_ts": "2026-11-06T20:16:06+08:00",
       "ai_points": [
@@ -4766,7 +4766,7 @@
       "article_id": "6651437",
       "title": "鉅亨速報 - Factset 最新調查：Madison Air Solutions Corp. Class AMAIR-US的目標價調降至33元，幅度約5.71%",
       "url": "https://news.cnyes.com/news/id/6651437",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:16:07",
       "published_ts": "2026-11-06T20:16:07+08:00",
       "ai_points": [
@@ -4805,7 +4805,7 @@
       "article_id": "6651443",
       "title": "鉅亨速報 - Factset 最新調查：10x Genomics Inc - Class ATXG-US的目標價調降至70元，幅度約6.67%",
       "url": "https://news.cnyes.com/news/id/6651443",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:16:12",
       "published_ts": "2026-11-06T20:16:12+08:00",
       "ai_points": [
@@ -4842,7 +4842,7 @@
       "article_id": "6651442",
       "title": "鉅亨速報 - Factset 最新調查：和康電訊MTSI-US的目標價調降至305元，幅度約18.67%",
       "url": "https://news.cnyes.com/news/id/6651442",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:16:12",
       "published_ts": "2026-11-06T20:16:12+08:00",
       "ai_points": [
@@ -4878,7 +4878,7 @@
       "article_id": "6651446",
       "title": "鉅亨速報 - Factset 最新調查：JFrog LtdFROG-US的目標價調升至119元，幅度約3.48%",
       "url": "https://news.cnyes.com/news/id/6651446",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:16:15",
       "published_ts": "2026-11-06T20:16:15+08:00",
       "ai_points": [
@@ -4917,7 +4917,7 @@
       "article_id": "6651447",
       "title": "鉅亨速報 - Factset 最新調查：帝亞吉歐公司DEO-US的目標價調升至110.25元，幅度約3.22%",
       "url": "https://news.cnyes.com/news/id/6651447",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:16:16",
       "published_ts": "2026-11-06T20:16:16+08:00",
       "ai_points": [
@@ -4954,7 +4954,7 @@
       "article_id": "6651569",
       "title": "鉅亨速報 - Factset 最新調查：Unity Software IncU-US的目標價調升至59元，幅度約5.36%",
       "url": "https://news.cnyes.com/news/id/6651569",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:15:23",
       "published_ts": "2026-11-06T22:15:23+08:00",
       "ai_points": [
@@ -4991,7 +4991,7 @@
       "article_id": "6651570",
       "title": "鉅亨速報 - Factset 最新調查：IonQ IncIONQ-US的目標價調降至55元，幅度約8.33%",
       "url": "https://news.cnyes.com/news/id/6651570",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:15:26",
       "published_ts": "2026-11-06T22:15:26+08:00",
       "ai_points": [
@@ -5028,7 +5028,7 @@
       "article_id": "6651572",
       "title": "鉅亨速報 - Factset 最新調查：永利度假村WYNN-US的目標價調降至121元，幅度約3.2%",
       "url": "https://news.cnyes.com/news/id/6651572",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:15:31",
       "published_ts": "2026-11-06T22:15:31+08:00",
       "ai_points": [
@@ -5063,7 +5063,7 @@
       "article_id": "6651574",
       "title": "鉅亨速報 - Factset 最新調查：掛毯TPR-US的目標價調升至168元，幅度約3.7%",
       "url": "https://news.cnyes.com/news/id/6651574",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:15:35",
       "published_ts": "2026-11-06T22:15:35+08:00",
       "ai_points": [
@@ -5100,7 +5100,7 @@
       "article_id": "6651576",
       "title": "鉅亨速報 - Factset 最新調查：雅保ALB-US的目標價調降至137.5元，幅度約5.17%",
       "url": "https://news.cnyes.com/news/id/6651576",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:15:36",
       "published_ts": "2026-11-06T22:15:36+08:00",
       "ai_points": [
@@ -5136,7 +5136,7 @@
       "article_id": "6651577",
       "title": "鉅亨速報 - Factset 最新調查：Cloudflare公司NET-US的目標價調降至362.5元，幅度約3.33%",
       "url": "https://news.cnyes.com/news/id/6651577",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:15:37",
       "published_ts": "2026-11-06T22:15:37+08:00",
       "ai_points": [
@@ -5168,7 +5168,7 @@
       "article_id": "6651579",
       "title": "鉅亨速報 - Factset 最新調查：Akamai科技AKAM-US的目標價調降至149.5元，幅度約5.08%",
       "url": "https://news.cnyes.com/news/id/6651579",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:15:39",
       "published_ts": "2026-11-06T22:15:39+08:00",
       "ai_points": [
@@ -5203,7 +5203,7 @@
       "article_id": "6651700",
       "title": "鉅亨速報 - Factset 最新調查：Halozyme治療HALO-US的目標價調升至115元，幅度約4.55%",
       "url": "https://news.cnyes.com/news/id/6651700",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-07 00:15:30",
       "published_ts": "2026-11-07T00:15:30+08:00",
       "ai_points": [
@@ -5238,7 +5238,7 @@
       "article_id": "6651701",
       "title": "鉅亨速報 - Factset 最新調查：Protagonist Therapeutics IncPTGX-US的目標價調升至180元，幅度約4.05%",
       "url": "https://news.cnyes.com/news/id/6651701",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-07 00:15:34",
       "published_ts": "2026-11-07T00:15:34+08:00",
       "ai_points": [
@@ -5273,7 +5273,7 @@
       "article_id": "6651702",
       "title": "鉅亨速報 - Factset 最新調查：Summit Therapeutics IncSMMT-US的目標價調升至32元，幅度約4.92%",
       "url": "https://news.cnyes.com/news/id/6651702",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-07 00:15:40",
       "published_ts": "2026-11-07T00:15:40+08:00",
       "ai_points": [
@@ -5308,7 +5308,7 @@
       "article_id": "6651796",
       "title": "鉅亨速報 - Factset 最新調查：Solstice Advanced Materials, Inc.SOLS-US的目標價調降至78元，幅度約3.11%",
       "url": "https://news.cnyes.com/news/id/6651796",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-07 04:15:27",
       "published_ts": "2026-11-07T04:15:27+08:00",
       "ai_points": [
@@ -6847,7 +6847,7 @@
       "article_id": "6651421",
       "title": "鉅亨速報 - Factset 最新調查：鐵山IRM-US的目標價調降至138元，幅度約4.17%",
       "url": "https://news.cnyes.com/news/id/6651421",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 20:15:53",
       "published_ts": "2026-11-06T20:15:53+08:00",
       "ai_points": [
@@ -6881,7 +6881,7 @@
       "article_id": "6651609",
       "title": "盤中速報 - 輝達(NVDA-US)大漲5.33%，報191.28美元",
       "url": "https://news.cnyes.com/news/id/6651609",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:16",
       "published_ts": "2026-11-06T22:45:16+08:00",
       "ai_points": [
@@ -8515,7 +8515,7 @@
       "article_id": "6651611",
       "title": "盤中速報 - 台積電ADR(TSM-US)大漲7.56%，報379.78美元",
       "url": "https://news.cnyes.com/news/id/6651611",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:18",
       "published_ts": "2026-11-06T22:45:18+08:00",
       "ai_points": [
@@ -11111,7 +11111,7 @@
       "article_id": "6651606",
       "title": "盤中速報 - 道瓊指數大跌1%，報51009.89點",
       "url": "https://news.cnyes.com/news/id/6651606",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:40:25",
       "published_ts": "2026-11-06T22:40:25+08:00",
       "ai_points": [
@@ -12117,7 +12117,7 @@
       "article_id": "6651614",
       "title": "盤中速報 - 美光科技(MU-US)大漲7.58%，報706.13美元",
       "url": "https://news.cnyes.com/news/id/6651614",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:19",
       "published_ts": "2026-11-06T22:45:19+08:00",
       "ai_points": [
@@ -12154,7 +12154,7 @@
       "article_id": "6651613",
       "title": "盤中速報 - 科林研發(LRCX-US)大漲12.13%，報207.66美元",
       "url": "https://news.cnyes.com/news/id/6651613",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:19",
       "published_ts": "2026-11-06T22:45:19+08:00",
       "ai_points": [
@@ -12191,7 +12191,7 @@
       "article_id": "6651616",
       "title": "盤中速報 - 萊迪思半導體(LSCC-US)大漲7.92%，報105.79美元",
       "url": "https://news.cnyes.com/news/id/6651616",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:20",
       "published_ts": "2026-11-06T22:45:20+08:00",
       "ai_points": [
@@ -12228,7 +12228,7 @@
       "article_id": "6651615",
       "title": "盤中速報 - 安森美半導體(ON-US)大漲5.79%，報66.66美元",
       "url": "https://news.cnyes.com/news/id/6651615",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:20",
       "published_ts": "2026-11-06T22:45:20+08:00",
       "ai_points": [
@@ -12265,7 +12265,7 @@
       "article_id": "6651618",
       "title": "盤中速報 - 愛彼迎(ABNB-US)大漲12.27%，報191.01美元",
       "url": "https://news.cnyes.com/news/id/6651618",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:21",
       "published_ts": "2026-11-06T22:45:21+08:00",
       "ai_points": [
@@ -12302,7 +12302,7 @@
       "article_id": "6651617",
       "title": "盤中速報 - 艾司摩爾(ASML-US)大漲6.6%，報1446.17美元",
       "url": "https://news.cnyes.com/news/id/6651617",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:21",
       "published_ts": "2026-11-06T22:45:21+08:00",
       "ai_points": [
@@ -12339,7 +12339,7 @@
       "article_id": "6651620",
       "title": "盤中速報 - 博通(AVGO-US)大漲6.58%，報310.71美元",
       "url": "https://news.cnyes.com/news/id/6651620",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:22",
       "published_ts": "2026-11-06T22:45:22+08:00",
       "ai_points": [
@@ -12376,7 +12376,7 @@
       "article_id": "6651619",
       "title": "盤中速報 - 特許通訊(CHTR-US)大跌8.37%，報115.32美元",
       "url": "https://news.cnyes.com/news/id/6651619",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:22",
       "published_ts": "2026-11-06T22:45:22+08:00",
       "ai_points": [
@@ -12413,7 +12413,7 @@
       "article_id": "6651622",
       "title": "盤中速報 - Palo Alto Networks Inc(PANW-US)大漲5.02%，報330.47美元",
       "url": "https://news.cnyes.com/news/id/6651622",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:23",
       "published_ts": "2026-11-06T22:45:23+08:00",
       "ai_points": [
@@ -12450,7 +12450,7 @@
       "article_id": "6651621",
       "title": "盤中速報 - Onto Innovation Inc.(ONTO-US)大漲11.19%，報173.44美元",
       "url": "https://news.cnyes.com/news/id/6651621",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:23",
       "published_ts": "2026-11-06T22:45:23+08:00",
       "ai_points": [
@@ -12487,7 +12487,7 @@
       "article_id": "6651623",
       "title": "盤中速報 - 英特爾(INTC-US)大漲5.26%，報55美元",
       "url": "https://news.cnyes.com/news/id/6651623",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:24",
       "published_ts": "2026-11-06T22:45:24+08:00",
       "ai_points": [
@@ -12524,7 +12524,7 @@
       "article_id": "6651625",
       "title": "盤中速報 - 連貫(COHR-US)大漲11.73%，報189.68美元",
       "url": "https://news.cnyes.com/news/id/6651625",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:25",
       "published_ts": "2026-11-06T22:45:25+08:00",
       "ai_points": [
@@ -12561,7 +12561,7 @@
       "article_id": "6651624",
       "title": "盤中速報 - 超微電腦(SMCI-US)大漲5.71%，報28.63美元",
       "url": "https://news.cnyes.com/news/id/6651624",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:25",
       "published_ts": "2026-11-06T22:45:25+08:00",
       "ai_points": [
@@ -12598,7 +12598,7 @@
       "article_id": "6651626",
       "title": "盤中速報 - 怪獸飲料(MNST-US)大跌6.15%，報44.89美元",
       "url": "https://news.cnyes.com/news/id/6651626",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:26",
       "published_ts": "2026-11-06T22:45:26+08:00",
       "ai_points": [
@@ -12635,7 +12635,7 @@
       "article_id": "6651629",
       "title": "盤中速報 - 安可(AMKR-US)大漲9.51%，報33.39美元",
       "url": "https://news.cnyes.com/news/id/6651629",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:27",
       "published_ts": "2026-11-06T22:45:27+08:00",
       "ai_points": [
@@ -12672,7 +12672,7 @@
       "article_id": "6651630",
       "title": "盤中速報 - 芯源系統(MPWR-US)大漲5.41%，報1192.63美元",
       "url": "https://news.cnyes.com/news/id/6651630",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:28",
       "published_ts": "2026-11-06T22:45:28+08:00",
       "ai_points": [
@@ -12709,7 +12709,7 @@
       "article_id": "6651632",
       "title": "盤中速報 - 科磊(KLAC-US)大漲8.4%，報140.7美元",
       "url": "https://news.cnyes.com/news/id/6651632",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:29",
       "published_ts": "2026-11-06T22:45:29+08:00",
       "ai_points": [
@@ -12746,7 +12746,7 @@
       "article_id": "6651631",
       "title": "盤中速報 - Atlassian Corporation - Class A(TEAM-US)大跌15.69%，報154.53美元",
       "url": "https://news.cnyes.com/news/id/6651631",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:29",
       "published_ts": "2026-11-06T22:45:29+08:00",
       "ai_points": [
@@ -12783,7 +12783,7 @@
       "article_id": "6651634",
       "title": "盤中速報 - 安謀控股公司(ARM-US)大漲5.61%，報176.08美元",
       "url": "https://news.cnyes.com/news/id/6651634",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:30",
       "published_ts": "2026-11-06T22:45:30+08:00",
       "ai_points": [
@@ -12820,7 +12820,7 @@
       "article_id": "6651633",
       "title": "盤中速報 - 超微半導體(AMD-US)大漲9.32%，報442.1美元",
       "url": "https://news.cnyes.com/news/id/6651633",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:30",
       "published_ts": "2026-11-06T22:45:30+08:00",
       "ai_points": [
@@ -12857,7 +12857,7 @@
       "article_id": "6651635",
       "title": "盤中速報 - 邁威爾科技(MRVL-US)大漲7.69%，報143.82美元",
       "url": "https://news.cnyes.com/news/id/6651635",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:31",
       "published_ts": "2026-11-06T22:45:31+08:00",
       "ai_points": [
@@ -12894,7 +12894,7 @@
       "article_id": "6651637",
       "title": "盤中速報 - 英特格(ENTG-US)大漲5.12%，報131.14美元",
       "url": "https://news.cnyes.com/news/id/6651637",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:52",
       "published_ts": "2026-11-06T22:45:52+08:00",
       "ai_points": [
@@ -12931,7 +12931,7 @@
       "article_id": "6651638",
       "title": "盤中速報 - 莫德納(MRNA-US)大漲5.6%，報254.98美元",
       "url": "https://news.cnyes.com/news/id/6651638",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:55",
       "published_ts": "2026-11-06T22:45:55+08:00",
       "ai_points": [
@@ -12968,7 +12968,7 @@
       "article_id": "6651639",
       "title": "盤中速報 - 格羅方德(GFS-US)大漲5.03%，報38.19美元",
       "url": "https://news.cnyes.com/news/id/6651639",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:59",
       "published_ts": "2026-11-06T22:45:59+08:00",
       "ai_points": [
@@ -13005,7 +13005,7 @@
       "article_id": "6651640",
       "title": "盤中速報 - 超捷國際(MCHP-US)大跌5.29%，報61.42美元",
       "url": "https://news.cnyes.com/news/id/6651640",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:47:59",
       "published_ts": "2026-11-06T22:47:59+08:00",
       "ai_points": [
@@ -13042,7 +13042,7 @@
       "article_id": "6651643",
       "title": "盤中速報 - MongoDB公司(MDB-US)大漲5.34%，報320.86美元",
       "url": "https://news.cnyes.com/news/id/6651643",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 23:00:33",
       "published_ts": "2026-11-06T23:00:33+08:00",
       "ai_points": [
@@ -13079,7 +13079,7 @@
       "article_id": "6651644",
       "title": "盤中速報 - 高通(QCOM-US)大漲5.33%，報165.11美元",
       "url": "https://news.cnyes.com/news/id/6651644",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 23:00:43",
       "published_ts": "2026-11-06T23:00:43+08:00",
       "ai_points": [
@@ -13116,7 +13116,7 @@
       "article_id": "6651655",
       "title": "盤中速報 - 數據狗(DDOG-US)大漲5.1%，報183.51美元",
       "url": "https://news.cnyes.com/news/id/6651655",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 23:07:51",
       "published_ts": "2026-11-06T23:07:51+08:00",
       "ai_points": [
@@ -13153,7 +13153,7 @@
       "article_id": "6651656",
       "title": "盤中速報 - Applovin Corp - Class A(APP-US)大漲5.17%，報374.51美元",
       "url": "https://news.cnyes.com/news/id/6651656",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 23:08:11",
       "published_ts": "2026-11-06T23:08:11+08:00",
       "ai_points": [
@@ -13190,7 +13190,7 @@
       "article_id": "6651665",
       "title": "盤中速報 - 特斯拉(TSLA-US)大漲5.02%，報360.95美元",
       "url": "https://news.cnyes.com/news/id/6651665",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 23:30:37",
       "published_ts": "2026-11-06T23:30:37+08:00",
       "ai_points": [
@@ -13227,7 +13227,7 @@
       "article_id": "6651669",
       "title": "盤中速報 - 星座能源(CEG-US)大漲5.01%，報251.65美元",
       "url": "https://news.cnyes.com/news/id/6651669",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 23:39:06",
       "published_ts": "2026-11-06T23:39:06+08:00",
       "ai_points": [
@@ -13264,7 +13264,7 @@
       "article_id": "6651670",
       "title": "盤中速報 - 直覺(INTU-US)大跌5.03%，報336.98美元",
       "url": "https://news.cnyes.com/news/id/6651670",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 23:39:40",
       "published_ts": "2026-11-06T23:39:40+08:00",
       "ai_points": [
@@ -13301,7 +13301,7 @@
       "article_id": "6651673",
       "title": "盤中速報 - 賽富時(CRM-US)大跌5.01%，報211.27美元",
       "url": "https://news.cnyes.com/news/id/6651673",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 23:46:15",
       "published_ts": "2026-11-06T23:46:15+08:00",
       "ai_points": [
@@ -13338,7 +13338,7 @@
       "article_id": "6651737",
       "title": "盤中速報 - 德康醫療(DXCM-US)大跌5.1%，報80.15美元",
       "url": "https://news.cnyes.com/news/id/6651737",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-07 01:51:46",
       "published_ts": "2026-11-07T01:51:46+08:00",
       "ai_points": [
@@ -13375,7 +13375,7 @@
       "article_id": "6651739",
       "title": "盤中速報 - 甲骨文(ORCL-US)大跌5.11%，報109.28美元",
       "url": "https://news.cnyes.com/news/id/6651739",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-07 01:53:18",
       "published_ts": "2026-11-07T01:53:18+08:00",
       "ai_points": [
@@ -17600,7 +17600,7 @@
       "article_id": "6651612",
       "title": "盤中速報 - 和康電訊(MTSI-US)大漲10.15%，報209.67美元",
       "url": "https://news.cnyes.com/news/id/6651612",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:18",
       "published_ts": "2026-11-06T22:45:18+08:00",
       "ai_points": [
@@ -17637,7 +17637,7 @@
       "article_id": "6651628",
       "title": "盤中速報 - 應用材料(AMAT-US)大漲8.34%，報345.89美元",
       "url": "https://news.cnyes.com/news/id/6651628",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:27",
       "published_ts": "2026-11-06T22:45:27+08:00",
       "ai_points": [
@@ -17674,7 +17674,7 @@
       "article_id": "6651636",
       "title": "盤中速報 - Verisk Analytics Inc(VRSK-US)大跌5.11%，報200.66美元",
       "url": "https://news.cnyes.com/news/id/6651636",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:38",
       "published_ts": "2026-11-06T22:45:38+08:00",
       "ai_points": [
@@ -19915,7 +19915,7 @@
       "article_id": "6651610",
       "title": "盤中速報 - 泰瑞達(TER-US)大漲9.63%，報233.23美元",
       "url": "https://news.cnyes.com/news/id/6651610",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:17",
       "published_ts": "2026-11-06T22:45:17+08:00",
       "ai_points": [
@@ -19951,7 +19951,7 @@
       "article_id": "6651627",
       "title": "盤中速報 - Crowdstrike控股(CRWD-US)大漲5.85%，報229.92美元",
       "url": "https://news.cnyes.com/news/id/6651627",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-06 22:45:26",
       "published_ts": "2026-11-06T22:45:26+08:00",
       "ai_points": [
@@ -20460,41 +20460,6 @@
         "13%",
         "14%",
         "12%"
-      ],
-      "why": "",
-      "importance": 3.5,
-      "ai_source": "rule",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6649435",
-      "title": "美國反AI勢力不會讓需求消失 留給產業更多時間吸收泡沫",
-      "url": "https://news.cnyes.com/news/id/6649435",
-      "category": "國際政經",
-      "published": "2026-11-06 10:47:46",
-      "published_ts": "2026-11-06T10:47:46+08:00",
-      "ai_points": [
-        "美國國會期中選舉的結果，正在給AI產業帶來一個意想不到的變量。",
-        "反資料中心勢力悄然崛起，市場開始擔憂美國AI基礎設施擴張遭遇阻力，全球晶片股巨震，三星電子、SK海力士等企業面臨伺服器DRAM和高頻寬記憶體需求預期變化的風險。",
-        "市場擔憂由此而來：如果更多州採取暫停令或提高審批門檻，美國資料中心擴張速度可能放緩，進而影響伺服器、記憶體晶片、高頻寬記憶體等AI基礎設施供應鏈的需求預期。"
-      ],
-      "summary": "美國國會期中選舉的結果，正在給AI產業帶來一個意想不到的變量。；反資料中心勢力悄然崛起，市場開始擔憂美國AI基礎設施擴張遭遇阻力，全球晶片股巨震，三星電子、SK海力士等企業面臨伺服器DRAM和高頻寬記憶體需求預期變化的風險。；市場擔憂由此而來：如果更多州採取暫停令或提高審批門檻，美國資料中心擴張速度可能放緩，進而影響伺服器、記憶體晶片、高頻寬記憶體等AI基礎設施供應鏈的需求預期。",
-      "sentiment": "利空",
-      "sectors": [
-        "AI／伺服器",
-        "記憶體",
-        "半導體"
-      ],
-      "stocks": [],
-      "highlights": [
-        "資料中心",
-        "DRAM",
-        "伺服器",
-        "記憶體",
-        "風險",
-        "擔憂",
-        "AI",
-        "晶片"
       ],
       "why": "",
       "importance": 3.5,
@@ -21201,6 +21166,41 @@
         "光通訊",
         "AI",
         "網通"
+      ],
+      "why": "",
+      "importance": 2.5,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6649435",
+      "title": "美國反AI勢力不會讓需求消失 留給產業更多時間吸收泡沫",
+      "url": "https://news.cnyes.com/news/id/6649435",
+      "category": "國際政經",
+      "published": "2026-11-06 10:47:46",
+      "published_ts": "2026-11-06T10:47:46+08:00",
+      "ai_points": [
+        "美國國會期中選舉的結果，正在給AI產業帶來一個意想不到的變量。",
+        "反資料中心勢力悄然崛起，市場開始擔憂美國AI基礎設施擴張遭遇阻力，全球晶片股巨震，三星電子、SK海力士等企業面臨伺服器DRAM和高頻寬記憶體需求預期變化的風險。",
+        "市場擔憂由此而來：如果更多州採取暫停令或提高審批門檻，美國資料中心擴張速度可能放緩，進而影響伺服器、記憶體晶片、高頻寬記憶體等AI基礎設施供應鏈的需求預期。"
+      ],
+      "summary": "美國國會期中選舉的結果，正在給AI產業帶來一個意想不到的變量。；反資料中心勢力悄然崛起，市場開始擔憂美國AI基礎設施擴張遭遇阻力，全球晶片股巨震，三星電子、SK海力士等企業面臨伺服器DRAM和高頻寬記憶體需求預期變化的風險。；市場擔憂由此而來：如果更多州採取暫停令或提高審批門檻，美國資料中心擴張速度可能放緩，進而影響伺服器、記憶體晶片、高頻寬記憶體等AI基礎設施供應鏈的需求預期。",
+      "sentiment": "利空",
+      "sectors": [
+        "AI／伺服器",
+        "記憶體",
+        "半導體"
+      ],
+      "stocks": [],
+      "highlights": [
+        "資料中心",
+        "DRAM",
+        "伺服器",
+        "記憶體",
+        "風險",
+        "擔憂",
+        "AI",
+        "晶片"
       ],
       "why": "",
       "importance": 2.5,
