@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-11-08",
-  "updated_at": "2026-11-08T16:00:03+08:00",
-  "finished_at": "2026-11-08T16:00:10+08:00",
-  "published_at": "2026-11-08T16:55:44+08:00",
+  "updated_at": "2026-11-08T18:00:03+08:00",
+  "finished_at": "2026-11-08T18:00:13+08:00",
+  "published_at": "2026-11-08T18:00:14+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -15,57 +15,31 @@
     "23:00"
   ],
   "stale": false,
-  "news_count": 137,
+  "news_count": 139,
   "earnings_count": 23,
   "news_digest": {
-    "generated_at": "2026-11-08T16:00:03+08:00",
-    "headline": "最近 2 天共整理 137 則財經新聞：利多 36、利空 38、中性 37、混合 26；討論度最高的產業：AI／伺服器、半導體、國際股市。",
+    "generated_at": "2026-11-08T18:00:03+08:00",
+    "headline": "最近 2 天共整理 139 則財經新聞：利多 33、利空 38、中性 43、混合 25；討論度最高的產業：AI／伺服器、半導體、國際股市。",
     "stats": {
-      "total": 137,
-      "利多": 36,
+      "total": 139,
+      "利多": 33,
       "利空": 38,
-      "中性": 37,
-      "混合": 26
+      "中性": 43,
+      "混合": 25
     },
     "key_points": [
       {
         "title": "志聖營收重登10億元大關 10月營收10.13億元創同期新高年增80%",
-        "point": "2026年前3季已賺回逾一個股本季台積電(2330-TW)供應鏈設備廠志聖(2467-TW)今(8)日公布最新營收資訊，志聖2026年10月營收重登10億元大關達10.13億元…",
+        "point": "志聖10月營收10.13億元，月增7.21%、年增80.68%，創歷史同期新高",
         "sentiment": "利多",
         "url": "https://news.cnyes.com/news/id/6652337",
         "highlights": [
+          "志聖",
           "10.13億元",
-          "80.23億元",
-          "16.61億元",
-          "10.67元",
-          "6.73億元",
-          "84.2%"
-        ]
-      },
-      {
-        "title": "宏致前三季EPS 3.31元 看好AI營收逐季增擬斥14億元購地擴產",
-        "point": "宏致Q3稅後純益2.44億元、年增9%，EPS 1.42元；前三季EPS 3.31元",
-        "sentiment": "利多",
-        "url": "https://news.cnyes.com/news/id/6652063",
-        "highlights": [
-          "EPS 1.42元",
-          "3.31元",
-          "年增23.71%",
-          "AI營收逐季成長",
-          "14億元"
-        ]
-      },
-      {
-        "title": "網路正在「死亡」！AI吞噬搜尋流量 這些知名企業商業模式面臨崩解",
-        "point": "Alphabet Q3搜尋廣告營收成長放緩至12%，低於第1季的19%",
-        "sentiment": "利空",
-        "url": "https://news.cnyes.com/news/id/6645817",
-        "highlights": [
-          "搜尋廣告",
-          "12%",
-          "重挫約29%",
-          "SEO",
-          "AI摘要"
+          "年增80.68%",
+          "EPS已達10.67元",
+          "牧德",
+          "迅得"
         ]
       },
       {
@@ -93,28 +67,29 @@
         ]
       },
       {
-        "title": "SpaceX愈來愈少靠政府 馬斯克估本季營收占比跌破一成",
-        "point": "馬斯克稱SpaceX本季政府付款將低於營收10%，上季為16.6%",
-        "sentiment": "混合",
-        "url": "https://news.cnyes.com/news/id/6651738",
+        "title": "宏致前三季EPS 3.31元 看好AI營收逐季增擬斥14億元購地擴產",
+        "point": "宏致Q3稅後純益2.44億元、年增9%，EPS 1.42元；前三季EPS 3.31元",
+        "sentiment": "利多",
+        "url": "https://news.cnyes.com/news/id/6652063",
         "highlights": [
-          "10%",
-          "16.6%",
-          "Anthropic",
-          "3分之1"
+          "EPS 1.42元",
+          "3.31元",
+          "年增23.71%",
+          "AI營收逐季成長",
+          "14億元"
         ]
       },
       {
         "title": "鴻海參展TASTI 2026 攜集團夥伴展現低軌衛星端到端布局",
-        "point": "鴻海11月8日至10日參與TASTI 2026，展示第二代珍珠號低軌衛星與衛星通訊模組等技術。",
+        "point": "鴻海11月8至10日參加TASTI 2026，展示第二代珍珠號低軌衛星模型",
         "sentiment": "中性",
         "url": "https://news.cnyes.com/news/id/6652342",
         "highlights": [
-          "2317",
-          "2454",
-          "聯發科",
           "鴻海",
-          "晶片"
+          "TASTI 2026",
+          "第二代珍珠號",
+          "Ka頻段星間鏈路",
+          "聯發科"
         ]
       },
       {
@@ -129,15 +104,39 @@
           "下跌周期",
           "中國業者"
         ]
+      },
+      {
+        "title": "網路正在「死亡」！AI吞噬搜尋流量 這些知名企業商業模式面臨崩解",
+        "point": "Alphabet Q3搜尋廣告營收成長放緩至12%，低於第1季的19%",
+        "sentiment": "利空",
+        "url": "https://news.cnyes.com/news/id/6645817",
+        "highlights": [
+          "搜尋廣告",
+          "12%",
+          "重挫約29%",
+          "SEO",
+          "AI摘要"
+        ]
+      },
+      {
+        "title": "美國10月非農超預期！Fed下月升息機率約八成 美債殖利率為何衝高又回落？",
+        "point": "非農報告後交易員估Fed 12月升息1碼機率約八成，近3月平均月增約13.7萬人",
+        "sentiment": "利空",
+        "url": "https://news.cnyes.com/news/id/6651538",
+        "highlights": [
+          "約八成",
+          "13.7萬人",
+          "4.54%",
+          "避險買盤"
+        ]
       }
     ],
     "bullish": [
       {
         "theme": "志聖營收重登10億元大關 10月營收10.13億元創同期新高年增80%",
-        "reason": "2026年前3季已賺回逾一個股本季台積電(2330-TW)供應鏈設備廠志聖(2467-TW)今(8)日公布最新營收資訊，志聖2026年10月營收重登10億元大關達10.13億元…",
+        "reason": "台積電供應鏈設備廠營收同步走強，反映客戶擴產需求",
         "sectors": [
           "半導體",
-          "AI／伺服器",
           "PCB／載板"
         ],
         "url": "https://news.cnyes.com/news/id/6652337"
@@ -161,25 +160,15 @@
         "url": "https://news.cnyes.com/news/id/6652098"
       },
       {
-        "theme": "高盛「逆勢唱多」上調預測！民主黨無法摧毀資料中心狂潮？",
-        "reason": "在選後政策疑慮中，高盛仍看好資料中心建設動能",
+        "theme": "AI反成利多!！Airbnb自造AI旅遊助理 一站式規劃旅程 客服成本年減17%",
+        "reason": "AI應用端帶來成本下降，提供AI投資回報的實例",
         "sectors": [
-          "AI／伺服器",
-          "營建／資產"
+          "AI／伺服器"
         ],
-        "url": "https://news.cnyes.com/news/id/6651930"
+        "url": "https://news.cnyes.com/news/id/6651848"
       }
     ],
     "bearish": [
-      {
-        "theme": "網路正在「死亡」！AI吞噬搜尋流量 這些知名企業商業模式面臨崩解",
-        "reason": "AI聊天機器人改變網路流量分配，衝擊搜尋與內容平台商業模式",
-        "sectors": [
-          "AI／伺服器",
-          "國際股市"
-        ],
-        "url": "https://news.cnyes.com/news/id/6645817"
-      },
       {
         "theme": "美期中選舉重塑Fed政策空間！華許升息阻力降低 但經濟可能不再需要更高利率",
         "reason": "選後Fed政策空間改變，牽動利率與科技股評價",
@@ -188,6 +177,15 @@
           "地緣／政策"
         ],
         "url": "https://news.cnyes.com/news/id/6651852"
+      },
+      {
+        "theme": "網路正在「死亡」！AI吞噬搜尋流量 這些知名企業商業模式面臨崩解",
+        "reason": "AI聊天機器人改變網路流量分配，衝擊搜尋與內容平台商業模式",
+        "sectors": [
+          "AI／伺服器",
+          "國際股市"
+        ],
+        "url": "https://news.cnyes.com/news/id/6645817"
       },
       {
         "theme": "美國10月非農超預期！Fed下月升息機率約八成 美債殖利率為何衝高又回落？",
@@ -212,71 +210,71 @@
     "sector_heat": [
       {
         "sector": "AI／伺服器",
-        "count": 60,
-        "利多": 16,
-        "利空": 18,
-        "tone": "偏空"
-      },
-      {
-        "sector": "半導體",
-        "count": 44,
-        "利多": 8,
-        "利空": 11,
-        "tone": "偏空"
-      },
-      {
-        "sector": "國際股市",
-        "count": 35,
-        "利多": 7,
+        "count": 54,
+        "利多": 15,
         "利空": 17,
         "tone": "偏空"
       },
       {
+        "sector": "半導體",
+        "count": 38,
+        "利多": 7,
+        "利空": 8,
+        "tone": "偏空"
+      },
+      {
+        "sector": "國際股市",
+        "count": 37,
+        "利多": 8,
+        "利空": 16,
+        "tone": "偏空"
+      },
+      {
         "sector": "地緣／政策",
-        "count": 21,
-        "利多": 5,
+        "count": 19,
+        "利多": 2,
         "利空": 6,
         "tone": "偏空"
       },
       {
         "sector": "總體經濟",
-        "count": 18,
+        "count": 17,
+        "利多": 0,
+        "利空": 10,
+        "tone": "偏空"
+      },
+      {
+        "sector": "金融",
+        "count": 12,
         "利多": 1,
-        "利空": 11,
+        "利空": 8,
+        "tone": "偏空"
+      },
+      {
+        "sector": "航運／航空",
+        "count": 11,
+        "利多": 1,
+        "利空": 3,
         "tone": "偏空"
       },
       {
         "sector": "原物料／能源",
-        "count": 12,
-        "利多": 4,
+        "count": 11,
+        "利多": 1,
         "利空": 3,
-        "tone": "偏多"
-      },
-      {
-        "sector": "航運／航空",
-        "count": 9,
-        "利多": 2,
-        "利空": 2,
-        "tone": "中性"
-      },
-      {
-        "sector": "記憶體",
-        "count": 9,
-        "利多": 2,
-        "利空": 0,
-        "tone": "偏多"
-      },
-      {
-        "sector": "金融",
-        "count": 9,
-        "利多": 0,
-        "利空": 8,
         "tone": "偏空"
       },
       {
         "sector": "生技醫療",
         "count": 9,
-        "利多": 5,
+        "利多": 4,
+        "利空": 2,
+        "tone": "偏多"
+      },
+      {
+        "sector": "網通／光通訊",
+        "count": 8,
+        "利多": 4,
         "利空": 1,
         "tone": "偏多"
       }
@@ -291,7 +289,7 @@
     "generated_by": "claude",
     "llm": {
       "source": "Claude 排程任務",
-      "from_cache": 95
+      "from_cache": 125
     },
     "agent_headline": "美股AI股重挫後反彈，台股上週跌12%國安基金進場；本週聚焦美CPI與CoreWeave財報",
     "agent_key_points": [
@@ -312,7 +310,7 @@
     "agent_generated_at": "2026-11-08T16:55:43+08:00"
   },
   "earnings_digest": {
-    "generated_at": "2026-11-08T16:00:03+08:00",
+    "generated_at": "2026-11-08T18:00:03+08:00",
     "days": 5,
     "total": 23,
     "利多": 10,
@@ -569,23 +567,23 @@
   },
   "crawl": {
     "ok": true,
-    "article_count": 137,
+    "article_count": 139,
     "per_category_count": {
-      "headline": 89,
+      "headline": 91,
       "tw_stock": 36,
-      "wd_stock": 100,
+      "wd_stock": 102,
       "forex": 2,
       "future": 16
     },
     "source_method": "api",
     "reused_from_previous_run": 12,
     "window_start": "2026-11-07T00:00:00+08:00",
-    "window_end": "2026-11-08T16:00:10.386474+08:00"
+    "window_end": "2026-11-08T18:00:12.815630+08:00"
   },
   "agent_stats": {
-    "input": 137,
-    "after_dedupe": 137,
-    "ai_cached": 95,
+    "input": 139,
+    "after_dedupe": 139,
+    "ai_cached": 125,
     "seconds": 0.2,
     "earnings": {
       "total": 23,
@@ -632,70 +630,6 @@
       ],
       "why": "台積電供應鏈設備廠營收同步走強，反映客戶擴產需求",
       "importance": 9.7,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6652063",
-      "title": "宏致前三季EPS 3.31元 看好AI營收逐季增擬斥14億元購地擴產",
-      "url": "https://news.cnyes.com/news/id/6652063",
-      "category": "台股新聞",
-      "published": "2026-11-07 17:02:26",
-      "published_ts": "2026-11-07T17:02:26+08:00",
-      "ai_points": [
-        "宏致Q3稅後純益2.44億元、年增9%，EPS 1.42元；前三季EPS 3.31元",
-        "Q3營收32.94億元、年增23.71%，營業利益年增83.72%",
-        "預期AI營收逐季成長，擬以不超過14億元購地擴產"
-      ],
-      "summary": "宏致Q3稅後純益2.44億元、年增9%，EPS 1.42元；前三季EPS 3.31元；Q3營收32.94億元、年增23.71%，營業利益年增83.72%；預期AI營收逐季成長，擬以不超過14億元購地擴產",
-      "sentiment": "利多",
-      "sectors": [
-        "AI／伺服器",
-        "網通／光通訊"
-      ],
-      "stocks": [
-        "3605"
-      ],
-      "highlights": [
-        "EPS 1.42元",
-        "3.31元",
-        "年增23.71%",
-        "AI營收逐季成長",
-        "14億元"
-      ],
-      "why": "AI高速連接與電源線需求帶動獲利並擴產",
-      "importance": 8.8,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6645817",
-      "title": "網路正在「死亡」！AI吞噬搜尋流量 這些知名企業商業模式面臨崩解",
-      "url": "https://news.cnyes.com/news/id/6645817",
-      "category": "美股雷達",
-      "published": "2026-11-08 10:30:03",
-      "published_ts": "2026-11-08T10:30:03+08:00",
-      "ai_points": [
-        "Alphabet Q3搜尋廣告營收成長放緩至12%，低於第1季的19%",
-        "Reddit財報後股價重挫約29%，稱Google導流每周減少逾100萬次",
-        "Fiverr、LegalZoom等稱AI摘要削弱SEO與新客戶來源"
-      ],
-      "summary": "Alphabet Q3搜尋廣告營收成長放緩至12%，低於第1季的19%；Reddit財報後股價重挫約29%，稱Google導流每周減少逾100萬次；Fiverr、LegalZoom等稱AI摘要削弱SEO與新客戶來源",
-      "sentiment": "利空",
-      "sectors": [
-        "AI／伺服器",
-        "國際股市"
-      ],
-      "stocks": [],
-      "highlights": [
-        "搜尋廣告",
-        "12%",
-        "重挫約29%",
-        "SEO",
-        "AI摘要"
-      ],
-      "why": "AI聊天機器人改變網路流量分配，衝擊搜尋與內容平台商業模式",
-      "importance": 8.7,
       "ai_source": "claude",
       "source": "鉅亨網"
     },
@@ -765,32 +699,35 @@
       "source": "鉅亨網"
     },
     {
-      "article_id": "6651738",
-      "title": "SpaceX愈來愈少靠政府 馬斯克估本季營收占比跌破一成",
-      "url": "https://news.cnyes.com/news/id/6651738",
-      "category": "美股雷達",
-      "published": "2026-11-07 17:00:07",
-      "published_ts": "2026-11-07T17:00:07+08:00",
+      "article_id": "6652063",
+      "title": "宏致前三季EPS 3.31元 看好AI營收逐季增擬斥14億元購地擴產",
+      "url": "https://news.cnyes.com/news/id/6652063",
+      "category": "台股新聞",
+      "published": "2026-11-07 17:02:26",
+      "published_ts": "2026-11-07T17:02:26+08:00",
       "ai_points": [
-        "馬斯克稱SpaceX本季政府付款將低於營收10%，上季為16.6%",
-        "Anthropic已成SpaceX最大客戶，貢獻逾3分之1營收",
-        "Anthropic最快明年可能終止協議，客戶集中風險受關注"
+        "宏致Q3稅後純益2.44億元、年增9%，EPS 1.42元；前三季EPS 3.31元",
+        "Q3營收32.94億元、年增23.71%，營業利益年增83.72%",
+        "預期AI營收逐季成長，擬以不超過14億元購地擴產"
       ],
-      "summary": "馬斯克稱SpaceX本季政府付款將低於營收10%，上季為16.6%；Anthropic已成SpaceX最大客戶，貢獻逾3分之1營收；Anthropic最快明年可能終止協議，客戶集中風險受關注",
-      "sentiment": "混合",
+      "summary": "宏致Q3稅後純益2.44億元、年增9%，EPS 1.42元；前三季EPS 3.31元；Q3營收32.94億元、年增23.71%，營業利益年增83.72%；預期AI營收逐季成長，擬以不超過14億元購地擴產",
+      "sentiment": "利多",
       "sectors": [
         "AI／伺服器",
-        "航運／航空"
+        "網通／光通訊"
       ],
-      "stocks": [],
+      "stocks": [
+        "3605"
+      ],
       "highlights": [
-        "10%",
-        "16.6%",
-        "Anthropic",
-        "3分之1"
+        "EPS 1.42元",
+        "3.31元",
+        "年增23.71%",
+        "AI營收逐季成長",
+        "14億元"
       ],
-      "why": "SpaceX營收轉向AI算力，新雲端模式風險受關注",
-      "importance": 8.3,
+      "why": "AI高速連接與電源線需求帶動獲利並擴產",
+      "importance": 7.8,
       "ai_source": "claude",
       "source": "鉅亨網"
     },
@@ -855,6 +792,37 @@
         "中國業者"
       ],
       "why": "美光估值爭議反映市場對記憶體景氣循環的疑慮，牽動台灣記憶體股",
+      "importance": 7.7,
+      "ai_source": "claude",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6645817",
+      "title": "網路正在「死亡」！AI吞噬搜尋流量 這些知名企業商業模式面臨崩解",
+      "url": "https://news.cnyes.com/news/id/6645817",
+      "category": "美股雷達",
+      "published": "2026-11-08 10:30:03",
+      "published_ts": "2026-11-08T10:30:03+08:00",
+      "ai_points": [
+        "Alphabet Q3搜尋廣告營收成長放緩至12%，低於第1季的19%",
+        "Reddit財報後股價重挫約29%，稱Google導流每周減少逾100萬次",
+        "Fiverr、LegalZoom等稱AI摘要削弱SEO與新客戶來源"
+      ],
+      "summary": "Alphabet Q3搜尋廣告營收成長放緩至12%，低於第1季的19%；Reddit財報後股價重挫約29%，稱Google導流每周減少逾100萬次；Fiverr、LegalZoom等稱AI摘要削弱SEO與新客戶來源",
+      "sentiment": "利空",
+      "sectors": [
+        "AI／伺服器",
+        "國際股市"
+      ],
+      "stocks": [],
+      "highlights": [
+        "搜尋廣告",
+        "12%",
+        "重挫約29%",
+        "SEO",
+        "AI摘要"
+      ],
+      "why": "AI聊天機器人改變網路流量分配，衝擊搜尋與內容平台商業模式",
       "importance": 7.7,
       "ai_source": "claude",
       "source": "鉅亨網"
@@ -953,36 +921,6 @@
       "source": "鉅亨網"
     },
     {
-      "article_id": "6652248",
-      "title": "力晶投控爭取股東支持出招 庫藏股每股42元、股東會送1088元商品券",
-      "url": "https://news.cnyes.com/news/id/6652248",
-      "category": "台股新聞",
-      "published": "2026-11-08 10:37:21",
-      "published_ts": "2026-11-08T10:37:21+08:00",
-      "ai_points": [
-        "力晶投控10億元庫藏股已完成初步審查，股東可依每股42元出售，預計11月20日付款",
-        "11月25日臨時股東會討論修章與改選董監，攸關登錄興櫃規劃",
-        "公司稱多家上下游廠商有意推出公開購買股權計畫"
-      ],
-      "summary": "力晶投控10億元庫藏股已完成初步審查，股東可依每股42元出售，預計11月20日付款；11月25日臨時股東會討論修章與改選董監，攸關登錄興櫃規劃；公司稱多家上下游廠商有意推出公開購買股權計畫",
-      "sentiment": "中性",
-      "sectors": [
-        "半導體"
-      ],
-      "stocks": [],
-      "highlights": [
-        "力晶投控",
-        "每股42元",
-        "11月20日",
-        "登錄興櫃",
-        "臨時股東會"
-      ],
-      "why": "力晶投控推動登錄興櫃，增加未上市股票流動性",
-      "importance": 7.4,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
       "article_id": "6651674",
       "title": "輝達、AMD強彈！兩大利多帶動晶片股反攻 分析師提醒「繫好安全帶」",
       "url": "https://news.cnyes.com/news/id/6651674",
@@ -1041,6 +979,36 @@
         "謹慎"
       ],
       "why": "反映重挫後市場資金承接意願與情緒",
+      "importance": 7.3,
+      "ai_source": "claude",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6651738",
+      "title": "SpaceX愈來愈少靠政府 馬斯克估本季營收占比跌破一成",
+      "url": "https://news.cnyes.com/news/id/6651738",
+      "category": "美股雷達",
+      "published": "2026-11-07 17:00:07",
+      "published_ts": "2026-11-07T17:00:07+08:00",
+      "ai_points": [
+        "馬斯克稱SpaceX本季政府付款將低於營收10%，上季為16.6%",
+        "Anthropic已成SpaceX最大客戶，貢獻逾3分之1營收",
+        "Anthropic最快明年可能終止協議，客戶集中風險受關注"
+      ],
+      "summary": "馬斯克稱SpaceX本季政府付款將低於營收10%，上季為16.6%；Anthropic已成SpaceX最大客戶，貢獻逾3分之1營收；Anthropic最快明年可能終止協議，客戶集中風險受關注",
+      "sentiment": "混合",
+      "sectors": [
+        "AI／伺服器",
+        "航運／航空"
+      ],
+      "stocks": [],
+      "highlights": [
+        "10%",
+        "16.6%",
+        "Anthropic",
+        "3分之1"
+      ],
+      "why": "SpaceX營收轉向AI算力，新雲端模式風險受關注",
       "importance": 7.3,
       "ai_source": "claude",
       "source": "鉅亨網"
@@ -1141,37 +1109,6 @@
       "source": "鉅亨網"
     },
     {
-      "article_id": "6651930",
-      "title": "高盛「逆勢唱多」上調預測！民主黨無法摧毀資料中心狂潮？",
-      "url": "https://news.cnyes.com/news/id/6651930",
-      "category": "美股雷達",
-      "published": "2026-11-08 11:00:04",
-      "published_ts": "2026-11-08T11:00:04+08:00",
-      "ai_points": [
-        "高盛上調美國資料中心建設支出，估2026年800億、2027年1,000億、2028年1,250億美元",
-        "美國已有86GW資料中心項目動工，另有約9,000億美元高可信度待建項目",
-        "高盛認為州政府暫停令主要是延後項目，不至改變整體市場規模"
-      ],
-      "summary": "高盛上調美國資料中心建設支出，估2026年800億、2027年1,000億、2028年1,250億美元；美國已有86GW資料中心項目動工，另有約9,000億美元高可信度待建項目；高盛認為州政府暫停令主要是延後項目，不至改變整體市場規模",
-      "sentiment": "利多",
-      "sectors": [
-        "AI／伺服器",
-        "營建／資產"
-      ],
-      "stocks": [],
-      "highlights": [
-        "高盛",
-        "800億",
-        "86GW",
-        "9,000億美元",
-        "暫停令"
-      ],
-      "why": "在選後政策疑慮中，高盛仍看好資料中心建設動能",
-      "importance": 7.2,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
       "article_id": "6652281",
       "title": "美股下週展望／AI股修正後迎CPI考驗CoreWeave財報成焦點",
       "url": "https://news.cnyes.com/news/id/6652281",
@@ -1264,35 +1201,37 @@
       "source": "鉅亨網"
     },
     {
-      "article_id": "6652243",
-      "title": "法人：台股短線沉澱不改AI長期動能 宜採「多策略配置」迎戰高波動",
-      "url": "https://news.cnyes.com/news/id/6652243",
-      "category": "台股新聞",
-      "published": "2026-11-08 11:20:03",
-      "published_ts": "2026-11-08T11:20:03+08:00",
+      "article_id": "6652257",
+      "title": "巴菲特波克夏Q3獲利年減28%！單季回購近百億美元、現金儲備升至3774億美元",
+      "url": "https://news.cnyes.com/news/id/6652257",
+      "category": "美股雷達",
+      "published": "2026-11-08 16:10:03",
+      "published_ts": "2026-11-08T16:10:03+08:00",
       "ai_points": [
-        "台股6日重挫1,873.08點失守4萬點，國安基金史上第十次進場護盤",
-        "金管會9日起實施限空令，調降借券賣出上限並調高融券保證金成數",
-        "安聯投信看好半導體、IP/ASIC、先進封裝、AI伺服器零組件及光通訊"
+        "波克夏Q3歸屬股東淨利221.12億美元，年減28.2%；",
+        "巴菲特旗下波克夏( BRK.A-US 、 BRK.B-US ) 公布2026年第三季財報，受投資收益及營運表現影響，單季歸屬股東淨利年減28.2%，降至221.12億美元；",
+        "財報顯示，截至9月底，波克夏持有的股票投資公允價值達3355.15億美元，高於6月底的3237.79億美元，季增約3.6%，增加117.36億美元。"
       ],
-      "summary": "台股6日重挫1,873.08點失守4萬點，國安基金史上第十次進場護盤；金管會9日起實施限空令，調降借券賣出上限並調高融券保證金成數；安聯投信看好半導體、IP/ASIC、先進封裝、AI伺服器零組件及光通訊",
+      "summary": "波克夏Q3歸屬股東淨利221.12億美元，年減28.2%；；巴菲特旗下波克夏( BRK.A-US 、 BRK.B-US ) 公布2026年第三季財報，受投資收益及營運表現影響，單季歸屬股東淨利年減28.2%，降至221.12億美元；；財報顯示，截至9月底，波克夏持有的股票投資公允價值達3355.15億美元，高於6月底的3237.79億美元，季增約3.6%，增加117.36億美元。",
       "sentiment": "利多",
       "sectors": [
-        "半導體",
         "AI／伺服器",
-        "金融"
+        "國際股市",
+        "營建／資產"
       ],
       "stocks": [],
       "highlights": [
-        "1,873.08點",
-        "國安基金",
-        "限空令",
-        "IP/ASIC",
-        "先進封裝"
+        "3355.15億美元",
+        "3237.79億美元",
+        "221.12億美元",
+        "117.36億美元",
+        "28.2%",
+        "3.6%",
+        "財報"
       ],
-      "why": "政府護盤與法人看法，有助判斷台股籌碼沉澱進度",
-      "importance": 6.9,
-      "ai_source": "claude",
+      "why": "",
+      "importance": 6.8,
+      "ai_source": "rule",
       "source": "鉅亨網"
     },
     {
@@ -1443,6 +1382,36 @@
         "籌資"
       ],
       "why": "新雲端財報將考驗AI資料中心投資信心",
+      "importance": 6.4,
+      "ai_source": "claude",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6652248",
+      "title": "力晶投控爭取股東支持出招 庫藏股每股42元、股東會送1088元商品券",
+      "url": "https://news.cnyes.com/news/id/6652248",
+      "category": "台股新聞",
+      "published": "2026-11-08 10:37:21",
+      "published_ts": "2026-11-08T10:37:21+08:00",
+      "ai_points": [
+        "力晶投控10億元庫藏股已完成初步審查，股東可依每股42元出售，預計11月20日付款",
+        "11月25日臨時股東會討論修章與改選董監，攸關登錄興櫃規劃",
+        "公司稱多家上下游廠商有意推出公開購買股權計畫"
+      ],
+      "summary": "力晶投控10億元庫藏股已完成初步審查，股東可依每股42元出售，預計11月20日付款；11月25日臨時股東會討論修章與改選董監，攸關登錄興櫃規劃；公司稱多家上下游廠商有意推出公開購買股權計畫",
+      "sentiment": "中性",
+      "sectors": [
+        "半導體"
+      ],
+      "stocks": [],
+      "highlights": [
+        "力晶投控",
+        "每股42元",
+        "11月20日",
+        "登錄興櫃",
+        "臨時股東會"
+      ],
+      "why": "力晶投控推動登錄興櫃，增加未上市股票流動性",
       "importance": 6.4,
       "ai_source": "claude",
       "source": "鉅亨網"
@@ -1782,6 +1751,37 @@
       "source": "鉅亨網"
     },
     {
+      "article_id": "6651930",
+      "title": "高盛「逆勢唱多」上調預測！民主黨無法摧毀資料中心狂潮？",
+      "url": "https://news.cnyes.com/news/id/6651930",
+      "category": "美股雷達",
+      "published": "2026-11-08 11:00:04",
+      "published_ts": "2026-11-08T11:00:04+08:00",
+      "ai_points": [
+        "高盛上調美國資料中心建設支出，估2026年800億、2027年1,000億、2028年1,250億美元",
+        "美國已有86GW資料中心項目動工，另有約9,000億美元高可信度待建項目",
+        "高盛認為州政府暫停令主要是延後項目，不至改變整體市場規模"
+      ],
+      "summary": "高盛上調美國資料中心建設支出，估2026年800億、2027年1,000億、2028年1,250億美元；美國已有86GW資料中心項目動工，另有約9,000億美元高可信度待建項目；高盛認為州政府暫停令主要是延後項目，不至改變整體市場規模",
+      "sentiment": "利多",
+      "sectors": [
+        "AI／伺服器",
+        "營建／資產"
+      ],
+      "stocks": [],
+      "highlights": [
+        "高盛",
+        "800億",
+        "86GW",
+        "9,000億美元",
+        "暫停令"
+      ],
+      "why": "在選後政策疑慮中，高盛仍看好資料中心建設動能",
+      "importance": 6.2,
+      "ai_source": "claude",
+      "source": "鉅亨網"
+    },
+    {
       "article_id": "6651700",
       "title": "鉅亨速報 - Factset 最新調查：Halozyme治療HALO-US的目標價調升至115元，幅度約4.55%",
       "url": "https://news.cnyes.com/news/id/6651700",
@@ -2048,6 +2048,38 @@
         "109%"
       ],
       "why": "反映新藥研發外包需求回升與成本壓力",
+      "importance": 5.9,
+      "ai_source": "claude",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6652243",
+      "title": "法人：台股短線沉澱不改AI長期動能 宜採「多策略配置」迎戰高波動",
+      "url": "https://news.cnyes.com/news/id/6652243",
+      "category": "台股新聞",
+      "published": "2026-11-08 11:20:03",
+      "published_ts": "2026-11-08T11:20:03+08:00",
+      "ai_points": [
+        "台股6日重挫1,873.08點失守4萬點，國安基金史上第十次進場護盤",
+        "金管會9日起實施限空令，調降借券賣出上限並調高融券保證金成數",
+        "安聯投信看好半導體、IP/ASIC、先進封裝、AI伺服器零組件及光通訊"
+      ],
+      "summary": "台股6日重挫1,873.08點失守4萬點，國安基金史上第十次進場護盤；金管會9日起實施限空令，調降借券賣出上限並調高融券保證金成數；安聯投信看好半導體、IP/ASIC、先進封裝、AI伺服器零組件及光通訊",
+      "sentiment": "利多",
+      "sectors": [
+        "半導體",
+        "AI／伺服器",
+        "金融"
+      ],
+      "stocks": [],
+      "highlights": [
+        "1,873.08點",
+        "國安基金",
+        "限空令",
+        "IP/ASIC",
+        "先進封裝"
+      ],
+      "why": "政府護盤與法人看法，有助判斷台股籌碼沉澱進度",
       "importance": 5.9,
       "ai_source": "claude",
       "source": "鉅亨網"
@@ -2588,6 +2620,41 @@
       "source": "鉅亨網"
     },
     {
+      "article_id": "6652256",
+      "title": "諾基亞搶攻AI資料中心光通訊市場！布局NPO、CPO Lumentum、Coherent迎新對手",
+      "url": "https://news.cnyes.com/news/id/6652256",
+      "category": "美股雷達",
+      "published": "2026-11-08 17:10:02",
+      "published_ts": "2026-11-08T17:10:02+08:00",
+      "ai_points": [
+        "諾基亞評估進軍AI資料中心內部光互連市場，涵蓋NPO、CPO，甚至外置雷射器。",
+        "隨著AI資料中心對高速光傳輸的需求持續攀升，諾基亞有意將既有光通訊技術與製造能力延伸至成長更快的市場，未來可能成為Lumentum( LITE-US ) …",
+        "Dell'Oro Group研究總監Frank Yang指出，傳統高速可插拔光模組約有30%至40%的功耗來自DSP。"
+      ],
+      "summary": "諾基亞評估進軍AI資料中心內部光互連市場，涵蓋NPO、CPO，甚至外置雷射器。；隨著AI資料中心對高速光傳輸的需求持續攀升，諾基亞有意將既有光通訊技術與製造能力延伸至成長更快的市場，未來可能成為Lumentum( LITE-US ) …；Dell'Oro Group研究總監Frank Yang指出，傳統高速可插拔光模組約有30%至40%的功耗來自DSP。",
+      "sentiment": "利多",
+      "sectors": [
+        "AI／伺服器",
+        "網通／光通訊",
+        "先進封裝／矽光子"
+      ],
+      "stocks": [],
+      "highlights": [
+        "資料中心",
+        "30%",
+        "40%",
+        "光通訊",
+        "光模組",
+        "CPO",
+        "成長",
+        "AI"
+      ],
+      "why": "",
+      "importance": 5.5,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
       "article_id": "6651855",
       "title": "營收速報 - 2026年11月7日台股大型公司10月營收一覽（新增62家）",
       "url": "https://news.cnyes.com/news/id/6651855",
@@ -2674,36 +2741,6 @@
         "777-F"
       ],
       "why": "航空股在大盤重挫中相對抗跌",
-      "importance": 5.4,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6651940",
-      "title": "馬斯克不排除收購美國大型電信商！SpaceX瞄準AT&T、Verizon、T-Mobile",
-      "url": "https://news.cnyes.com/news/id/6651940",
-      "category": "美股雷達",
-      "published": "2026-11-07 17:10:03",
-      "published_ts": "2026-11-07T17:10:03+08:00",
-      "ai_points": [
-        "馬斯克稱若能更有效運用頻譜，SpaceX不排除收購大型電信商",
-        "SpaceX初期無線通訊服務預計2028年初啟用，並與高通合作",
-        "AST SpaceMobile將以8億美元打造20噸火箭發射衛星"
-      ],
-      "summary": "馬斯克稱若能更有效運用頻譜，SpaceX不排除收購大型電信商；SpaceX初期無線通訊服務預計2028年初啟用，並與高通合作；AST SpaceMobile將以8億美元打造20噸火箭發射衛星",
-      "sentiment": "中性",
-      "sectors": [
-        "網通／光通訊",
-        "航運／航空"
-      ],
-      "stocks": [],
-      "highlights": [
-        "頻譜",
-        "2028年初",
-        "高通",
-        "8億美元"
-      ],
-      "why": "衛星通訊與電信整合可能改變美國電信競爭",
       "importance": 5.4,
       "ai_source": "claude",
       "source": "鉅亨網"
@@ -3258,34 +3295,6 @@
       "source": "鉅亨網"
     },
     {
-      "article_id": "6651928",
-      "title": "美俄烏下週阿布達比重啟談判！川普稱接近達成協議、俄軍突襲基輔釀2傷",
-      "url": "https://news.cnyes.com/news/id/6651928",
-      "category": "國際政經",
-      "published": "2026-11-07 16:10:03",
-      "published_ts": "2026-11-07T16:10:03+08:00",
-      "ai_points": [
-        "美俄烏預計下週在阿布達比重啟三方談判，為相隔9個月面對面會談",
-        "川普稱協議非常接近，烏方不預期突破；俄軍飛彈攻擊基輔造成2人受傷"
-      ],
-      "summary": "美俄烏預計下週在阿布達比重啟三方談判，為相隔9個月面對面會談；川普稱協議非常接近，烏方不預期突破；俄軍飛彈攻擊基輔造成2人受傷",
-      "sentiment": "中性",
-      "sectors": [
-        "地緣／政策"
-      ],
-      "stocks": [],
-      "highlights": [
-        "阿布達比",
-        "三方談判",
-        "基輔",
-        "2人受傷"
-      ],
-      "why": "俄烏和談進展影響歐洲地緣與能源風險",
-      "importance": 4.7,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
       "article_id": "6649351",
       "title": "AI股震盪掀避險潮！日元重拾傳統避風港魅力 分析師看好長線升至148",
       "url": "https://news.cnyes.com/news/id/6649351",
@@ -3582,6 +3591,36 @@
         "3.47%"
       ],
       "why": "設備股是否錯殺取決於全球建設總量",
+      "importance": 4.4,
+      "ai_source": "claude",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6651940",
+      "title": "馬斯克不排除收購美國大型電信商！SpaceX瞄準AT&T、Verizon、T-Mobile",
+      "url": "https://news.cnyes.com/news/id/6651940",
+      "category": "美股雷達",
+      "published": "2026-11-07 17:10:03",
+      "published_ts": "2026-11-07T17:10:03+08:00",
+      "ai_points": [
+        "馬斯克稱若能更有效運用頻譜，SpaceX不排除收購大型電信商",
+        "SpaceX初期無線通訊服務預計2028年初啟用，並與高通合作",
+        "AST SpaceMobile將以8億美元打造20噸火箭發射衛星"
+      ],
+      "summary": "馬斯克稱若能更有效運用頻譜，SpaceX不排除收購大型電信商；SpaceX初期無線通訊服務預計2028年初啟用，並與高通合作；AST SpaceMobile將以8億美元打造20噸火箭發射衛星",
+      "sentiment": "中性",
+      "sectors": [
+        "網通／光通訊",
+        "航運／航空"
+      ],
+      "stocks": [],
+      "highlights": [
+        "頻譜",
+        "2028年初",
+        "高通",
+        "8億美元"
+      ],
+      "why": "衛星通訊與電信整合可能改變美國電信競爭",
       "importance": 4.4,
       "ai_source": "claude",
       "source": "鉅亨網"
@@ -4101,6 +4140,34 @@
       "source": "鉅亨網"
     },
     {
+      "article_id": "6651928",
+      "title": "美俄烏下週阿布達比重啟談判！川普稱接近達成協議、俄軍突襲基輔釀2傷",
+      "url": "https://news.cnyes.com/news/id/6651928",
+      "category": "國際政經",
+      "published": "2026-11-07 16:10:03",
+      "published_ts": "2026-11-07T16:10:03+08:00",
+      "ai_points": [
+        "美俄烏預計下週在阿布達比重啟三方談判，為相隔9個月面對面會談",
+        "川普稱協議非常接近，烏方不預期突破；俄軍飛彈攻擊基輔造成2人受傷"
+      ],
+      "summary": "美俄烏預計下週在阿布達比重啟三方談判，為相隔9個月面對面會談；川普稱協議非常接近，烏方不預期突破；俄軍飛彈攻擊基輔造成2人受傷",
+      "sentiment": "中性",
+      "sectors": [
+        "地緣／政策"
+      ],
+      "stocks": [],
+      "highlights": [
+        "阿布達比",
+        "三方談判",
+        "基輔",
+        "2人受傷"
+      ],
+      "why": "俄烏和談進展影響歐洲地緣與能源風險",
+      "importance": 3.7,
+      "ai_source": "claude",
+      "source": "鉅亨網"
+    },
+    {
       "article_id": "6652210",
       "title": "彰化等待20年！台76線全線通車 卓揆：打造「中部精密智慧新核心」關鍵拼圖",
       "url": "https://news.cnyes.com/news/id/6652210",
@@ -4216,35 +4283,6 @@
         "250億美元"
       ],
       "why": "美對伊封鎖由海上擴至陸上，衝突恐延長",
-      "importance": 3.3,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6652269",
-      "title": "特斯拉Cybertruck加開一班趕交車明年6至7月拆線擴充Cybercab",
-      "url": "https://news.cnyes.com/news/id/6652269",
-      "category": "美股雷達",
-      "published": "2026-11-08 11:30:06",
-      "published_ts": "2026-11-08T11:30:06+08:00",
-      "ai_points": [
-        "馬斯克稱Cybertruck加開一個生產班次，趕在拆線前完成現有訂單",
-        "Cybertruck產線預計2027年6至7月拆除，擴大Cybercab生產",
-        "德州廠Cybertruck與Cybercab已建置年產能各超過12.5萬輛"
-      ],
-      "summary": "馬斯克稱Cybertruck加開一個生產班次，趕在拆線前完成現有訂單；Cybertruck產線預計2027年6至7月拆除，擴大Cybercab生產；德州廠Cybertruck與Cybercab已建置年產能各超過12.5萬輛",
-      "sentiment": "中性",
-      "sectors": [
-        "電動車／車用"
-      ],
-      "stocks": [],
-      "highlights": [
-        "Cybertruck",
-        "加開一個生產班次",
-        "Cybercab",
-        "12.5萬輛"
-      ],
-      "why": "特斯拉產能轉向Robotaxi，Cybertruck將逐步退場",
       "importance": 3.3,
       "ai_source": "claude",
       "source": "鉅亨網"
@@ -4699,6 +4737,35 @@
       "why": "",
       "importance": 2.5,
       "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6652269",
+      "title": "特斯拉Cybertruck加開一班趕交車明年6至7月拆線擴充Cybercab",
+      "url": "https://news.cnyes.com/news/id/6652269",
+      "category": "美股雷達",
+      "published": "2026-11-08 11:30:06",
+      "published_ts": "2026-11-08T11:30:06+08:00",
+      "ai_points": [
+        "馬斯克稱Cybertruck加開一個生產班次，趕在拆線前完成現有訂單",
+        "Cybertruck產線預計2027年6至7月拆除，擴大Cybercab生產",
+        "德州廠Cybertruck與Cybercab已建置年產能各超過12.5萬輛"
+      ],
+      "summary": "馬斯克稱Cybertruck加開一個生產班次，趕在拆線前完成現有訂單；Cybertruck產線預計2027年6至7月拆除，擴大Cybercab生產；德州廠Cybertruck與Cybercab已建置年產能各超過12.5萬輛",
+      "sentiment": "中性",
+      "sectors": [
+        "電動車／車用"
+      ],
+      "stocks": [],
+      "highlights": [
+        "Cybertruck",
+        "加開一個生產班次",
+        "Cybercab",
+        "12.5萬輛"
+      ],
+      "why": "特斯拉產能轉向Robotaxi，Cybertruck將逐步退場",
+      "importance": 2.3,
+      "ai_source": "claude",
       "source": "鉅亨網"
     },
     {
