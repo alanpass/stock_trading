@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-11-11",
-  "updated_at": "2026-11-11T17:58:35+08:00",
-  "finished_at": "2026-11-11T18:00:16+08:00",
-  "published_at": "2026-11-11T18:00:16+08:00",
+  "updated_at": "2026-11-11T18:00:04+08:00",
+  "finished_at": "2026-11-11T18:01:32+08:00",
+  "published_at": "2026-11-11T18:01:32+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -16,9 +16,9 @@
   ],
   "stale": false,
   "news_count": 599,
-  "earnings_count": 7,
+  "earnings_count": 17,
   "news_digest": {
-    "generated_at": "2026-11-11T17:58:35+08:00",
+    "generated_at": "2026-11-11T18:00:04+08:00",
     "headline": "最近 2 天共整理 599 則財經新聞：利多 221、利空 263、中性 70、混合 45；討論度最高的產業：AI／伺服器、半導體、匯率。",
     "stats": {
       "total": 599,
@@ -302,22 +302,64 @@
     }
   },
   "earnings_digest": {
-    "generated_at": "2026-11-11T17:58:35+08:00",
+    "generated_at": "2026-11-11T18:00:04+08:00",
     "days": 5,
-    "total": 7,
-    "利多": 3,
+    "total": 17,
+    "利多": 6,
     "利空": 2,
     "中性": 0,
-    "混合": 2,
+    "混合": 9,
     "stats": {
-      "total": 7,
-      "利多": 3,
+      "total": 17,
+      "利多": 6,
       "利空": 2,
       "中性": 0,
-      "混合": 2
+      "混合": 9
     },
-    "headline": "最近 5 天共 7 場法說會備忘錄：利多 3、利空 2、中性 0、混合 2；集中產業：AI／伺服器、匯率、營建／資產。",
+    "headline": "最近 5 天共 17 場法說會備忘錄：利多 6、利空 2、中性 0、混合 9；集中產業：AI／伺服器、匯率、半導體。",
     "key_points": [
+      {
+        "title": "6894",
+        "point": "營運摘要 衛司特 ( 6894 ) 2026 年前三季營運表現強勁，營收與獲利同步顯著成長。",
+        "sentiment": "利多",
+        "url": "https://blog.fugle.tw/post/earnings-call-6894-2026-11-10",
+        "highlights": [
+          "17.19 億元",
+          "6.18 億元",
+          "4.80 億元",
+          "35.98%",
+          "69.0%",
+          "6894"
+        ]
+      },
+      {
+        "title": "5269",
+        "point": "財務表現 ：祥碩 2026 年第三季合併營收為新台幣 26.6 億元 ，季減 2%，年減 33%。",
+        "sentiment": "利多",
+        "url": "https://blog.fugle.tw/post/earnings-call-5269-2026-11-10",
+        "highlights": [
+          "26.6 億元",
+          "33%",
+          "新台幣",
+          "2%",
+          "營收",
+          "指引"
+        ]
+      },
+      {
+        "title": "6531",
+        "point": "營運摘要 2026Q3 創歷史新高 ：愛普* 6531 2026 年第三季合併營收達新臺幣 33.1 億元 ，季增 40%，年增 122%，創下單季歷史新高。",
+        "sentiment": "利多",
+        "url": "https://blog.fugle.tw/post/earnings-call-6531-2026-11-10",
+        "highlights": [
+          "33.1 億元",
+          "18.5 億元",
+          "122%",
+          "6531",
+          "40%",
+          "60%"
+        ]
+      },
       {
         "title": "8454",
         "point": "富邦媒Q3營收263億元、年增7.1%，營業淨利7.2億元年增11.1%，GMV成長加速至11.4%。",
@@ -333,77 +375,57 @@
         ]
       },
       {
-        "title": "3703",
-        "point": "欣陸前三季稅後淨利15.38億元、年增104%，EPS 1.87元，三大事業營收存量充沛。",
-        "sentiment": "利多",
-        "url": "https://blog.fugle.tw/post/earnings-call-3703-2026-11-09",
-        "highlights": [
-          "228.82億元",
-          "15.38億元",
-          "38.34億元",
-          "1.87元",
-          "57.8%",
-          "16.8%"
-        ]
-      },
-      {
-        "title": "1337",
-        "point": "再生-KY前三季銷量5.2萬立方米、年減22%，上半年每股虧損0.89元，本業短期難恢復。",
-        "sentiment": "利空",
-        "url": "https://blog.fugle.tw/post/earnings-call-1337-2026-11-09",
-        "highlights": [
-          "2.88億元",
-          "2.39億元",
-          "0.89元",
-          "7.15億",
-          "13.4億",
-          "5.2萬"
-        ]
-      },
-      {
-        "title": "6216",
-        "point": "居易前三季營收4.35億元、年減28.28%，由盈轉虧，EPS -0.17元，歐洲市場持續疲弱。",
-        "sentiment": "利空",
-        "url": "https://blog.fugle.tw/post/earnings-call-6216-2026-11-09",
-        "highlights": [
-          "4.35億元",
-          "28.28%",
-          "-0.17元",
-          "0.40元",
-          "78.0%",
-          "8.1%"
-        ]
-      },
-      {
-        "title": "3715",
-        "point": "定穎投控Q3營收87.05億元、年增79.8%，毛利率回升至22.2%，但匯兌損失約3.3億元使EPS僅0.11元。",
+        "title": "2420",
+        "point": "營運摘要 新巨 ( 2420 ) 於 2026 年第三季繳出亮麗成績，在伺服器電源與車用、工控開關雙業務引擎帶動下，多項財務指標創下佳績。",
         "sentiment": "混合",
-        "url": "https://blog.fugle.tw/post/earnings-call-3715-2026-11-09",
+        "url": "https://blog.fugle.tw/post/earnings-call-2420-2026-11-10",
         "highlights": [
-          "87.05億元",
-          "79.8%",
-          "22.2%",
-          "3.3億元",
-          "0.11元",
-          "26.7%"
+          "2420",
+          "庫藏股",
+          "伺服器",
+          "指引",
+          "獲利",
+          "車用"
         ]
       },
       {
-        "title": "2729",
-        "point": "瓦城2026Q2營收16.36億元、年增12.44%創同期新高，上半年營收32.89億元，美國首店已開幕。",
-        "sentiment": "利多",
-        "url": "https://blog.fugle.tw/post/earnings-call-2729-2026-11-09",
+        "title": "1476",
+        "point": "營運摘要 儒鴻 (1476) 2026 年第三季營運表現強勁，營收、毛利率及營業利益率均呈現季增與年增。",
+        "sentiment": "混合",
+        "url": "https://blog.fugle.tw/post/earnings-call-1476-2026-11-10",
         "highlights": [
-          "16.36億元",
-          "32.89億元",
-          "12.44%",
-          "80%",
+          "1476",
+          "28%",
+          "32%",
           "營收",
-          "股利"
+          "上修",
+          "指引"
         ]
       }
     ],
     "bullish": [
+      {
+        "theme": "6894",
+        "reason": "展望與指引 整體展望 : 管理層對 2027 年展望樂觀，認為整個產業需求強勁，客戶擴產的 roadmap 非常明確",
+        "sectors": [],
+        "url": "https://blog.fugle.tw/post/earnings-call-6894-2026-11-10"
+      },
+      {
+        "theme": "5269",
+        "reason": "展望與指引 短期營收 ：考量主要客戶庫存調節， 2026Q4 及 2027Q1 營收表現將較為疲弱 ",
+        "sectors": [
+          "匯率"
+        ],
+        "url": "https://blog.fugle.tw/post/earnings-call-5269-2026-11-10"
+      },
+      {
+        "theme": "6531",
+        "reason": "展望與指引 短期展望 (2026Q4) ：延續第三季動能，樂觀看待第四季營收表現，主要動能來自 IoT-RAM 的強勁需…",
+        "sectors": [
+          "記憶體"
+        ],
+        "url": "https://blog.fugle.tw/post/earnings-call-6531-2026-11-10"
+      },
       {
         "theme": "8454",
         "reason": "2026Q4雙11與雙12旺季抱持樂觀態度。沒有調整股利政策的規劃",
@@ -411,20 +433,6 @@
           "AI／伺服器"
         ],
         "url": "https://blog.fugle.tw/post/earnings-call-8454-2026-11-09"
-      },
-      {
-        "theme": "3703",
-        "reason": "公司未提供具體的財務預測。「湍序」預計2026Q4認列完畢。大陸建設多個預售案於2027年至2029年陸續交屋",
-        "sectors": [
-          "營建／資產"
-        ],
-        "url": "https://blog.fugle.tw/post/earnings-call-3703-2026-11-09"
-      },
-      {
-        "theme": "2729",
-        "reason": "臺灣維持穩健門店成長。美國從洛杉磯逐步擴展至加州乃至全美。每年推出1至2個全新品牌",
-        "sectors": [],
-        "url": "https://blog.fugle.tw/post/earnings-call-2729-2026-11-09"
       }
     ],
     "bearish": [
@@ -449,17 +457,45 @@
     "sector_heat": [
       {
         "sector": "AI／伺服器",
-        "count": 2,
+        "count": 5,
         "利多": 1,
         "利空": 0,
         "tone": "偏多"
       },
       {
         "sector": "匯率",
+        "count": 4,
+        "利多": 1,
+        "利空": 1,
+        "tone": "中性"
+      },
+      {
+        "sector": "半導體",
         "count": 2,
         "利多": 0,
-        "利空": 1,
-        "tone": "偏空"
+        "利空": 0,
+        "tone": "中性"
+      },
+      {
+        "sector": "PCB／載板",
+        "count": 2,
+        "利多": 0,
+        "利空": 0,
+        "tone": "中性"
+      },
+      {
+        "sector": "記憶體",
+        "count": 1,
+        "利多": 1,
+        "利空": 0,
+        "tone": "偏多"
+      },
+      {
+        "sector": "電動車／車用",
+        "count": 1,
+        "利多": 0,
+        "利空": 0,
+        "tone": "中性"
       },
       {
         "sector": "營建／資產",
@@ -481,27 +517,13 @@
         "利多": 0,
         "利空": 1,
         "tone": "偏空"
-      },
-      {
-        "sector": "PCB／載板",
-        "count": 1,
-        "利多": 0,
-        "利空": 0,
-        "tone": "中性"
-      },
-      {
-        "sector": "半導體",
-        "count": 1,
-        "利多": 0,
-        "利空": 0,
-        "tone": "中性"
       }
     ],
     "watch_items": [],
     "risks": [
-      "電商競爭與資安事件",
-      "建案交屋時點影響認列節奏",
-      "中東局勢。中國內需與房地產疲弱。園區交屋進度"
+      "成本上升",
+      "放緩",
+      "電商競爭與資安事件"
     ],
     "generated_by": "rule",
     "llm": {
@@ -520,17 +542,17 @@
       "future": 43
     },
     "source_method": "api",
-    "reused_from_previous_run": 20,
+    "reused_from_previous_run": 65,
     "window_start": "2026-11-10T00:00:00+08:00",
-    "window_end": "2026-11-11T18:00:14.526686+08:00"
+    "window_end": "2026-11-11T18:00:39.003355+08:00"
   },
   "agent_stats": {
     "input": 599,
     "after_dedupe": 599,
     "ai_cached": 20,
-    "seconds": 1.2,
+    "seconds": 1.0,
     "earnings": {
-      "total": 7,
+      "total": 17,
       "ai_cached": 0,
       "seconds": 0.0
     }
@@ -3384,49 +3406,10 @@
       "source": "鉅亨網"
     },
     {
-      "article_id": "6657970",
-      "title": "Anthropic拚長期營業利益率逾35%！算力效率提升4倍、企業客戶逾1.19萬家",
-      "url": "https://news.cnyes.com/news/id/6657970",
-      "category": "美股",
-      "published": "2026-11-11 12:00:04",
-      "published_ts": "2026-11-11T12:00:04+08:00",
-      "ai_points": [
-        "Anthropic路演首揭長期獲利目標，盼調整後營業利益率達35%以上，較第三季15%大增 截至第三季營收169.56億美元、企業客戶逾1.19萬家；",
-        "算力支出占營收比重拚降至45%至50% 長期利潤率目標逾35% Anthropic財務長Krishna Rao在路演影片中表示，公司相信長期調整後營業利益率能達到35%或更高…",
-        "35%以上的調整後營業利益率目標、算力效率提升逾4倍，以及約9000億美元的算力承諾，構成公司未來成長與獲利能力評估的核心。"
-      ],
-      "summary": "Anthropic路演首揭長期獲利目標，盼調整後營業利益率達35%以上，較第三季15%大增 截至第三季營收169.56億美元、企業客戶逾1.19萬家；；算力支出占營收比重拚降至45%至50% 長期利潤率目標逾35% Anthropic財務長Krishna Rao在路演影片中表示，公司相信長期調整後營業利益率能達到35%或更高…；35%以上的調整後營業利益率目標、算力效率提升逾4倍，以及約9000億美元的算力承諾，構成公司未來成長與獲利能力評估的核心。",
-      "sentiment": "利多",
-      "sectors": [
-        "AI／伺服器",
-        "半導體",
-        "國際股市"
-      ],
-      "stocks": [
-        "2330"
-      ],
-      "highlights": [
-        "169.56億美元",
-        "9000億美元",
-        "1.19萬",
-        "35%",
-        "15%",
-        "45%",
-        "50%",
-        "4倍",
-        "營收",
-        "成長"
-      ],
-      "why": "",
-      "importance": 7.6,
-      "ai_source": "rule",
-      "source": "鉅亨網"
-    },
-    {
       "article_id": "6658450",
       "title": "台股連三日飆千點、外資續賣7億元 三大法人土洋對作買超202.56億元",
       "url": "https://news.cnyes.com/news/id/6658450",
-      "category": "tw_stock",
+      "category": "台股新聞",
       "published": "2026-11-11 15:02:19",
       "published_ts": "2026-11-11T15:02:19+08:00",
       "ai_points": [
@@ -4436,7 +4419,7 @@
       "article_id": "6656725",
       "title": "鉅亨速報 - Factset 最新調查：環球晶(6488-TW)目標價調升至865元，幅度約6.79%",
       "url": "https://news.cnyes.com/news/id/6656725",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-10 20:10:23",
       "published_ts": "2026-11-10T20:10:23+08:00",
       "ai_points": [
@@ -4477,7 +4460,7 @@
       "article_id": "6656756",
       "title": "鉅亨速報 - Factset 最新調查：簡伯特G-US的目標價調升至47元，幅度約9.3%",
       "url": "https://news.cnyes.com/news/id/6656756",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-10 20:15:21",
       "published_ts": "2026-11-10T20:15:21+08:00",
       "ai_points": [
@@ -4519,7 +4502,7 @@
       "article_id": "6656761",
       "title": "鉅亨速報 - Factset 最新調查：Onto Innovation Inc.ONTO-US的目標價調降至337.5元，幅度約14.56%",
       "url": "https://news.cnyes.com/news/id/6656761",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-10 20:15:23",
       "published_ts": "2026-11-10T20:15:23+08:00",
       "ai_points": [
@@ -4556,7 +4539,7 @@
       "article_id": "6656766",
       "title": "鉅亨速報 - Factset 最新調查：Astera Labs, Inc.ALAB-US的目標價調降至350元，幅度約4.09%",
       "url": "https://news.cnyes.com/news/id/6656766",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-10 20:15:24",
       "published_ts": "2026-11-10T20:15:24+08:00",
       "ai_points": [
@@ -4593,7 +4576,7 @@
       "article_id": "6656774",
       "title": "鉅亨速報 - Factset 最新調查：沃達丰電信公司VOD-US的目標價調降至15.46元，幅度約8.23%",
       "url": "https://news.cnyes.com/news/id/6656774",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-10 20:15:27",
       "published_ts": "2026-11-10T20:15:27+08:00",
       "ai_points": [
@@ -4630,7 +4613,7 @@
       "article_id": "6656779",
       "title": "鉅亨速報 - Factset 最新調查：CNH Industrial NVCNH-US的目標價調升至14.5元，幅度約3.57%",
       "url": "https://news.cnyes.com/news/id/6656779",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-10 20:15:29",
       "published_ts": "2026-11-10T20:15:29+08:00",
       "ai_points": [
@@ -4670,7 +4653,7 @@
       "article_id": "6656784",
       "title": "鉅亨速報 - Factset 最新調查：聯營投資管理集團AMG-US的目標價調升至456元，幅度約7.04%",
       "url": "https://news.cnyes.com/news/id/6656784",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-10 20:15:30",
       "published_ts": "2026-11-10T20:15:30+08:00",
       "ai_points": [
@@ -4712,7 +4695,7 @@
       "article_id": "6656787",
       "title": "鉅亨速報 - Factset 最新調查：Akamai科技AKAM-US的目標價調降至137元，幅度約8.05%",
       "url": "https://news.cnyes.com/news/id/6656787",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-10 20:15:31",
       "published_ts": "2026-11-10T20:15:31+08:00",
       "ai_points": [
@@ -4786,7 +4769,7 @@
       "article_id": "6657788",
       "title": "鉅亨速報 - Factset 最新調查：Timken Co.TKR-US的目標價調降至145元，幅度約3.33%",
       "url": "https://news.cnyes.com/news/id/6657788",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-11 00:15:27",
       "published_ts": "2026-11-11T00:15:27+08:00",
       "ai_points": [
@@ -4826,7 +4809,7 @@
       "article_id": "6657791",
       "title": "鉅亨速報 - Factset 最新調查：Zeta Global Holdings Corp - Class AZETA-US的目標價調升至39.5元，幅度約3.95%",
       "url": "https://news.cnyes.com/news/id/6657791",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-11 00:15:33",
       "published_ts": "2026-11-11T00:15:33+08:00",
       "ai_points": [
@@ -4866,7 +4849,7 @@
       "article_id": "6657792",
       "title": "鉅亨速報 - Factset 最新調查：Cerebras Systems, Inc. Class ACBRS-US的目標價調降至265元，幅度約6.19%",
       "url": "https://news.cnyes.com/news/id/6657792",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-11 00:15:34",
       "published_ts": "2026-11-11T00:15:34+08:00",
       "ai_points": [
@@ -4903,7 +4886,7 @@
       "article_id": "6657842",
       "title": "鉅亨速報 - Factset 最新調查：Rocket Lab USA IncRKLB-US的目標價調降至100元，幅度約4.76%",
       "url": "https://news.cnyes.com/news/id/6657842",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-11 02:15:23",
       "published_ts": "2026-11-11T02:15:23+08:00",
       "ai_points": [
@@ -4976,7 +4959,7 @@
       "article_id": "6657958",
       "title": "鉅亨速報 - Factset 最新調查：上銀(2049-TW)目標價調降至430元，幅度約3.37%",
       "url": "https://news.cnyes.com/news/id/6657958",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-11 08:10:21",
       "published_ts": "2026-11-11T08:10:21+08:00",
       "ai_points": [
@@ -5016,7 +4999,7 @@
       "article_id": "6657959",
       "title": "鉅亨速報 - Factset 最新調查：儒鴻(1476-TW)目標價調升至412.5元，幅度約5.23%",
       "url": "https://news.cnyes.com/news/id/6657959",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-11 08:10:22",
       "published_ts": "2026-11-11T08:10:22+08:00",
       "ai_points": [
@@ -5053,7 +5036,7 @@
       "article_id": "6657960",
       "title": "鉅亨速報 - Factset 最新調查：宏捷科(8086-TW)目標價調降至136元，幅度約7.48%",
       "url": "https://news.cnyes.com/news/id/6657960",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-11 08:10:24",
       "published_ts": "2026-11-11T08:10:24+08:00",
       "ai_points": [
@@ -5094,7 +5077,7 @@
       "article_id": "6657961",
       "title": "鉅亨速報 - Factset 最新調查：旺宏(2337-TW)目標價調降至120元，幅度約22.58%",
       "url": "https://news.cnyes.com/news/id/6657961",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-11 08:10:26",
       "published_ts": "2026-11-11T08:10:26+08:00",
       "ai_points": [
@@ -5171,7 +5154,7 @@
       "article_id": "6658331",
       "title": "盤中速報 - 櫃買市場加權指數上漲8.65點至341.62點，漲幅2.6%",
       "url": "https://news.cnyes.com/news/id/6658331",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-11 12:07:27",
       "published_ts": "2026-11-11T12:07:27+08:00",
       "ai_points": [
@@ -5216,7 +5199,7 @@
       "article_id": "6658332",
       "title": "盤中速報 - 集中市場加權指數上漲1123.15點至43835.07點，漲幅2.63%",
       "url": "https://news.cnyes.com/news/id/6658332",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-11 12:07:30",
       "published_ts": "2026-11-11T12:07:30+08:00",
       "ai_points": [
@@ -6494,7 +6477,7 @@
       "article_id": "6657789",
       "title": "鉅亨速報 - Factset 最新調查：康明斯CMI-US的目標價調降至613.5元，幅度約9.18%",
       "url": "https://news.cnyes.com/news/id/6657789",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-11 00:15:29",
       "published_ts": "2026-11-11T00:15:29+08:00",
       "ai_points": [
@@ -6526,7 +6509,7 @@
       "article_id": "6657790",
       "title": "鉅亨速報 - Factset 最新調查：Akamai科技AKAM-US的目標價調升至149元，幅度約8.76%",
       "url": "https://news.cnyes.com/news/id/6657790",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-11 00:15:31",
       "published_ts": "2026-11-11T00:15:31+08:00",
       "ai_points": [
@@ -6589,10 +6572,49 @@
       "source": "鉅亨網"
     },
     {
+      "article_id": "6657970",
+      "title": "Anthropic拚長期營業利益率逾35%！算力效率提升4倍、企業客戶逾1.19萬家",
+      "url": "https://news.cnyes.com/news/id/6657970",
+      "category": "美股",
+      "published": "2026-11-11 12:00:04",
+      "published_ts": "2026-11-11T12:00:04+08:00",
+      "ai_points": [
+        "Anthropic路演首揭長期獲利目標，盼調整後營業利益率達35%以上，較第三季15%大增 截至第三季營收169.56億美元、企業客戶逾1.19萬家；",
+        "算力支出占營收比重拚降至45%至50% 長期利潤率目標逾35% Anthropic財務長Krishna Rao在路演影片中表示，公司相信長期調整後營業利益率能達到35%或更高…",
+        "35%以上的調整後營業利益率目標、算力效率提升逾4倍，以及約9000億美元的算力承諾，構成公司未來成長與獲利能力評估的核心。"
+      ],
+      "summary": "Anthropic路演首揭長期獲利目標，盼調整後營業利益率達35%以上，較第三季15%大增 截至第三季營收169.56億美元、企業客戶逾1.19萬家；；算力支出占營收比重拚降至45%至50% 長期利潤率目標逾35% Anthropic財務長Krishna Rao在路演影片中表示，公司相信長期調整後營業利益率能達到35%或更高…；35%以上的調整後營業利益率目標、算力效率提升逾4倍，以及約9000億美元的算力承諾，構成公司未來成長與獲利能力評估的核心。",
+      "sentiment": "利多",
+      "sectors": [
+        "AI／伺服器",
+        "半導體",
+        "國際股市"
+      ],
+      "stocks": [
+        "2330"
+      ],
+      "highlights": [
+        "169.56億美元",
+        "9000億美元",
+        "1.19萬",
+        "35%",
+        "15%",
+        "45%",
+        "50%",
+        "4倍",
+        "營收",
+        "成長"
+      ],
+      "why": "",
+      "importance": 6.6,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
       "article_id": "6658376",
       "title": "盤中速報 - 櫃買市場加權指數上漲10點至342.97點，漲幅3%",
       "url": "https://news.cnyes.com/news/id/6658376",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-11 13:17:01",
       "published_ts": "2026-11-11T13:17:01+08:00",
       "ai_points": [
@@ -7606,7 +7628,7 @@
       "article_id": "6657758",
       "title": "盤中速報 - 輝達(NVDA-US)大跌5.02%，報169.7美元",
       "url": "https://news.cnyes.com/news/id/6657758",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-10 23:59:52",
       "published_ts": "2026-11-10T23:59:52+08:00",
       "ai_points": [
@@ -7849,7 +7871,7 @@
       "article_id": "6658357",
       "title": "盤中速報 - 集中市場加權指數上漲1148.13點至43860.05點，漲幅2.69%",
       "url": "https://news.cnyes.com/news/id/6658357",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-11 12:57:11",
       "published_ts": "2026-11-11T12:57:11+08:00",
       "ai_points": [
@@ -7893,7 +7915,7 @@
       "article_id": "6658358",
       "title": "盤中速報 - 櫃買市場加權指數上漲8.78點至341.75點，漲幅2.64%",
       "url": "https://news.cnyes.com/news/id/6658358",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-11 12:58:07",
       "published_ts": "2026-11-11T12:58:07+08:00",
       "ai_points": [
@@ -7937,7 +7959,7 @@
       "article_id": "6658359",
       "title": "盤中速報 - 集中市場加權指數上漲1142.09點至43854.01點，漲幅2.67%",
       "url": "https://news.cnyes.com/news/id/6658359",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-11 12:58:09",
       "published_ts": "2026-11-11T12:58:09+08:00",
       "ai_points": [
@@ -7981,7 +8003,7 @@
       "article_id": "6658367",
       "title": "盤中速報 - 集中市場加權指數上漲1280.39點至43992.31點，漲幅3%",
       "url": "https://news.cnyes.com/news/id/6658367",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-11 13:03:52",
       "published_ts": "2026-11-11T13:03:52+08:00",
       "ai_points": [
@@ -11127,7 +11149,7 @@
       "article_id": "6657722",
       "title": "盤中速報 - Take-Two互動軟體(TTWO-US)大漲5.68%，報219.17美元",
       "url": "https://news.cnyes.com/news/id/6657722",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-10 22:45:10",
       "published_ts": "2026-11-10T22:45:10+08:00",
       "ai_points": [
@@ -11164,7 +11186,7 @@
       "article_id": "6657724",
       "title": "盤中速報 - Onto Innovation Inc.(ONTO-US)大漲5.89%，報205.47美元",
       "url": "https://news.cnyes.com/news/id/6657724",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-10 22:45:52",
       "published_ts": "2026-11-10T22:45:52+08:00",
       "ai_points": [
@@ -11201,7 +11223,7 @@
       "article_id": "6657725",
       "title": "盤中速報 - 卡特彼勒(CAT-US)大跌5.36%，報566.8美元",
       "url": "https://news.cnyes.com/news/id/6657725",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-10 22:46:12",
       "published_ts": "2026-11-10T22:46:12+08:00",
       "ai_points": [
@@ -11238,7 +11260,7 @@
       "article_id": "6657727",
       "title": "盤中速報 - Zscaler公司(ZS-US)大跌5.08%，報188.93美元",
       "url": "https://news.cnyes.com/news/id/6657727",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-10 22:47:41",
       "published_ts": "2026-11-10T22:47:41+08:00",
       "ai_points": [
@@ -11275,7 +11297,7 @@
       "article_id": "6657741",
       "title": "盤中速報 - 莫德納(MRNA-US)大跌5.11%，報255.25美元",
       "url": "https://news.cnyes.com/news/id/6657741",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-10 23:21:10",
       "published_ts": "2026-11-10T23:21:10+08:00",
       "ai_points": [
@@ -11312,7 +11334,7 @@
       "article_id": "6657800",
       "title": "盤中速報 - Applovin Corp - Class A(APP-US)大跌5.02%，報389.4美元",
       "url": "https://news.cnyes.com/news/id/6657800",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-11 00:26:37",
       "published_ts": "2026-11-11T00:26:37+08:00",
       "ai_points": [
@@ -11349,7 +11371,7 @@
       "article_id": "6657808",
       "title": "盤中速報 - 特許通訊(CHTR-US)大漲5.01%，報127.28美元",
       "url": "https://news.cnyes.com/news/id/6657808",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-11 00:37:09",
       "published_ts": "2026-11-11T00:37:09+08:00",
       "ai_points": [
@@ -11386,7 +11408,7 @@
       "article_id": "6657813",
       "title": "盤中速報 - 連貫(COHR-US)大跌5.1%，報213.71美元",
       "url": "https://news.cnyes.com/news/id/6657813",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-11 01:04:37",
       "published_ts": "2026-11-11T01:04:37+08:00",
       "ai_points": [
@@ -11423,7 +11445,7 @@
       "article_id": "6657814",
       "title": "盤中速報 - 和康電訊(MTSI-US)大跌5.05%，報218.38美元",
       "url": "https://news.cnyes.com/news/id/6657814",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-11 01:07:51",
       "published_ts": "2026-11-11T01:07:51+08:00",
       "ai_points": [
@@ -11460,7 +11482,7 @@
       "article_id": "6657816",
       "title": "盤中速報 - 芯源系統(MPWR-US)大跌5.05%，報1318.01美元",
       "url": "https://news.cnyes.com/news/id/6657816",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-11 01:12:42",
       "published_ts": "2026-11-11T01:12:42+08:00",
       "ai_points": [
@@ -11497,7 +11519,7 @@
       "article_id": "6657820",
       "title": "盤中速報 - 安謀控股公司(ARM-US)大跌5.02%，報176.95美元",
       "url": "https://news.cnyes.com/news/id/6657820",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-11 01:39:54",
       "published_ts": "2026-11-11T01:39:54+08:00",
       "ai_points": [
@@ -11534,7 +11556,7 @@
       "article_id": "6657824",
       "title": "盤中速報 - 超微電腦(SMCI-US)大跌5.07%，報27.15美元",
       "url": "https://news.cnyes.com/news/id/6657824",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-11 01:56:04",
       "published_ts": "2026-11-11T01:56:04+08:00",
       "ai_points": [
@@ -11571,7 +11593,7 @@
       "article_id": "6657845",
       "title": "盤中速報 - Atlassian Corporation - Class A(TEAM-US)大跌5.07%，報147.05美元",
       "url": "https://news.cnyes.com/news/id/6657845",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-11 02:23:09",
       "published_ts": "2026-11-11T02:23:09+08:00",
       "ai_points": [
@@ -11608,7 +11630,7 @@
       "article_id": "6657846",
       "title": "盤中速報 - 交易台(TTD-US)大漲5.02%，報15.68美元",
       "url": "https://news.cnyes.com/news/id/6657846",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-11 02:24:57",
       "published_ts": "2026-11-11T02:24:57+08:00",
       "ai_points": [
@@ -17243,7 +17265,7 @@
       "article_id": "6658222",
       "title": "盤中速報 - 集中市場加權指數上漲852.5點至43564.42點，漲幅2%",
       "url": "https://news.cnyes.com/news/id/6658222",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-11 10:41:14",
       "published_ts": "2026-11-11T10:41:14+08:00",
       "ai_points": [
@@ -17283,7 +17305,7 @@
       "article_id": "6658258",
       "title": "盤中速報 - 櫃買市場加權指數上漲6.76點至339.73點，漲幅2.03%",
       "url": "https://news.cnyes.com/news/id/6658258",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-11 11:26:06",
       "published_ts": "2026-11-11T11:26:06+08:00",
       "ai_points": [
@@ -17965,7 +17987,7 @@
       "article_id": "6657739",
       "title": "盤中速報 - 超微半導體(AMD-US)大漲5.02%，報534.12美元",
       "url": "https://news.cnyes.com/news/id/6657739",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-10 23:13:57",
       "published_ts": "2026-11-10T23:13:57+08:00",
       "ai_points": [
@@ -21862,6 +21884,100 @@
   ],
   "earnings": [
     {
+      "title": "【衛司特法說會重點內容備忘錄】未來展望趨勢 20261110 【衛司特法說會重點內容備忘錄】未來展望趨勢 20261110",
+      "symbol": "6894",
+      "name": "",
+      "event_date": "2026-11-10",
+      "published_at": "",
+      "ai_points": [
+        "營運摘要 衛司特 ( 6894 ) 2026 年前三季營運表現強勁，營收與獲利同步顯著成長。",
+        "財務表現 2026 年前三季關鍵財務數據 : 營業收入 : 17.19 億元 (年增 69.0%) 營業毛利 : 6.18 億元 (毛利率 35.98%) 營業利益 : 4.80 億元 (年增 73.…",
+        "展望與指引 整體展望 : 管理層對 2027 年展望樂觀，認為整個產業需求強勁，客戶擴產的 roadmap 非常明確。"
+      ],
+      "summary": "營運摘要 衛司特 ( 6894 ) 2026 年前三季營運表現強勁，營收與獲利同步顯著成長。",
+      "sentiment": "利多",
+      "impact": "利多",
+      "signal": "",
+      "judgement": "",
+      "sectors": [],
+      "highlights": [
+        "17.19 億元",
+        "6.18 億元",
+        "4.80 億元",
+        "35.98%",
+        "69.0%",
+        "6894",
+        "營收",
+        "指引",
+        "成長",
+        "擴產"
+      ],
+      "source_url": "https://blog.fugle.tw/post/earnings-call-6894-2026-11-10"
+    },
+    {
+      "title": "【祥碩法說會重點內容備忘錄】未來展望趨勢 20261110 【祥碩法說會重點內容備忘錄】未來展望趨勢 20261110",
+      "symbol": "5269",
+      "name": "",
+      "event_date": "2026-11-10",
+      "published_at": "",
+      "ai_points": [
+        "財務表現 ：祥碩 2026 年第三季合併營收為新台幣 26.6 億元 ，季減 2%，年減 33%。",
+        "展望與指引 短期營收 ：考量主要客戶庫存調節， 2026Q4 及 2027Q1 營收表現將較為疲弱 。",
+        "Q&A 重點 Q: 2026Q3 的營收表現與產品組合為何？"
+      ],
+      "summary": "財務表現 ：祥碩 2026 年第三季合併營收為新台幣 26.6 億元 ，季減 2%，年減 33%。",
+      "sentiment": "利多",
+      "impact": "利多",
+      "signal": "",
+      "judgement": "",
+      "sectors": [
+        "匯率"
+      ],
+      "highlights": [
+        "26.6 億元",
+        "33%",
+        "新台幣",
+        "2%",
+        "營收",
+        "指引",
+        "疲弱"
+      ],
+      "source_url": "https://blog.fugle.tw/post/earnings-call-5269-2026-11-10"
+    },
+    {
+      "title": "【愛普*法說會重點內容備忘錄】未來展望趨勢 20261110 【愛普*法說會重點內容備忘錄】未來展望趨勢 20261110",
+      "symbol": "6531",
+      "name": "",
+      "event_date": "2026-11-10",
+      "published_at": "",
+      "ai_points": [
+        "營運摘要 2026Q3 創歷史新高 ：愛普* 6531 2026 年第三季合併營收達新臺幣 33.1 億元 ，季增 40%，年增 122%，創下單季歷史新高。",
+        "財務表現 關鍵財務數據 (2026Q3) ： 合併營收 ： 33.1 億元 (季增 40%，年增 122%) 毛利 ： 18.5 億元 (季增 60%…",
+        "展望與指引 短期展望 (2026Q4) ：延續第三季動能，樂觀看待第四季營收表現，主要動能來自 IoT-RAM 的強勁需求及矽電容產品線出貨量持續提升。"
+      ],
+      "summary": "營運摘要 2026Q3 創歷史新高 ：愛普* 6531 2026 年第三季合併營收達新臺幣 33.1 億元 ，季增 40%，年增 122%，創下單季歷史新高。",
+      "sentiment": "利多",
+      "impact": "利多",
+      "signal": "",
+      "judgement": "",
+      "sectors": [
+        "記憶體"
+      ],
+      "highlights": [
+        "33.1 億元",
+        "18.5 億元",
+        "122%",
+        "6531",
+        "40%",
+        "60%",
+        "營收",
+        "指引",
+        "新高",
+        "強勁"
+      ],
+      "source_url": "https://blog.fugle.tw/post/earnings-call-6531-2026-11-10"
+    },
+    {
       "title": "【富邦媒法說會重點內容備忘錄】未來展望趨勢 20261109 【富邦媒法說會重點內容備忘錄】未來展望趨勢 20261109",
       "symbol": "8454",
       "name": "",
@@ -21894,6 +22010,65 @@
         "成長"
       ],
       "source_url": "https://blog.fugle.tw/post/earnings-call-8454-2026-11-09"
+    },
+    {
+      "title": "【新巨法說會重點內容備忘錄】未來展望趨勢 20261110 【新巨法說會重點內容備忘錄】未來展望趨勢 20261110",
+      "symbol": "2420",
+      "name": "",
+      "event_date": "2026-11-10",
+      "published_at": "",
+      "ai_points": [
+        "營運摘要 新巨 ( 2420 ) 於 2026 年第三季繳出亮麗成績，在伺服器電源與車用、工控開關雙業務引擎帶動下，多項財務指標創下佳績。",
+        "財務表現 公司 2026 年第三季及前三季的財務表現穩健，獲利能力顯著提升。",
+        "展望與指引 公司憑藉雙事業處的利基產品組合，使毛利率維持在近五成的高檔水準，加上嚴謹的費用管控，帶動獲利能力持續提升。",
+        "Q&A 重點 Q1: 公司股價評價偏低且財務健康，是否會考慮實施庫藏股？"
+      ],
+      "summary": "營運摘要 新巨 ( 2420 ) 於 2026 年第三季繳出亮麗成績，在伺服器電源與車用、工控開關雙業務引擎帶動下，多項財務指標創下佳績。",
+      "sentiment": "混合",
+      "impact": "混合",
+      "signal": "",
+      "judgement": "",
+      "sectors": [
+        "AI／伺服器",
+        "電動車／車用"
+      ],
+      "highlights": [
+        "2420",
+        "庫藏股",
+        "伺服器",
+        "指引",
+        "獲利",
+        "車用"
+      ],
+      "source_url": "https://blog.fugle.tw/post/earnings-call-2420-2026-11-10"
+    },
+    {
+      "title": "【儒鴻法說會重點內容備忘錄】未來展望趨勢 20261110 【儒鴻法說會重點內容備忘錄】未來展望趨勢 20261110",
+      "symbol": "1476",
+      "name": "",
+      "event_date": "2026-11-10",
+      "published_at": "",
+      "ai_points": [
+        "營運摘要 儒鴻 (1476) 2026 年第三季營運表現強勁，營收、毛利率及營業利益率均呈現季增與年增。",
+        "展望與指引 短期展望 ：公司對 2026 年第四季營收動能保持信心 ，將努力達成董事長設定的目標。",
+        "Q&A 重點 Q：公司對長期毛利率 28% 至 32% 的指引是否會上修？"
+      ],
+      "summary": "營運摘要 儒鴻 (1476) 2026 年第三季營運表現強勁，營收、毛利率及營業利益率均呈現季增與年增。",
+      "sentiment": "混合",
+      "impact": "混合",
+      "signal": "",
+      "judgement": "",
+      "sectors": [],
+      "highlights": [
+        "1476",
+        "28%",
+        "32%",
+        "營收",
+        "上修",
+        "指引",
+        "強勁"
+      ],
+      "source_url": "https://blog.fugle.tw/post/earnings-call-1476-2026-11-10"
     },
     {
       "title": "【欣陸法說會重點內容備忘錄】未來展望趨勢 20261109 【欣陸法說會重點內容備忘錄】未來展望趨勢 20261109",
@@ -21963,6 +22138,168 @@
         "虧損"
       ],
       "source_url": "https://blog.fugle.tw/post/earnings-call-1337-2026-11-09"
+    },
+    {
+      "title": "【邁達特法說會重點內容備忘錄】未來展望趨勢 20261110 【邁達特法說會重點內容備忘錄】未來展望趨勢 20261110",
+      "symbol": "6112",
+      "name": "",
+      "event_date": "2026-11-10",
+      "published_at": "",
+      "ai_points": [
+        "營運摘要 邁達特 ( 6112 ) 2026 年前三季營運表現穩健，董事長總結指出，累計營收達 189.9 億元 ，年增 17%。",
+        "財務表現 2026Q3 關鍵財務數據 : 營業收入： 64.2 億元 營業毛利： 7.89 億元 (毛利率 12.3%) 營業利益： 1.34 億元 (營業利益率 2.1%…",
+        "展望與指引 公司未提供具體的財務預測，但對 2026Q4 及 2027 年的展望保持樂觀，認為 AI 驅動的市場趨勢方向不變。"
+      ],
+      "summary": "營運摘要 邁達特 ( 6112 ) 2026 年前三季營運表現穩健，董事長總結指出，累計營收達 189.9 億元 ，年增 17%",
+      "sentiment": "混合",
+      "impact": "混合",
+      "signal": "",
+      "judgement": "",
+      "sectors": [
+        "AI／伺服器"
+      ],
+      "highlights": [
+        "189.9 億元",
+        "64.2 億元",
+        "7.89 億元",
+        "1.34 億元",
+        "12.3%",
+        "2.1%",
+        "6112",
+        "17%",
+        "營收",
+        "指引"
+      ],
+      "source_url": "https://blog.fugle.tw/post/earnings-call-6112-2026-11-10"
+    },
+    {
+      "title": "【禾伸堂法說會重點內容備忘錄】未來展望趨勢 20261110 【禾伸堂法說會重點內容備忘錄】未來展望趨勢 20261110",
+      "symbol": "3026",
+      "name": "",
+      "event_date": "2026-11-10",
+      "published_at": "",
+      "ai_points": [
+        "營運摘要 禾伸堂 (3026) 2026 年第三季受惠於 高階 MLCC 產出與銷售增加 ，帶動公司毛利率與獲利顯著成長。",
+        "財務表現 2026 年第三季關鍵財務數據 : 合併營收 : 45.38 億元 (季增 11%，年增 32%) 毛利率 : 29.8% (季增 3.6 個百分點…",
+        "展望與指引 第四季展望 : 公司樂觀預期，在高階 MLCC 的 AI 應用需求持續強勁下， MLCC 第四季的營收將進一步提升 。"
+      ],
+      "summary": "營運摘要 禾伸堂 (3026) 2026 年第三季受惠於 高階 MLCC 產出與銷售增加 ，帶動公司毛利率與獲利顯著成長。",
+      "sentiment": "混合",
+      "impact": "混合",
+      "signal": "",
+      "judgement": "",
+      "sectors": [
+        "AI／伺服器"
+      ],
+      "highlights": [
+        "45.38 億元",
+        "29.8%",
+        "3026",
+        "11%",
+        "32%",
+        "營收",
+        "指引",
+        "成長",
+        "受惠",
+        "獲利"
+      ],
+      "source_url": "https://blog.fugle.tw/post/earnings-call-3026-2026-11-10"
+    },
+    {
+      "title": "【百容法說會重點內容備忘錄】未來展望趨勢 20261110 【百容法說會重點內容備忘錄】未來展望趨勢 20261110",
+      "symbol": "2483",
+      "name": "",
+      "event_date": "2026-11-10",
+      "published_at": "",
+      "ai_points": [
+        "營運摘要 百容 ( 2483 ) 2026 年前三季營運表現顯著成長，受惠於半導體業務需求強勁，營收與獲利能力均較去年同期大幅改善。",
+        "財務表現 2026 年前三季關鍵財務數據 : 營業收入 : 16.24 億元 ，較去年同期 13.25 億元成長 23% 。",
+        "展望與指引 公司未提供具體的財務預測數據，但釋出正面的營運展望。"
+      ],
+      "summary": "營運摘要 百容 ( 2483 ) 2026 年前三季營運表現顯著成長，受惠於半導體業務需求強勁，營收與獲利能力均較去年同期大幅改善。",
+      "sentiment": "混合",
+      "impact": "混合",
+      "signal": "",
+      "judgement": "",
+      "sectors": [
+        "半導體"
+      ],
+      "highlights": [
+        "16.24 億元",
+        "13.25 億元",
+        "2483",
+        "23%",
+        "半導體",
+        "營收",
+        "指引",
+        "成長",
+        "受惠",
+        "獲利"
+      ],
+      "source_url": "https://blog.fugle.tw/post/earnings-call-2483-2026-11-10"
+    },
+    {
+      "title": "【驊訊法說會重點內容備忘錄】未來展望趨勢 20261110 【驊訊法說會重點內容備忘錄】未來展望趨勢 20261110",
+      "symbol": "6237",
+      "name": "",
+      "event_date": "2026-11-10",
+      "published_at": "",
+      "ai_points": [
+        "營運摘要 驊訊 ( 6237 ) 2026 年第三季營運表現受到總體環境影響，單季營收為 新台幣 1.08 億元 ，季減 36%，年減 17%。",
+        "財務表現 2026Q3 關鍵財務指標 : 營業收入 : 新台幣 1.08 億元 ，較 2026Q2 減少 36%，較 2025Q3 減少 17%。",
+        "展望與指引 短期展望 : 2026 下半年因 PCB 等關鍵零組件成本上揚，終端市場消費力道轉趨謹慎，預期將對增長動能帶來壓力。"
+      ],
+      "summary": "營運摘要 驊訊 ( 6237 ) 2026 年第三季營運表現受到總體環境影響，單季營收為 新台幣 1.08 億元 ，季減 36%，年減 17%。",
+      "sentiment": "混合",
+      "impact": "混合",
+      "signal": "",
+      "judgement": "",
+      "sectors": [
+        "PCB／載板",
+        "匯率"
+      ],
+      "highlights": [
+        "1.08 億元",
+        "6237",
+        "36%",
+        "17%",
+        "PCB",
+        "新台幣",
+        "營收",
+        "指引"
+      ],
+      "source_url": "https://blog.fugle.tw/post/earnings-call-6237-2026-11-10"
+    },
+    {
+      "title": "【敦陽科法說會重點內容備忘錄】未來展望趨勢 20261110 【敦陽科法說會重點內容備忘錄】未來展望趨勢 20261110",
+      "symbol": "2480",
+      "name": "",
+      "event_date": "2026-11-10",
+      "published_at": "",
+      "ai_points": [
+        "營運摘要 敦陽科技 ( 2480 ) 於 115 年第三季法說會說明，公司營運持續穩健成長。",
+        "財務表現 115 年 Q3 關鍵財務指標 ： 合併營收 ： 25.6 億元 ，季增 4.1%，年增 30.9%。",
+        "展望與指引 全年展望 ：基於前三季的強勁表現及高能見度的在手訂單，公司有信心 115 年全年營收將突破 100 億元 。"
+      ],
+      "summary": "營運摘要 敦陽科技 ( 2480 ) 於 115 年第三季法說會說明，公司營運持續穩健成長。",
+      "sentiment": "混合",
+      "impact": "混合",
+      "signal": "",
+      "judgement": "",
+      "sectors": [],
+      "highlights": [
+        "25.6 億元",
+        "100 億元",
+        "30.9%",
+        "4.1%",
+        "2480",
+        "法說",
+        "營收",
+        "指引",
+        "成長",
+        "訂單"
+      ],
+      "source_url": "https://blog.fugle.tw/post/earnings-call-2480-2026-11-10"
     },
     {
       "title": "【居易法說會重點內容備忘錄】未來展望趨勢 20261109 【居易法說會重點內容備忘錄】未來展望趨勢 20261109",
