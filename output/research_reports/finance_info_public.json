@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-11-14",
-  "updated_at": "2026-11-14T15:42:35+08:00",
-  "finished_at": "2026-11-14T15:44:25+08:00",
-  "published_at": "2026-11-14T15:46:19+08:00",
+  "updated_at": "2026-11-14T15:46:18+08:00",
+  "finished_at": "2026-11-14T15:46:33+08:00",
+  "published_at": "2026-11-14T15:46:34+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -18,14 +18,14 @@
   "news_count": 486,
   "earnings_count": 40,
   "news_digest": {
-    "generated_at": "2026-11-14T15:42:35+08:00",
-    "headline": "最近 2 天共整理 486 則財經新聞：利多 220、利空 131、中性 84、混合 51；討論度最高的產業：AI／伺服器、半導體、國際股市。",
+    "generated_at": "2026-11-14T15:46:18+08:00",
+    "headline": "最近 2 天共整理 486 則財經新聞：利多 216、利空 130、中性 85、混合 55；討論度最高的產業：AI／伺服器、半導體、國際股市。",
     "stats": {
       "total": 486,
-      "利多": 220,
-      "利空": 131,
-      "中性": 84,
-      "混合": 51
+      "利多": 216,
+      "利空": 130,
+      "中性": 85,
+      "混合": 55
     },
     "key_points": [
       {
@@ -55,72 +55,68 @@
       },
       {
         "title": "黃仁勳離職市值跌破4兆美元！輝達連六周收黑創14年紀錄 庫藏股護盤、台積電合作受矚",
-        "point": "下周二財報將公布，接班人選、2,350億美元庫藏股與台積電合作及人才留任成焦點。",
+        "point": "輝達13日再跌2.01%，市值跌破4兆美元，本周跌12.7%、連六周收黑創2012年以來最長",
         "sentiment": "利空",
         "url": "https://news.cnyes.com/news/id/6662375",
         "highlights": [
+          "市值跌破4兆美元",
+          "連六周收黑",
           "5,733.4億美元",
-          "2,350億美元",
-          "2.01%",
-          "12.7%",
-          "庫藏股",
+          "2,350億美元庫藏股",
           "台積電"
         ]
       },
       {
         "title": "黃仁勳風波延燒 輝達下週財報會受到影響嗎？",
-        "point": "輝達下週二公布第三季財報，市場估EPS 2.47美元、營收1,092億美元。",
+        "point": "市場預期輝達Q3 EPS 2.47美元、營收1,092億美元，年增約9成",
         "sentiment": "混合",
         "url": "https://news.cnyes.com/news/id/6662331",
         "highlights": [
+          "EPS 2.47美元",
           "1,092億美元",
-          "2.47美元",
-          "400美元",
+          "Bernstein",
           "200美元",
-          "EPS",
-          "財報"
+          "H200減記"
         ]
       },
       {
         "title": "黃仁勳離任後首場財報會 接班人克雷斯須回應輝達五大考題",
-        "point": "輝達17日公布2027財年第三季財報，將由臨時執行長兼財務長克雷斯主持黃仁勳離任後首場法說。",
+        "point": "輝達17日公布財報，臨時執行長兼財務長克雷斯主持黃仁勳離任後首場法說",
         "sentiment": "混合",
         "url": "https://news.cnyes.com/news/id/6662445",
         "highlights": [
+          "克雷斯",
           "1,080億美元",
-          "490億美元",
-          "800億美元",
-          "390億美元",
-          "庫藏股",
-          "2%"
+          "1,450億美元",
+          "Vera Rubin",
+          "毛利率"
         ]
       },
       {
         "title": "黃仁勳辭輝達執行長、MSCI調整台股增3刪4、台積電入股 Anthropic與OpenAI 本周大事回顧",
-        "point": "台積電Q3配息9元 核准資本預算409億美元 擬各砸5億美元入股Anthropic與OpenAI 晶圓代工龍頭台積電 ( 2330-TW )( TSM-US ) 董事會周二(10日…",
+        "point": "黃仁勳辭任輝達執行長；MSCI台灣指數新增南電、景碩、台燿，刪除中租-KY等4檔",
         "sentiment": "利多",
         "url": "https://news.cnyes.com/news/id/6662262",
         "highlights": [
-          "428.6億元",
-          "409億美元",
-          "13.54元",
-          "428億元",
-          "5億美元",
-          "營收年增"
+          "MSCI",
+          "南電",
+          "配息9元",
+          "Anthropic",
+          "廣達",
+          "緯創"
         ]
       },
       {
         "title": "Nebius大跌近17%新雲端股承壓！財測疲弱、輝達動盪與Nscale虧損擴大",
-        "point": "Nebius週四重挫近17%，雖Q3營收年增571%至9.808億美元且優預期，但全年財測疲弱拖累股價 黃仁勳辭去引擔憂；",
+        "point": "Nebius週四重挫16.84%，Q3營收年增571%至9.808億美元但全年財測疲弱",
         "sentiment": "利空",
         "url": "https://news.cnyes.com/news/id/6662435",
         "highlights": [
-          "9.808億美元",
           "16.84%",
-          "571%",
-          "營收年增",
-          "17%",
-          "財報"
+          "9.808億美元",
+          "Nscale",
+          "額外融資",
+          "245美元"
         ]
       },
       {
@@ -157,7 +153,7 @@
       },
       {
         "theme": "黃仁勳辭輝達執行長、MSCI調整台股增3刪4、台積電入股 Anthropic與OpenAI 本周大事回顧",
-        "reason": "台積電Q3配息9元 核准資本預算409億美元 擬各砸5億美元入股Anthropic與OpenAI 晶圓代工龍頭台積電 ( 2330-TW )( TSM-US ) 董事會周二(10日…",
+        "reason": "一次整理本周影響台股的重大事件",
         "sectors": [
           "AI／伺服器",
           "半導體",
@@ -178,40 +174,35 @@
     "bearish": [
       {
         "theme": "黃仁勳離職市值跌破4兆美元！輝達連六周收黑創14年紀錄 庫藏股護盤、台積電合作受矚",
-        "reason": "下周二財報將公布，接班人選、2,350億美元庫藏股與台積電合作及人才留任成焦點。",
+        "reason": "輝達領導層變動牽動AI供應鏈與台積電關係",
         "sectors": [
           "AI／伺服器",
-          "半導體",
-          "國際股市"
+          "半導體"
         ],
         "url": "https://news.cnyes.com/news/id/6662375"
       },
       {
         "theme": "Nebius大跌近17%新雲端股承壓！財測疲弱、輝達動盪與Nscale虧損擴大",
-        "reason": "Nebius週四重挫近17%，雖Q3營收年增571%至9.808億美元且優預期，但全年財測疲弱拖累股價 黃仁勳辭去引擔憂；",
+        "reason": "新雲端融資壓力可能影響AI算力建置需求",
         "sectors": [
-          "AI／伺服器",
-          "半導體"
+          "AI／伺服器"
         ],
         "url": "https://news.cnyes.com/news/id/6662435"
       },
       {
         "theme": "黃仁勳離任衝擊「AI央行」地位！輝達收緊融資恐掀產業洗牌 新雲端首當其衝",
-        "reason": "輝達被稱「AI央行」，截至7/26股權投資帳面值990億美元，對外承諾與擔保約5,305億美元。",
+        "reason": "輝達資金支持若放緩，新雲端與供應鏈承壓",
         "sectors": [
           "AI／伺服器",
-          "金融",
-          "總體經濟"
+          "金融"
         ],
         "url": "https://news.cnyes.com/news/id/6662437"
       },
       {
         "theme": "升息辯論已轉向明年1月！Fed官員密集放鷹 市場甚至押注一路連升至3月",
-        "reason": "聯準會(Fed)官員本周密集演說，都觸及對通膨升溫的擔憂，由於內容偏向鷹派，不但鞏固市場對12月升息的預期，也讓外界開始關注明年1月是否可能連續升息。",
+        "reason": "升息預期上修，影響資金成本與科技股評價",
         "sectors": [
-          "總體經濟",
-          "地緣／政策",
-          "AI／伺服器"
+          "總體經濟"
         ],
         "url": "https://news.cnyes.com/news/id/6662371"
       }
@@ -219,58 +210,58 @@
     "sector_heat": [
       {
         "sector": "AI／伺服器",
-        "count": 314,
-        "利多": 137,
-        "利空": 91,
+        "count": 309,
+        "利多": 134,
+        "利空": 87,
         "tone": "偏多"
       },
       {
         "sector": "半導體",
-        "count": 199,
-        "利多": 80,
-        "利空": 63,
+        "count": 196,
+        "利多": 78,
+        "利空": 61,
         "tone": "偏多"
       },
       {
         "sector": "國際股市",
-        "count": 106,
-        "利多": 46,
-        "利空": 47,
+        "count": 102,
+        "利多": 42,
+        "利空": 46,
         "tone": "偏空"
       },
       {
         "sector": "地緣／政策",
-        "count": 74,
-        "利多": 24,
-        "利空": 18,
+        "count": 72,
+        "利多": 23,
+        "利空": 16,
         "tone": "偏多"
       },
       {
         "sector": "匯率",
-        "count": 55,
-        "利多": 26,
+        "count": 54,
+        "利多": 24,
         "利空": 5,
         "tone": "偏多"
       },
       {
         "sector": "金融",
-        "count": 53,
-        "利多": 28,
-        "利空": 16,
+        "count": 49,
+        "利多": 27,
+        "利空": 13,
         "tone": "偏多"
       },
       {
         "sector": "總體經濟",
-        "count": 39,
-        "利多": 8,
-        "利空": 25,
+        "count": 37,
+        "利多": 7,
+        "利空": 23,
         "tone": "偏空"
       },
       {
         "sector": "電動車／車用",
-        "count": 29,
-        "利多": 11,
-        "利空": 5,
+        "count": 27,
+        "利多": 10,
+        "利空": 4,
         "tone": "偏多"
       },
       {
@@ -282,44 +273,42 @@
       },
       {
         "sector": "原物料／能源",
-        "count": 19,
+        "count": 18,
         "利多": 8,
-        "利空": 8,
-        "tone": "中性"
+        "利空": 7,
+        "tone": "偏多"
       }
     ],
     "watch_items": [
-      "11/17輝達財報與法說：營收共識約1,092億美元、接班人選、庫藏股及Vera Rubin進度",
-      "Fed 12月會議升息幅度、10月會議紀錄與美國零售數據",
-      "Anthropic IPO進度，以及輝達約100億美元認購是否重新評估",
-      "外資能否延續買超台股，以及台指期空單變化",
-      "美國對中國AI算力出口管制與RASA法案後續"
+      "11月17日輝達財報（市場估營收約1,092億美元）與臨時執行長克雷斯對接班、融資平台的說明",
+      "Fed 12月與明年1月是否連續升息，以及美元走強對台股資金的影響",
+      "ASIC概念股（聯發科、創意、世芯）能否延續資金輪動",
+      "美國對晶片流入中國的調查進展，以及美超微、輝達相關司法調查"
     ],
     "generated_by": "claude",
     "llm": {
       "source": "Claude 排程任務",
-      "from_cache": 19
+      "from_cache": 49
     },
-    "agent_headline": "黃仁勳辭職後輝達單週跌逾12%，資金轉向ASIC與台積電；Fed鷹派升息預期升溫，下週二輝達財報成焦點",
+    "agent_headline": "黃仁勳去職衝擊延燒，輝達連六周收黑；資金轉向ASIC與台積電，Fed鷹派升息預期升溫",
     "agent_key_points": [
-      "黃仁勳辭任輝達執行長，克雷斯暫代；輝達單週跌12.7%、市值跌破4兆美元，AI／半導體情緒承壓",
-      "9家以上機構下修輝達目標價；AI融資支持恐放緩，新雲端股Nebius單日重挫近17%",
-      "台股13日漲583點收43675點，聯發科、創意、世芯等ASIC族群領漲，資金由GPU鏈轉向客製化晶片",
-      "台積電10月營收5868.9億元、年增59.7%創單月新高，並擬入股Anthropic與OpenAI",
-      "MSCI台灣指數新增南電、景碩、台燿3檔PCB股，刪除中租-KY、嘉澤、元太、萬海",
-      "技嘉Q3 EPS 12.80元、貿聯Q3 EPS 21.83元創高，AI伺服器需求推升代工與零組件獲利",
-      "Fed官員密集放鷹，市場押注12月升息、1月可能連升；美元指數創2025年4月來新高",
-      "美股週五費半跌3.43%、AMD跌8.75%，但三大指數仍創8月初以來最佳單週表現"
+      "輝達本周跌約13%、市值跌破4兆美元，17日財報與接班安排成AI伺服器供應鏈焦點",
+      "至少9家機構下修輝達目標價，Nebius等新雲端股重挫，市場憂輝達收緊融資衝擊AI資料中心",
+      "資金轉向ASIC：聯發科大漲7%，創意、世芯等跟漲，台股13日漲583點收43675點",
+      "台積電10月營收5868.9億元創高並入股Anthropic、OpenAI，熱錢「賣輝達、轉台積」",
+      "MSCI台灣指數新增南電、景碩、台燿，PCB／載板族群獲青睞",
+      "Fed官員密集放鷹，戴莉稱可能需升息，市場押注12月起連續升息，美元指數創19個月新高",
+      "技嘉Q3 EPS 12.80元創高、AI伺服器占營收78%，貿聯Q3 EPS 21.83元，AI伺服器財報亮眼"
     ],
     "risks": [
-      "輝達接班、國安與反壟斷調查不確定性延燒，拖累AI供應鏈評價",
-      "Fed升息幅度超預期、美債殖利率走高，壓抑高評價科技股",
-      "新雲端業者融資壓力擴大，可能放慢資料中心建設與AI硬體需求"
+      "輝達財報或接班不如預期，AI伺服器與半導體供應鏈估值再修正",
+      "Fed升息幅度超出預期，壓抑高估值科技股",
+      "出口管制與晶片走私調查擴大，衝擊AI晶片銷售與地緣政策風險"
     ],
-    "agent_generated_at": "2026-11-14T15:46:18+08:00"
+    "agent_generated_at": "2026-11-14T15:44:57+08:00"
   },
   "earnings_digest": {
-    "generated_at": "2026-11-14T15:42:35+08:00",
+    "generated_at": "2026-11-14T15:46:18+08:00",
     "days": 5,
     "total": 40,
     "利多": 22,
@@ -543,29 +532,28 @@
       }
     ],
     "watch_items": [
-      "敦陽科在手訂單134.88億元的認列進度",
-      "台橡預期2026下半年至2027年產業下行循環的影響",
-      "沛爾生醫CAR-T產品PL001藥證申請進度"
+      "衛司特、大量等半導體設備廠對2027年成長更強的展望能否兌現",
+      "敦陽科在手訂單134.88億元連九季創高，全年營收能否突破百億",
+      "台橡預期下半年至2027年產業下行循環的影響"
     ],
     "risks": [
-      "零組件成本上漲壓抑消費性電子需求與毛利率",
-      "部分業者營運資金需求擴大，自由現金流轉負"
+      "記憶體等零組件漲價壓縮消費性電子毛利",
+      "聯強自由現金流為負並規劃籌資，通路營運資金壓力"
     ],
     "generated_by": "claude",
     "llm": {
       "source": "Claude 排程任務",
       "from_cache": 0
     },
-    "agent_headline": "法說會以AI相關業者成長最明顯，愛普、禾伸堂、大量獲利大增；消費性與部分傳產承壓",
+    "agent_headline": "本周法說以AI相關報喜為主，大量、愛普、禾伸堂獲利大增，消費性與部分IC設計轉弱",
     "agent_key_points": [
-      "愛普* Q3營收33.1億元創新高、年增122%，EPS 7.21元，IoT-RAM動能強",
-      "禾伸堂Q3營收年增32%、毛利率29.8%，AI應用占被動元件營收升至35%",
       "大量Q3 EPS 9.94元，PCB訂單能見度涵蓋2027年全年，半導體BB Ratio大於2",
-      "和碩Q3營收3,890.73億元、年增50.9%，EPS 1.49元",
-      "聯強Q3營收年增136%、EPS 2.93元，但10月營收月減34%並規劃籌資",
-      "光鋐、驊訊Q3轉虧，受零組件成本上漲與終端需求保守壓抑"
+      "愛普Q3營收33.1億元創新高、年增122%，EPS 7.21元",
+      "禾伸堂Q3營收年增32%、毛利率29.8%，AI高階MLCC帶動",
+      "和碩Q3營收3,890.73億元年增50.9%，聯強Q3營收年增136%但10月營收月減34%",
+      "祥碩Q3營收年減33%，驊訊、光鋐Q3轉虧，零組件漲價與需求保守壓抑"
     ],
-    "agent_generated_at": "2026-11-14T15:46:18+08:00"
+    "agent_generated_at": "2026-11-14T15:44:57+08:00"
   },
   "crawl": {
     "ok": true,
@@ -578,15 +566,15 @@
       "future": 45
     },
     "source_method": "api",
-    "reused_from_previous_run": 42,
+    "reused_from_previous_run": 75,
     "window_start": "2026-11-13T00:00:00+08:00",
-    "window_end": "2026-11-14T15:43:28.591896+08:00"
+    "window_end": "2026-11-14T15:46:32.037837+08:00"
   },
   "agent_stats": {
     "input": 486,
     "after_dedupe": 486,
-    "ai_cached": 19,
-    "seconds": 1.0,
+    "ai_cached": 49,
+    "seconds": 1.3,
     "earnings": {
       "total": 40,
       "ai_cached": 0,
@@ -1040,8 +1028,8 @@
         "2465",
         "6150",
         "6112",
-        "2454",
         "2317",
+        "2454",
         "3443",
         "3661"
       ],
@@ -1106,10 +1094,7 @@
         "AI／伺服器",
         "半導體"
       ],
-      "stocks": [
-        "2330",
-        "2317"
-      ],
+      "stocks": [],
       "highlights": [
         "Wedbush",
         "優於財測",
@@ -3485,7 +3470,7 @@
       "article_id": "6662287",
       "title": "鉅亨速報 - Factset 最新調查：輝達NVDA-US的目標價調降至281元，幅度約6.33%",
       "url": "https://news.cnyes.com/news/id/6662287",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-14 02:15:25",
       "published_ts": "2026-11-14T02:15:25+08:00",
       "ai_points": [
@@ -4291,7 +4276,7 @@
       "article_id": "6662241",
       "title": "鉅亨速報 - Factset 最新調查：Banco Santander (Brasil) S.A. - ADRBSBR-US的目標價調降至5.44元，幅度約5.15%",
       "url": "https://news.cnyes.com/news/id/6662241",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-14 00:15:24",
       "published_ts": "2026-11-14T00:15:24+08:00",
       "ai_points": [
@@ -4323,7 +4308,7 @@
       "article_id": "6662242",
       "title": "鉅亨速報 - Factset 最新調查：NRG能源公司NRG-US的目標價調降至160元，幅度約3.03%",
       "url": "https://news.cnyes.com/news/id/6662242",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-14 00:15:32",
       "published_ts": "2026-11-14T00:15:32+08:00",
       "ai_points": [
@@ -4356,7 +4341,7 @@
       "article_id": "6662314",
       "title": "鉅亨速報 - Factset 最新調查：三菱日聯金融集團MUFG-US的目標價調降至27元，幅度約3.31%",
       "url": "https://news.cnyes.com/news/id/6662314",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-14 04:15:25",
       "published_ts": "2026-11-14T04:15:25+08:00",
       "ai_points": [
@@ -4391,7 +4376,7 @@
       "article_id": "6662350",
       "title": "鉅亨速報 - Factset 最新調查：Nebius Group N.V. Class ANBIS-US的目標價調降至245元，幅度約7.55%",
       "url": "https://news.cnyes.com/news/id/6662350",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-14 06:15:33",
       "published_ts": "2026-11-14T06:15:33+08:00",
       "ai_points": [
@@ -4423,7 +4408,7 @@
       "article_id": "6662385",
       "title": "鉅亨速報 - Factset 最新調查：啟碁(6285-TW)目標價調降至235元，幅度約10.48%",
       "url": "https://news.cnyes.com/news/id/6662385",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-14 08:10:24",
       "published_ts": "2026-11-14T08:10:24+08:00",
       "ai_points": [
@@ -4462,7 +4447,7 @@
       "article_id": "6662386",
       "title": "鉅亨速報 - Factset 最新調查：健策(3653-TW)目標價調升至9450元，幅度約7.39%",
       "url": "https://news.cnyes.com/news/id/6662386",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-14 08:10:30",
       "published_ts": "2026-11-14T08:10:30+08:00",
       "ai_points": [
@@ -4501,7 +4486,7 @@
       "article_id": "6662387",
       "title": "鉅亨速報 - Factset 最新調查：旺矽(6223-TW)目標價調降至7677.5元，幅度約6.46%",
       "url": "https://news.cnyes.com/news/id/6662387",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-14 08:10:34",
       "published_ts": "2026-11-14T08:10:34+08:00",
       "ai_points": [
@@ -11199,7 +11184,7 @@
       "article_id": "6662183",
       "title": "盤中速報 - 博通(AVGO-US)大跌5.01%，報346.12美元",
       "url": "https://news.cnyes.com/news/id/6662183",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:04:50",
       "published_ts": "2026-11-13T23:04:50+08:00",
       "ai_points": [
@@ -11234,7 +11219,7 @@
       "article_id": "6662185",
       "title": "盤中速報 - 安謀控股公司(ARM-US)大跌5.07%，報189.66美元",
       "url": "https://news.cnyes.com/news/id/6662185",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:04:52",
       "published_ts": "2026-11-13T23:04:52+08:00",
       "ai_points": [
@@ -11271,7 +11256,7 @@
       "article_id": "6662184",
       "title": "盤中速報 - 連貫(COHR-US)大跌5.02%，報220.44美元",
       "url": "https://news.cnyes.com/news/id/6662184",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:04:52",
       "published_ts": "2026-11-13T23:04:52+08:00",
       "ai_points": [
@@ -11306,7 +11291,7 @@
       "article_id": "6662186",
       "title": "盤中速報 - 思科系統(CSCO-US)大跌5.01%，報96.9美元",
       "url": "https://news.cnyes.com/news/id/6662186",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:05:51",
       "published_ts": "2026-11-13T23:05:51+08:00",
       "ai_points": [
@@ -11343,7 +11328,7 @@
       "article_id": "6662189",
       "title": "盤中速報 - Applovin Corp - Class A(APP-US)大漲5%，報413.37美元",
       "url": "https://news.cnyes.com/news/id/6662189",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:11:27",
       "published_ts": "2026-11-13T23:11:27+08:00",
       "ai_points": [
@@ -11377,7 +11362,7 @@
       "article_id": "6662192",
       "title": "盤中速報 - 泰瑞達(TER-US)大跌5.01%，報250.53美元",
       "url": "https://news.cnyes.com/news/id/6662192",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:15:13",
       "published_ts": "2026-11-13T23:15:13+08:00",
       "ai_points": [
@@ -11412,7 +11397,7 @@
       "article_id": "6662193",
       "title": "盤中速報 - 應用材料(AMAT-US)大跌5.04%，報361.75美元",
       "url": "https://news.cnyes.com/news/id/6662193",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:18:04",
       "published_ts": "2026-11-13T23:18:04+08:00",
       "ai_points": [
@@ -11449,7 +11434,7 @@
       "article_id": "6662195",
       "title": "盤中速報 - 英特爾(INTC-US)大跌5.03%，報58.12美元",
       "url": "https://news.cnyes.com/news/id/6662195",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:25:39",
       "published_ts": "2026-11-13T23:25:39+08:00",
       "ai_points": [
@@ -11486,7 +11471,7 @@
       "article_id": "6662197",
       "title": "盤中速報 - Onto Innovation Inc.(ONTO-US)大跌5.2%，報198.77美元",
       "url": "https://news.cnyes.com/news/id/6662197",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:26:01",
       "published_ts": "2026-11-13T23:26:01+08:00",
       "ai_points": [
@@ -11520,7 +11505,7 @@
       "article_id": "6662198",
       "title": "盤中速報 - 萊迪思半導體(LSCC-US)大跌5.14%，報112.74美元",
       "url": "https://news.cnyes.com/news/id/6662198",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:26:07",
       "published_ts": "2026-11-13T23:26:07+08:00",
       "ai_points": [
@@ -11557,7 +11542,7 @@
       "article_id": "6662199",
       "title": "盤中速報 - 安森美半導體(ON-US)大跌5.06%，報70美元",
       "url": "https://news.cnyes.com/news/id/6662199",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:26:15",
       "published_ts": "2026-11-13T23:26:15+08:00",
       "ai_points": [
@@ -11594,7 +11579,7 @@
       "article_id": "6662200",
       "title": "盤中速報 - 英特格(ENTG-US)大跌5.32%，報145.06美元",
       "url": "https://news.cnyes.com/news/id/6662200",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:26:16",
       "published_ts": "2026-11-13T23:26:16+08:00",
       "ai_points": [
@@ -11631,7 +11616,7 @@
       "article_id": "6662201",
       "title": "盤中速報 - 芯源系統(MPWR-US)大跌5%，報1375.01美元",
       "url": "https://news.cnyes.com/news/id/6662201",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:26:58",
       "published_ts": "2026-11-13T23:26:58+08:00",
       "ai_points": [
@@ -11668,7 +11653,7 @@
       "article_id": "6662204",
       "title": "盤中速報 - 安可(AMKR-US)大跌5.01%，報35.26美元",
       "url": "https://news.cnyes.com/news/id/6662204",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:30:08",
       "published_ts": "2026-11-13T23:30:08+08:00",
       "ai_points": [
@@ -11703,7 +11688,7 @@
       "article_id": "6662206",
       "title": "盤中速報 - 科林研發(LRCX-US)大跌5%，報222.09美元",
       "url": "https://news.cnyes.com/news/id/6662206",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:33:32",
       "published_ts": "2026-11-13T23:33:32+08:00",
       "ai_points": [
@@ -11740,7 +11725,7 @@
       "article_id": "6662207",
       "title": "盤中速報 - 美光科技(MU-US)大跌5.07%，報757.92美元",
       "url": "https://news.cnyes.com/news/id/6662207",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:36:46",
       "published_ts": "2026-11-13T23:36:46+08:00",
       "ai_points": [
@@ -11777,7 +11762,7 @@
       "article_id": "6662210",
       "title": "盤中速報 - 高通(QCOM-US)大跌5.04%，報168.22美元",
       "url": "https://news.cnyes.com/news/id/6662210",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:50:37",
       "published_ts": "2026-11-13T23:50:37+08:00",
       "ai_points": [
@@ -11812,7 +11797,7 @@
       "article_id": "6662211",
       "title": "盤中速報 - 德州儀器(TXN-US)大跌5.02%，報296.81美元",
       "url": "https://news.cnyes.com/news/id/6662211",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:51:40",
       "published_ts": "2026-11-13T23:51:40+08:00",
       "ai_points": [
@@ -11849,7 +11834,7 @@
       "article_id": "6662215",
       "title": "盤中速報 - 格羅方德(GFS-US)大跌5.07%，報40.46美元",
       "url": "https://news.cnyes.com/news/id/6662215",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-14 00:03:13",
       "published_ts": "2026-11-14T00:03:13+08:00",
       "ai_points": [
@@ -11886,7 +11871,7 @@
       "article_id": "6662246",
       "title": "盤中速報 - 超捷國際(MCHP-US)大跌5.11%，報58.91美元",
       "url": "https://news.cnyes.com/news/id/6662246",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-14 00:19:54",
       "published_ts": "2026-11-14T00:19:54+08:00",
       "ai_points": [
@@ -11923,7 +11908,7 @@
       "article_id": "6662248",
       "title": "盤中速報 - 恩智浦半導體(NXPI-US)大跌5.07%，報253.75美元",
       "url": "https://news.cnyes.com/news/id/6662248",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-14 00:20:06",
       "published_ts": "2026-11-14T00:20:06+08:00",
       "ai_points": [
@@ -11960,7 +11945,7 @@
       "article_id": "6662251",
       "title": "盤中速報 - 特許通訊(CHTR-US)大漲5.1%，報139.43美元",
       "url": "https://news.cnyes.com/news/id/6662251",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-14 00:26:36",
       "published_ts": "2026-11-14T00:26:36+08:00",
       "ai_points": [
@@ -13771,7 +13756,7 @@
       "article_id": "6662187",
       "title": "盤中速報 - 和康電訊(MTSI-US)大跌5.15%，報233.11美元",
       "url": "https://news.cnyes.com/news/id/6662187",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:10:43",
       "published_ts": "2026-11-13T23:10:43+08:00",
       "ai_points": [
@@ -13807,7 +13792,7 @@
       "article_id": "6662196",
       "title": "盤中速報 - 科磊(KLAC-US)大跌5.02%，報149.4美元",
       "url": "https://news.cnyes.com/news/id/6662196",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:25:41",
       "published_ts": "2026-11-13T23:25:41+08:00",
       "ai_points": [
@@ -14893,7 +14878,7 @@
       "article_id": "6662188",
       "title": "盤中速報 - 邁威爾科技(MRVL-US)大跌5.05%，報156.15美元",
       "url": "https://news.cnyes.com/news/id/6662188",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-13 23:10:52",
       "published_ts": "2026-11-13T23:10:52+08:00",
       "ai_points": [
