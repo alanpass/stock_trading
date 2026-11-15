@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-11-15",
-  "updated_at": "2026-11-15T08:41:58+08:00",
-  "finished_at": "2026-11-15T08:42:05+08:00",
-  "published_at": "2026-11-15T08:42:05+08:00",
+  "updated_at": "2026-11-15T08:45:55+08:00",
+  "finished_at": "2026-11-15T08:46:00+08:00",
+  "published_at": "2026-11-15T08:46:01+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -18,7 +18,7 @@
   "news_count": 121,
   "earnings_count": 30,
   "news_digest": {
-    "generated_at": "2026-11-15T08:41:58+08:00",
+    "generated_at": "2026-11-15T08:45:55+08:00",
     "headline": "最近 2 天共整理 121 則財經新聞：利多 29、利空 42、中性 28、混合 22；討論度最高的產業：AI／伺服器、半導體、地緣／政策。",
     "stats": {
       "total": 121,
@@ -313,7 +313,7 @@
     "agent_generated_at": "2026-11-14T23:55:14+08:00"
   },
   "earnings_digest": {
-    "generated_at": "2026-11-15T08:41:58+08:00",
+    "generated_at": "2026-11-15T08:45:55+08:00",
     "days": 5,
     "total": 30,
     "利多": 16,
@@ -577,15 +577,15 @@
       "future": 18
     },
     "source_method": "api",
-    "reused_from_previous_run": 13,
+    "reused_from_previous_run": 14,
     "window_start": "2026-11-14T00:00:00+08:00",
-    "window_end": "2026-11-15T08:42:05.145316+08:00"
+    "window_end": "2026-11-15T08:46:00.373934+08:00"
   },
   "agent_stats": {
     "input": 121,
     "after_dedupe": 121,
     "ai_cached": 57,
-    "seconds": 0.2,
+    "seconds": 0.3,
     "earnings": {
       "total": 30,
       "ai_cached": 0,
@@ -1301,7 +1301,7 @@
       "article_id": "6662742",
       "title": "馬斯克力挺黃仁勳！稱輝達少了他恐失「關鍵交易」：許多合作只靠握手承諾",
       "url": "https://news.cnyes.com/news/id/6662742",
-      "category": "wd_stock",
+      "category": "美股雷達",
       "published": "2026-11-15 08:00:07",
       "published_ts": "2026-11-15T08:00:07+08:00",
       "ai_points": [
