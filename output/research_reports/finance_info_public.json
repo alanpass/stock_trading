@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-11-16",
-  "updated_at": "2026-11-16T17:54:23+08:00",
-  "finished_at": "2026-11-16T17:55:13+08:00",
-  "published_at": "2026-11-16T17:55:13+08:00",
+  "updated_at": "2026-11-16T17:58:17+08:00",
+  "finished_at": "2026-11-16T17:58:26+08:00",
+  "published_at": "2026-11-16T17:58:26+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -15,14 +15,14 @@
     "23:00"
   ],
   "stale": false,
-  "news_count": 171,
+  "news_count": 172,
   "earnings_count": 20,
   "news_digest": {
-    "generated_at": "2026-11-16T17:54:23+08:00",
-    "headline": "最近 2 天共整理 171 則財經新聞：利多 63、利空 50、中性 35、混合 23；討論度最高的產業：AI／伺服器、半導體、國際股市。",
+    "generated_at": "2026-11-16T17:58:17+08:00",
+    "headline": "最近 2 天共整理 172 則財經新聞：利多 64、利空 50、中性 35、混合 23；討論度最高的產業：AI／伺服器、半導體、國際股市。",
     "stats": {
-      "total": 171,
-      "利多": 63,
+      "total": 172,
+      "利多": 64,
       "利空": 50,
       "中性": 35,
       "混合": 23
@@ -223,15 +223,15 @@
     "sector_heat": [
       {
         "sector": "AI／伺服器",
-        "count": 115,
-        "利多": 45,
+        "count": 116,
+        "利多": 46,
         "利空": 36,
         "tone": "偏多"
       },
       {
         "sector": "半導體",
-        "count": 58,
-        "利多": 23,
+        "count": 59,
+        "利多": 24,
         "利空": 15,
         "tone": "偏多"
       },
@@ -285,11 +285,11 @@
         "tone": "中性"
       },
       {
-        "sector": "原物料／能源",
+        "sector": "營建／資產",
         "count": 9,
-        "利多": 1,
-        "利空": 4,
-        "tone": "偏空"
+        "利多": 3,
+        "利空": 1,
+        "tone": "偏多"
       }
     ],
     "watch_items": [],
@@ -300,7 +300,7 @@
     }
   },
   "earnings_digest": {
-    "generated_at": "2026-11-16T17:54:23+08:00",
+    "generated_at": "2026-11-16T17:58:17+08:00",
     "days": 5,
     "total": 20,
     "利多": 10,
@@ -546,22 +546,22 @@
   },
   "crawl": {
     "ok": true,
-    "article_count": 171,
+    "article_count": 172,
     "per_category_count": {
-      "headline": 137,
-      "tw_stock": 94,
+      "headline": 138,
+      "tw_stock": 95,
       "wd_stock": 64,
       "forex": 6,
       "future": 5
     },
     "source_method": "api",
-    "reused_from_previous_run": 1,
+    "reused_from_previous_run": 23,
     "window_start": "2026-11-15T00:00:00+08:00",
-    "window_end": "2026-11-16T17:55:12.727223+08:00"
+    "window_end": "2026-11-16T17:58:25.964242+08:00"
   },
   "agent_stats": {
-    "input": 171,
-    "after_dedupe": 171,
+    "input": 172,
+    "after_dedupe": 172,
     "ai_cached": 17,
     "seconds": 0.3,
     "earnings": {
@@ -972,6 +972,45 @@
       ],
       "why": "",
       "importance": 9.2,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6664037",
+      "title": "匯僑設計在手訂單達35億元 看好AI與半導體科技廠辦及總部升級等需求",
+      "url": "https://news.cnyes.com/news/id/6664037",
+      "category": "台股新聞",
+      "published": "2026-11-16 17:56:32",
+      "published_ts": "2026-11-16T17:56:32+08:00",
+      "ai_points": [
+        "匯僑設計第三季營收10.5億元，稅後純益5652萬元、每股純益0.86元；",
+        "成立邁向50年的室內設計公司匯僑設計 (6754-TW) 今 (16) 日召開法說會，公司指出，截至2026年第三季底止，匯僑設計新簽訂單達34.01億元，年增9.56億元…",
+        "隨著專案陸續進入實質施工階段，營運表現已明顯回溫，9月與10月單月合併營收都穩定維持在約3.6億元水準，分別較去年同期成長15.95%與約33%，展現強勁的工程推進動能…"
+      ],
+      "summary": "匯僑設計第三季營收10.5億元，稅後純益5652萬元、每股純益0.86元；；成立邁向50年的室內設計公司匯僑設計 (6754-TW) 今 (16) 日召開法說會，公司指出，截至2026年第三季底止，匯僑設計新簽訂單達34.01億元，年增9.56億元…；隨著專案陸續進入實質施工階段，營運表現已明顯回溫，9月與10月單月合併營收都穩定維持在約3.6億元水準，分別較去年同期成長15.95%與約33%，展現強勁的工程推進動能…",
+      "sentiment": "利多",
+      "sectors": [
+        "AI／伺服器",
+        "營建／資產",
+        "半導體"
+      ],
+      "stocks": [
+        "6754"
+      ],
+      "highlights": [
+        "34.01億元",
+        "10.5億元",
+        "5652萬元",
+        "9.56億元",
+        "15.95%",
+        "0.86元",
+        "3.6億元",
+        "6754",
+        "33%",
+        "法說"
+      ],
+      "why": "",
+      "importance": 9.1,
       "ai_source": "rule",
       "source": "鉅亨網"
     },
@@ -1467,7 +1506,7 @@
       "article_id": "6663621",
       "title": "鉅亨速報 - Factset 最新調查：台塑化(6505-TW)目標價調升至120元，幅度約4.35%",
       "url": "https://news.cnyes.com/news/id/6663621",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-16 12:10:35",
       "published_ts": "2026-11-16T12:10:35+08:00",
       "ai_points": [
@@ -1508,7 +1547,7 @@
       "article_id": "6663622",
       "title": "鉅亨速報 - Factset 最新調查：台塑(1301-TW)目標價調升至85元，幅度約6.25%",
       "url": "https://news.cnyes.com/news/id/6663622",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-16 12:10:37",
       "published_ts": "2026-11-16T12:10:37+08:00",
       "ai_points": [
@@ -1545,7 +1584,7 @@
       "article_id": "6663624",
       "title": "鉅亨速報 - Factset 最新調查：仁寶(2324-TW)目標價調降至35元，幅度約12.5%",
       "url": "https://news.cnyes.com/news/id/6663624",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-16 12:10:41",
       "published_ts": "2026-11-16T12:10:41+08:00",
       "ai_points": [
@@ -1584,7 +1623,7 @@
       "article_id": "6663625",
       "title": "鉅亨速報 - Factset 最新調查：川湖(2059-TW)目標價調降至13375元，幅度約3.43%",
       "url": "https://news.cnyes.com/news/id/6663625",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-16 12:10:43",
       "published_ts": "2026-11-16T12:10:43+08:00",
       "ai_points": [
@@ -2495,7 +2534,7 @@
       "article_id": "6663201",
       "title": "鉅亨速報 - Factset 最新調查：華邦電(2344-TW)目標價調降至218元，幅度約3.11%",
       "url": "https://news.cnyes.com/news/id/6663201",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-16 08:10:26",
       "published_ts": "2026-11-16T08:10:26+08:00",
       "ai_points": [
@@ -2574,7 +2613,7 @@
       "article_id": "6663444",
       "title": "鉅亨速報 - Factset 最新調查：貿聯-KY(3665-TW)目標價調降至3080元，幅度約6.67%",
       "url": "https://news.cnyes.com/news/id/6663444",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-16 10:10:23",
       "published_ts": "2026-11-16T10:10:23+08:00",
       "ai_points": [
@@ -3829,7 +3868,7 @@
       "article_id": "6663818",
       "title": "台股摔出史上第二大跌點 三大法人同步翻空、聯手賣超1140.55億元",
       "url": "https://news.cnyes.com/news/id/6663818",
-      "category": "tw_stock",
+      "category": "台股新聞",
       "published": "2026-11-16 15:06:02",
       "published_ts": "2026-11-16T15:06:02+08:00",
       "ai_points": [
@@ -4151,7 +4190,7 @@
       "article_id": "6663099",
       "title": "伊朗：兩艘油輪在荷姆茲海峽觸雷 引發劇烈爆炸",
       "url": "https://news.cnyes.com/news/id/6663099",
-      "category": "wd_stock",
+      "category": "國際政經",
       "published": "2026-11-15 22:57:24",
       "published_ts": "2026-11-15T22:57:24+08:00",
       "ai_points": [
@@ -4617,7 +4656,7 @@
       "article_id": "6663296",
       "title": "中方宣布：習近平將同川普、普丁舉行美中俄元首會談",
       "url": "https://news.cnyes.com/news/id/6663296",
-      "category": "wd_stock",
+      "category": "國際政經",
       "published": "2026-11-16 09:18:04",
       "published_ts": "2026-11-16T09:18:04+08:00",
       "ai_points": [
@@ -5024,7 +5063,7 @@
       "article_id": "6663289",
       "title": "盤中速報 - 櫃買市場加權指數下跌-7.02點至335.39點，跌幅2.05%",
       "url": "https://news.cnyes.com/news/id/6663289",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-16 09:05:13",
       "published_ts": "2026-11-16T09:05:13+08:00",
       "ai_points": [
@@ -5070,7 +5109,7 @@
       "article_id": "6663306",
       "title": "盤中速報 - 櫃買市場加權指數下跌-10.32點至332.09點，跌幅3.01%",
       "url": "https://news.cnyes.com/news/id/6663306",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-16 09:14:27",
       "published_ts": "2026-11-16T09:14:27+08:00",
       "ai_points": [
@@ -5114,7 +5153,7 @@
       "article_id": "6663307",
       "title": "盤中速報 - 集中市場加權指數下跌-884.92點至42790.2點，跌幅2.03%",
       "url": "https://news.cnyes.com/news/id/6663307",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-16 09:14:28",
       "published_ts": "2026-11-16T09:14:28+08:00",
       "ai_points": [
@@ -5158,7 +5197,7 @@
       "article_id": "6663328",
       "title": "盤中速報 - 櫃買市場加權指數下跌-13.74點至328.67點，跌幅4.01%",
       "url": "https://news.cnyes.com/news/id/6663328",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-16 09:22:44",
       "published_ts": "2026-11-16T09:22:44+08:00",
       "ai_points": [
@@ -5240,7 +5279,7 @@
       "article_id": "6663342",
       "title": "盤中速報 - 集中市場加權指數下跌-1336.16點至42338.96點，跌幅3.06%",
       "url": "https://news.cnyes.com/news/id/6663342",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-16 09:27:38",
       "published_ts": "2026-11-16T09:27:38+08:00",
       "ai_points": [
@@ -5286,7 +5325,7 @@
       "article_id": "6663387",
       "title": "盤中速報 - 櫃買市場加權指數下跌-16.19點至326.22點，跌幅4.73%",
       "url": "https://news.cnyes.com/news/id/6663387",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-16 09:54:08",
       "published_ts": "2026-11-16T09:54:08+08:00",
       "ai_points": [
@@ -5329,7 +5368,7 @@
       "article_id": "6663394",
       "title": "盤中速報 - 櫃買市場加權指數下跌-17.42點至324.99點，跌幅5.09%",
       "url": "https://news.cnyes.com/news/id/6663394",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-16 09:55:38",
       "published_ts": "2026-11-16T09:55:38+08:00",
       "ai_points": [
@@ -5372,7 +5411,7 @@
       "article_id": "6663395",
       "title": "盤中速報 - 集中市場加權指數下跌-1377.6點至42297.52點，跌幅3.15%",
       "url": "https://news.cnyes.com/news/id/6663395",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-16 09:55:40",
       "published_ts": "2026-11-16T09:55:40+08:00",
       "ai_points": [
@@ -5415,7 +5454,7 @@
       "article_id": "6663526",
       "title": "盤中速報 - 集中市場加權指數下跌-1747.2點至41927.92點，跌幅4%",
       "url": "https://news.cnyes.com/news/id/6663526",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-16 10:52:04",
       "published_ts": "2026-11-16T10:52:04+08:00",
       "ai_points": [
@@ -5458,7 +5497,7 @@
       "article_id": "6663552",
       "title": "盤中速報 - 櫃買市場加權指數下跌-18.72點至323.69點，跌幅5.47%",
       "url": "https://news.cnyes.com/news/id/6663552",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-16 11:19:12",
       "published_ts": "2026-11-16T11:19:12+08:00",
       "ai_points": [
@@ -5500,7 +5539,7 @@
       "article_id": "6663553",
       "title": "盤中速報 - 集中市場加權指數下跌-1806.45點至41868.67點，跌幅4.14%",
       "url": "https://news.cnyes.com/news/id/6663553",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-16 11:19:13",
       "published_ts": "2026-11-16T11:19:13+08:00",
       "ai_points": [
@@ -5744,7 +5783,7 @@
       "article_id": "6663388",
       "title": "盤中速報 - 集中市場加權指數下跌-1240.29點至42434.83點，跌幅2.84%",
       "url": "https://news.cnyes.com/news/id/6663388",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-16 09:54:11",
       "published_ts": "2026-11-16T09:54:11+08:00",
       "ai_points": [
@@ -5785,7 +5824,7 @@
       "article_id": "6663389",
       "title": "盤中速報 - 集中市場加權指數下跌-1278.82點至42396.3點，跌幅2.93%",
       "url": "https://news.cnyes.com/news/id/6663389",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-16 09:54:48",
       "published_ts": "2026-11-16T09:54:48+08:00",
       "ai_points": [
