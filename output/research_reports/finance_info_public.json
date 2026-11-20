@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-11-20",
-  "updated_at": "2026-11-20T18:07:32+08:00",
-  "finished_at": "2026-11-20T18:08:48+08:00",
-  "published_at": "2026-11-20T18:09:49+08:00",
+  "updated_at": "2026-11-20T18:11:29+08:00",
+  "finished_at": "2026-11-20T18:11:54+08:00",
+  "published_at": "2026-11-20T18:11:55+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -15,45 +15,42 @@
     "23:00"
   ],
   "stale": false,
-  "news_count": 453,
+  "news_count": 454,
   "earnings_count": 20,
   "news_digest": {
-    "generated_at": "2026-11-20T18:07:32+08:00",
-    "headline": "最近 2 天共整理 453 則財經新聞：利多 160、利空 165、中性 72、混合 56；討論度最高的產業：AI／伺服器、半導體、國際股市。",
+    "generated_at": "2026-11-20T18:11:29+08:00",
+    "headline": "最近 2 天共整理 454 則財經新聞：利多 153、利空 167、中性 74、混合 60；討論度最高的產業：AI／伺服器、半導體、國際股市。",
     "stats": {
-      "total": 453,
-      "利多": 160,
-      "利空": 165,
-      "中性": 72,
-      "混合": 56
+      "total": 454,
+      "利多": 153,
+      "利空": 167,
+      "中性": 74,
+      "混合": 60
     },
     "key_points": [
       {
         "title": "〈財報〉上季電商銷售大增近兩成！沃爾瑪上修全年財測 看好年底買氣",
-        "point": "1.沃爾瑪第三季營收年增5.2%至1,888.4億美元，調整後每股盈餘0.65美元，均優於預期。",
+        "point": "沃爾瑪第三季營收年增5.2%至1,888.4億美元，調整後EPS 0.65美元，略優於預期",
         "sentiment": "利多",
         "url": "https://news.cnyes.com/news/id/6667853",
         "highlights": [
+          "沃爾瑪",
           "1,888.4億美元",
-          "0.65美元",
-          "5.2%",
-          "優於預期",
-          "營收年增",
-          "營收"
+          "電商銷售成長17%",
+          "上修"
         ]
       },
       {
         "title": "〈台股開盤〉台積電重挫3%逾百檔個股跌停 賣壓擴大早盤跌逾1500點失守3萬7",
-        "point": "台股今（20）日早盤同步走弱，以37646.13點，跳空下跌780.76點，台積電跌近3%，台達電跌逾9%，賣壓由電子權值股擴散至高價股與AI供應鏈，逾100檔個股跌停…",
+        "point": "台股開盤跳空跌780點，早盤最低36753點，逾100檔跌停",
         "sentiment": "利空",
         "url": "https://news.cnyes.com/news/id/6668393",
         "highlights": [
-          "37646.13點",
-          "780.76點",
-          "2,035元",
-          "1.01兆",
-          "2.74%",
-          "4.37%"
+          "逾100檔跌停",
+          "台積電",
+          "台達電",
+          "創意跌停",
+          "銅箔基板"
         ]
       },
       {
@@ -93,61 +90,49 @@
       },
       {
         "title": "〈焦點股〉台股狂殺2400點 光通訊一片哀號超過10檔亮燈跌停",
-        "point": "光通訊股重災區，聯亞(3081-TW)、光聖(6442-TW)、波若威(3163TW)等逾10檔亮燈跌停。",
+        "point": "光通訊股重災，聯亞、光聖、波若威等逾10檔亮燈跌停",
         "sentiment": "利空",
         "url": "https://news.cnyes.com/news/id/6668916",
         "highlights": [
-          "1,365元",
-          "2,215元",
-          "400張",
-          "850點",
-          "3081",
-          "6442"
+          "光通訊",
+          "逾10檔亮燈跌停",
+          "聯亞",
+          "跌幅逾4成"
         ]
       },
       {
         "title": "NEXTDC上修財測仍難補缺口M3資料中心缺電，1.4億澳元營收未計入",
-        "point": "2026年11月20日（優分析／產業數據中心報導）⸺ 澳洲資料中心業者NEXTDC(NXT-AU)11月20日小幅上修2027財年財測，股價仍下跌7.1%。",
-        "sentiment": "利多",
+        "point": "澳洲資料中心業者NEXTDC小幅上修2027財年財測，股價仍跌7.1%",
+        "sentiment": "混合",
         "url": "https://news.cnyes.com/news/id/6668968",
         "highlights": [
-          "3.98億",
-          "2.55億",
-          "2.68億",
-          "7.1%",
-          "1.4億",
-          "資料中心"
+          "NEXTDC",
+          "供電延誤",
+          "1.4億澳元",
+          "EBITDA"
         ]
       },
       {
         "title": "亞洲晶片股拋售演變為恐慌性踩踏 台韓股市成重災區",
-        "point": "AI巨額資本支出效益疑慮升溫，Anthropic熱烈上市未能支撐市場信心，反而引發獲利了結與恐慌性拋售賣壓。",
+        "point": "MSCI亞太除日本指數午盤跌3.5%，本週預計跌約8.6%，為2020年初以來最慘",
         "sentiment": "利空",
         "url": "https://news.cnyes.com/news/id/6668962",
         "highlights": [
-          "台積電",
-          "財報",
-          "升息",
-          "獲利",
-          "重挫",
-          "恐慌"
+          "亞太",
+          "最差單週表現",
+          "SK海力士",
+          "日銀12月升息"
         ]
       }
     ],
     "bullish": [
       {
         "theme": "〈財報〉上季電商銷售大增近兩成！沃爾瑪上修全年財測 看好年底買氣",
-        "reason": "1.沃爾瑪第三季營收年增5.2%至1,888.4億美元，調整後每股盈餘0.65美元，均優於預期。",
-        "sectors": [],
-        "url": "https://news.cnyes.com/news/id/6667853"
-      },
-      {
-        "theme": "NEXTDC上修財測仍難補缺口M3資料中心缺電，1.4億澳元營收未計入",
-        "reason": "2026年11月20日（優分析／產業數據中心報導）⸺ 澳洲資料中心業者NEXTDC(NXT-AU)11月20日小幅上修2027財年財測，股價仍下跌7.1%。",
+        "reason": "美國消費龍頭上修財測，可觀察年底消費支出韌性",
         "sectors": [
-          "AI／伺服器"
+          "國際股市"
         ],
-        "url": "https://news.cnyes.com/news/id/6668968"
+        "url": "https://news.cnyes.com/news/id/6667853"
       },
       {
         "theme": "早年押注Anthropic狂賺1470%！南韓SK電信持股飆至32億美元 台積電、輝達也參與私募",
@@ -159,23 +144,27 @@
         "url": "https://news.cnyes.com/news/id/6667080"
       },
       {
-        "theme": "〈分析〉14.5倍明年營收估值貴過SpaceX Anthropic上市狂歡能撐多久？",
-        "reason": "Anthropic上市開盤大漲34%，完全稀釋估值一度突破2兆美元，達明年預估營收14.5倍。",
+        "theme": "〈焦點股〉喬山進入銷售旺季全年營收可望再創高 逆風走揚",
+        "reason": "旺季帶動，在弱勢盤中逆風走揚",
+        "sectors": [],
+        "url": "https://news.cnyes.com/news/id/6667226"
+      },
+      {
+        "theme": "《價值型投資 最新產業研究報告》台積電 (2330-TW) 中央處理器需求升溫，二奈米與封裝擴大商機",
+        "reason": "說明AI帶給台積電的新增製造與封裝需求",
         "sectors": [
-          "AI／伺服器",
-          "半導體",
-          "國際股市"
+          "半導體"
         ],
-        "url": "https://news.cnyes.com/news/id/6668447"
+        "url": "https://news.cnyes.com/news/id/6667527"
       }
     ],
     "bearish": [
       {
         "theme": "〈台股開盤〉台積電重挫3%逾百檔個股跌停 賣壓擴大早盤跌逾1500點失守3萬7",
-        "reason": "台股今（20）日早盤同步走弱，以37646.13點，跳空下跌780.76點，台積電跌近3%，台達電跌逾9%，賣壓由電子權值股擴散至高價股與AI供應鏈，逾100檔個股跌停…",
+        "reason": "賣壓從電子權值擴散至高價股與AI供應鏈",
         "sectors": [
-          "AI／伺服器",
           "半導體",
+          "AI／伺服器",
           "記憶體"
         ],
         "url": "https://news.cnyes.com/news/id/6668393"
@@ -191,21 +180,20 @@
       },
       {
         "theme": "〈焦點股〉台股狂殺2400點 光通訊一片哀號超過10檔亮燈跌停",
-        "reason": "光通訊股重災區，聯亞(3081-TW)、光聖(6442-TW)、波若威(3163TW)等逾10檔亮燈跌停。",
+        "reason": "AI高成長族群評價快速修正",
         "sectors": [
-          "半導體",
-          "AI／伺服器",
-          "國際股市"
+          "網通／光通訊",
+          "AI／伺服器"
         ],
         "url": "https://news.cnyes.com/news/id/6668916"
       },
       {
         "theme": "亞洲晶片股拋售演變為恐慌性踩踏 台韓股市成重災區",
-        "reason": "AI巨額資本支出效益疑慮升溫，Anthropic熱烈上市未能支撐市場信心，反而引發獲利了結與恐慌性拋售賣壓。",
+        "reason": "亞洲晶片股出現恐慌性拋售，台韓首當其衝",
         "sectors": [
           "國際股市",
-          "AI／伺服器",
-          "半導體"
+          "半導體",
+          "記憶體"
         ],
         "url": "https://news.cnyes.com/news/id/6668962"
       }
@@ -213,49 +201,49 @@
     "sector_heat": [
       {
         "sector": "AI／伺服器",
-        "count": 297,
-        "利多": 106,
-        "利空": 113,
+        "count": 294,
+        "利多": 101,
+        "利空": 112,
         "tone": "偏空"
       },
       {
         "sector": "半導體",
-        "count": 216,
-        "利多": 72,
+        "count": 211,
+        "利多": 68,
         "利空": 92,
         "tone": "偏空"
       },
       {
         "sector": "國際股市",
-        "count": 134,
-        "利多": 30,
-        "利空": 80,
+        "count": 132,
+        "利多": 27,
+        "利空": 79,
         "tone": "偏空"
       },
       {
-        "sector": "匯率",
-        "count": 58,
-        "利多": 22,
-        "利空": 15,
-        "tone": "偏多"
-      },
-      {
         "sector": "地緣／政策",
-        "count": 53,
+        "count": 52,
         "利多": 14,
         "利空": 20,
         "tone": "偏空"
       },
       {
+        "sector": "匯率",
+        "count": 52,
+        "利多": 19,
+        "利空": 15,
+        "tone": "偏多"
+      },
+      {
         "sector": "總體經濟",
-        "count": 46,
-        "利多": 13,
+        "count": 47,
+        "利多": 12,
         "利空": 25,
         "tone": "偏空"
       },
       {
         "sector": "金融",
-        "count": 41,
+        "count": 42,
         "利多": 16,
         "利空": 14,
         "tone": "偏多"
@@ -269,9 +257,9 @@
       },
       {
         "sector": "記憶體",
-        "count": 23,
+        "count": 25,
         "利多": 14,
-        "利空": 5,
+        "利空": 7,
         "tone": "偏多"
       },
       {
@@ -292,7 +280,7 @@
     "generated_by": "claude",
     "llm": {
       "source": "Claude 排程任務",
-      "from_cache": 27
+      "from_cache": 57
     },
     "agent_headline": "台股重挫2393點收36033點、本週跌17.5%，AI信心潰散與Fed升息預期拖累全市場",
     "agent_key_points": [
@@ -313,7 +301,7 @@
     "agent_generated_at": "2026-11-20T18:09:49+08:00"
   },
   "earnings_digest": {
-    "generated_at": "2026-11-20T18:07:32+08:00",
+    "generated_at": "2026-11-20T18:11:29+08:00",
     "days": 5,
     "total": 20,
     "利多": 8,
@@ -537,24 +525,24 @@
   },
   "crawl": {
     "ok": true,
-    "article_count": 454,
+    "article_count": 455,
     "per_category_count": {
-      "headline": 263,
-      "tw_stock": 186,
+      "headline": 264,
+      "tw_stock": 187,
       "wd_stock": 252,
       "forex": 6,
       "future": 42
     },
     "source_method": "api",
-    "reused_from_previous_run": 29,
+    "reused_from_previous_run": 94,
     "window_start": "2026-11-19T00:00:00+08:00",
-    "window_end": "2026-11-20T18:08:47.995032+08:00"
+    "window_end": "2026-11-20T18:11:53.607511+08:00"
   },
   "agent_stats": {
-    "input": 454,
-    "after_dedupe": 453,
-    "ai_cached": 27,
-    "seconds": 0.7,
+    "input": 455,
+    "after_dedupe": 454,
+    "ai_cached": 57,
+    "seconds": 1.0,
     "earnings": {
       "total": 20,
       "ai_cached": 0,
@@ -931,7 +919,7 @@
       "article_id": "6668854",
       "title": "永昕董座異動由晟德王素琦出任 強化CDMO布局",
       "url": "https://news.cnyes.com/news/id/6668854",
-      "category": "tw_stock",
+      "category": "台股新聞",
       "published": "2026-11-20 14:51:01",
       "published_ts": "2026-11-20T14:51:01+08:00",
       "ai_points": [
@@ -1176,95 +1164,6 @@
         "追繳保證金"
       ],
       "why": "升息預期與美元走強壓抑避險資產",
-      "importance": 8.2,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6668815",
-      "title": "鉅亨速報 - Factset 最新調查：和碩(4938-TW)EPS預估上修至5.83元，預估目標價為99元",
-      "url": "https://news.cnyes.com/news/id/6668815",
-      "category": "台股",
-      "published": "2026-11-20 12:10:45",
-      "published_ts": "2026-11-20T12:10:45+08:00",
-      "ai_points": [
-        "FactSet調查9位分析師，和碩2026年EPS中位數由5.79元上修至5.83元",
-        "2027年EPS中位數8.19元，2027年營收中位數約1.83兆元，高於2026年約1.37兆元"
-      ],
-      "summary": "FactSet調查9位分析師，和碩2026年EPS中位數由5.79元上修至5.83元；2027年EPS中位數8.19元，2027年營收中位數約1.83兆元，高於2026年約1.37兆元",
-      "sentiment": "利多",
-      "sectors": [
-        "AI／伺服器"
-      ],
-      "stocks": [
-        "4938"
-      ],
-      "highlights": [
-        "和碩",
-        "5.83元",
-        "上修"
-      ],
-      "why": "分析師小幅上修組裝代工廠獲利預估",
-      "importance": 8.2,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6668816",
-      "title": "鉅亨速報 - Factset 最新調查：創意(3443-TW)EPS預估下修至62.05元，預估目標價為9150元",
-      "url": "https://news.cnyes.com/news/id/6668816",
-      "category": "台股",
-      "published": "2026-11-20 12:10:54",
-      "published_ts": "2026-11-20T12:10:54+08:00",
-      "ai_points": [
-        "FactSet調查15位分析師，創意2026年EPS中位數由62.41元小幅下修至62.05元",
-        "2027年EPS中位數160.57元、2028年279.56元，預估差距大，最高與最低估值分歧明顯"
-      ],
-      "summary": "FactSet調查15位分析師，創意2026年EPS中位數由62.41元小幅下修至62.05元；2027年EPS中位數160.57元、2028年279.56元，預估差距大，最高與最低估值分歧明顯",
-      "sentiment": "混合",
-      "sectors": [
-        "半導體",
-        "AI／伺服器"
-      ],
-      "stocks": [
-        "3443"
-      ],
-      "highlights": [
-        "創意",
-        "62.05元",
-        "160.57元",
-        "分歧"
-      ],
-      "why": "ASIC設計服務龍頭今年小幅下修、遠期預估分歧大",
-      "importance": 8.2,
-      "ai_source": "claude",
-      "source": "鉅亨網"
-    },
-    {
-      "article_id": "6668817",
-      "title": "鉅亨速報 - Factset 最新調查：長榮(2603-TW)EPS預估上修至45.31元，預估目標價為271.5元",
-      "url": "https://news.cnyes.com/news/id/6668817",
-      "category": "台股",
-      "published": "2026-11-20 12:11:03",
-      "published_ts": "2026-11-20T12:11:03+08:00",
-      "ai_points": [
-        "FactSet調查10位分析師，長榮2026年EPS中位數由44.24元上修至45.31元",
-        "2027年EPS中位數25.07元、2028年17.7元，市場預期獲利逐年下滑"
-      ],
-      "summary": "FactSet調查10位分析師，長榮2026年EPS中位數由44.24元上修至45.31元；2027年EPS中位數25.07元、2028年17.7元，市場預期獲利逐年下滑",
-      "sentiment": "混合",
-      "sectors": [
-        "航運／航空"
-      ],
-      "stocks": [
-        "2603"
-      ],
-      "highlights": [
-        "長榮",
-        "45.31元",
-        "逐年下滑"
-      ],
-      "why": "今年預估上修，但後兩年獲利預期明顯走低",
       "importance": 8.2,
       "ai_source": "claude",
       "source": "鉅亨網"
@@ -1576,7 +1475,7 @@
       "article_id": "6667881",
       "title": "鉅亨速報 - Factset 最新調查：FedEx Freight Holding Company, Inc.FDXF-US的目標價調升至145元，幅度約3.57%",
       "url": "https://news.cnyes.com/news/id/6667881",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 20:15:28",
       "published_ts": "2026-11-19T20:15:28+08:00",
       "ai_points": [
@@ -1637,7 +1536,7 @@
       "article_id": "6669073",
       "title": "鉅亨速報 - Factset 最新調查：富邦金(2881-TW)目標價調升至155.3元，幅度約5%",
       "url": "https://news.cnyes.com/news/id/6669073",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-20 16:10:20",
       "published_ts": "2026-11-20T16:10:20+08:00",
       "ai_points": [
@@ -2848,7 +2747,7 @@
       "article_id": "6669222",
       "title": "元進莊IPO案再過一關 今獲OTC董監聯席會審查通過",
       "url": "https://news.cnyes.com/news/id/6669222",
-      "category": "tw_stock",
+      "category": "台股新聞",
       "published": "2026-11-20 18:02:01",
       "published_ts": "2026-11-20T18:02:01+08:00",
       "ai_points": [
@@ -3039,6 +2938,95 @@
       "why": "",
       "importance": 7.2,
       "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6668815",
+      "title": "鉅亨速報 - Factset 最新調查：和碩(4938-TW)EPS預估上修至5.83元，預估目標價為99元",
+      "url": "https://news.cnyes.com/news/id/6668815",
+      "category": "台股",
+      "published": "2026-11-20 12:10:45",
+      "published_ts": "2026-11-20T12:10:45+08:00",
+      "ai_points": [
+        "FactSet調查9位分析師，和碩2026年EPS中位數由5.79元上修至5.83元",
+        "2027年EPS中位數8.19元，2027年營收中位數約1.83兆元，高於2026年約1.37兆元"
+      ],
+      "summary": "FactSet調查9位分析師，和碩2026年EPS中位數由5.79元上修至5.83元；2027年EPS中位數8.19元，2027年營收中位數約1.83兆元，高於2026年約1.37兆元",
+      "sentiment": "利多",
+      "sectors": [
+        "AI／伺服器"
+      ],
+      "stocks": [
+        "4938"
+      ],
+      "highlights": [
+        "和碩",
+        "5.83元",
+        "上修"
+      ],
+      "why": "分析師小幅上修組裝代工廠獲利預估",
+      "importance": 7.2,
+      "ai_source": "claude",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6668816",
+      "title": "鉅亨速報 - Factset 最新調查：創意(3443-TW)EPS預估下修至62.05元，預估目標價為9150元",
+      "url": "https://news.cnyes.com/news/id/6668816",
+      "category": "台股",
+      "published": "2026-11-20 12:10:54",
+      "published_ts": "2026-11-20T12:10:54+08:00",
+      "ai_points": [
+        "FactSet調查15位分析師，創意2026年EPS中位數由62.41元小幅下修至62.05元",
+        "2027年EPS中位數160.57元、2028年279.56元，預估差距大，最高與最低估值分歧明顯"
+      ],
+      "summary": "FactSet調查15位分析師，創意2026年EPS中位數由62.41元小幅下修至62.05元；2027年EPS中位數160.57元、2028年279.56元，預估差距大，最高與最低估值分歧明顯",
+      "sentiment": "混合",
+      "sectors": [
+        "半導體",
+        "AI／伺服器"
+      ],
+      "stocks": [
+        "3443"
+      ],
+      "highlights": [
+        "創意",
+        "62.05元",
+        "160.57元",
+        "分歧"
+      ],
+      "why": "ASIC設計服務龍頭今年小幅下修、遠期預估分歧大",
+      "importance": 7.2,
+      "ai_source": "claude",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6668817",
+      "title": "鉅亨速報 - Factset 最新調查：長榮(2603-TW)EPS預估上修至45.31元，預估目標價為271.5元",
+      "url": "https://news.cnyes.com/news/id/6668817",
+      "category": "台股",
+      "published": "2026-11-20 12:11:03",
+      "published_ts": "2026-11-20T12:11:03+08:00",
+      "ai_points": [
+        "FactSet調查10位分析師，長榮2026年EPS中位數由44.24元上修至45.31元",
+        "2027年EPS中位數25.07元、2028年17.7元，市場預期獲利逐年下滑"
+      ],
+      "summary": "FactSet調查10位分析師，長榮2026年EPS中位數由44.24元上修至45.31元；2027年EPS中位數25.07元、2028年17.7元，市場預期獲利逐年下滑",
+      "sentiment": "混合",
+      "sectors": [
+        "航運／航空"
+      ],
+      "stocks": [
+        "2603"
+      ],
+      "highlights": [
+        "長榮",
+        "45.31元",
+        "逐年下滑"
+      ],
+      "why": "今年預估上修，但後兩年獲利預期明顯走低",
+      "importance": 7.2,
+      "ai_source": "claude",
       "source": "鉅亨網"
     },
     {
@@ -3235,7 +3223,7 @@
       "article_id": "6667880",
       "title": "鉅亨速報 - Factset 最新調查：智利化工礦業SQM-US的目標價調降至76元，幅度約6.17%",
       "url": "https://news.cnyes.com/news/id/6667880",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 20:15:25",
       "published_ts": "2026-11-19T20:15:25+08:00",
       "ai_points": [
@@ -3272,7 +3260,7 @@
       "article_id": "6667887",
       "title": "鉅亨速報 - Factset 最新調查：美國水處理AWK-US的目標價調降至143.5元，幅度約3.69%",
       "url": "https://news.cnyes.com/news/id/6667887",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 20:15:34",
       "published_ts": "2026-11-19T20:15:34+08:00",
       "ai_points": [
@@ -3307,7 +3295,7 @@
       "article_id": "6667889",
       "title": "鉅亨速報 - Factset 最新調查：Amrize LtdAMRZ-US的目標價調降至46元，幅度約4.17%",
       "url": "https://news.cnyes.com/news/id/6667889",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 20:15:35",
       "published_ts": "2026-11-19T20:15:35+08:00",
       "ai_points": [
@@ -3381,7 +3369,7 @@
       "article_id": "6668045",
       "title": "鉅亨速報 - Factset 最新調查：Everpure, Inc. Class AP-US的目標價調降至150元，幅度約3.23%",
       "url": "https://news.cnyes.com/news/id/6668045",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-20 00:15:29",
       "published_ts": "2026-11-20T00:15:29+08:00",
       "ai_points": [
@@ -3452,7 +3440,7 @@
       "article_id": "6668092",
       "title": "鉅亨速報 - Factset 最新調查：Robinhood Markets Inc - Class AHOOD-US的目標價調降至124元，幅度約4.62%",
       "url": "https://news.cnyes.com/news/id/6668092",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-20 02:15:23",
       "published_ts": "2026-11-20T02:15:23+08:00",
       "ai_points": [
@@ -4210,6 +4198,43 @@
       "source": "鉅亨網"
     },
     {
+      "article_id": "6669255",
+      "title": "外資再提款94億元續砍0050本周大賣逾30萬張 聯電與面板雙虎反獲青睞",
+      "url": "https://news.cnyes.com/news/id/6669255",
+      "category": "台股盤勢",
+      "published": "2026-11-20 18:11:09",
+      "published_ts": "2026-11-20T18:11:09+08:00",
+      "ai_points": [
+        "外資賣超個股方面，今天減碼臺企銀2.5萬張，中鋼2.1萬張，兆豐金1.2萬張，台積電1.1萬張，仁寶1萬張，大成鋼8535張，遠東銀7825張，台玻7666張，台泥6789張…",
+        "外資今天青睞聯電與面板雙虎，買超聯電8萬張，群創4.6萬張，友達2.8張，並同步加碼力積電1.8萬張，台新新光金1.7萬張，華航1.1萬張，華邦電1萬張，第一金8599張…",
+        "不過投信今天則大賣聯電，與外資對作，賣超3.5萬張，並減碼中信金1萬張，國泰金1萬張，寶成6081張，英業達4251張，中租-KY 4032張，長榮4014張，台積電3848張…"
+      ],
+      "summary": "外資賣超個股方面，今天減碼臺企銀2.5萬張，中鋼2.1萬張，兆豐金1.2萬張，台積電1.1萬張，仁寶1萬張，大成鋼8535張，遠東銀7825張，台玻7666張，台泥6789張…；外資今天青睞聯電與面板雙虎，買超聯電8萬張，群創4.6萬張，友達2.8張，並同步加碼力積電1.8萬張，台新新光金1.7萬張，華航1.1萬張，華邦電1萬張，第一金8599張…；不過投信今天則大賣聯電，與外資對作，賣超3.5萬張，並減碼中信金1萬張，國泰金1萬張，寶成6081張，英業達4251張，中租-KY 4032張，長榮4014張，台積電3848張…",
+      "sentiment": "利空",
+      "sectors": [
+        "面板／光電",
+        "半導體",
+        "航運／航空"
+      ],
+      "stocks": [],
+      "highlights": [
+        "2.5萬張",
+        "2.1萬張",
+        "1.2萬張",
+        "1.1萬張",
+        "8535張",
+        "7825張",
+        "7666張",
+        "6789張",
+        "4.6萬張",
+        "1.8萬張"
+      ],
+      "why": "",
+      "importance": 6.8,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
       "article_id": "6666670",
       "title": "〈台股盤前要聞〉千金股升降單位改為1元、APEC峰會登場、AI股爆鉅額違約交割",
       "url": "https://news.cnyes.com/news/id/6666670",
@@ -4472,7 +4497,7 @@
       "article_id": "6667882",
       "title": "鉅亨速報 - Factset 最新調查：愛迪生國際EIX-US的目標價調升至62元，幅度約5.08%",
       "url": "https://news.cnyes.com/news/id/6667882",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 20:15:29",
       "published_ts": "2026-11-19T20:15:29+08:00",
       "ai_points": [
@@ -5480,7 +5505,7 @@
       "article_id": "6667885",
       "title": "鉅亨速報 - Factset 最新調查：淡水河谷VALE-US的目標價調降至14元，幅度約3.45%",
       "url": "https://news.cnyes.com/news/id/6667885",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 20:15:32",
       "published_ts": "2026-11-19T20:15:32+08:00",
       "ai_points": [
@@ -6331,7 +6356,7 @@
       "article_id": "6668901",
       "title": "台股跌 2393.6 點，收 36033.29 點，三大法人賣超 522.46 億元",
       "url": "https://news.cnyes.com/news/id/6668901",
-      "category": "tw_stock",
+      "category": "台股盤勢",
       "published": "2026-11-20 15:08:17",
       "published_ts": "2026-11-20T15:08:17+08:00",
       "ai_points": [
@@ -9637,7 +9662,7 @@
       "article_id": "6668245",
       "title": "盤中速報 - 集中市場加權指數下跌-780.76點至37646.13點，跌幅2.03%",
       "url": "https://news.cnyes.com/news/id/6668245",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 09:00:12",
       "published_ts": "2026-11-20T09:00:12+08:00",
       "ai_points": [
@@ -9681,7 +9706,7 @@
       "article_id": "6668248",
       "title": "盤中速報 - 櫃買市場加權指數下跌-6.97點至278.36點，跌幅2.44%",
       "url": "https://news.cnyes.com/news/id/6668248",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 09:00:16",
       "published_ts": "2026-11-20T09:00:16+08:00",
       "ai_points": [
@@ -9725,7 +9750,7 @@
       "article_id": "6668256",
       "title": "盤中速報 - 櫃買市場加權指數下跌-15.39點至269.94點，跌幅5.39%",
       "url": "https://news.cnyes.com/news/id/6668256",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 09:00:41",
       "published_ts": "2026-11-20T09:00:41+08:00",
       "ai_points": [
@@ -9803,7 +9828,7 @@
       "article_id": "6668287",
       "title": "盤中速報 - 集中市場加權指數下跌-1538.72點至36888.17點，跌幅4%",
       "url": "https://news.cnyes.com/news/id/6668287",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 09:05:35",
       "published_ts": "2026-11-20T09:05:35+08:00",
       "ai_points": [
@@ -9847,7 +9872,7 @@
       "article_id": "6668367",
       "title": "盤中速報 - 櫃買市場加權指數下跌-18.83點至266.5點，跌幅6.6%",
       "url": "https://news.cnyes.com/news/id/6668367",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 09:15:37",
       "published_ts": "2026-11-20T09:15:37+08:00",
       "ai_points": [
@@ -9889,7 +9914,7 @@
       "article_id": "6668369",
       "title": "盤中速報 - 集中市場加權指數下跌-1614.17點至36812.72點，跌幅4.2%",
       "url": "https://news.cnyes.com/news/id/6668369",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 09:15:47",
       "published_ts": "2026-11-20T09:15:47+08:00",
       "ai_points": [
@@ -9931,7 +9956,7 @@
       "article_id": "6668417",
       "title": "盤中速報 - 集中市場加權指數下跌-1452.56點至36974.33點，跌幅3.78%",
       "url": "https://news.cnyes.com/news/id/6668417",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 09:23:22",
       "published_ts": "2026-11-20T09:23:22+08:00",
       "ai_points": [
@@ -9975,7 +10000,7 @@
       "article_id": "6668421",
       "title": "盤中速報 - 櫃買市場加權指數下跌-18.28點至267.05點，跌幅6.41%",
       "url": "https://news.cnyes.com/news/id/6668421",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 09:26:22",
       "published_ts": "2026-11-20T09:26:22+08:00",
       "ai_points": [
@@ -10019,7 +10044,7 @@
       "article_id": "6668422",
       "title": "盤中速報 - 櫃買市場加權指數下跌-18.31點至267.02點，跌幅6.42%",
       "url": "https://news.cnyes.com/news/id/6668422",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 09:29:32",
       "published_ts": "2026-11-20T09:29:32+08:00",
       "ai_points": [
@@ -10063,7 +10088,7 @@
       "article_id": "6668423",
       "title": "盤中速報 - 集中市場加權指數下跌-1532.87點至36894.02點，跌幅3.99%",
       "url": "https://news.cnyes.com/news/id/6668423",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 09:29:34",
       "published_ts": "2026-11-20T09:29:34+08:00",
       "ai_points": [
@@ -10146,7 +10171,7 @@
       "article_id": "6668455",
       "title": "盤中速報 - 集中市場加權指數下跌-1977.84點至36449.05點，跌幅5.15%",
       "url": "https://news.cnyes.com/news/id/6668455",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 09:51:41",
       "published_ts": "2026-11-20T09:51:41+08:00",
       "ai_points": [
@@ -10227,7 +10252,7 @@
       "article_id": "6668559",
       "title": "盤中速報 - 櫃買市場加權指數下跌-21.66點至263.67點，跌幅7.59%",
       "url": "https://news.cnyes.com/news/id/6668559",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 10:06:58",
       "published_ts": "2026-11-20T10:06:58+08:00",
       "ai_points": [
@@ -10271,7 +10296,7 @@
       "article_id": "6668571",
       "title": "盤中速報 - 集中市場加權指數下跌-1941.04點至36485.85點，跌幅5.05%",
       "url": "https://news.cnyes.com/news/id/6668571",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 10:17:46",
       "published_ts": "2026-11-20T10:17:46+08:00",
       "ai_points": [
@@ -10315,7 +10340,7 @@
       "article_id": "6668573",
       "title": "盤中速報 - 櫃買市場加權指數下跌-20.78點至264.55點，跌幅7.28%",
       "url": "https://news.cnyes.com/news/id/6668573",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 10:17:51",
       "published_ts": "2026-11-20T10:17:51+08:00",
       "ai_points": [
@@ -10359,7 +10384,7 @@
       "article_id": "6668585",
       "title": "盤中速報 - 櫃買市場加權指數下跌-20.44點至264.89點，跌幅7.16%",
       "url": "https://news.cnyes.com/news/id/6668585",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 10:34:16",
       "published_ts": "2026-11-20T10:34:16+08:00",
       "ai_points": [
@@ -10403,7 +10428,7 @@
       "article_id": "6668593",
       "title": "盤中速報 - 櫃買市場加權指數下跌-21.97點至263.36點，跌幅7.7%",
       "url": "https://news.cnyes.com/news/id/6668593",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 10:39:53",
       "published_ts": "2026-11-20T10:39:53+08:00",
       "ai_points": [
@@ -10446,7 +10471,7 @@
       "article_id": "6668755",
       "title": "盤中速報 - 櫃買市場加權指數下跌-21.37點至263.96點，跌幅7.49%",
       "url": "https://news.cnyes.com/news/id/6668755",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 11:40:55",
       "published_ts": "2026-11-20T11:40:55+08:00",
       "ai_points": [
@@ -10490,7 +10515,7 @@
       "article_id": "6668758",
       "title": "盤中速報 - 櫃買市場加權指數下跌-21.13點至264.2點，跌幅7.41%",
       "url": "https://news.cnyes.com/news/id/6668758",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 11:41:57",
       "published_ts": "2026-11-20T11:41:57+08:00",
       "ai_points": [
@@ -11344,7 +11369,7 @@
       "article_id": "6667982",
       "title": "盤中速報 - 拼多多控股(PDD-US)大漲6.36%，報82.38美元",
       "url": "https://news.cnyes.com/news/id/6667982",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 22:45:06",
       "published_ts": "2026-11-19T22:45:06+08:00",
       "ai_points": [
@@ -11380,7 +11405,7 @@
       "article_id": "6667985",
       "title": "盤中速報 - 英特爾(INTC-US)大漲5.03%，報57.42美元",
       "url": "https://news.cnyes.com/news/id/6667985",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 22:45:24",
       "published_ts": "2026-11-19T22:45:24+08:00",
       "ai_points": [
@@ -11416,7 +11441,7 @@
       "article_id": "6667984",
       "title": "盤中速報 - Palo Alto Networks Inc(PANW-US)大漲5.01%，報356.96美元",
       "url": "https://news.cnyes.com/news/id/6667984",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 22:45:24",
       "published_ts": "2026-11-19T22:45:24+08:00",
       "ai_points": [
@@ -11451,7 +11476,7 @@
       "article_id": "6667986",
       "title": "盤中速報 - 數據狗(DDOG-US)大漲5%，報175.47美元",
       "url": "https://news.cnyes.com/news/id/6667986",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 22:45:53",
       "published_ts": "2026-11-19T22:45:53+08:00",
       "ai_points": [
@@ -11487,7 +11512,7 @@
       "article_id": "6667987",
       "title": "盤中速報 - MongoDB公司(MDB-US)大漲5.19%，報322.62美元",
       "url": "https://news.cnyes.com/news/id/6667987",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 22:46:41",
       "published_ts": "2026-11-19T22:46:41+08:00",
       "ai_points": [
@@ -11523,7 +11548,7 @@
       "article_id": "6667988",
       "title": "盤中速報 - Zscaler公司(ZS-US)大漲6.17%，報210.04美元",
       "url": "https://news.cnyes.com/news/id/6667988",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 22:46:43",
       "published_ts": "2026-11-19T22:46:43+08:00",
       "ai_points": [
@@ -11559,7 +11584,7 @@
       "article_id": "6667990",
       "title": "盤中速報 - 美光科技(MU-US)大漲5.07%，報741.06美元",
       "url": "https://news.cnyes.com/news/id/6667990",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 22:47:20",
       "published_ts": "2026-11-19T22:47:20+08:00",
       "ai_points": [
@@ -11595,7 +11620,7 @@
       "article_id": "6667991",
       "title": "盤中速報 - 萊迪思半導體(LSCC-US)大漲5.14%，報117.35美元",
       "url": "https://news.cnyes.com/news/id/6667991",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 22:48:13",
       "published_ts": "2026-11-19T22:48:13+08:00",
       "ai_points": [
@@ -11632,7 +11657,7 @@
       "article_id": "6667992",
       "title": "盤中速報 - 邁威爾科技(MRVL-US)大漲5.06%，報152.91美元",
       "url": "https://news.cnyes.com/news/id/6667992",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 22:49:27",
       "published_ts": "2026-11-19T22:49:27+08:00",
       "ai_points": [
@@ -11668,7 +11693,7 @@
       "article_id": "6667993",
       "title": "盤中速報 - 泰瑞達(TER-US)大漲5.05%，報247.08美元",
       "url": "https://news.cnyes.com/news/id/6667993",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 22:49:38",
       "published_ts": "2026-11-19T22:49:38+08:00",
       "ai_points": [
@@ -11704,7 +11729,7 @@
       "article_id": "6667994",
       "title": "盤中速報 - 和康電訊(MTSI-US)大漲5.21%，報232.61美元",
       "url": "https://news.cnyes.com/news/id/6667994",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 22:53:51",
       "published_ts": "2026-11-19T22:53:51+08:00",
       "ai_points": [
@@ -11740,7 +11765,7 @@
       "article_id": "6667999",
       "title": "盤中速報 - 超微電腦(SMCI-US)大漲5%，報25.59美元",
       "url": "https://news.cnyes.com/news/id/6667999",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 22:59:16",
       "published_ts": "2026-11-19T22:59:16+08:00",
       "ai_points": [
@@ -11776,7 +11801,7 @@
       "article_id": "6668004",
       "title": "盤中速報 - Onto Innovation Inc.(ONTO-US)大漲5%，報211.08美元",
       "url": "https://news.cnyes.com/news/id/6668004",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 23:00:32",
       "published_ts": "2026-11-19T23:00:32+08:00",
       "ai_points": [
@@ -11812,7 +11837,7 @@
       "article_id": "6668008",
       "title": "盤中速報 - 芯源系統(MPWR-US)大漲5.03%，報1376.82美元",
       "url": "https://news.cnyes.com/news/id/6668008",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 23:21:57",
       "published_ts": "2026-11-19T23:21:57+08:00",
       "ai_points": [
@@ -11848,7 +11873,7 @@
       "article_id": "6668021",
       "title": "盤中速報 - 聯合健康保險(UNH-US)大跌5.01%，報332.38美元",
       "url": "https://news.cnyes.com/news/id/6668021",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-20 00:01:20",
       "published_ts": "2026-11-20T00:01:20+08:00",
       "ai_points": [
@@ -11884,7 +11909,7 @@
       "article_id": "6668118",
       "title": "盤中速報 - 美卡多(MELI-US)大跌5.03%，報1351.57美元",
       "url": "https://news.cnyes.com/news/id/6668118",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-20 04:17:27",
       "published_ts": "2026-11-20T04:17:27+08:00",
       "ai_points": [
@@ -11920,7 +11945,7 @@
       "article_id": "6668126",
       "title": "盤中速報 - 交易台(TTD-US)大跌5.06%，報14.74美元",
       "url": "https://news.cnyes.com/news/id/6668126",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-20 04:55:35",
       "published_ts": "2026-11-20T04:55:35+08:00",
       "ai_points": [
@@ -11956,7 +11981,7 @@
       "article_id": "6668253",
       "title": "盤中速報 - 櫃買市場加權指數下跌-10.35點至274.98點，跌幅3.63%",
       "url": "https://news.cnyes.com/news/id/6668253",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 09:00:34",
       "published_ts": "2026-11-20T09:00:34+08:00",
       "ai_points": [
@@ -11997,7 +12022,7 @@
       "article_id": "6668255",
       "title": "盤中速報 - 集中市場加權指數下跌-1221.35點至37205.54點，跌幅3.18%",
       "url": "https://news.cnyes.com/news/id/6668255",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 09:00:39",
       "published_ts": "2026-11-20T09:00:39+08:00",
       "ai_points": [
@@ -12038,7 +12063,7 @@
       "article_id": "6668418",
       "title": "盤中速報 - 櫃買市場加權指數下跌-18點至267.33點，跌幅6.31%",
       "url": "https://news.cnyes.com/news/id/6668418",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 09:23:26",
       "published_ts": "2026-11-20T09:23:26+08:00",
       "ai_points": [
@@ -12081,7 +12106,7 @@
       "article_id": "6668420",
       "title": "盤中速報 - 櫃買市場加權指數下跌-18.25點至267.08點，跌幅6.4%",
       "url": "https://news.cnyes.com/news/id/6668420",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 09:24:43",
       "published_ts": "2026-11-20T09:24:43+08:00",
       "ai_points": [
@@ -12124,7 +12149,7 @@
       "article_id": "6668452",
       "title": "盤中速報 - 櫃買市場加權指數下跌-21.04點至264.29點，跌幅7.37%",
       "url": "https://news.cnyes.com/news/id/6668452",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 09:51:35",
       "published_ts": "2026-11-20T09:51:35+08:00",
       "ai_points": [
@@ -12165,7 +12190,7 @@
       "article_id": "6668594",
       "title": "盤中速報 - 集中市場加權指數下跌-2270.5點至36156.39點，跌幅5.91%",
       "url": "https://news.cnyes.com/news/id/6668594",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 10:39:55",
       "published_ts": "2026-11-20T10:39:55+08:00",
       "ai_points": [
@@ -12206,7 +12231,7 @@
       "article_id": "6668756",
       "title": "盤中速報 - 集中市場加權指數下跌-2250.63點至36176.26點，跌幅5.86%",
       "url": "https://news.cnyes.com/news/id/6668756",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 11:40:59",
       "published_ts": "2026-11-20T11:40:59+08:00",
       "ai_points": [
@@ -12247,7 +12272,7 @@
       "article_id": "6668759",
       "title": "盤中速報 - 集中市場加權指數下跌-2222.53點至36204.36點，跌幅5.78%",
       "url": "https://news.cnyes.com/news/id/6668759",
-      "category": "anue_live",
+      "category": "台股新聞",
       "published": "2026-11-20 11:41:59",
       "published_ts": "2026-11-20T11:41:59+08:00",
       "ai_points": [
@@ -13118,7 +13143,7 @@
       "article_id": "6667983",
       "title": "盤中速報 - 連貫(COHR-US)大漲7.66%，報229.15美元",
       "url": "https://news.cnyes.com/news/id/6667983",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 22:45:12",
       "published_ts": "2026-11-19T22:45:12+08:00",
       "ai_points": [
@@ -13154,7 +13179,7 @@
       "article_id": "6667989",
       "title": "盤中速報 - Crowdstrike控股(CRWD-US)大漲5.05%，報249美元",
       "url": "https://news.cnyes.com/news/id/6667989",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 22:46:44",
       "published_ts": "2026-11-19T22:46:44+08:00",
       "ai_points": [
@@ -13190,7 +13215,7 @@
       "article_id": "6667995",
       "title": "盤中速報 - 高通(QCOM-US)大漲5.09%，報167.95美元",
       "url": "https://news.cnyes.com/news/id/6667995",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 22:55:23",
       "published_ts": "2026-11-19T22:55:23+08:00",
       "ai_points": [
@@ -13226,7 +13251,7 @@
       "article_id": "6667998",
       "title": "盤中速報 - 防特網(FTNT-US)大漲5.03%，報138.44美元",
       "url": "https://news.cnyes.com/news/id/6667998",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 22:58:08",
       "published_ts": "2026-11-19T22:58:08+08:00",
       "ai_points": [
@@ -13262,7 +13287,7 @@
       "article_id": "6668019",
       "title": "盤中速報 - 超微半導體(AMD-US)大跌5.08%，報503.2美元",
       "url": "https://news.cnyes.com/news/id/6668019",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-19 23:51:28",
       "published_ts": "2026-11-19T23:51:28+08:00",
       "ai_points": [
@@ -13298,7 +13323,7 @@
       "article_id": "6668057",
       "title": "盤中速報 - 耐吉(NKE-US)大跌5.01%，報34.49美元",
       "url": "https://news.cnyes.com/news/id/6668057",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-20 00:47:26",
       "published_ts": "2026-11-20T00:47:26+08:00",
       "ai_points": [
@@ -13334,7 +13359,7 @@
       "article_id": "6668066",
       "title": "盤中速報 - 道瓊指數大跌2%，報49196.27點",
       "url": "https://news.cnyes.com/news/id/6668066",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-20 01:13:47",
       "published_ts": "2026-11-20T01:13:47+08:00",
       "ai_points": [
@@ -13370,7 +13395,7 @@
       "article_id": "6668117",
       "title": "盤中速報 - DoorDash公司(DASH-US)大跌5.06%，報158.36美元",
       "url": "https://news.cnyes.com/news/id/6668117",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-20 04:15:51",
       "published_ts": "2026-11-20T04:15:51+08:00",
       "ai_points": [
@@ -14393,32 +14418,6 @@
       "source": "鉅亨網"
     },
     {
-      "article_id": "6667711",
-      "title": "美中俄峰會前夕 烏克蘭三度襲擊克里米亞大橋",
-      "url": "https://news.cnyes.com/news/id/6667711",
-      "category": "國際政經",
-      "published": "2026-11-19 18:10:03",
-      "published_ts": "2026-11-19T18:10:03+08:00",
-      "ai_points": [
-        "烏克蘭四天內第三度空襲刻赤大橋，周四清晨無人機襲擊一度迫使俄方暫停鐵路運輸。",
-        "刻赤大橋全長19公里，是俄軍運送軍事與民生物資至克里米亞及烏南前線的後勤命脈。",
-        "在俄羅斯總統普丁、美國總統川普與中國國家主席習近平於中國舉行三方峰會前夕，烏克蘭於四天內第三度對連接俄羅斯本土與克里米亞的刻赤大橋(Kerch Bridge)發動空襲…"
-      ],
-      "summary": "烏克蘭四天內第三度空襲刻赤大橋，周四清晨無人機襲擊一度迫使俄方暫停鐵路運輸。；刻赤大橋全長19公里，是俄軍運送軍事與民生物資至克里米亞及烏南前線的後勤命脈。；在俄羅斯總統普丁、美國總統川普與中國國家主席習近平於中國舉行三方峰會前夕，烏克蘭於四天內第三度對連接俄羅斯本土與克里米亞的刻赤大橋(Kerch Bridge)發動空襲…",
-      "sentiment": "中性",
-      "sectors": [
-        "地緣／政策"
-      ],
-      "stocks": [],
-      "highlights": [
-        "川普"
-      ],
-      "why": "",
-      "importance": 3.5,
-      "ai_source": "rule",
-      "source": "鉅亨網"
-    },
-    {
       "article_id": "6667800",
       "title": "美俄中歷史性三方元首峰會 會後《和平宣言》聚焦核風險與能源安全",
       "url": "https://news.cnyes.com/news/id/6667800",
@@ -14507,7 +14506,7 @@
       "article_id": "6668121",
       "title": "盤中速報 - 伊魯米納(ILMN-US)大跌5.03%，報199.45美元",
       "url": "https://news.cnyes.com/news/id/6668121",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-20 04:26:55",
       "published_ts": "2026-11-20T04:26:55+08:00",
       "ai_points": [
@@ -14678,7 +14677,7 @@
       "article_id": "6668880",
       "title": "快訊｜美參院通過能源許可改革法案，擬加快電廠與輸電線審批",
       "url": "https://news.cnyes.com/news/id/6668880",
-      "category": "wd_stock",
+      "category": "國際政經",
       "published": "2026-11-20 13:00:05",
       "published_ts": "2026-11-20T13:00:05+08:00",
       "ai_points": [
@@ -15797,6 +15796,32 @@
         "風險",
         "戰爭",
         "俄烏",
+        "川普"
+      ],
+      "why": "",
+      "importance": 2.5,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6667711",
+      "title": "美中俄峰會前夕 烏克蘭三度襲擊克里米亞大橋",
+      "url": "https://news.cnyes.com/news/id/6667711",
+      "category": "國際政經",
+      "published": "2026-11-19 18:10:03",
+      "published_ts": "2026-11-19T18:10:03+08:00",
+      "ai_points": [
+        "烏克蘭四天內第三度空襲刻赤大橋，周四清晨無人機襲擊一度迫使俄方暫停鐵路運輸。",
+        "刻赤大橋全長19公里，是俄軍運送軍事與民生物資至克里米亞及烏南前線的後勤命脈。",
+        "在俄羅斯總統普丁、美國總統川普與中國國家主席習近平於中國舉行三方峰會前夕，烏克蘭於四天內第三度對連接俄羅斯本土與克里米亞的刻赤大橋(Kerch Bridge)發動空襲…"
+      ],
+      "summary": "烏克蘭四天內第三度空襲刻赤大橋，周四清晨無人機襲擊一度迫使俄方暫停鐵路運輸。；刻赤大橋全長19公里，是俄軍運送軍事與民生物資至克里米亞及烏南前線的後勤命脈。；在俄羅斯總統普丁、美國總統川普與中國國家主席習近平於中國舉行三方峰會前夕，烏克蘭於四天內第三度對連接俄羅斯本土與克里米亞的刻赤大橋(Kerch Bridge)發動空襲…",
+      "sentiment": "中性",
+      "sectors": [
+        "地緣／政策"
+      ],
+      "stocks": [],
+      "highlights": [
         "川普"
       ],
       "why": "",
