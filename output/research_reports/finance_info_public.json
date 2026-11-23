@@ -3,8 +3,8 @@
   "report_type": "finance_info_public",
   "report_date": "2026-11-23",
   "updated_at": "2026-11-23T18:42:14+08:00",
-  "finished_at": "2026-11-23T18:42:24+08:00",
-  "published_at": "2026-11-23T18:42:24+08:00",
+  "finished_at": "2026-11-23T18:42:27+08:00",
+  "published_at": "2026-11-23T18:42:27+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -568,7 +568,7 @@
     "source_method": "api",
     "reused_from_previous_run": 10,
     "window_start": "2026-11-22T00:00:00+08:00",
-    "window_end": "2026-11-23T18:42:22.909129+08:00"
+    "window_end": "2026-11-23T18:42:27.099349+08:00"
   },
   "agent_stats": {
     "input": 132,
