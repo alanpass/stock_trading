@@ -1,515 +1,533 @@
 {
   "schema_version": 2,
   "report_type": "trend_pattern_window_stats",
-  "generated_at": "2026-11-25T19:03:08+08:00",
+  "generated_at": "2026-11-26T19:03:09+08:00",
   "offset_trading_days": 40,
   "window_trading_days": 40,
-  "window_start": "2026-07-30",
-  "window_end": "2026-09-23",
+  "window_start": "2026-07-31",
+  "window_end": "2026-09-24",
   "symbols": 177,
   "all": {
     "count": 177,
-    "avg_return_pct": 31.52,
-    "median_return_pct": 25.38,
-    "up_count": 159,
-    "up_avg_pct": 35.79,
-    "down_count": 18,
-    "down_avg_pct": -6.2
+    "avg_return_pct": 37.8,
+    "median_return_pct": 29.59,
+    "up_count": 164,
+    "up_avg_pct": 41.19,
+    "down_count": 13,
+    "down_avg_pct": -5.02
   },
   "min_samples": 5,
   "best_classification": "多頭延續／持續創高",
-  "best_pattern": "持續創高",
+  "best_pattern": "上升趨勢",
   "by_classification": [
     {
       "classification": "多頭延續／持續創高",
-      "count": 20,
-      "avg_return_pct": 76.01,
-      "median_return_pct": 69.83,
-      "up_count": 20,
-      "up_avg_pct": 76.01,
+      "count": 22,
+      "avg_return_pct": 83.96,
+      "median_return_pct": 80.06,
+      "up_count": 22,
+      "up_avg_pct": 83.96,
       "down_count": 0,
       "down_avg_pct": null,
-      "avg_max_drawdown_pct": -11.94,
+      "avg_max_drawdown_pct": -12.48,
       "enough_samples": true,
       "best": [
-        "統新（6426）+164.1%",
-        "創意（3443）+154.5%",
-        "宏致（3605）+121.3%"
+        "統新（6426）+183.4%",
+        "創意（3443）+146.4%",
+        "光頡（3624）+146.1%"
       ],
       "worst": [
-        "泰碩（3338）+18.2%",
-        "台達電（2308）+27.1%",
-        "良維（6290）+35.3%"
+        "台達電（2308）+24.8%",
+        "帆宣（6196）+29.6%",
+        "晶心科（6533）+36.6%"
       ]
     },
     {
       "classification": "整理待突破",
-      "count": 18,
-      "avg_return_pct": 40.57,
-      "median_return_pct": 32.67,
-      "up_count": 17,
-      "up_avg_pct": 43.57,
+      "count": 16,
+      "avg_return_pct": 49.69,
+      "median_return_pct": 49.13,
+      "up_count": 15,
+      "up_avg_pct": 53.6,
       "down_count": 1,
-      "down_avg_pct": -10.32,
-      "avg_max_drawdown_pct": -16.65,
+      "down_avg_pct": -8.9,
+      "avg_max_drawdown_pct": -15.64,
       "enough_samples": true,
       "best": [
-        "聯茂（6213）+117.3%",
-        "前鼎（4908）+68.4%",
-        "金居（8358）+65.1%"
+        "聯茂（6213）+148.4%",
+        "金居（8358）+88.6%",
+        "前鼎（4908）+76.2%"
       ],
       "worst": [
-        "智易（3596）-10.3%",
-        "穎崴（6515）+10.7%",
-        "貿聯-KY（3665）+12.0%"
+        "智易（3596）-8.9%",
+        "穎崴（6515）+10.6%",
+        "台積電（2330）+12.6%"
       ]
     },
     {
       "classification": "高檔轉弱／反轉警示",
-      "count": 34,
-      "avg_return_pct": 26.09,
-      "median_return_pct": 19.88,
-      "up_count": 32,
-      "up_avg_pct": 27.94,
-      "down_count": 2,
-      "down_avg_pct": -3.51,
-      "avg_max_drawdown_pct": -12.89,
+      "count": 42,
+      "avg_return_pct": 30.74,
+      "median_return_pct": 23.45,
+      "up_count": 42,
+      "up_avg_pct": 30.74,
+      "down_count": 0,
+      "down_avg_pct": null,
+      "avg_max_drawdown_pct": -13.07,
       "enough_samples": true,
       "best": [
-        "聯亞（3081）+74.0%",
-        "奇鋐（3017）+66.8%",
-        "雍智科技（6683）+66.1%"
+        "聯亞（3081）+81.8%",
+        "雍智科技（6683）+80.3%",
+        "IET-KY（4971）+74.7%"
       ],
       "worst": [
-        "所羅門（2359）-6.6%",
-        "尼得科超眾（6230）-0.5%",
-        "英業達（2356）+1.2%"
+        "鴻勁（7769）+0.9%",
+        "所羅門（2359）+3.2%",
+        "英業達（2356）+4.2%"
       ]
     },
     {
       "classification": "底部反轉候選",
-      "count": 96,
-      "avg_return_pct": 24.12,
-      "median_return_pct": 17.35,
-      "up_count": 86,
-      "up_avg_pct": 27.55,
-      "down_count": 10,
-      "down_avg_pct": -5.39,
-      "avg_max_drawdown_pct": -15.22,
+      "count": 85,
+      "avg_return_pct": 29.83,
+      "median_return_pct": 26.46,
+      "up_count": 79,
+      "up_avg_pct": 32.43,
+      "down_count": 6,
+      "down_avg_pct": -4.36,
+      "avg_max_drawdown_pct": -15.37,
       "enough_samples": true,
       "best": [
-        "富世達（6805）+107.0%",
-        "富喬（1815）+101.7%",
-        "光環（3234）+88.9%"
+        "嘉晶（3016）+115.0%",
+        "富世達（6805）+107.1%",
+        "光環（3234）+104.6%"
       ],
       "worst": [
-        "印能科技（7734）-16.5%",
-        "勤誠（8210）-9.1%",
-        "優群（3217）-7.1%"
+        "印能科技（7734）-10.3%",
+        "凡甲（3526）-6.7%",
+        "勤誠（8210）-5.7%"
       ]
     },
     {
       "classification": "下降趨勢／弱勢整理",
-      "count": 9,
-      "avg_return_pct": 13.99,
-      "median_return_pct": -0.26,
-      "up_count": 4,
-      "up_avg_pct": 41.55,
-      "down_count": 5,
-      "down_avg_pct": -8.06,
-      "avg_max_drawdown_pct": -18.33,
+      "count": 12,
+      "avg_return_pct": 18.46,
+      "median_return_pct": 2.14,
+      "up_count": 6,
+      "up_avg_pct": 41.96,
+      "down_count": 6,
+      "down_avg_pct": -5.04,
+      "avg_max_drawdown_pct": -18.8,
       "enough_samples": true,
       "best": [
-        "川湖（2059）+74.0%",
-        "光寶科（2301）+54.7%",
-        "晶心科（6533）+26.8%"
+        "德宏（5475）+79.2%",
+        "川湖（2059）+73.6%",
+        "上詮（3363）+49.2%"
       ],
       "worst": [
-        "台灣精銳（4583）-11.6%",
-        "中磊（5388）-11.4%",
-        "宇瞻（8271）-9.9%"
+        "亞德客-KY（1590）-9.7%",
+        "中磊（5388）-7.2%",
+        "優群（3217）-5.5%"
       ]
     }
   ],
   "by_pattern": [
     {
-      "pattern_name": "持續創高",
-      "count": 5,
-      "avg_return_pct": 114.35,
-      "median_return_pct": 93.66,
-      "up_count": 5,
-      "up_avg_pct": 114.35,
-      "down_count": 0,
-      "down_avg_pct": null,
-      "avg_max_drawdown_pct": -10.59,
-      "enough_samples": true,
-      "best": [
-        "統新（6426）+164.1%",
-        "創意（3443）+154.5%",
-        "健策（3653）+93.7%"
-      ],
-      "worst": [
-        "營邦（3693）+72.9%",
-        "雙鴻（3324）+86.5%",
-        "健策（3653）+93.7%"
-      ]
-    },
-    {
       "pattern_name": "上升趨勢",
       "count": 16,
-      "avg_return_pct": 65.46,
-      "median_return_pct": 65.36,
+      "avg_return_pct": 83.96,
+      "median_return_pct": 80.06,
       "up_count": 16,
-      "up_avg_pct": 65.46,
+      "up_avg_pct": 83.96,
       "down_count": 0,
       "down_avg_pct": null,
-      "avg_max_drawdown_pct": -13.33,
+      "avg_max_drawdown_pct": -12.44,
       "enough_samples": true,
       "best": [
-        "宏致（3605）+121.3%",
-        "光頡（3624）+115.1%",
-        "全新（2455）+102.6%"
+        "統新（6426）+183.4%",
+        "光頡（3624）+146.1%",
+        "宏致（3605）+137.7%"
       ],
       "worst": [
-        "台達電（2308）+27.1%",
-        "良維（6290）+35.3%",
-        "矽格（6257）+36.1%"
+        "台達電（2308）+24.8%",
+        "聯電（2303）+40.0%",
+        "矽格（6257）+40.1%"
       ]
     },
     {
       "pattern_name": "倒頭肩突破",
-      "count": 4,
-      "avg_return_pct": 63.97,
-      "median_return_pct": 62.29,
-      "up_count": 4,
-      "up_avg_pct": 63.97,
+      "count": 3,
+      "avg_return_pct": 81.91,
+      "median_return_pct": 77.84,
+      "up_count": 3,
+      "up_avg_pct": 81.91,
       "down_count": 0,
       "down_avg_pct": null,
-      "avg_max_drawdown_pct": -11.7,
+      "avg_max_drawdown_pct": -10.74,
       "enough_samples": false,
       "best": [
-        "嘉晶（3016）+88.2%",
-        "萊德光電-KY（7717）+67.5%",
-        "信驊（5274）+57.1%"
+        "嘉晶（3016）+115.0%",
+        "萊德光電-KY（7717）+77.8%",
+        "京元電子（2449）+52.8%"
       ],
       "worst": [
-        "京元電子（2449）+43.1%",
-        "信驊（5274）+57.1%",
-        "萊德光電-KY（7717）+67.5%"
+        "京元電子（2449）+52.8%",
+        "萊德光電-KY（7717）+77.8%",
+        "嘉晶（3016）+115.0%"
       ]
     },
     {
-      "pattern_name": "圓底",
-      "count": 1,
-      "avg_return_pct": 58.51,
-      "median_return_pct": 58.51,
-      "up_count": 1,
-      "up_avg_pct": 58.51,
-      "down_count": 0,
-      "down_avg_pct": null,
-      "avg_max_drawdown_pct": -23.99,
-      "enough_samples": false,
-      "best": [
-        "力旺（3529）+58.5%"
-      ],
-      "worst": [
-        "力旺（3529）+58.5%"
-      ]
-    },
-    {
-      "pattern_name": "上升楔形",
-      "count": 2,
-      "avg_return_pct": 52.78,
-      "median_return_pct": 52.78,
-      "up_count": 2,
-      "up_avg_pct": 52.78,
-      "down_count": 0,
-      "down_avg_pct": null,
-      "avg_max_drawdown_pct": -14.51,
-      "enough_samples": false,
-      "best": [
-        "奇鋐（3017）+66.8%",
-        "華新科（2492）+38.8%"
-      ],
-      "worst": [
-        "華新科（2492）+38.8%",
-        "奇鋐（3017）+66.8%"
-      ]
-    },
-    {
-      "pattern_name": "對稱三角形",
+      "pattern_name": "持續創高",
       "count": 6,
-      "avg_return_pct": 50.4,
-      "median_return_pct": 42.88,
+      "avg_return_pct": 80.05,
+      "median_return_pct": 73.48,
       "up_count": 6,
-      "up_avg_pct": 50.4,
+      "up_avg_pct": 80.05,
       "down_count": 0,
       "down_avg_pct": null,
-      "avg_max_drawdown_pct": -17.25,
+      "avg_max_drawdown_pct": -11.54,
       "enough_samples": true,
       "best": [
-        "聯茂（6213）+117.3%",
-        "金居（8358）+65.1%",
-        "德宏（5475）+62.4%"
+        "創意（3443）+146.4%",
+        "健策（3653）+120.7%",
+        "雙鴻（3324）+108.5%"
       ],
       "worst": [
-        "臻鼎-KY（4958）+16.9%",
-        "旺矽（6223）+17.3%",
-        "順達（3211）+23.4%"
+        "帆宣（6196）+29.6%",
+        "晶心科（6533）+36.6%",
+        "日月光投控（3711）+38.4%"
       ]
     },
     {
       "pattern_name": "上升三角形",
       "count": 6,
-      "avg_return_pct": 45.78,
-      "median_return_pct": 50.67,
+      "avg_return_pct": 74.99,
+      "median_return_pct": 66.9,
       "up_count": 6,
-      "up_avg_pct": 45.78,
+      "up_avg_pct": 74.99,
       "down_count": 0,
       "down_avg_pct": null,
-      "avg_max_drawdown_pct": -12.72,
+      "avg_max_drawdown_pct": -13.45,
       "enough_samples": true,
       "best": [
-        "南亞（1303）+60.8%",
-        "光寶科（2301）+54.7%",
-        "昇達科（3491）+52.7%"
+        "聯茂（6213）+148.4%",
+        "汎銓（6830）+70.9%",
+        "奇鋐（3017）+69.7%"
       ],
       "worst": [
-        "大銀微系統（4576）+27.0%",
-        "建準（2421）+30.9%",
-        "眾達-KY（4977）+48.7%"
-      ]
-    },
-    {
-      "pattern_name": "下降三角形",
-      "count": 2,
-      "avg_return_pct": 42.39,
-      "median_return_pct": 42.39,
-      "up_count": 2,
-      "up_avg_pct": 42.39,
-      "down_count": 0,
-      "down_avg_pct": null,
-      "avg_max_drawdown_pct": -12.06,
-      "enough_samples": false,
-      "best": [
-        "川湖（2059）+74.0%",
-        "亞力（1514）+10.8%"
-      ],
-      "worst": [
-        "亞力（1514）+10.8%",
-        "川湖（2059）+74.0%"
-      ]
-    },
-    {
-      "pattern_name": "雙底突破",
-      "count": 9,
-      "avg_return_pct": 40.35,
-      "median_return_pct": 30.08,
-      "up_count": 9,
-      "up_avg_pct": 40.35,
-      "down_count": 0,
-      "down_avg_pct": null,
-      "avg_max_drawdown_pct": -11.58,
-      "enough_samples": true,
-      "best": [
-        "富世達（6805）+107.0%",
-        "健鼎（3044）+59.9%",
-        "詮欣（6205）+35.9%"
-      ],
-      "worst": [
-        "智原（3035）+22.2%",
-        "漢唐（2404）+23.1%",
-        "正文（4906）+25.9%"
-      ]
-    },
-    {
-      "pattern_name": "頭肩頂",
-      "count": 4,
-      "avg_return_pct": 31.71,
-      "median_return_pct": 23.32,
-      "up_count": 4,
-      "up_avg_pct": 31.71,
-      "down_count": 0,
-      "down_avg_pct": null,
-      "avg_max_drawdown_pct": -13.0,
-      "enough_samples": false,
-      "best": [
-        "聯亞（3081）+74.0%",
-        "台玻（1802）+30.8%",
-        "信邦（3023）+15.9%"
-      ],
-      "worst": [
-        "緯創（3231）+6.2%",
-        "信邦（3023）+15.9%",
-        "台玻（1802）+30.8%"
-      ]
-    },
-    {
-      "pattern_name": "箱型整理",
-      "count": 9,
-      "avg_return_pct": 28.62,
-      "median_return_pct": 26.77,
-      "up_count": 8,
-      "up_avg_pct": 33.49,
-      "down_count": 1,
-      "down_avg_pct": -10.32,
-      "avg_max_drawdown_pct": -19.54,
-      "enough_samples": true,
-      "best": [
-        "前鼎（4908）+68.4%",
-        "汎銓（6830）+61.7%",
-        "均華（6640）+32.9%"
-      ],
-      "worst": [
-        "智易（3596）-10.3%",
-        "穎崴（6515）+10.7%",
-        "貿聯-KY（3665）+12.0%"
-      ]
-    },
-    {
-      "pattern_name": "雙頂",
-      "count": 22,
-      "avg_return_pct": 23.4,
-      "median_return_pct": 19.85,
-      "up_count": 21,
-      "up_avg_pct": 24.53,
-      "down_count": 1,
-      "down_avg_pct": -0.45,
-      "avg_max_drawdown_pct": -11.23,
-      "enough_samples": true,
-      "best": [
-        "晶豪科（3006）+59.3%",
-        "愛普*（6531）+57.4%",
-        "IET-KY（4971）+55.3%"
-      ],
-      "worst": [
-        "尼得科超眾（6230）-0.5%",
-        "祥碩（5269）+2.1%",
-        "達明（4585）+2.2%"
-      ]
-    },
-    {
-      "pattern_name": "雙底",
-      "count": 67,
-      "avg_return_pct": 21.29,
-      "median_return_pct": 13.23,
-      "up_count": 61,
-      "up_avg_pct": 23.67,
-      "down_count": 6,
-      "down_avg_pct": -2.81,
-      "avg_max_drawdown_pct": -14.84,
-      "enough_samples": true,
-      "best": [
-        "富喬（1815）+101.7%",
-        "光環（3234）+88.9%",
-        "禾伸堂（3026）+61.9%"
-      ],
-      "worst": [
-        "聖暉*（5536）-5.4%",
-        "凡甲（3526）-5.0%",
-        "群電（6412）-4.1%"
+        "建準（2421）+38.6%",
+        "眾達-KY（4977）+58.2%",
+        "南亞（1303）+64.1%"
       ]
     },
     {
       "pattern_name": "多頭旗形",
       "count": 1,
-      "avg_return_pct": 18.17,
-      "median_return_pct": 18.17,
+      "avg_return_pct": 63.59,
+      "median_return_pct": 63.59,
       "up_count": 1,
-      "up_avg_pct": 18.17,
+      "up_avg_pct": 63.59,
       "down_count": 0,
       "down_avg_pct": null,
-      "avg_max_drawdown_pct": -7.67,
+      "avg_max_drawdown_pct": -13.59,
       "enough_samples": false,
       "best": [
-        "泰碩（3338）+18.2%"
+        "愛普*（6531）+63.6%"
       ],
       "worst": [
-        "泰碩（3338）+18.2%"
+        "愛普*（6531）+63.6%"
+      ]
+    },
+    {
+      "pattern_name": "對稱三角形",
+      "count": 6,
+      "avg_return_pct": 52.47,
+      "median_return_pct": 50.83,
+      "up_count": 6,
+      "up_avg_pct": 52.47,
+      "down_count": 0,
+      "down_avg_pct": null,
+      "avg_max_drawdown_pct": -17.81,
+      "enough_samples": true,
+      "best": [
+        "金居（8358）+88.6%",
+        "德宏（5475）+79.2%",
+        "光寶科（2301）+52.5%"
+      ],
+      "worst": [
+        "旺矽（6223）+12.8%",
+        "順達（3211）+32.6%",
+        "上詮（3363）+49.2%"
+      ]
+    },
+    {
+      "pattern_name": "倒頭肩",
+      "count": 1,
+      "avg_return_pct": 50.21,
+      "median_return_pct": 50.21,
+      "up_count": 1,
+      "up_avg_pct": 50.21,
+      "down_count": 0,
+      "down_avg_pct": null,
+      "avg_max_drawdown_pct": -14.56,
+      "enough_samples": false,
+      "best": [
+        "信驊（5274）+50.2%"
+      ],
+      "worst": [
+        "信驊（5274）+50.2%"
+      ]
+    },
+    {
+      "pattern_name": "雙底突破",
+      "count": 11,
+      "avg_return_pct": 46.83,
+      "median_return_pct": 45.74,
+      "up_count": 11,
+      "up_avg_pct": 46.83,
+      "down_count": 0,
+      "down_avg_pct": null,
+      "avg_max_drawdown_pct": -13.02,
+      "enough_samples": true,
+      "best": [
+        "富世達（6805）+107.1%",
+        "健鼎（3044）+57.3%",
+        "漢磊（3707）+49.3%"
+      ],
+      "worst": [
+        "洋基工程（6691）+24.6%",
+        "漢唐（2404）+27.2%",
+        "正文（4906）+30.1%"
+      ]
+    },
+    {
+      "pattern_name": "下降三角形",
+      "count": 2,
+      "avg_return_pct": 42.23,
+      "median_return_pct": 42.23,
+      "up_count": 2,
+      "up_avg_pct": 42.23,
+      "down_count": 0,
+      "down_avg_pct": null,
+      "avg_max_drawdown_pct": -12.06,
+      "enough_samples": false,
+      "best": [
+        "川湖（2059）+73.6%",
+        "亞力（1514）+10.9%"
+      ],
+      "worst": [
+        "亞力（1514）+10.9%",
+        "川湖（2059）+73.6%"
+      ]
+    },
+    {
+      "pattern_name": "圓底",
+      "count": 1,
+      "avg_return_pct": 41.05,
+      "median_return_pct": 41.05,
+      "up_count": 1,
+      "up_avg_pct": 41.05,
+      "down_count": 0,
+      "down_avg_pct": null,
+      "avg_max_drawdown_pct": -23.99,
+      "enough_samples": false,
+      "best": [
+        "力旺（3529）+41.0%"
+      ],
+      "worst": [
+        "力旺（3529）+41.0%"
+      ]
+    },
+    {
+      "pattern_name": "雙頂",
+      "count": 34,
+      "avg_return_pct": 32.98,
+      "median_return_pct": 27.17,
+      "up_count": 34,
+      "up_avg_pct": 32.98,
+      "down_count": 0,
+      "down_avg_pct": null,
+      "avg_max_drawdown_pct": -12.41,
+      "enough_samples": true,
+      "best": [
+        "雍智科技（6683）+80.3%",
+        "IET-KY（4971）+74.7%",
+        "昇達科（3491）+68.5%"
+      ],
+      "worst": [
+        "神達（3706）+6.2%",
+        "尼得科超眾（6230）+7.1%",
+        "仁寶（2324）+8.2%"
+      ]
+    },
+    {
+      "pattern_name": "箱型整理",
+      "count": 7,
+      "avg_return_pct": 27.48,
+      "median_return_pct": 22.51,
+      "up_count": 6,
+      "up_avg_pct": 33.54,
+      "down_count": 1,
+      "down_avg_pct": -8.9,
+      "avg_max_drawdown_pct": -17.15,
+      "enough_samples": true,
+      "best": [
+        "前鼎（4908）+76.2%",
+        "精測（6510）+45.8%",
+        "均華（6640）+33.6%"
+      ],
+      "worst": [
+        "智易（3596）-8.9%",
+        "穎崴（6515）+10.6%",
+        "台積電（2330）+12.6%"
+      ]
+    },
+    {
+      "pattern_name": "頭肩頂",
+      "count": 4,
+      "avg_return_pct": 26.86,
+      "median_return_pct": 12.36,
+      "up_count": 4,
+      "up_avg_pct": 26.86,
+      "down_count": 0,
+      "down_avg_pct": null,
+      "avg_max_drawdown_pct": -14.91,
+      "enough_samples": false,
+      "best": [
+        "聯亞（3081）+81.8%",
+        "信邦（3023）+17.6%",
+        "士電（1503）+7.1%"
+      ],
+      "worst": [
+        "鴻勁（7769）+0.9%",
+        "士電（1503）+7.1%",
+        "信邦（3023）+17.6%"
+      ]
+    },
+    {
+      "pattern_name": "雙底",
+      "count": 58,
+      "avg_return_pct": 25.21,
+      "median_return_pct": 19.75,
+      "up_count": 55,
+      "up_avg_pct": 26.74,
+      "down_count": 3,
+      "down_avg_pct": -2.75,
+      "avg_max_drawdown_pct": -14.68,
+      "enough_samples": true,
+      "best": [
+        "光環（3234）+104.6%",
+        "富喬（1815）+102.7%",
+        "景碩（3189）+66.4%"
+      ],
+      "worst": [
+        "凡甲（3526）-6.7%",
+        "群電（6412）-1.1%",
+        "聖暉*（5536）-0.4%"
       ]
     },
     {
       "pattern_name": "下降楔形",
-      "count": 14,
-      "avg_return_pct": 13.46,
-      "median_return_pct": 9.57,
-      "up_count": 10,
-      "up_avg_pct": 22.55,
-      "down_count": 4,
-      "down_avg_pct": -9.26,
-      "avg_max_drawdown_pct": -19.03,
+      "count": 11,
+      "avg_return_pct": 20.11,
+      "median_return_pct": 17.57,
+      "up_count": 8,
+      "up_avg_pct": 29.89,
+      "down_count": 3,
+      "down_avg_pct": -5.97,
+      "avg_max_drawdown_pct": -21.93,
       "enough_samples": true,
       "best": [
-        "欣興（3037）+68.6%",
-        "世芯-KY（3661）+35.1%",
-        "波若威（3163）+26.3%"
+        "欣興（3037）+65.5%",
+        "世芯-KY（3661）+36.4%",
+        "南俊國際（6584）+34.0%"
       ],
       "worst": [
-        "印能科技（7734）-16.5%",
-        "勤誠（8210）-9.1%",
-        "優群（3217）-7.1%"
+        "印能科技（7734）-10.3%",
+        "勤誠（8210）-5.7%",
+        "宇瞻（8271）-2.0%"
       ]
     },
     {
       "pattern_name": "雙頂跌破",
       "count": 1,
-      "avg_return_pct": 11.36,
-      "median_return_pct": 11.36,
+      "avg_return_pct": 15.02,
+      "median_return_pct": 15.02,
       "up_count": 1,
-      "up_avg_pct": 11.36,
+      "up_avg_pct": 15.02,
       "down_count": 0,
       "down_avg_pct": null,
       "avg_max_drawdown_pct": -16.41,
       "enough_samples": false,
       "best": [
-        "上銀（2049）+11.4%"
+        "上銀（2049）+15.0%"
       ],
       "worst": [
-        "上銀（2049）+11.4%"
+        "上銀（2049）+15.0%"
       ]
     },
     {
       "pattern_name": "頭肩頂跌破",
-      "count": 3,
-      "avg_return_pct": 3.84,
-      "median_return_pct": 1.16,
+      "count": 2,
+      "avg_return_pct": 3.71,
+      "median_return_pct": 3.71,
       "up_count": 2,
-      "up_avg_pct": 9.04,
-      "down_count": 1,
-      "down_avg_pct": -6.57,
-      "avg_max_drawdown_pct": -19.56,
+      "up_avg_pct": 3.71,
+      "down_count": 0,
+      "down_avg_pct": null,
+      "avg_max_drawdown_pct": -21.95,
       "enough_samples": false,
       "best": [
-        "鴻勁（7769）+16.9%",
-        "英業達（2356）+1.2%",
-        "所羅門（2359）-6.6%"
+        "英業達（2356）+4.2%",
+        "所羅門（2359）+3.2%"
       ],
       "worst": [
-        "所羅門（2359）-6.6%",
-        "英業達（2356）+1.2%",
-        "鴻勁（7769）+16.9%"
+        "所羅門（2359）+3.2%",
+        "英業達（2356）+4.2%"
+      ]
+    },
+    {
+      "pattern_name": "空頭旗形",
+      "count": 3,
+      "avg_return_pct": -0.16,
+      "median_return_pct": -1.01,
+      "up_count": 1,
+      "up_avg_pct": 5.29,
+      "down_count": 2,
+      "down_avg_pct": -2.89,
+      "avg_max_drawdown_pct": -18.5,
+      "enough_samples": false,
+      "best": [
+        "加百裕（3323）+5.3%",
+        "旭隼（6409）-1.0%",
+        "台灣精銳（4583）-4.8%"
+      ],
+      "worst": [
+        "台灣精銳（4583）-4.8%",
+        "旭隼（6409）-1.0%",
+        "加百裕（3323）+5.3%"
       ]
     },
     {
       "pattern_name": "下降趨勢",
-      "count": 5,
-      "avg_return_pct": -8.06,
-      "median_return_pct": -9.89,
+      "count": 4,
+      "avg_return_pct": -6.11,
+      "median_return_pct": -6.34,
       "up_count": 0,
       "up_avg_pct": null,
-      "down_count": 5,
-      "down_avg_pct": -8.06,
-      "avg_max_drawdown_pct": -22.13,
-      "enough_samples": true,
+      "down_count": 4,
+      "down_avg_pct": -6.11,
+      "avg_max_drawdown_pct": -22.16,
+      "enough_samples": false,
       "best": [
-        "智邦（2345）-0.3%",
-        "亞德客-KY（1590）-7.2%",
-        "宇瞻（8271）-9.9%"
+        "智邦（2345）-2.1%",
+        "優群（3217）-5.5%",
+        "中磊（5388）-7.2%"
       ],
       "worst": [
-        "台灣精銳（4583）-11.6%",
-        "中磊（5388）-11.4%",
-        "宇瞻（8271）-9.9%"
+        "亞德客-KY（1590）-9.7%",
+        "中磊（5388）-7.2%",
+        "優群（3217）-5.5%"
       ]
     }
   ],
@@ -518,630 +536,780 @@
       "symbol": "6426",
       "name": "統新",
       "classification": "多頭延續／持續創高",
-      "pattern_name": "持續創高",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 164.13,
-      "max_drawdown_pct": -7.4
+      "pattern_name": "上升趨勢",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 183.42,
+      "max_drawdown_pct": -6.83
+    },
+    {
+      "symbol": "6213",
+      "name": "聯茂",
+      "classification": "整理待突破",
+      "pattern_name": "上升三角形",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 148.43,
+      "max_drawdown_pct": -15.09
     },
     {
       "symbol": "3443",
       "name": "創意",
       "classification": "多頭延續／持續創高",
       "pattern_name": "持續創高",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 154.48,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 146.39,
       "max_drawdown_pct": -9.49
-    },
-    {
-      "symbol": "3605",
-      "name": "宏致",
-      "classification": "多頭延續／持續創高",
-      "pattern_name": "上升趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 121.32,
-      "max_drawdown_pct": -17.8
-    },
-    {
-      "symbol": "6213",
-      "name": "聯茂",
-      "classification": "整理待突破",
-      "pattern_name": "對稱三角形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 117.27,
-      "max_drawdown_pct": -15.09
     },
     {
       "symbol": "3624",
       "name": "光頡",
       "classification": "多頭延續／持續創高",
       "pattern_name": "上升趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 115.09,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 146.05,
       "max_drawdown_pct": -10.83
     },
     {
-      "symbol": "6805",
-      "name": "富世達",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底突破",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 106.97,
-      "max_drawdown_pct": -13.65
-    },
-    {
-      "symbol": "2455",
-      "name": "全新",
+      "symbol": "3605",
+      "name": "宏致",
       "classification": "多頭延續／持續創高",
       "pattern_name": "上升趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 102.57,
-      "max_drawdown_pct": -8.62
-    },
-    {
-      "symbol": "1815",
-      "name": "富喬",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 101.71,
-      "max_drawdown_pct": -12.57
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 137.73,
+      "max_drawdown_pct": -17.8
     },
     {
       "symbol": "3653",
       "name": "健策",
       "classification": "多頭延續／持續創高",
       "pattern_name": "持續創高",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 93.66,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 120.73,
       "max_drawdown_pct": -12.52
-    },
-    {
-      "symbol": "3234",
-      "name": "光環",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 88.89,
-      "max_drawdown_pct": -22.51
     },
     {
       "symbol": "3016",
       "name": "嘉晶",
       "classification": "底部反轉候選",
       "pattern_name": "倒頭肩突破",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 88.23,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 115.05,
       "max_drawdown_pct": -9.53
+    },
+    {
+      "symbol": "2455",
+      "name": "全新",
+      "classification": "多頭延續／持續創高",
+      "pattern_name": "上升趨勢",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 108.66,
+      "max_drawdown_pct": -8.62
     },
     {
       "symbol": "3324",
       "name": "雙鴻",
       "classification": "多頭延續／持續創高",
       "pattern_name": "持續創高",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 86.55,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 108.54,
       "max_drawdown_pct": -15.15
+    },
+    {
+      "symbol": "6805",
+      "name": "富世達",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底突破",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 107.13,
+      "max_drawdown_pct": -13.65
+    },
+    {
+      "symbol": "3234",
+      "name": "光環",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 104.6,
+      "max_drawdown_pct": -22.51
+    },
+    {
+      "symbol": "1815",
+      "name": "富喬",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 102.73,
+      "max_drawdown_pct": -12.57
     },
     {
       "symbol": "8996",
       "name": "高力",
       "classification": "多頭延續／持續創高",
       "pattern_name": "上升趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 79.28,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 96.66,
       "max_drawdown_pct": -15.18
     },
     {
-      "symbol": "3081",
-      "name": "聯亞",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "頭肩頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 74.03,
-      "max_drawdown_pct": -24.22
-    },
-    {
-      "symbol": "2059",
-      "name": "川湖",
-      "classification": "下降趨勢／弱勢整理",
-      "pattern_name": "下降三角形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 74.02,
-      "max_drawdown_pct": -18.98
-    },
-    {
-      "symbol": "3693",
-      "name": "營邦",
-      "classification": "多頭延續／持續創高",
-      "pattern_name": "持續創高",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 72.92,
-      "max_drawdown_pct": -8.38
-    },
-    {
-      "symbol": "3105",
-      "name": "穩懋",
+      "symbol": "3026",
+      "name": "禾伸堂",
       "classification": "多頭延續／持續創高",
       "pattern_name": "上升趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 70.79,
-      "max_drawdown_pct": -11.25
-    },
-    {
-      "symbol": "3374",
-      "name": "精材",
-      "classification": "多頭延續／持續創高",
-      "pattern_name": "上升趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 68.87,
-      "max_drawdown_pct": -16.29
-    },
-    {
-      "symbol": "3037",
-      "name": "欣興",
-      "classification": "底部反轉候選",
-      "pattern_name": "下降楔形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 68.6,
-      "max_drawdown_pct": -23.56
-    },
-    {
-      "symbol": "4908",
-      "name": "前鼎",
-      "classification": "整理待突破",
-      "pattern_name": "箱型整理",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 68.43,
-      "max_drawdown_pct": -15.66
-    },
-    {
-      "symbol": "6173",
-      "name": "信昌電",
-      "classification": "多頭延續／持續創高",
-      "pattern_name": "上升趨勢",
-      "window_start": "2026-07-21",
-      "window_end": "2026-09-14",
-      "window_return_pct": 67.71,
-      "max_drawdown_pct": -27.6
-    },
-    {
-      "symbol": "7717",
-      "name": "萊德光電-KY",
-      "classification": "底部反轉候選",
-      "pattern_name": "倒頭肩突破",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 67.49,
-      "max_drawdown_pct": -12.27
-    },
-    {
-      "symbol": "3017",
-      "name": "奇鋐",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "上升楔形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 66.78,
-      "max_drawdown_pct": -12.75
-    },
-    {
-      "symbol": "6683",
-      "name": "雍智科技",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "上升趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 66.13,
-      "max_drawdown_pct": -23.3
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 89.47,
+      "max_drawdown_pct": -14.02
     },
     {
       "symbol": "8358",
       "name": "金居",
       "classification": "整理待突破",
       "pattern_name": "對稱三角形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 65.12,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 88.56,
       "max_drawdown_pct": -13.44
     },
     {
-      "symbol": "2454",
-      "name": "聯發科",
+      "symbol": "3105",
+      "name": "穩懋",
       "classification": "多頭延續／持續創高",
       "pattern_name": "上升趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 64.6,
-      "max_drawdown_pct": -12.43
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 87.31,
+      "max_drawdown_pct": -11.25
+    },
+    {
+      "symbol": "3693",
+      "name": "營邦",
+      "classification": "多頭延續／持續創高",
+      "pattern_name": "上升趨勢",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 81.95,
+      "max_drawdown_pct": -8.38
+    },
+    {
+      "symbol": "3081",
+      "name": "聯亞",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "頭肩頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 81.82,
+      "max_drawdown_pct": -24.22
+    },
+    {
+      "symbol": "6683",
+      "name": "雍智科技",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 80.31,
+      "max_drawdown_pct": -23.3
     },
     {
       "symbol": "5475",
       "name": "德宏",
-      "classification": "整理待突破",
+      "classification": "下降趨勢／弱勢整理",
       "pattern_name": "對稱三角形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 62.39,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 79.21,
       "max_drawdown_pct": -16.87
     },
     {
-      "symbol": "3026",
-      "name": "禾伸堂",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 61.85,
-      "max_drawdown_pct": -14.02
-    },
-    {
-      "symbol": "6830",
-      "name": "汎銓",
-      "classification": "整理待突破",
-      "pattern_name": "箱型整理",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 61.72,
-      "max_drawdown_pct": -14.38
-    },
-    {
-      "symbol": "1303",
-      "name": "南亞",
-      "classification": "整理待突破",
-      "pattern_name": "上升三角形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 60.78,
-      "max_drawdown_pct": -13.25
-    },
-    {
-      "symbol": "3044",
-      "name": "健鼎",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底突破",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 59.94,
-      "max_drawdown_pct": -9.09
-    },
-    {
-      "symbol": "3006",
-      "name": "晶豪科",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 59.3,
-      "max_drawdown_pct": -15.38
-    },
-    {
-      "symbol": "3529",
-      "name": "力旺",
-      "classification": "底部反轉候選",
-      "pattern_name": "圓底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 58.51,
-      "max_drawdown_pct": -23.99
-    },
-    {
-      "symbol": "6531",
-      "name": "愛普*",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 57.42,
-      "max_drawdown_pct": -13.59
-    },
-    {
-      "symbol": "3189",
-      "name": "景碩",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 57.29,
-      "max_drawdown_pct": -15.21
-    },
-    {
-      "symbol": "5274",
-      "name": "信驊",
-      "classification": "底部反轉候選",
-      "pattern_name": "倒頭肩突破",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 57.09,
-      "max_drawdown_pct": -14.56
-    },
-    {
-      "symbol": "2368",
-      "name": "金像電",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 56.38,
-      "max_drawdown_pct": -22.45
-    },
-    {
-      "symbol": "5351",
-      "name": "鈺創",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 56.21,
-      "max_drawdown_pct": -24.35
-    },
-    {
-      "symbol": "2303",
-      "name": "聯電",
+      "symbol": "3374",
+      "name": "精材",
       "classification": "多頭延續／持續創高",
       "pattern_name": "上升趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 56.1,
-      "max_drawdown_pct": -7.23
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 78.17,
+      "max_drawdown_pct": -16.29
+    },
+    {
+      "symbol": "7717",
+      "name": "萊德光電-KY",
+      "classification": "底部反轉候選",
+      "pattern_name": "倒頭肩突破",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 77.84,
+      "max_drawdown_pct": -12.27
+    },
+    {
+      "symbol": "4908",
+      "name": "前鼎",
+      "classification": "整理待突破",
+      "pattern_name": "箱型整理",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 76.16,
+      "max_drawdown_pct": -15.66
     },
     {
       "symbol": "4971",
       "name": "IET-KY",
       "classification": "高檔轉弱／反轉警示",
       "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 55.27,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 74.68,
       "max_drawdown_pct": -21.97
     },
     {
-      "symbol": "2301",
-      "name": "光寶科",
+      "symbol": "2059",
+      "name": "川湖",
       "classification": "下降趨勢／弱勢整理",
-      "pattern_name": "上升三角形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 54.66,
-      "max_drawdown_pct": -13.7
+      "pattern_name": "下降三角形",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 73.58,
+      "max_drawdown_pct": -18.98
     },
     {
-      "symbol": "4979",
-      "name": "華星光",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 53.45,
-      "max_drawdown_pct": -19.08
+      "symbol": "6830",
+      "name": "汎銓",
+      "classification": "整理待突破",
+      "pattern_name": "上升三角形",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 70.89,
+      "max_drawdown_pct": -14.38
+    },
+    {
+      "symbol": "3017",
+      "name": "奇鋐",
+      "classification": "整理待突破",
+      "pattern_name": "上升三角形",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 69.65,
+      "max_drawdown_pct": -12.75
     },
     {
       "symbol": "3491",
       "name": "昇達科",
-      "classification": "整理待突破",
-      "pattern_name": "上升三角形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 52.68,
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 68.47,
       "max_drawdown_pct": -10.91
     },
     {
-      "symbol": "3264",
-      "name": "欣銓",
-      "classification": "高檔轉弱／反轉警示",
+      "symbol": "6173",
+      "name": "信昌電",
+      "classification": "多頭延續／持續創高",
       "pattern_name": "上升趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 50.9,
-      "max_drawdown_pct": -11.93
+      "window_start": "2026-07-22",
+      "window_end": "2026-09-15",
+      "window_return_pct": 68.29,
+      "max_drawdown_pct": -27.6
+    },
+    {
+      "symbol": "3006",
+      "name": "晶豪科",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 67.68,
+      "max_drawdown_pct": -15.38
+    },
+    {
+      "symbol": "3189",
+      "name": "景碩",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 66.44,
+      "max_drawdown_pct": -15.21
+    },
+    {
+      "symbol": "3037",
+      "name": "欣興",
+      "classification": "底部反轉候選",
+      "pattern_name": "下降楔形",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 65.5,
+      "max_drawdown_pct": -23.56
+    },
+    {
+      "symbol": "1303",
+      "name": "南亞",
+      "classification": "整理待突破",
+      "pattern_name": "上升三角形",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 64.14,
+      "max_drawdown_pct": -13.25
+    },
+    {
+      "symbol": "6531",
+      "name": "愛普*",
+      "classification": "多頭延續／持續創高",
+      "pattern_name": "多頭旗形",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 63.59,
+      "max_drawdown_pct": -13.59
+    },
+    {
+      "symbol": "5351",
+      "name": "鈺創",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 63.39,
+      "max_drawdown_pct": -24.35
+    },
+    {
+      "symbol": "2454",
+      "name": "聯發科",
+      "classification": "多頭延續／持續創高",
+      "pattern_name": "上升趨勢",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 63.37,
+      "max_drawdown_pct": -12.43
+    },
+    {
+      "symbol": "4979",
+      "name": "華星光",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 62.48,
+      "max_drawdown_pct": -19.08
     },
     {
       "symbol": "4977",
       "name": "眾達-KY",
       "classification": "整理待突破",
       "pattern_name": "上升三角形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 48.66,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 58.22,
       "max_drawdown_pct": -13.24
     },
     {
-      "symbol": "6510",
-      "name": "精測",
-      "classification": "多頭延續／持續創高",
-      "pattern_name": "上升趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 46.62,
-      "max_drawdown_pct": -12.81
+      "symbol": "3044",
+      "name": "健鼎",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底突破",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 57.31,
+      "max_drawdown_pct": -9.09
     },
     {
-      "symbol": "8299",
-      "name": "群聯",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 46.2,
-      "max_drawdown_pct": -15.79
+      "symbol": "2492",
+      "name": "華新科",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 56.93,
+      "max_drawdown_pct": -16.27
     },
     {
       "symbol": "2408",
       "name": "南亞科",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 45.69,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 53.35,
       "max_drawdown_pct": -14.27
     },
     {
-      "symbol": "6770",
-      "name": "力積電",
+      "symbol": "2368",
+      "name": "金像電",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 45.53,
-      "max_drawdown_pct": -15.05
-    },
-    {
-      "symbol": "6274",
-      "name": "台燿",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 43.14,
-      "max_drawdown_pct": -21.19
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 53.26,
+      "max_drawdown_pct": -22.45
     },
     {
       "symbol": "2449",
       "name": "京元電子",
       "classification": "底部反轉候選",
       "pattern_name": "倒頭肩突破",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 43.06,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 52.83,
       "max_drawdown_pct": -10.42
+    },
+    {
+      "symbol": "3264",
+      "name": "欣銓",
+      "classification": "多頭延續／持續創高",
+      "pattern_name": "上升趨勢",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 52.8,
+      "max_drawdown_pct": -13.38
+    },
+    {
+      "symbol": "2301",
+      "name": "光寶科",
+      "classification": "整理待突破",
+      "pattern_name": "對稱三角形",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 52.45,
+      "max_drawdown_pct": -13.7
     },
     {
       "symbol": "3450",
       "name": "聯鈞",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 42.66,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 51.55,
       "max_drawdown_pct": -23.76
     },
     {
-      "symbol": "3711",
-      "name": "日月光投控",
-      "classification": "多頭延續／持續創高",
-      "pattern_name": "上升趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 38.88,
-      "max_drawdown_pct": -8.92
-    },
-    {
-      "symbol": "2492",
-      "name": "華新科",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "上升楔形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 38.78,
-      "max_drawdown_pct": -16.27
-    },
-    {
-      "symbol": "5340",
-      "name": "建榮",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 38.28,
-      "max_drawdown_pct": -7.13
-    },
-    {
-      "symbol": "8046",
-      "name": "南電",
+      "symbol": "5274",
+      "name": "信驊",
       "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 37.66,
-      "max_drawdown_pct": -21.46
-    },
-    {
-      "symbol": "6187",
-      "name": "萬潤",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 37.11,
-      "max_drawdown_pct": -15.73
+      "pattern_name": "倒頭肩",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 50.21,
+      "max_drawdown_pct": -14.56
     },
     {
       "symbol": "4931",
       "name": "新盛力",
       "classification": "高檔轉弱／反轉警示",
       "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 37.07,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 49.54,
       "max_drawdown_pct": -19.64
     },
     {
-      "symbol": "6442",
-      "name": "光聖",
+      "symbol": "3707",
+      "name": "漢磊",
       "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 36.49,
-      "max_drawdown_pct": -16.11
+      "pattern_name": "雙底突破",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 49.33,
+      "max_drawdown_pct": -10.21
     },
     {
-      "symbol": "6257",
-      "name": "矽格",
-      "classification": "多頭延續／持續創高",
-      "pattern_name": "上升趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 36.09,
-      "max_drawdown_pct": -7.28
+      "symbol": "3363",
+      "name": "上詮",
+      "classification": "下降趨勢／弱勢整理",
+      "pattern_name": "對稱三角形",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 49.2,
+      "max_drawdown_pct": -18.19
+    },
+    {
+      "symbol": "8046",
+      "name": "南電",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底突破",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 48.15,
+      "max_drawdown_pct": -21.46
+    },
+    {
+      "symbol": "6274",
+      "name": "台燿",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底突破",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 48.02,
+      "max_drawdown_pct": -21.19
+    },
+    {
+      "symbol": "6510",
+      "name": "精測",
+      "classification": "整理待突破",
+      "pattern_name": "箱型整理",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 45.81,
+      "max_drawdown_pct": -12.81
+    },
+    {
+      "symbol": "6770",
+      "name": "力積電",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 45.78,
+      "max_drawdown_pct": -15.05
     },
     {
       "symbol": "6205",
       "name": "詮欣",
       "classification": "底部反轉候選",
       "pattern_name": "雙底突破",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 35.85,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 45.74,
       "max_drawdown_pct": -15.33
+    },
+    {
+      "symbol": "6442",
+      "name": "光聖",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 45.71,
+      "max_drawdown_pct": -16.11
+    },
+    {
+      "symbol": "5340",
+      "name": "建榮",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 45.18,
+      "max_drawdown_pct": -7.13
+    },
+    {
+      "symbol": "3090",
+      "name": "日電貿",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 44.74,
+      "max_drawdown_pct": -10.42
+    },
+    {
+      "symbol": "2344",
+      "name": "華邦電",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 44.72,
+      "max_drawdown_pct": -15.16
     },
     {
       "symbol": "6290",
       "name": "良維",
       "classification": "多頭延續／持續創高",
       "pattern_name": "上升趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 35.31,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 44.59,
       "max_drawdown_pct": -7.82
+    },
+    {
+      "symbol": "2313",
+      "name": "華通",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 44.48,
+      "max_drawdown_pct": -13.29
+    },
+    {
+      "symbol": "4991",
+      "name": "環宇-KY",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 44.39,
+      "max_drawdown_pct": -23.16
+    },
+    {
+      "symbol": "6187",
+      "name": "萬潤",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 43.22,
+      "max_drawdown_pct": -16.43
+    },
+    {
+      "symbol": "4540",
+      "name": "全球傳動",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 42.18,
+      "max_drawdown_pct": -8.91
+    },
+    {
+      "symbol": "8299",
+      "name": "群聯",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 42.14,
+      "max_drawdown_pct": -15.79
+    },
+    {
+      "symbol": "3529",
+      "name": "力旺",
+      "classification": "底部反轉候選",
+      "pattern_name": "圓底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 41.05,
+      "max_drawdown_pct": -23.99
+    },
+    {
+      "symbol": "6643",
+      "name": "M31",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底突破",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 40.33,
+      "max_drawdown_pct": -11.72
+    },
+    {
+      "symbol": "6257",
+      "name": "矽格",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "上升趨勢",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 40.06,
+      "max_drawdown_pct": -7.28
+    },
+    {
+      "symbol": "2303",
+      "name": "聯電",
+      "classification": "多頭延續／持續創高",
+      "pattern_name": "上升趨勢",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 40.0,
+      "max_drawdown_pct": -7.23
+    },
+    {
+      "symbol": "2421",
+      "name": "建準",
+      "classification": "整理待突破",
+      "pattern_name": "上升三角形",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 38.59,
+      "max_drawdown_pct": -11.98
+    },
+    {
+      "symbol": "3711",
+      "name": "日月光投控",
+      "classification": "多頭延續／持續創高",
+      "pattern_name": "持續創高",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 38.42,
+      "max_drawdown_pct": -8.92
+    },
+    {
+      "symbol": "6588",
+      "name": "東典光電",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 38.27,
+      "max_drawdown_pct": -15.25
+    },
+    {
+      "symbol": "3035",
+      "name": "智原",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底突破",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 37.21,
+      "max_drawdown_pct": -8.13
+    },
+    {
+      "symbol": "1802",
+      "name": "台玻",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 37.09,
+      "max_drawdown_pct": -8.65
+    },
+    {
+      "symbol": "4576",
+      "name": "大銀微系統",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 36.78,
+      "max_drawdown_pct": -13.22
+    },
+    {
+      "symbol": "5443",
+      "name": "均豪",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 36.65,
+      "max_drawdown_pct": -15.0
+    },
+    {
+      "symbol": "6533",
+      "name": "晶心科",
+      "classification": "多頭延續／持續創高",
+      "pattern_name": "持續創高",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 36.63,
+      "max_drawdown_pct": -16.54
     },
     {
       "symbol": "3661",
       "name": "世芯-KY",
       "classification": "底部反轉候選",
       "pattern_name": "下降楔形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 35.09,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 36.43,
       "max_drawdown_pct": -22.32
     },
     {
@@ -1149,309 +1317,109 @@
       "name": "博智",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 34.5,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 35.48,
       "max_drawdown_pct": -15.73
-    },
-    {
-      "symbol": "3707",
-      "name": "漢磊",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底突破",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 32.95,
-      "max_drawdown_pct": -10.21
-    },
-    {
-      "symbol": "6640",
-      "name": "均華",
-      "classification": "整理待突破",
-      "pattern_name": "箱型整理",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 32.91,
-      "max_drawdown_pct": -20.38
-    },
-    {
-      "symbol": "2344",
-      "name": "華邦電",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 32.69,
-      "max_drawdown_pct": -15.16
-    },
-    {
-      "symbol": "4540",
-      "name": "全球傳動",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 32.59,
-      "max_drawdown_pct": -8.91
-    },
-    {
-      "symbol": "3363",
-      "name": "上詮",
-      "classification": "整理待突破",
-      "pattern_name": "箱型整理",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 32.44,
-      "max_drawdown_pct": -18.19
-    },
-    {
-      "symbol": "2313",
-      "name": "華通",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 30.99,
-      "max_drawdown_pct": -13.29
-    },
-    {
-      "symbol": "2421",
-      "name": "建準",
-      "classification": "整理待突破",
-      "pattern_name": "上升三角形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 30.92,
-      "max_drawdown_pct": -11.98
-    },
-    {
-      "symbol": "1802",
-      "name": "台玻",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "頭肩頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 30.76,
-      "max_drawdown_pct": -8.65
-    },
-    {
-      "symbol": "3090",
-      "name": "日電貿",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 30.43,
-      "max_drawdown_pct": -10.42
-    },
-    {
-      "symbol": "5347",
-      "name": "世界",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底突破",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 30.08,
-      "max_drawdown_pct": -9.82
-    },
-    {
-      "symbol": "4967",
-      "name": "十銓",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 28.51,
-      "max_drawdown_pct": -7.25
     },
     {
       "symbol": "3715",
       "name": "定穎投控",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 28.06,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 35.31,
       "max_drawdown_pct": -14.74
-    },
-    {
-      "symbol": "5443",
-      "name": "均豪",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 28.02,
-      "max_drawdown_pct": -15.0
-    },
-    {
-      "symbol": "2395",
-      "name": "研華",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 27.45,
-      "max_drawdown_pct": -8.16
-    },
-    {
-      "symbol": "2308",
-      "name": "台達電",
-      "classification": "多頭延續／持續創高",
-      "pattern_name": "上升趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 27.09,
-      "max_drawdown_pct": -14.06
-    },
-    {
-      "symbol": "4576",
-      "name": "大銀微系統",
-      "classification": "整理待突破",
-      "pattern_name": "上升三角形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 26.99,
-      "max_drawdown_pct": -13.22
-    },
-    {
-      "symbol": "6533",
-      "name": "晶心科",
-      "classification": "下降趨勢／弱勢整理",
-      "pattern_name": "箱型整理",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 26.77,
-      "max_drawdown_pct": -16.54
-    },
-    {
-      "symbol": "2360",
-      "name": "致茂",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 26.7,
-      "max_drawdown_pct": -16.95
-    },
-    {
-      "symbol": "3163",
-      "name": "波若威",
-      "classification": "底部反轉候選",
-      "pattern_name": "下降楔形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 26.29,
-      "max_drawdown_pct": -18.9
-    },
-    {
-      "symbol": "6643",
-      "name": "M31",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底突破",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 26.06,
-      "max_drawdown_pct": -11.72
-    },
-    {
-      "symbol": "4906",
-      "name": "正文",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底突破",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 25.95,
-      "max_drawdown_pct": -9.83
-    },
-    {
-      "symbol": "4991",
-      "name": "環宇-KY",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 25.53,
-      "max_drawdown_pct": -23.16
-    },
-    {
-      "symbol": "2392",
-      "name": "正崴",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 25.45,
-      "max_drawdown_pct": -11.9
-    },
-    {
-      "symbol": "6239",
-      "name": "力成",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 25.38,
-      "max_drawdown_pct": -9.01
     },
     {
       "symbol": "6584",
       "name": "南俊國際",
       "classification": "底部反轉候選",
       "pattern_name": "下降楔形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 25.38,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 34.03,
       "max_drawdown_pct": -20.95
     },
     {
-      "symbol": "6588",
-      "name": "東典光電",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 25.14,
-      "max_drawdown_pct": -15.25
+      "symbol": "6239",
+      "name": "力成",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 33.8,
+      "max_drawdown_pct": -9.01
+    },
+    {
+      "symbol": "6640",
+      "name": "均華",
+      "classification": "下降趨勢／弱勢整理",
+      "pattern_name": "箱型整理",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 33.6,
+      "max_drawdown_pct": -22.31
     },
     {
       "symbol": "3211",
       "name": "順達",
       "classification": "整理待突破",
       "pattern_name": "對稱三角形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 23.38,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 32.57,
       "max_drawdown_pct": -20.87
     },
     {
-      "symbol": "2404",
-      "name": "漢唐",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底突破",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 23.15,
-      "max_drawdown_pct": -14.1
+      "symbol": "4967",
+      "name": "十銓",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 32.38,
+      "max_drawdown_pct": -7.25
     },
     {
-      "symbol": "2383",
-      "name": "台光電",
+      "symbol": "2395",
+      "name": "研華",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 31.99,
+      "max_drawdown_pct": -8.16
+    },
+    {
+      "symbol": "3163",
+      "name": "波若威",
       "classification": "底部反轉候選",
-      "pattern_name": "箱型整理",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 23.0,
-      "max_drawdown_pct": -25.73
+      "pattern_name": "下降楔形",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 31.92,
+      "max_drawdown_pct": -18.9
+    },
+    {
+      "symbol": "4906",
+      "name": "正文",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底突破",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 30.05,
+      "max_drawdown_pct": -9.83
     },
     {
       "symbol": "6196",
       "name": "帆宣",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 22.82,
+      "classification": "多頭延續／持續創高",
+      "pattern_name": "持續創高",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 29.59,
       "max_drawdown_pct": -6.65
     },
     {
@@ -1459,9 +1427,9 @@
       "name": "直得",
       "classification": "底部反轉候選",
       "pattern_name": "下降楔形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 22.56,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 29.04,
       "max_drawdown_pct": -13.87
     },
     {
@@ -1469,189 +1437,229 @@
       "name": "緯穎",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 22.27,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 28.75,
       "max_drawdown_pct": -19.5
-    },
-    {
-      "symbol": "3035",
-      "name": "智原",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底突破",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 22.16,
-      "max_drawdown_pct": -10.48
     },
     {
       "symbol": "6451",
       "name": "訊芯-KY",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 21.46,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 27.95,
       "max_drawdown_pct": -21.2
     },
     {
-      "symbol": "3338",
-      "name": "泰碩",
-      "classification": "多頭延續／持續創高",
-      "pattern_name": "多頭旗形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 18.17,
-      "max_drawdown_pct": -7.67
-    },
-    {
-      "symbol": "1519",
-      "name": "華城",
-      "classification": "底部反轉候選",
-      "pattern_name": "下降楔形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 17.75,
-      "max_drawdown_pct": -9.87
-    },
-    {
-      "symbol": "2376",
-      "name": "技嘉",
+      "symbol": "8027",
+      "name": "鈦昇",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 17.73,
-      "max_drawdown_pct": -14.59
-    },
-    {
-      "symbol": "6223",
-      "name": "旺矽",
-      "classification": "整理待突破",
-      "pattern_name": "對稱三角形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 17.33,
-      "max_drawdown_pct": -23.79
-    },
-    {
-      "symbol": "2367",
-      "name": "燿華",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 16.97,
-      "max_drawdown_pct": -13.55
-    },
-    {
-      "symbol": "4958",
-      "name": "臻鼎-KY",
-      "classification": "整理待突破",
-      "pattern_name": "對稱三角形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 16.93,
-      "max_drawdown_pct": -13.46
-    },
-    {
-      "symbol": "7769",
-      "name": "鴻勁",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "頭肩頂跌破",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 16.93,
-      "max_drawdown_pct": -15.66
-    },
-    {
-      "symbol": "8042",
-      "name": "金山電",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 16.88,
-      "max_drawdown_pct": -15.11
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 27.78,
+      "max_drawdown_pct": -14.58
     },
     {
       "symbol": "2337",
       "name": "旺宏",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 16.67,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 27.45,
       "max_drawdown_pct": -16.42
+    },
+    {
+      "symbol": "2392",
+      "name": "正崴",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 27.4,
+      "max_drawdown_pct": -11.9
+    },
+    {
+      "symbol": "2404",
+      "name": "漢唐",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底突破",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 27.23,
+      "max_drawdown_pct": -14.1
+    },
+    {
+      "symbol": "2327",
+      "name": "國巨",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 27.05,
+      "max_drawdown_pct": -22.81
+    },
+    {
+      "symbol": "8042",
+      "name": "金山電",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 26.95,
+      "max_drawdown_pct": -15.11
+    },
+    {
+      "symbol": "4958",
+      "name": "臻鼎-KY",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 26.46,
+      "max_drawdown_pct": -13.46
+    },
+    {
+      "symbol": "2367",
+      "name": "燿華",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 25.53,
+      "max_drawdown_pct": -13.55
+    },
+    {
+      "symbol": "2308",
+      "name": "台達電",
+      "classification": "多頭延續／持續創高",
+      "pattern_name": "上升趨勢",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 24.84,
+      "max_drawdown_pct": -14.06
     },
     {
       "symbol": "6691",
       "name": "洋基工程",
       "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 16.44,
+      "pattern_name": "雙底突破",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 24.58,
       "max_drawdown_pct": -8.53
+    },
+    {
+      "symbol": "5347",
+      "name": "世界",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 23.55,
+      "max_drawdown_pct": -9.82
+    },
+    {
+      "symbol": "3338",
+      "name": "泰碩",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 23.36,
+      "max_drawdown_pct": -7.67
+    },
+    {
+      "symbol": "3665",
+      "name": "貿聯-KY",
+      "classification": "整理待突破",
+      "pattern_name": "箱型整理",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 22.51,
+      "max_drawdown_pct": -20.89
     },
     {
       "symbol": "3013",
       "name": "晟銘電",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 16.12,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 22.23,
       "max_drawdown_pct": -8.94
-    },
-    {
-      "symbol": "3023",
-      "name": "信邦",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "頭肩頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 15.87,
-      "max_drawdown_pct": -8.24
-    },
-    {
-      "symbol": "6215",
-      "name": "和椿",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 15.28,
-      "max_drawdown_pct": -10.65
-    },
-    {
-      "symbol": "1609",
-      "name": "大亞",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 14.7,
-      "max_drawdown_pct": -3.54
     },
     {
       "symbol": "3380",
       "name": "明泰",
       "classification": "高檔轉弱／反轉警示",
       "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 14.6,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 22.01,
       "max_drawdown_pct": -8.03
+    },
+    {
+      "symbol": "2382",
+      "name": "廣達",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 21.33,
+      "max_drawdown_pct": -5.61
+    },
+    {
+      "symbol": "6139",
+      "name": "亞翔",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 20.71,
+      "max_drawdown_pct": -14.18
+    },
+    {
+      "symbol": "6215",
+      "name": "和椿",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 20.7,
+      "max_drawdown_pct": -10.65
+    },
+    {
+      "symbol": "6197",
+      "name": "佳必琪",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 20.53,
+      "max_drawdown_pct": -8.37
+    },
+    {
+      "symbol": "2360",
+      "name": "致茂",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 20.16,
+      "max_drawdown_pct": -16.95
     },
     {
       "symbol": "8131",
       "name": "福懋科",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 14.55,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 20.16,
       "max_drawdown_pct": -12.88
     },
     {
@@ -1659,369 +1667,239 @@
       "name": "大毅",
       "classification": "高檔轉弱／反轉警示",
       "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 14.35,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 20.12,
       "max_drawdown_pct": -14.87
-    },
-    {
-      "symbol": "6197",
-      "name": "佳必琪",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 14.05,
-      "max_drawdown_pct": -8.37
-    },
-    {
-      "symbol": "2330",
-      "name": "台積電",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 13.97,
-      "max_drawdown_pct": -4.33
-    },
-    {
-      "symbol": "2467",
-      "name": "志聖",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 13.23,
-      "max_drawdown_pct": -17.31
-    },
-    {
-      "symbol": "6139",
-      "name": "亞翔",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 13.06,
-      "max_drawdown_pct": -14.18
-    },
-    {
-      "symbol": "2327",
-      "name": "國巨",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 13.02,
-      "max_drawdown_pct": -22.81
-    },
-    {
-      "symbol": "8027",
-      "name": "鈦昇",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 12.06,
-      "max_drawdown_pct": -14.58
-    },
-    {
-      "symbol": "3665",
-      "name": "貿聯-KY",
-      "classification": "整理待突破",
-      "pattern_name": "箱型整理",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 11.96,
-      "max_drawdown_pct": -20.89
-    },
-    {
-      "symbol": "3583",
-      "name": "辛耘",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 11.77,
-      "max_drawdown_pct": -14.1
-    },
-    {
-      "symbol": "2049",
-      "name": "上銀",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "雙頂跌破",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 11.36,
-      "max_drawdown_pct": -16.41
-    },
-    {
-      "symbol": "3357",
-      "name": "臺慶科",
-      "classification": "底部反轉候選",
-      "pattern_name": "下降楔形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 11.35,
-      "max_drawdown_pct": -21.5
-    },
-    {
-      "symbol": "4938",
-      "name": "和碩",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 11.34,
-      "max_drawdown_pct": -7.44
-    },
-    {
-      "symbol": "2375",
-      "name": "凱美",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 10.84,
-      "max_drawdown_pct": -15.77
-    },
-    {
-      "symbol": "1514",
-      "name": "亞力",
-      "classification": "下降趨勢／弱勢整理",
-      "pattern_name": "下降三角形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 10.76,
-      "max_drawdown_pct": -5.14
-    },
-    {
-      "symbol": "6515",
-      "name": "穎崴",
-      "classification": "整理待突破",
-      "pattern_name": "箱型整理",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 10.71,
-      "max_drawdown_pct": -25.13
-    },
-    {
-      "symbol": "1513",
-      "name": "中興電",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 10.7,
-      "max_drawdown_pct": -5.26
-    },
-    {
-      "symbol": "1504",
-      "name": "東元",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 10.65,
-      "max_drawdown_pct": -6.67
     },
     {
       "symbol": "5309",
       "name": "系統電",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 10.52,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 20.09,
       "max_drawdown_pct": -12.61
     },
     {
-      "symbol": "2382",
-      "name": "廣達",
+      "symbol": "2467",
+      "name": "志聖",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 19.41,
+      "max_drawdown_pct": -17.31
+    },
+    {
+      "symbol": "1519",
+      "name": "華城",
       "classification": "高檔轉弱／反轉警示",
       "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 10.34,
-      "max_drawdown_pct": -9.85
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 17.79,
+      "max_drawdown_pct": -9.87
     },
     {
-      "symbol": "3483",
-      "name": "力致",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 9.98,
-      "max_drawdown_pct": -8.82
+      "symbol": "2376",
+      "name": "技嘉",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 17.7,
+      "max_drawdown_pct": -14.59
     },
     {
-      "symbol": "8374",
-      "name": "羅昇",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 8.71,
-      "max_drawdown_pct": -14.51
+      "symbol": "3023",
+      "name": "信邦",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "頭肩頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 17.62,
+      "max_drawdown_pct": -8.53
     },
     {
-      "symbol": "6121",
-      "name": "新普",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 8.19,
-      "max_drawdown_pct": -14.5
-    },
-    {
-      "symbol": "2317",
-      "name": "鴻海",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 8.02,
-      "max_drawdown_pct": -10.0
-    },
-    {
-      "symbol": "4562",
-      "name": "穎漢",
+      "symbol": "2383",
+      "name": "台光電",
       "classification": "底部反轉候選",
       "pattern_name": "下降楔形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 7.79,
-      "max_drawdown_pct": -13.28
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 17.57,
+      "max_drawdown_pct": -25.73
     },
     {
-      "symbol": "6282",
-      "name": "康舒",
+      "symbol": "3583",
+      "name": "辛耘",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 7.45,
-      "max_drawdown_pct": -15.48
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 17.51,
+      "max_drawdown_pct": -14.1
     },
     {
-      "symbol": "3323",
-      "name": "加百裕",
+      "symbol": "3357",
+      "name": "臺慶科",
       "classification": "底部反轉候選",
       "pattern_name": "下降楔形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 6.48,
-      "max_drawdown_pct": -17.9
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 16.71,
+      "max_drawdown_pct": -21.5
     },
     {
       "symbol": "6285",
       "name": "啟碁",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 6.48,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 16.67,
       "max_drawdown_pct": -15.77
+    },
+    {
+      "symbol": "1609",
+      "name": "大亞",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 16.46,
+      "max_drawdown_pct": -3.54
     },
     {
       "symbol": "3231",
       "name": "緯創",
       "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "頭肩頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 6.19,
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 15.31,
       "max_drawdown_pct": -10.91
     },
     {
-      "symbol": "2324",
-      "name": "仁寶",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 5.6,
-      "max_drawdown_pct": -14.81
+      "symbol": "2049",
+      "name": "上銀",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂跌破",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 15.02,
+      "max_drawdown_pct": -16.41
     },
     {
-      "symbol": "2451",
-      "name": "創見",
+      "symbol": "3483",
+      "name": "力致",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 5.57,
-      "max_drawdown_pct": -13.61
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 13.62,
+      "max_drawdown_pct": -8.82
     },
     {
-      "symbol": "3015",
-      "name": "全漢",
+      "symbol": "4938",
+      "name": "和碩",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 4.92,
-      "max_drawdown_pct": -13.8
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 13.42,
+      "max_drawdown_pct": -7.44
+    },
+    {
+      "symbol": "5269",
+      "name": "祥碩",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 13.41,
+      "max_drawdown_pct": -10.54
+    },
+    {
+      "symbol": "1504",
+      "name": "東元",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 13.22,
+      "max_drawdown_pct": -6.8
+    },
+    {
+      "symbol": "1513",
+      "name": "中興電",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 12.93,
+      "max_drawdown_pct": -5.26
+    },
+    {
+      "symbol": "6223",
+      "name": "旺矽",
+      "classification": "整理待突破",
+      "pattern_name": "對稱三角形",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 12.81,
+      "max_drawdown_pct": -23.79
+    },
+    {
+      "symbol": "8374",
+      "name": "羅昇",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 12.72,
+      "max_drawdown_pct": -15.3
+    },
+    {
+      "symbol": "2330",
+      "name": "台積電",
+      "classification": "整理待突破",
+      "pattern_name": "箱型整理",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 12.58,
+      "max_drawdown_pct": -4.33
+    },
+    {
+      "symbol": "6282",
+      "name": "康舒",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 12.17,
+      "max_drawdown_pct": -15.48
+    },
+    {
+      "symbol": "2375",
+      "name": "凱美",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 11.94,
+      "max_drawdown_pct": -15.77
     },
     {
       "symbol": "3131",
       "name": "弘塑",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 4.88,
-      "max_drawdown_pct": -14.23
-    },
-    {
-      "symbol": "3706",
-      "name": "神達",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 4.8,
-      "max_drawdown_pct": -7.77
-    },
-    {
-      "symbol": "1503",
-      "name": "士電",
-      "classification": "底部反轉候選",
-      "pattern_name": "下降楔形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 4.24,
-      "max_drawdown_pct": -8.24
-    },
-    {
-      "symbol": "6449",
-      "name": "鈺邦",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 4.21,
-      "max_drawdown_pct": -15.52
-    },
-    {
-      "symbol": "6191",
-      "name": "精成科",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 4.02,
-      "max_drawdown_pct": -7.22
-    },
-    {
-      "symbol": "8086",
-      "name": "宏捷科",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 3.83,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 11.83,
       "max_drawdown_pct": -14.23
     },
     {
@@ -2029,69 +1907,219 @@
       "name": "閎康",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-29",
-      "window_end": "2026-09-23",
-      "window_return_pct": 3.28,
+      "window_start": "2026-07-30",
+      "window_end": "2026-09-24",
+      "window_return_pct": 10.93,
       "max_drawdown_pct": -17.18
     },
     {
-      "symbol": "3289",
-      "name": "宜特",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 3.1,
-      "max_drawdown_pct": -11.9
+      "symbol": "1514",
+      "name": "亞力",
+      "classification": "下降趨勢／弱勢整理",
+      "pattern_name": "下降三角形",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 10.87,
+      "max_drawdown_pct": -5.14
     },
     {
-      "symbol": "4585",
-      "name": "達明",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 2.25,
-      "max_drawdown_pct": -8.86
+      "symbol": "6515",
+      "name": "穎崴",
+      "classification": "整理待突破",
+      "pattern_name": "箱型整理",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 10.59,
+      "max_drawdown_pct": -25.13
+    },
+    {
+      "symbol": "6449",
+      "name": "鈺邦",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 9.4,
+      "max_drawdown_pct": -15.52
+    },
+    {
+      "symbol": "2472",
+      "name": "立隆電",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 9.27,
+      "max_drawdown_pct": -16.94
     },
     {
       "symbol": "4966",
       "name": "譜瑞-KY",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 2.09,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 9.19,
       "max_drawdown_pct": -14.06
+    },
+    {
+      "symbol": "2317",
+      "name": "鴻海",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 9.15,
+      "max_drawdown_pct": -10.0
+    },
+    {
+      "symbol": "3289",
+      "name": "宜特",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 9.01,
+      "max_drawdown_pct": -11.9
+    },
+    {
+      "symbol": "3015",
+      "name": "全漢",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 9.0,
+      "max_drawdown_pct": -13.8
+    },
+    {
+      "symbol": "8086",
+      "name": "宏捷科",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 8.83,
+      "max_drawdown_pct": -14.23
+    },
+    {
+      "symbol": "4585",
+      "name": "達明",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 8.52,
+      "max_drawdown_pct": -8.86
+    },
+    {
+      "symbol": "6121",
+      "name": "新普",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 8.51,
+      "max_drawdown_pct": -14.5
+    },
+    {
+      "symbol": "2324",
+      "name": "仁寶",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 8.15,
+      "max_drawdown_pct": -15.51
+    },
+    {
+      "symbol": "4562",
+      "name": "穎漢",
+      "classification": "底部反轉候選",
+      "pattern_name": "下降楔形",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 7.91,
+      "max_drawdown_pct": -13.28
+    },
+    {
+      "symbol": "6230",
+      "name": "尼得科超眾",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 7.11,
+      "max_drawdown_pct": -6.44
+    },
+    {
+      "symbol": "1503",
+      "name": "士電",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "頭肩頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 7.1,
+      "max_drawdown_pct": -8.24
+    },
+    {
+      "symbol": "6191",
+      "name": "精成科",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 6.33,
+      "max_drawdown_pct": -7.22
+    },
+    {
+      "symbol": "3706",
+      "name": "神達",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "雙頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 6.17,
+      "max_drawdown_pct": -7.77
+    },
+    {
+      "symbol": "2451",
+      "name": "創見",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 5.57,
+      "max_drawdown_pct": -13.61
     },
     {
       "symbol": "6613",
       "name": "朋億*",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 2.09,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 5.46,
       "max_drawdown_pct": -19.25
     },
     {
-      "symbol": "5269",
-      "name": "祥碩",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 2.07,
-      "max_drawdown_pct": -10.54
+      "symbol": "3323",
+      "name": "加百裕",
+      "classification": "下降趨勢／弱勢整理",
+      "pattern_name": "空頭旗形",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 5.29,
+      "max_drawdown_pct": -17.9
     },
     {
       "symbol": "3260",
       "name": "威剛",
       "classification": "底部反轉候選",
       "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 1.83,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 4.62,
       "max_drawdown_pct": -11.4
     },
     {
@@ -2099,189 +2127,179 @@
       "name": "英業達",
       "classification": "高檔轉弱／反轉警示",
       "pattern_name": "頭肩頂跌破",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": 1.16,
-      "max_drawdown_pct": -13.45
-    },
-    {
-      "symbol": "2472",
-      "name": "立隆電",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": -0.1,
-      "max_drawdown_pct": -16.94
-    },
-    {
-      "symbol": "2345",
-      "name": "智邦",
-      "classification": "下降趨勢／弱勢整理",
-      "pattern_name": "下降趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": -0.26,
-      "max_drawdown_pct": -25.31
-    },
-    {
-      "symbol": "3533",
-      "name": "嘉澤",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": -0.29,
-      "max_drawdown_pct": -24.88
-    },
-    {
-      "symbol": "6230",
-      "name": "尼得科超眾",
-      "classification": "高檔轉弱／反轉警示",
-      "pattern_name": "雙頂",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": -0.45,
-      "max_drawdown_pct": -6.44
-    },
-    {
-      "symbol": "6117",
-      "name": "迎廣",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": -1.98,
-      "max_drawdown_pct": -7.19
-    },
-    {
-      "symbol": "6412",
-      "name": "群電",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": -4.13,
-      "max_drawdown_pct": -9.9
-    },
-    {
-      "symbol": "6409",
-      "name": "旭隼",
-      "classification": "底部反轉候選",
-      "pattern_name": "下降楔形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": -4.33,
-      "max_drawdown_pct": -19.15
-    },
-    {
-      "symbol": "3526",
-      "name": "凡甲",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": -4.95,
-      "max_drawdown_pct": -14.66
-    },
-    {
-      "symbol": "5536",
-      "name": "聖暉*",
-      "classification": "底部反轉候選",
-      "pattern_name": "雙底",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": -5.4,
-      "max_drawdown_pct": -23.64
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 4.17,
+      "max_drawdown_pct": -14.31
     },
     {
       "symbol": "2359",
       "name": "所羅門",
       "classification": "高檔轉弱／反轉警示",
       "pattern_name": "頭肩頂跌破",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": -6.57,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 3.24,
       "max_drawdown_pct": -29.58
+    },
+    {
+      "symbol": "6117",
+      "name": "迎廣",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 2.59,
+      "max_drawdown_pct": -7.19
+    },
+    {
+      "symbol": "3533",
+      "name": "嘉澤",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 1.77,
+      "max_drawdown_pct": -24.88
+    },
+    {
+      "symbol": "7769",
+      "name": "鴻勁",
+      "classification": "高檔轉弱／反轉警示",
+      "pattern_name": "頭肩頂",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": 0.89,
+      "max_drawdown_pct": -18.65
+    },
+    {
+      "symbol": "5536",
+      "name": "聖暉*",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": -0.44,
+      "max_drawdown_pct": -23.64
+    },
+    {
+      "symbol": "6409",
+      "name": "旭隼",
+      "classification": "下降趨勢／弱勢整理",
+      "pattern_name": "空頭旗形",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": -1.01,
+      "max_drawdown_pct": -19.15
+    },
+    {
+      "symbol": "6412",
+      "name": "群電",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": -1.06,
+      "max_drawdown_pct": -9.9
+    },
+    {
+      "symbol": "8271",
+      "name": "宇瞻",
+      "classification": "底部反轉候選",
+      "pattern_name": "下降楔形",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": -1.96,
+      "max_drawdown_pct": -19.23
+    },
+    {
+      "symbol": "2345",
+      "name": "智邦",
+      "classification": "下降趨勢／弱勢整理",
+      "pattern_name": "下降趨勢",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": -2.07,
+      "max_drawdown_pct": -25.31
+    },
+    {
+      "symbol": "4583",
+      "name": "台灣精銳",
+      "classification": "下降趨勢／弱勢整理",
+      "pattern_name": "空頭旗形",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": -4.77,
+      "max_drawdown_pct": -18.45
     },
     {
       "symbol": "3217",
       "name": "優群",
-      "classification": "底部反轉候選",
-      "pattern_name": "下降楔形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": -7.14,
-      "max_drawdown_pct": -15.05
-    },
-    {
-      "symbol": "1590",
-      "name": "亞德客-KY",
       "classification": "下降趨勢／弱勢整理",
       "pattern_name": "下降趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": -7.17,
-      "max_drawdown_pct": -23.51
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": -5.47,
+      "max_drawdown_pct": -15.05
     },
     {
       "symbol": "8210",
       "name": "勤誠",
       "classification": "底部反轉候選",
       "pattern_name": "下降楔形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": -9.07,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": -5.68,
       "max_drawdown_pct": -29.23
     },
     {
-      "symbol": "8271",
-      "name": "宇瞻",
-      "classification": "下降趨勢／弱勢整理",
-      "pattern_name": "下降趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": -9.89,
-      "max_drawdown_pct": -19.23
-    },
-    {
-      "symbol": "3596",
-      "name": "智易",
-      "classification": "整理待突破",
-      "pattern_name": "箱型整理",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": -10.32,
-      "max_drawdown_pct": -18.93
+      "symbol": "3526",
+      "name": "凡甲",
+      "classification": "底部反轉候選",
+      "pattern_name": "雙底",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": -6.74,
+      "max_drawdown_pct": -14.66
     },
     {
       "symbol": "5388",
       "name": "中磊",
       "classification": "下降趨勢／弱勢整理",
       "pattern_name": "下降趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": -11.36,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": -7.21,
       "max_drawdown_pct": -24.15
     },
     {
-      "symbol": "4583",
-      "name": "台灣精銳",
+      "symbol": "3596",
+      "name": "智易",
+      "classification": "整理待突破",
+      "pattern_name": "箱型整理",
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": -8.9,
+      "max_drawdown_pct": -18.93
+    },
+    {
+      "symbol": "1590",
+      "name": "亞德客-KY",
       "classification": "下降趨勢／弱勢整理",
       "pattern_name": "下降趨勢",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": -11.6,
-      "max_drawdown_pct": -18.45
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": -9.7,
+      "max_drawdown_pct": -24.14
     },
     {
       "symbol": "7734",
       "name": "印能科技",
       "classification": "底部反轉候選",
       "pattern_name": "下降楔形",
-      "window_start": "2026-07-30",
-      "window_end": "2026-09-23",
-      "window_return_pct": -16.5,
+      "window_start": "2026-07-31",
+      "window_end": "2026-09-24",
+      "window_return_pct": -10.28,
       "max_drawdown_pct": -32.66
     }
   ],
