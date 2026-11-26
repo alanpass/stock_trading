@@ -1,17 +1,196 @@
 {
  "schema_version": 2,
  "report_type": "system_picks_public",
- "generated_at": "2026-11-25T18:31:52+08:00",
- "data_asof": "2026-11-25",
+ "generated_at": "2026-11-26T20:33:31+08:00",
+ "data_asof": "2026-11-26",
  "latest": {
-  "date": "2026-11-25",
+  "date": "2026-11-26",
   "picks": [
+   {
+    "symbol": "3231",
+    "name": "緯創",
+    "themes": [
+     "組裝代工／ODM"
+    ],
+    "close": 167.0,
+    "r20": -11.41,
+    "horizon": "long",
+    "reasons": [
+     {
+      "cat": "基本面",
+      "text": "2026/10 月營收年增 117.6%"
+     },
+     {
+      "cat": "技術",
+      "text": "站上年線 156.33，季線高於年線，長期趨勢向上"
+     },
+     {
+      "cat": "評價",
+      "text": "本益比 10.2 倍（≤ 35）"
+     },
+     {
+      "cat": "股利",
+      "text": "最近 5 年每年配息"
+     },
+     {
+      "cat": "股利",
+      "text": "殖利率 3.62%"
+     },
+     {
+      "cat": "動能",
+      "text": "近一年上漲 14.8%"
+     },
+     {
+      "cat": "籌碼",
+      "text": "投信熱門買超：買超 3,275 張，買超金額全市場前 30 名"
+     },
+     {
+      "cat": "籌碼",
+      "text": "自營商熱門買超：買超 821 張，買超金額全市場前 30 名"
+     },
+     {
+      "cat": "籌碼",
+      "text": "主力大買超：主力買超 9,041 張，占成交量 25%（門檻 10%，2026-11-26）"
+     },
+     {
+      "cat": "籌碼",
+      "text": "投信連買5日"
+     },
+     {
+      "cat": "籌碼",
+      "text": "融券連減8日"
+     },
+     {
+      "cat": "籌碼",
+      "text": "集保後大戶續買：主力買超 6,528 張、融資減 2,655 張（11/23–11/26，4 日；集保下次公布前以每日資料估計）"
+     },
+     {
+      "cat": "價量",
+      "text": "週強勢：近 5 日上漲 7.1%（門檻 +7%）"
+     }
+    ],
+    "score": 6
+   },
+   {
+    "symbol": "4938",
+    "name": "和碩",
+    "themes": [
+     "組裝代工／ODM"
+    ],
+    "close": 85.1,
+    "r20": -18.56,
+    "horizon": "long",
+    "reasons": [
+     {
+      "cat": "基本面",
+      "text": "2026/10 月營收年增 59.6%"
+     },
+     {
+      "cat": "技術",
+      "text": "站上年線 82.55，季線高於年線，長期趨勢向上"
+     },
+     {
+      "cat": "評價",
+      "text": "本益比 13.9 倍（≤ 35）"
+     },
+     {
+      "cat": "股利",
+      "text": "最近 5 年每年配息"
+     },
+     {
+      "cat": "股利",
+      "text": "殖利率 5.04%"
+     },
+     {
+      "cat": "動能",
+      "text": "近一年上漲 19.0%"
+     },
+     {
+      "cat": "籌碼",
+      "text": "投信熱門買超：買超 3,784 張，買超金額全市場前 30 名"
+     },
+     {
+      "cat": "籌碼",
+      "text": "主力大買超：主力買超 1,773 張，占成交量 21%（門檻 10%，2026-11-26）"
+     },
+     {
+      "cat": "籌碼",
+      "text": "融券連減4日"
+     },
+     {
+      "cat": "研究筆記",
+      "text": "投信買超較多個股之一（和碩（4938）今日上漲 6.91%，投信買超、組裝代工股反）"
+     },
+     {
+      "cat": "研究筆記",
+      "text": "代工族群同步反彈（和碩（4938）今日上漲 6.91%，投信買超、組裝代工股反）"
+     }
+    ],
+    "score": 6
+   },
+   {
+    "symbol": "2059",
+    "name": "川湖",
+    "themes": [
+     "滑軌"
+    ],
+    "close": 7155.0,
+    "r20": -27.58,
+    "horizon": "long",
+    "reasons": [
+     {
+      "cat": "基本面",
+      "text": "2026/10 月營收年增 191.1%"
+     },
+     {
+      "cat": "技術",
+      "text": "站上年線 6,706.27，季線高於年線，長期趨勢向上"
+     },
+     {
+      "cat": "評價",
+      "text": "本益比 24.0 倍（≤ 35）"
+     },
+     {
+      "cat": "股利",
+      "text": "最近 5 年每年配息"
+     },
+     {
+      "cat": "動能",
+      "text": "近一年上漲 98.5%"
+     },
+     {
+      "cat": "籌碼",
+      "text": "融資連增3日"
+     },
+     {
+      "cat": "籌碼",
+      "text": "大戶加碼：≥400 張大戶持股 63.78%（+0.58），集保 11/13 → 11/20"
+     },
+     {
+      "cat": "籌碼",
+      "text": "散戶離場：≤50 張散戶持股 14.35%（-0.23），集保 11/13 → 11/20"
+     },
+     {
+      "cat": "價量",
+      "text": "週強勢：近 5 日上漲 20.5%（門檻 +7%）"
+     },
+     {
+      "cat": "研究筆記",
+      "text": "連兩日相對大盤強勢（股后連兩日逆勢走強，5 日累計上漲逾兩成）"
+     },
+     {
+      "cat": "研究筆記",
+      "text": "AI 伺服器機櫃零組件（股后連兩日逆勢走強，5 日累計上漲逾兩成）"
+     }
+    ],
+    "score": 5
+   },
    {
     "symbol": "2615",
     "name": "",
     "themes": [],
-    "close": 100.5,
-    "r20": -15.19,
+    "close": 100.0,
+    "r20": -13.04,
     "horizon": "long",
     "reasons": [
      {
@@ -20,50 +199,34 @@
      },
      {
       "cat": "技術",
-      "text": "站上年線 88.91，季線高於年線，長期趨勢向上"
+      "text": "站上年線 88.99，季線高於年線，長期趨勢向上"
      },
      {
       "cat": "評價",
-      "text": "本益比 5.3 倍（≤ 35）"
+      "text": "本益比 5.5 倍（≤ 35）"
      },
      {
       "cat": "股利",
       "text": "最近 5 年每年配息"
      },
      {
-      "cat": "股利",
-      "text": "殖利率 3.09%"
-     },
-     {
       "cat": "動能",
-      "text": "近一年上漲 21.5%"
+      "text": "近一年上漲 22.9%"
      },
      {
       "cat": "籌碼",
-      "text": "外資熱門買超：買超 9,268 張，買超金額全市場前 30 名"
-     },
-     {
-      "cat": "籌碼",
-      "text": "主力大買超：主力買超 7,197 張，占成交量 28%（門檻 10%，2026-11-25）"
-     },
-     {
-      "cat": "籌碼",
-      "text": "融券連減4日"
+      "text": "集保後大戶續買：主力買超 5,638 張、融資減 278 張（11/23–11/26，4 日；集保下次公布前以每日資料估計）"
      },
      {
       "cat": "研究筆記",
-      "text": "外資今日買超 9267 張，資金轉向航運（萬海（2615）今日逆勢上漲 3.50%，外資買超 9267）"
+      "text": "前一日外資買超 9,267 張（萬海（2615）今日下跌 0.50%，前一日外資買超後今日小）"
      },
      {
       "cat": "研究筆記",
-      "text": "航運業今日逆勢上漲（研究包樣本僅萬海）（萬海（2615）今日逆勢上漲 3.50%，外資買超 9267）"
-     },
-     {
-      "cat": "研究筆記",
-      "text": "上期研究包 10 月營收年增 124.36%（萬海（2615）今日逆勢上漲 3.50%，外資買超 9267）"
+      "text": "中東航運風險可能支撐運價（推論）（萬海（2615）今日下跌 0.50%，前一日外資買超後今日小）"
      }
     ],
-    "score": 6
+    "score": 5
    },
    {
     "symbol": "6213",
@@ -71,8 +234,8 @@
     "themes": [
      "CCL／銅箔基板"
     ],
-    "close": 390.0,
-    "r20": -49.87,
+    "close": 429.0,
+    "r20": -42.42,
     "horizon": "long",
     "reasons": [
      {
@@ -81,11 +244,11 @@
      },
      {
       "cat": "技術",
-      "text": "站上年線 321.46，季線高於年線，長期趨勢向上"
+      "text": "站上年線 322.79，季線高於年線，長期趨勢向上"
      },
      {
       "cat": "評價",
-      "text": "本益比 30.8 倍（≤ 35）"
+      "text": "本益比 27.9 倍（≤ 35）"
      },
      {
       "cat": "股利",
@@ -93,23 +256,23 @@
      },
      {
       "cat": "動能",
-      "text": "近一年上漲 261.1%"
+      "text": "近一年上漲 291.8%"
      },
      {
-      "cat": "籌碼",
-      "text": "投信熱門買超：買超 1,578 張，買超金額全市場前 30 名"
-     },
-     {
-      "cat": "研究筆記",
-      "text": "10月營收年增119.53%、累計年增57.17%，公司提及漲價效應與AI需求（聯茂（6213）今日下跌9.30%，前一日漲停後回吐；10月）"
+      "cat": "價量",
+      "text": "週強勢：近 5 日上漲 8.6%（門檻 +7%）"
      },
      {
       "cat": "研究筆記",
-      "text": "前三季累計EPS 12.8元（聯茂（6213）今日下跌9.30%，前一日漲停後回吐；10月）"
+      "text": "前三季 EPS 12.8 元（聯茂（6213）今日上漲 10.00%，漲停居漲幅榜首，CC）"
      },
      {
       "cat": "研究筆記",
-      "text": "投信今日買超約1,578張（聯茂（6213）今日下跌9.30%，前一日漲停後回吐；10月）"
+      "text": "CCL 高階化趨勢由 AI 帶動（聯茂（6213）今日上漲 10.00%，漲停居漲幅榜首，CC）"
+     },
+     {
+      "cat": "研究筆記",
+      "text": "量大上漲居漲幅榜首（聯茂（6213）今日上漲 10.00%，漲停居漲幅榜首，CC）"
      }
     ],
     "score": 5
@@ -120,8 +283,8 @@
     "themes": [
      "機器人／自動化"
     ],
-    "close": 555.0,
-    "r20": -19.45,
+    "close": 589.0,
+    "r20": -12.48,
     "horizon": "long",
     "reasons": [
      {
@@ -130,11 +293,11 @@
      },
      {
       "cat": "技術",
-      "text": "站上年線 475.12，季線高於年線，長期趨勢向上"
+      "text": "站上年線 476.37，季線高於年線，長期趨勢向上"
      },
      {
       "cat": "評價",
-      "text": "本益比 29.8 倍（≤ 35）"
+      "text": "本益比 28.1 倍（≤ 35）"
      },
      {
       "cat": "股利",
@@ -142,7 +305,11 @@
      },
      {
       "cat": "動能",
-      "text": "近一年上漲 91.7%"
+      "text": "近一年上漲 104.5%"
+     },
+     {
+      "cat": "籌碼",
+      "text": "集保後大戶續買：主力買超 9 張、融資減 10 張（11/23–11/26，4 日；集保下次公布前以每日資料估計）"
      }
     ],
     "score": 5
@@ -153,8 +320,8 @@
     "themes": [
      "被動元件"
     ],
-    "close": 88.2,
-    "r20": -35.85,
+    "close": 94.1,
+    "r20": -29.51,
     "horizon": "long",
     "reasons": [
      {
@@ -163,11 +330,11 @@
      },
      {
       "cat": "技術",
-      "text": "站上年線 86.88，季線高於年線，長期趨勢向上"
+      "text": "站上年線 87.06，季線高於年線，長期趨勢向上"
      },
      {
       "cat": "評價",
-      "text": "本益比 19.9 倍（≤ 35）"
+      "text": "本益比 21.2 倍（≤ 35）"
      },
      {
       "cat": "股利",
@@ -175,11 +342,11 @@
      },
      {
       "cat": "動能",
-      "text": "近一年上漲 83.9%"
+      "text": "近一年上漲 85.6%"
      },
      {
-      "cat": "籌碼",
-      "text": "主力連買3日"
+      "cat": "價量",
+      "text": "週強勢：近 5 日上漲 9.2%（門檻 +7%）"
      }
     ],
     "score": 5
@@ -190,8 +357,8 @@
     "themes": [
      "PCB／伺服器板／HDI"
     ],
-    "close": 452.0,
-    "r20": -16.91,
+    "close": 497.0,
+    "r20": -7.28,
     "horizon": "long",
     "reasons": [
      {
@@ -200,11 +367,11 @@
      },
      {
       "cat": "技術",
-      "text": "站上年線 434.46，季線高於年線，長期趨勢向上"
+      "text": "站上年線 435.25，季線高於年線，長期趨勢向上"
      },
      {
       "cat": "評價",
-      "text": "本益比 16.4 倍（≤ 35）"
+      "text": "本益比 15.2 倍（≤ 35）"
      },
      {
       "cat": "股利",
@@ -212,182 +379,27 @@
      },
      {
       "cat": "動能",
-      "text": "近一年上漲 47.0%"
-     },
-     {
-      "cat": "研究筆記",
-      "text": "10月營收年增70.33%、累計年增43.66%（健鼎（3044）今日下跌7.09%，10月營收年增70.33）"
-     },
-     {
-      "cat": "研究筆記",
-      "text": "公司說明客戶訂單需求及出貨增加（健鼎（3044）今日下跌7.09%，10月營收年增70.33）"
-     },
-     {
-      "cat": "研究筆記",
-      "text": "近10日投信累計淨買約5,208張（健鼎（3044）今日下跌7.09%，10月營收年增70.33）"
-     }
-    ],
-    "score": 5
-   },
-   {
-    "symbol": "1303",
-    "name": "南亞",
-    "themes": [
-     "CCL／銅箔基板"
-    ],
-    "close": 226.5,
-    "r20": -29.0,
-    "horizon": "long",
-    "reasons": [
-     {
-      "cat": "基本面",
-      "text": "2026/10 月營收年增 64.6%"
-     },
-     {
-      "cat": "技術",
-      "text": "站上年線 146.28，季線高於年線，長期趨勢向上"
-     },
-     {
-      "cat": "評價",
-      "text": "本益比 23.3 倍（≤ 35）"
-     },
-     {
-      "cat": "股利",
-      "text": "最近 5 年每年配息"
-     },
-     {
-      "cat": "動能",
-      "text": "近一年上漲 343.2%"
+      "text": "近一年上漲 61.1%"
      },
      {
       "cat": "籌碼",
-      "text": "投信熱門買超：買超 6,566 張，買超金額全市場前 30 名"
+      "text": "投信熱門買超：買超 1,441 張，買超金額全市場前 30 名"
      },
      {
-      "cat": "籌碼",
-      "text": "自營商熱門買超：買超 1,808 張，買超金額全市場前 30 名"
-     },
-     {
-      "cat": "籌碼",
-      "text": "融券連減3日"
+      "cat": "價量",
+      "text": "週強勢：近 5 日上漲 14.6%（門檻 +7%）"
      },
      {
       "cat": "研究筆記",
-      "text": "10月營收349.42億元，創近55個月新高、年增64.6%（南亞（1303）今日下跌9.04%，塑化族群全面走弱；投信買）"
+      "text": "10 月營收年增 70.33%（健鼎（3044）今日上漲 9.96%，PCB 族群強彈，量大）"
      },
      {
       "cat": "研究筆記",
-      "text": "電子材料產品營運大幅成長（南亞（1303）今日下跌9.04%，塑化族群全面走弱；投信買）"
+      "text": "前三季 EPS 24.95 元（健鼎（3044）今日上漲 9.96%，PCB 族群強彈，量大）"
      },
      {
       "cat": "研究筆記",
-      "text": "投信今日買超約6,565張（南亞（1303）今日下跌9.04%，塑化族群全面走弱；投信買）"
-     }
-    ],
-    "score": 5
-   },
-   {
-    "symbol": "2330",
-    "name": "台積電",
-    "themes": [
-     "晶圓代工"
-    ],
-    "close": 2150.0,
-    "r20": -11.34,
-    "horizon": "long",
-    "reasons": [
-     {
-      "cat": "基本面",
-      "text": "2026/10 月營收年增 59.7%"
-     },
-     {
-      "cat": "技術",
-      "text": "站上年線 2,121.38，季線高於年線，長期趨勢向上"
-     },
-     {
-      "cat": "評價",
-      "text": "本益比 22.7 倍（≤ 35）"
-     },
-     {
-      "cat": "股利",
-      "text": "最近 5 年每年配息"
-     },
-     {
-      "cat": "動能",
-      "text": "近一年上漲 49.3%"
-     },
-     {
-      "cat": "籌碼",
-      "text": "投信熱門買超：買超 4,725 張，買超金額全市場前 30 名"
-     },
-     {
-      "cat": "籌碼",
-      "text": "投信連買3日"
-     },
-     {
-      "cat": "籌碼",
-      "text": "融券連減3日"
-     },
-     {
-      "cat": "研究筆記",
-      "text": "10 月營收年增 59.71%，累計年增 43.3%（台積電（2330）今日下跌 3.59% 收 2,150 元，）"
-     },
-     {
-      "cat": "研究筆記",
-      "text": "跌幅小於大盤（台積電（2330）今日下跌 3.59% 收 2,150 元，）"
-     },
-     {
-      "cat": "研究筆記",
-      "text": "投信今日買超約 4,725 張（台積電（2330）今日下跌 3.59% 收 2,150 元，）"
-     }
-    ],
-    "score": 5
-   },
-   {
-    "symbol": "3017",
-    "name": "奇鋐",
-    "themes": [
-     "散熱／液冷"
-    ],
-    "close": 2545.0,
-    "r20": -20.84,
-    "horizon": "long",
-    "reasons": [
-     {
-      "cat": "基本面",
-      "text": "2026/10 月營收年增 34.4%"
-     },
-     {
-      "cat": "技術",
-      "text": "站上年線 2,375.29，季線高於年線，長期趨勢向上"
-     },
-     {
-      "cat": "評價",
-      "text": "本益比 28.7 倍（≤ 35）"
-     },
-     {
-      "cat": "股利",
-      "text": "最近 5 年每年配息"
-     },
-     {
-      "cat": "動能",
-      "text": "近一年上漲 83.8%"
-     },
-     {
-      "cat": "籌碼",
-      "text": "投信熱門買超：買超 1,418 張，買超金額全市場前 30 名"
-     },
-     {
-      "cat": "研究筆記",
-      "text": "投信今日買超約 1418 張，承接外資賣壓（奇鋐（3017）今日下跌 2.12%，跌幅小於大盤，投信買超）"
-     },
-     {
-      "cat": "研究筆記",
-      "text": "戴爾 AI 伺服器未完成訂單 1,323 億美元創新高，散熱需求背景仍在（奇鋐（3017）今日下跌 2.12%，跌幅小於大盤，投信買超）"
-     },
-     {
-      "cat": "研究筆記",
-      "text": "今日跌幅小於大盤與散熱同業（奇鋐（3017）今日下跌 2.12%，跌幅小於大盤，投信買超）"
+      "text": "PCB 族群整體走強（健鼎（3044）今日上漲 9.96%，PCB 族群強彈，量大）"
      }
     ],
     "score": 5
@@ -395,149 +407,19 @@
   ],
   "candidates": {
    "swing": 0,
-   "long": 12
+   "long": 18
   }
  },
  "tracked": [
-  {
-   "date": "2026-11-11",
-   "symbol": "1815",
-   "name": "富喬",
-   "horizon": "swing",
-   "ref_price": 140.5,
-   "last_close": 101.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -27.76
-  },
-  {
-   "date": "2026-11-11",
-   "symbol": "1802",
-   "name": "台玻",
-   "horizon": "swing",
-   "ref_price": 76.7,
-   "last_close": 59.9,
-   "last_date": "2026-11-25",
-   "ret_pct": -21.9
-  },
-  {
-   "date": "2026-11-11",
-   "symbol": "7704",
-   "name": "",
-   "horizon": "swing",
-   "ref_price": 81.9,
-   "last_close": 54.9,
-   "last_date": "2026-11-25",
-   "ret_pct": -32.97
-  },
-  {
-   "date": "2026-11-11",
-   "symbol": "4562",
-   "name": "穎漢",
-   "horizon": "swing",
-   "ref_price": 33.05,
-   "last_close": 21.2,
-   "last_date": "2026-11-25",
-   "ret_pct": -35.85
-  },
-  {
-   "date": "2026-11-11",
-   "symbol": "5340",
-   "name": "建榮",
-   "horizon": "swing",
-   "ref_price": 96.5,
-   "last_close": 66.2,
-   "last_date": "2026-11-25",
-   "ret_pct": -31.4
-  },
-  {
-   "date": "2026-11-11",
-   "symbol": "2376",
-   "name": "技嘉",
-   "horizon": "long",
-   "ref_price": 305.0,
-   "last_close": 261.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -14.43
-  },
-  {
-   "date": "2026-11-11",
-   "symbol": "4967",
-   "name": "十銓",
-   "horizon": "long",
-   "ref_price": 261.5,
-   "last_close": 226.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -13.58
-  },
-  {
-   "date": "2026-11-11",
-   "symbol": "3231",
-   "name": "緯創",
-   "horizon": "long",
-   "ref_price": 174.5,
-   "last_close": 152.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -12.89
-  },
-  {
-   "date": "2026-11-11",
-   "symbol": "4938",
-   "name": "和碩",
-   "horizon": "long",
-   "ref_price": 96.2,
-   "last_close": 79.6,
-   "last_date": "2026-11-25",
-   "ret_pct": -17.26
-  },
-  {
-   "date": "2026-11-11",
-   "symbol": "3006",
-   "name": "晶豪科",
-   "horizon": "long",
-   "ref_price": 235.0,
-   "last_close": 171.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -27.02
-  },
-  {
-   "date": "2026-11-11",
-   "symbol": "2615",
-   "name": "",
-   "horizon": "long",
-   "ref_price": 111.0,
-   "last_close": 100.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -9.46
-  },
-  {
-   "date": "2026-11-11",
-   "symbol": "6196",
-   "name": "帆宣",
-   "horizon": "long",
-   "ref_price": 424.5,
-   "last_close": 311.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -26.62
-  },
-  {
-   "date": "2026-11-11",
-   "symbol": "2395",
-   "name": "研華",
-   "horizon": "long",
-   "ref_price": 612.0,
-   "last_close": 555.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -9.31
-  },
   {
    "date": "2026-11-12",
    "symbol": "1802",
    "name": "台玻",
    "horizon": "swing",
    "ref_price": 81.7,
-   "last_close": 59.9,
-   "last_date": "2026-11-25",
-   "ret_pct": -26.68
+   "last_close": 59.7,
+   "last_date": "2026-11-26",
+   "ret_pct": -26.93
   },
   {
    "date": "2026-11-12",
@@ -545,9 +427,9 @@
    "name": "穎漢",
    "horizon": "swing",
    "ref_price": 32.45,
-   "last_close": 21.2,
-   "last_date": "2026-11-25",
-   "ret_pct": -34.67
+   "last_close": 21.15,
+   "last_date": "2026-11-26",
+   "ret_pct": -34.82
   },
   {
    "date": "2026-11-12",
@@ -555,9 +437,9 @@
    "name": "富喬",
    "horizon": "swing",
    "ref_price": 137.0,
-   "last_close": 101.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -25.91
+   "last_close": 107.5,
+   "last_date": "2026-11-26",
+   "ret_pct": -21.53
   },
   {
    "date": "2026-11-12",
@@ -565,9 +447,9 @@
    "name": "建榮",
    "horizon": "swing",
    "ref_price": 93.2,
-   "last_close": 66.2,
-   "last_date": "2026-11-25",
-   "ret_pct": -28.97
+   "last_close": 68.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -27.04
   },
   {
    "date": "2026-11-12",
@@ -575,9 +457,9 @@
    "name": "",
    "horizon": "swing",
    "ref_price": 76.8,
-   "last_close": 54.9,
-   "last_date": "2026-11-25",
-   "ret_pct": -28.52
+   "last_close": 55.7,
+   "last_date": "2026-11-26",
+   "ret_pct": -27.47
   },
   {
    "date": "2026-11-12",
@@ -585,9 +467,9 @@
    "name": "昇達科",
    "horizon": "swing",
    "ref_price": 1455.0,
-   "last_close": 1255.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -13.75
+   "last_close": 1380.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -5.15
   },
   {
    "date": "2026-11-12",
@@ -595,9 +477,9 @@
    "name": "營邦",
    "horizon": "swing",
    "ref_price": 687.0,
-   "last_close": 433.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -36.9
+   "last_close": 476.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -30.71
   },
   {
    "date": "2026-11-12",
@@ -605,9 +487,9 @@
    "name": "德宏",
    "horizon": "swing",
    "ref_price": 192.0,
-   "last_close": 141.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -26.56
+   "last_close": 152.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -20.83
   },
   {
    "date": "2026-11-12",
@@ -615,9 +497,9 @@
    "name": "十銓",
    "horizon": "long",
    "ref_price": 255.5,
-   "last_close": 226.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -11.55
+   "last_close": 237.5,
+   "last_date": "2026-11-26",
+   "ret_pct": -7.05
   },
   {
    "date": "2026-11-12",
@@ -625,9 +507,9 @@
    "name": "緯創",
    "horizon": "long",
    "ref_price": 170.0,
-   "last_close": 152.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -10.59
+   "last_close": 167.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -1.76
   },
   {
    "date": "2026-11-12",
@@ -635,9 +517,9 @@
    "name": "和碩",
    "horizon": "long",
    "ref_price": 92.2,
-   "last_close": 79.6,
-   "last_date": "2026-11-25",
-   "ret_pct": -13.67
+   "last_close": 85.1,
+   "last_date": "2026-11-26",
+   "ret_pct": -7.7
   },
   {
    "date": "2026-11-12",
@@ -645,9 +527,9 @@
    "name": "晶豪科",
    "horizon": "long",
    "ref_price": 225.5,
-   "last_close": 171.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -23.95
+   "last_close": 185.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -17.96
   },
   {
    "date": "2026-11-12",
@@ -655,9 +537,9 @@
    "name": "",
    "horizon": "long",
    "ref_price": 107.0,
-   "last_close": 100.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -6.07
+   "last_close": 100.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -6.54
   },
   {
    "date": "2026-11-12",
@@ -665,9 +547,9 @@
    "name": "研華",
    "horizon": "long",
    "ref_price": 603.0,
-   "last_close": 555.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -7.96
+   "last_close": 589.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -2.32
   },
   {
    "date": "2026-11-12",
@@ -675,9 +557,9 @@
    "name": "光頡",
    "horizon": "long",
    "ref_price": 112.5,
-   "last_close": 88.2,
-   "last_date": "2026-11-25",
-   "ret_pct": -21.6
+   "last_close": 94.1,
+   "last_date": "2026-11-26",
+   "ret_pct": -16.36
   },
   {
    "date": "2026-11-12",
@@ -685,9 +567,9 @@
    "name": "健鼎",
    "horizon": "long",
    "ref_price": 534.0,
-   "last_close": 452.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -15.36
+   "last_close": 497.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -6.93
   },
   {
    "date": "2026-11-16",
@@ -695,9 +577,9 @@
    "name": "台玻",
    "horizon": "swing",
    "ref_price": 76.6,
-   "last_close": 59.9,
-   "last_date": "2026-11-25",
-   "ret_pct": -21.8
+   "last_close": 59.7,
+   "last_date": "2026-11-26",
+   "ret_pct": -22.06
   },
   {
    "date": "2026-11-16",
@@ -705,9 +587,9 @@
    "name": "穎漢",
    "horizon": "swing",
    "ref_price": 31.2,
-   "last_close": 21.2,
-   "last_date": "2026-11-25",
-   "ret_pct": -32.05
+   "last_close": 21.15,
+   "last_date": "2026-11-26",
+   "ret_pct": -32.21
   },
   {
    "date": "2026-11-16",
@@ -715,9 +597,9 @@
    "name": "創意",
    "horizon": "swing",
    "ref_price": 7750.0,
-   "last_close": 5070.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -34.58
+   "last_close": 5390.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -30.45
   },
   {
    "date": "2026-11-16",
@@ -725,9 +607,9 @@
    "name": "萊德光電-KY",
    "horizon": "swing",
    "ref_price": 485.0,
-   "last_close": 460.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -5.15
+   "last_close": 506.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 4.33
   },
   {
    "date": "2026-11-16",
@@ -735,9 +617,9 @@
    "name": "穩懋",
    "horizon": "swing",
    "ref_price": 512.0,
-   "last_close": 404.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -21.0
+   "last_close": 444.5,
+   "last_date": "2026-11-26",
+   "ret_pct": -13.18
   },
   {
    "date": "2026-11-16",
@@ -745,9 +627,9 @@
    "name": "建榮",
    "horizon": "swing",
    "ref_price": 85.7,
-   "last_close": 66.2,
-   "last_date": "2026-11-25",
-   "ret_pct": -22.75
+   "last_close": 68.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -20.65
   },
   {
    "date": "2026-11-16",
@@ -755,9 +637,9 @@
    "name": "十銓",
    "horizon": "long",
    "ref_price": 240.0,
-   "last_close": 226.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -5.83
+   "last_close": 237.5,
+   "last_date": "2026-11-26",
+   "ret_pct": -1.04
   },
   {
    "date": "2026-11-16",
@@ -765,9 +647,9 @@
    "name": "緯創",
    "horizon": "long",
    "ref_price": 159.0,
-   "last_close": 152.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -4.4
+   "last_close": 167.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 5.03
   },
   {
    "date": "2026-11-16",
@@ -775,9 +657,9 @@
    "name": "和碩",
    "horizon": "long",
    "ref_price": 85.7,
-   "last_close": 79.6,
-   "last_date": "2026-11-25",
-   "ret_pct": -7.12
+   "last_close": 85.1,
+   "last_date": "2026-11-26",
+   "ret_pct": -0.7
   },
   {
    "date": "2026-11-16",
@@ -785,9 +667,9 @@
    "name": "晶豪科",
    "horizon": "long",
    "ref_price": 216.0,
-   "last_close": 171.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -20.6
+   "last_close": 185.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -14.35
   },
   {
    "date": "2026-11-16",
@@ -795,9 +677,9 @@
    "name": "營邦",
    "horizon": "long",
    "ref_price": 647.0,
-   "last_close": 433.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -33.0
+   "last_close": 476.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -26.43
   },
   {
    "date": "2026-11-16",
@@ -805,9 +687,9 @@
    "name": "川湖",
    "horizon": "long",
    "ref_price": 7125.0,
-   "last_close": 6505.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -8.7
+   "last_close": 7155.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 0.42
   },
   {
    "date": "2026-11-16",
@@ -815,9 +697,9 @@
    "name": "",
    "horizon": "long",
    "ref_price": 109.5,
-   "last_close": 100.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -8.22
+   "last_close": 100.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -8.68
   },
   {
    "date": "2026-11-16",
@@ -825,9 +707,9 @@
    "name": "研華",
    "horizon": "long",
    "ref_price": 580.0,
-   "last_close": 555.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -4.31
+   "last_close": 589.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 1.55
   },
   {
    "date": "2026-11-17",
@@ -835,9 +717,9 @@
    "name": "定穎投控",
    "horizon": "swing",
    "ref_price": 127.5,
-   "last_close": 132.0,
-   "last_date": "2026-11-25",
-   "ret_pct": 3.53
+   "last_close": 143.5,
+   "last_date": "2026-11-26",
+   "ret_pct": 12.55
   },
   {
    "date": "2026-11-17",
@@ -845,9 +727,9 @@
    "name": "台玻",
    "horizon": "swing",
    "ref_price": 69.0,
-   "last_close": 59.9,
-   "last_date": "2026-11-25",
-   "ret_pct": -13.19
+   "last_close": 59.7,
+   "last_date": "2026-11-26",
+   "ret_pct": -13.48
   },
   {
    "date": "2026-11-17",
@@ -855,9 +737,9 @@
    "name": "十銓",
    "horizon": "long",
    "ref_price": 245.0,
-   "last_close": 226.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -7.76
+   "last_close": 237.5,
+   "last_date": "2026-11-26",
+   "ret_pct": -3.06
   },
   {
    "date": "2026-11-17",
@@ -865,9 +747,9 @@
    "name": "緯創",
    "horizon": "long",
    "ref_price": 157.0,
-   "last_close": 152.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -3.18
+   "last_close": 167.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 6.37
   },
   {
    "date": "2026-11-17",
@@ -875,9 +757,9 @@
    "name": "和碩",
    "horizon": "long",
    "ref_price": 83.8,
-   "last_close": 79.6,
-   "last_date": "2026-11-25",
-   "ret_pct": -5.01
+   "last_close": 85.1,
+   "last_date": "2026-11-26",
+   "ret_pct": 1.55
   },
   {
    "date": "2026-11-17",
@@ -885,9 +767,9 @@
    "name": "晶豪科",
    "horizon": "long",
    "ref_price": 213.0,
-   "last_close": 171.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -19.48
+   "last_close": 185.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -13.15
   },
   {
    "date": "2026-11-17",
@@ -895,9 +777,9 @@
    "name": "營邦",
    "horizon": "long",
    "ref_price": 583.0,
-   "last_close": 433.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -25.64
+   "last_close": 476.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -18.35
   },
   {
    "date": "2026-11-17",
@@ -905,9 +787,9 @@
    "name": "",
    "horizon": "long",
    "ref_price": 106.5,
-   "last_close": 100.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -5.63
+   "last_close": 100.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -6.1
   },
   {
    "date": "2026-11-17",
@@ -915,9 +797,9 @@
    "name": "聯茂",
    "horizon": "long",
    "ref_price": 432.0,
-   "last_close": 390.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -9.72
+   "last_close": 429.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -0.69
   },
   {
    "date": "2026-11-17",
@@ -925,9 +807,9 @@
    "name": "研華",
    "horizon": "long",
    "ref_price": 564.0,
-   "last_close": 555.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -1.6
+   "last_close": 589.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 4.43
   },
   {
    "date": "2026-11-18",
@@ -935,9 +817,9 @@
    "name": "十銓",
    "horizon": "long",
    "ref_price": 240.0,
-   "last_close": 226.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -5.83
+   "last_close": 237.5,
+   "last_date": "2026-11-26",
+   "ret_pct": -1.04
   },
   {
    "date": "2026-11-18",
@@ -945,9 +827,9 @@
    "name": "緯創",
    "horizon": "long",
    "ref_price": 162.0,
-   "last_close": 152.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -6.17
+   "last_close": 167.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 3.09
   },
   {
    "date": "2026-11-18",
@@ -955,9 +837,9 @@
    "name": "和碩",
    "horizon": "long",
    "ref_price": 85.4,
-   "last_close": 79.6,
-   "last_date": "2026-11-25",
-   "ret_pct": -6.79
+   "last_close": 85.1,
+   "last_date": "2026-11-26",
+   "ret_pct": -0.35
   },
   {
    "date": "2026-11-18",
@@ -965,9 +847,9 @@
    "name": "信邦",
    "horizon": "long",
    "ref_price": 274.5,
-   "last_close": 266.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -3.1
+   "last_close": 262.5,
+   "last_date": "2026-11-26",
+   "ret_pct": -4.37
   },
   {
    "date": "2026-11-18",
@@ -975,9 +857,9 @@
    "name": "晶豪科",
    "horizon": "long",
    "ref_price": 212.0,
-   "last_close": 171.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -19.1
+   "last_close": 185.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -12.74
   },
   {
    "date": "2026-11-18",
@@ -985,9 +867,9 @@
    "name": "營邦",
    "horizon": "long",
    "ref_price": 536.0,
-   "last_close": 433.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -19.12
+   "last_close": 476.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -11.19
   },
   {
    "date": "2026-11-18",
@@ -995,9 +877,9 @@
    "name": "",
    "horizon": "long",
    "ref_price": 111.0,
-   "last_close": 100.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -9.46
+   "last_close": 100.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -9.91
   },
   {
    "date": "2026-11-18",
@@ -1005,9 +887,9 @@
    "name": "聯茂",
    "horizon": "long",
    "ref_price": 438.5,
-   "last_close": 390.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -11.06
+   "last_close": 429.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -2.17
   },
   {
    "date": "2026-11-19",
@@ -1015,9 +897,9 @@
    "name": "",
    "horizon": "long",
    "ref_price": 103.5,
-   "last_close": 100.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -2.9
+   "last_close": 100.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -3.38
   },
   {
    "date": "2026-11-19",
@@ -1025,9 +907,9 @@
    "name": "聯茂",
    "horizon": "long",
    "ref_price": 395.0,
-   "last_close": 390.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -1.27
+   "last_close": 429.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 8.61
   },
   {
    "date": "2026-11-19",
@@ -1035,9 +917,9 @@
    "name": "研華",
    "horizon": "long",
    "ref_price": 554.0,
-   "last_close": 555.0,
-   "last_date": "2026-11-25",
-   "ret_pct": 0.18
+   "last_close": 589.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 6.32
   },
   {
    "date": "2026-11-19",
@@ -1045,9 +927,9 @@
    "name": "健鼎",
    "horizon": "long",
    "ref_price": 433.5,
-   "last_close": 452.0,
-   "last_date": "2026-11-25",
-   "ret_pct": 4.27
+   "last_close": 497.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 14.65
   },
   {
    "date": "2026-11-19",
@@ -1055,9 +937,9 @@
    "name": "南亞",
    "horizon": "long",
    "ref_price": 228.5,
-   "last_close": 226.5,
-   "last_date": "2026-11-25",
-   "ret_pct": -0.88
+   "last_close": 244.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 6.78
   },
   {
    "date": "2026-11-19",
@@ -1065,9 +947,9 @@
    "name": "日月光投控",
    "horizon": "long",
    "ref_price": 504.0,
-   "last_close": 488.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -3.17
+   "last_close": 511.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 1.39
   },
   {
    "date": "2026-11-19",
@@ -1075,9 +957,9 @@
    "name": "奇鋐",
    "horizon": "long",
    "ref_price": 2445.0,
-   "last_close": 2545.0,
-   "last_date": "2026-11-25",
-   "ret_pct": 4.09
+   "last_close": 2795.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 14.31
   },
   {
    "date": "2026-11-19",
@@ -1085,9 +967,9 @@
    "name": "",
    "horizon": "long",
    "ref_price": 57.1,
-   "last_close": 54.9,
-   "last_date": "2026-11-25",
-   "ret_pct": -3.85
+   "last_close": 55.7,
+   "last_date": "2026-11-26",
+   "ret_pct": -2.45
   },
   {
    "date": "2026-11-20",
@@ -1095,9 +977,9 @@
    "name": "",
    "horizon": "long",
    "ref_price": 95.0,
-   "last_close": 100.5,
-   "last_date": "2026-11-25",
-   "ret_pct": 5.79
+   "last_close": 100.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 5.26
   },
   {
    "date": "2026-11-20",
@@ -1105,9 +987,9 @@
    "name": "聯茂",
    "horizon": "long",
    "ref_price": 355.5,
-   "last_close": 390.0,
-   "last_date": "2026-11-25",
-   "ret_pct": 9.7
+   "last_close": 429.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 20.68
   },
   {
    "date": "2026-11-20",
@@ -1115,9 +997,9 @@
    "name": "研華",
    "horizon": "long",
    "ref_price": 520.0,
-   "last_close": 555.0,
-   "last_date": "2026-11-25",
-   "ret_pct": 6.73
+   "last_close": 589.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 13.27
   },
   {
    "date": "2026-11-20",
@@ -1125,9 +1007,9 @@
    "name": "南亞",
    "horizon": "long",
    "ref_price": 206.0,
-   "last_close": 226.5,
-   "last_date": "2026-11-25",
-   "ret_pct": 9.95
+   "last_close": 244.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 18.45
   },
   {
    "date": "2026-11-20",
@@ -1135,9 +1017,9 @@
    "name": "創意",
    "horizon": "long",
    "ref_price": 5400.0,
-   "last_close": 5070.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -6.11
+   "last_close": 5390.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -0.19
   },
   {
    "date": "2026-11-20",
@@ -1145,9 +1027,9 @@
    "name": "",
    "horizon": "long",
    "ref_price": 142.5,
-   "last_close": 142.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -0.35
+   "last_close": 133.5,
+   "last_date": "2026-11-26",
+   "ret_pct": -6.32
   },
   {
    "date": "2026-11-20",
@@ -1155,9 +1037,9 @@
    "name": "統新",
    "horizon": "long",
    "ref_price": 203.5,
-   "last_close": 214.5,
-   "last_date": "2026-11-25",
-   "ret_pct": 5.41
+   "last_close": 235.5,
+   "last_date": "2026-11-26",
+   "ret_pct": 15.72
   },
   {
    "date": "2026-11-20",
@@ -1165,9 +1047,9 @@
    "name": "精材",
    "horizon": "long",
    "ref_price": 319.5,
-   "last_close": 336.0,
-   "last_date": "2026-11-25",
-   "ret_pct": 5.16
+   "last_close": 340.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 6.42
   },
   {
    "date": "2026-11-23",
@@ -1175,9 +1057,9 @@
    "name": "",
    "horizon": "long",
    "ref_price": 96.1,
-   "last_close": 100.5,
-   "last_date": "2026-11-25",
-   "ret_pct": 4.58
+   "last_close": 100.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 4.06
   },
   {
    "date": "2026-11-23",
@@ -1185,9 +1067,9 @@
    "name": "健鼎",
    "horizon": "long",
    "ref_price": 442.5,
-   "last_close": 452.0,
-   "last_date": "2026-11-25",
-   "ret_pct": 2.15
+   "last_close": 497.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 12.32
   },
   {
    "date": "2026-11-23",
@@ -1195,9 +1077,9 @@
    "name": "信邦",
    "horizon": "long",
    "ref_price": 277.5,
-   "last_close": 266.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -4.14
+   "last_close": 262.5,
+   "last_date": "2026-11-26",
+   "ret_pct": -5.41
   },
   {
    "date": "2026-11-23",
@@ -1205,9 +1087,9 @@
    "name": "聯茂",
    "horizon": "long",
    "ref_price": 391.0,
-   "last_close": 390.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -0.26
+   "last_close": 429.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 9.72
   },
   {
    "date": "2026-11-23",
@@ -1215,9 +1097,9 @@
    "name": "研華",
    "horizon": "long",
    "ref_price": 536.0,
-   "last_close": 555.0,
-   "last_date": "2026-11-25",
-   "ret_pct": 3.54
+   "last_close": 589.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 9.89
   },
   {
    "date": "2026-11-23",
@@ -1225,9 +1107,9 @@
    "name": "南亞",
    "horizon": "long",
    "ref_price": 226.5,
-   "last_close": 226.5,
-   "last_date": "2026-11-25",
-   "ret_pct": 0.0
+   "last_close": 244.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 7.73
   },
   {
    "date": "2026-11-23",
@@ -1235,9 +1117,9 @@
    "name": "創意",
    "horizon": "long",
    "ref_price": 5120.0,
-   "last_close": 5070.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -0.98
+   "last_close": 5390.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 5.27
   },
   {
    "date": "2026-11-23",
@@ -1245,9 +1127,9 @@
    "name": "",
    "horizon": "long",
    "ref_price": 140.0,
-   "last_close": 142.0,
-   "last_date": "2026-11-25",
-   "ret_pct": 1.43
+   "last_close": 133.5,
+   "last_date": "2026-11-26",
+   "ret_pct": -4.64
   },
   {
    "date": "2026-11-24",
@@ -1255,9 +1137,9 @@
    "name": "",
    "horizon": "swing",
    "ref_price": 383.0,
-   "last_close": 345.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -9.92
+   "last_close": 329.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -14.1
   },
   {
    "date": "2026-11-24",
@@ -1265,9 +1147,9 @@
    "name": "十銓",
    "horizon": "long",
    "ref_price": 246.0,
-   "last_close": 226.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -8.13
+   "last_close": 237.5,
+   "last_date": "2026-11-26",
+   "ret_pct": -3.46
   },
   {
    "date": "2026-11-24",
@@ -1275,9 +1157,9 @@
    "name": "",
    "horizon": "long",
    "ref_price": 97.1,
-   "last_close": 100.5,
-   "last_date": "2026-11-25",
-   "ret_pct": 3.5
+   "last_close": 100.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 2.99
   },
   {
    "date": "2026-11-24",
@@ -1285,9 +1167,9 @@
    "name": "緯創",
    "horizon": "long",
    "ref_price": 163.0,
-   "last_close": 152.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -6.75
+   "last_close": 167.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 2.45
   },
   {
    "date": "2026-11-24",
@@ -1295,9 +1177,9 @@
    "name": "和碩",
    "horizon": "long",
    "ref_price": 84.8,
-   "last_close": 79.6,
-   "last_date": "2026-11-25",
-   "ret_pct": -6.13
+   "last_close": 85.1,
+   "last_date": "2026-11-26",
+   "ret_pct": 0.35
   },
   {
    "date": "2026-11-24",
@@ -1305,9 +1187,9 @@
    "name": "信邦",
    "horizon": "long",
    "ref_price": 278.0,
-   "last_close": 266.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -4.32
+   "last_close": 262.5,
+   "last_date": "2026-11-26",
+   "ret_pct": -5.58
   },
   {
    "date": "2026-11-24",
@@ -1315,9 +1197,9 @@
    "name": "聯茂",
    "horizon": "long",
    "ref_price": 430.0,
-   "last_close": 390.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -9.3
+   "last_close": 429.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -0.23
   },
   {
    "date": "2026-11-24",
@@ -1325,9 +1207,9 @@
    "name": "研華",
    "horizon": "long",
    "ref_price": 589.0,
-   "last_close": 555.0,
-   "last_date": "2026-11-25",
-   "ret_pct": -5.77
+   "last_close": 589.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 0.0
   },
   {
    "date": "2026-11-24",
@@ -1335,9 +1217,9 @@
    "name": "光頡",
    "horizon": "long",
    "ref_price": 93.8,
-   "last_close": 88.2,
-   "last_date": "2026-11-25",
-   "ret_pct": -5.97
+   "last_close": 94.1,
+   "last_date": "2026-11-26",
+   "ret_pct": 0.32
   },
   {
    "date": "2026-11-25",
@@ -1345,9 +1227,9 @@
    "name": "",
    "horizon": "long",
    "ref_price": 100.5,
-   "last_close": 100.5,
-   "last_date": "2026-11-25",
-   "ret_pct": null
+   "last_close": 100.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -0.5
   },
   {
    "date": "2026-11-25",
@@ -1355,9 +1237,9 @@
    "name": "聯茂",
    "horizon": "long",
    "ref_price": 390.0,
-   "last_close": 390.0,
-   "last_date": "2026-11-25",
-   "ret_pct": null
+   "last_close": 429.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 10.0
   },
   {
    "date": "2026-11-25",
@@ -1365,9 +1247,9 @@
    "name": "研華",
    "horizon": "long",
    "ref_price": 555.0,
-   "last_close": 555.0,
-   "last_date": "2026-11-25",
-   "ret_pct": null
+   "last_close": 589.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 6.13
   },
   {
    "date": "2026-11-25",
@@ -1375,9 +1257,9 @@
    "name": "光頡",
    "horizon": "long",
    "ref_price": 88.2,
-   "last_close": 88.2,
-   "last_date": "2026-11-25",
-   "ret_pct": null
+   "last_close": 94.1,
+   "last_date": "2026-11-26",
+   "ret_pct": 6.69
   },
   {
    "date": "2026-11-25",
@@ -1385,9 +1267,9 @@
    "name": "健鼎",
    "horizon": "long",
    "ref_price": 452.0,
-   "last_close": 452.0,
-   "last_date": "2026-11-25",
-   "ret_pct": null
+   "last_close": 497.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 9.96
   },
   {
    "date": "2026-11-25",
@@ -1395,9 +1277,9 @@
    "name": "南亞",
    "horizon": "long",
    "ref_price": 226.5,
-   "last_close": 226.5,
-   "last_date": "2026-11-25",
-   "ret_pct": null
+   "last_close": 244.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 7.73
   },
   {
    "date": "2026-11-25",
@@ -1405,9 +1287,9 @@
    "name": "台積電",
    "horizon": "long",
    "ref_price": 2150.0,
-   "last_close": 2150.0,
-   "last_date": "2026-11-25",
-   "ret_pct": null
+   "last_close": 2145.0,
+   "last_date": "2026-11-26",
+   "ret_pct": -0.23
   },
   {
    "date": "2026-11-25",
@@ -1415,23 +1297,103 @@
    "name": "奇鋐",
    "horizon": "long",
    "ref_price": 2545.0,
-   "last_close": 2545.0,
-   "last_date": "2026-11-25",
+   "last_close": 2795.0,
+   "last_date": "2026-11-26",
+   "ret_pct": 9.82
+  },
+  {
+   "date": "2026-11-26",
+   "symbol": "3231",
+   "name": "緯創",
+   "horizon": "long",
+   "ref_price": 167.0,
+   "last_close": 167.0,
+   "last_date": "2026-11-26",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-11-26",
+   "symbol": "4938",
+   "name": "和碩",
+   "horizon": "long",
+   "ref_price": 85.1,
+   "last_close": 85.1,
+   "last_date": "2026-11-26",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-11-26",
+   "symbol": "2059",
+   "name": "川湖",
+   "horizon": "long",
+   "ref_price": 7155.0,
+   "last_close": 7155.0,
+   "last_date": "2026-11-26",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-11-26",
+   "symbol": "2615",
+   "name": "",
+   "horizon": "long",
+   "ref_price": 100.0,
+   "last_close": 100.0,
+   "last_date": "2026-11-26",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-11-26",
+   "symbol": "6213",
+   "name": "聯茂",
+   "horizon": "long",
+   "ref_price": 429.0,
+   "last_close": 429.0,
+   "last_date": "2026-11-26",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-11-26",
+   "symbol": "2395",
+   "name": "研華",
+   "horizon": "long",
+   "ref_price": 589.0,
+   "last_close": 589.0,
+   "last_date": "2026-11-26",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-11-26",
+   "symbol": "3624",
+   "name": "光頡",
+   "horizon": "long",
+   "ref_price": 94.1,
+   "last_close": 94.1,
+   "last_date": "2026-11-26",
+   "ret_pct": null
+  },
+  {
+   "date": "2026-11-26",
+   "symbol": "3044",
+   "name": "健鼎",
+   "horizon": "long",
+   "ref_price": 497.0,
+   "last_close": 497.0,
+   "last_date": "2026-11-26",
    "ret_pct": null
   }
  ],
  "summary": {
   "swing": {
    "label": "波段（約 2～8 週）",
-   "count": 22,
-   "avg_ret": -24.03,
-   "win_rate": 4.5
+   "count": 17,
+   "avg_ret": -19.04,
+   "win_rate": 11.8
   },
   "long": {
    "label": "長期（數月以上）",
    "count": 72,
-   "avg_ret": -6.89,
-   "win_rate": 19.4
+   "avg_ret": 0.37,
+   "win_rate": 48.6
   }
  },
  "rules": [
