@@ -2,9 +2,9 @@
   "schema_version": 1,
   "report_type": "finance_info_public",
   "report_date": "2026-11-28",
-  "updated_at": "2026-11-28T11:38:55+08:00",
-  "finished_at": "2026-11-28T11:39:30+08:00",
-  "published_at": "2026-11-28T11:39:31+08:00",
+  "updated_at": "2026-11-28T11:42:53+08:00",
+  "finished_at": "2026-11-28T11:43:01+08:00",
+  "published_at": "2026-11-28T11:43:01+08:00",
   "lookback_days": 2,
   "schedule": [
     "08:10",
@@ -18,7 +18,7 @@
   "news_count": 172,
   "earnings_count": 20,
   "news_digest": {
-    "generated_at": "2026-11-28T11:38:55+08:00",
+    "generated_at": "2026-11-28T11:42:53+08:00",
     "headline": "最近 2 天共整理 172 則財經新聞：利多 92、利空 30、中性 32、混合 18；討論度最高的產業：AI／伺服器、總體經濟、半導體。",
     "stats": {
       "total": 172,
@@ -295,7 +295,7 @@
     }
   },
   "earnings_digest": {
-    "generated_at": "2026-11-28T11:38:55+08:00",
+    "generated_at": "2026-11-28T11:42:53+08:00",
     "days": 5,
     "total": 20,
     "利多": 11,
@@ -554,9 +554,9 @@
       "future": 5
     },
     "source_method": "api",
-    "reused_from_previous_run": 3,
+    "reused_from_previous_run": 31,
     "window_start": "2026-11-27T00:00:00+08:00",
-    "window_end": "2026-11-28T11:39:29.948966+08:00"
+    "window_end": "2026-11-28T11:43:00.334793+08:00"
   },
   "agent_stats": {
     "input": 173,
@@ -1280,7 +1280,7 @@
       "article_id": "6674169",
       "title": "〈熱門股〉健策三片式均熱片明年量產 周漲逾3成",
       "url": "https://news.cnyes.com/news/id/6674169",
-      "category": "tw_stock",
+      "category": "台股新聞",
       "published": "2026-11-28 10:10:06",
       "published_ts": "2026-11-28T10:10:06+08:00",
       "ai_points": [
@@ -1393,7 +1393,7 @@
       "article_id": "6674321",
       "title": "鉅亨速報 - Factset 最新調查：第一金(2892-TW)目標價調升至40元，幅度約8.11%",
       "url": "https://news.cnyes.com/news/id/6674321",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-28 08:10:20",
       "published_ts": "2026-11-28T08:10:20+08:00",
       "ai_points": [
@@ -1433,7 +1433,7 @@
       "article_id": "6674322",
       "title": "鉅亨速報 - Factset 最新調查：元大金(2885-TW)目標價調降至70元，幅度約5.41%",
       "url": "https://news.cnyes.com/news/id/6674322",
-      "category": "anue_live",
+      "category": "台股",
       "published": "2026-11-28 08:10:51",
       "published_ts": "2026-11-28T08:10:51+08:00",
       "ai_points": [
@@ -1935,7 +1935,7 @@
       "article_id": "6674086",
       "title": "鉅亨速報 - Factset 最新調查：高特利集團MO-US的目標價調升至82元，幅度約6.49%",
       "url": "https://news.cnyes.com/news/id/6674086",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-27 20:15:25",
       "published_ts": "2026-11-27T20:15:25+08:00",
       "ai_points": [
@@ -1972,7 +1972,7 @@
       "article_id": "6674087",
       "title": "鉅亨速報 - Factset 最新調查：Nebius Group N.V. Class ANBIS-US的目標價調降至223元，幅度約4.7%",
       "url": "https://news.cnyes.com/news/id/6674087",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-27 20:15:29",
       "published_ts": "2026-11-27T20:15:29+08:00",
       "ai_points": [
@@ -2004,7 +2004,7 @@
       "article_id": "6674088",
       "title": "鉅亨速報 - Factset 最新調查：AST SpaceMobile Inc - Class AASTS-US的目標價調降至48元，幅度約13.82%",
       "url": "https://news.cnyes.com/news/id/6674088",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-27 20:15:30",
       "published_ts": "2026-11-27T20:15:30+08:00",
       "ai_points": [
@@ -3296,7 +3296,7 @@
       "article_id": "6674154",
       "title": "盤中速報 - 安謀控股公司(ARM-US)大漲5.68%，報170.69美元",
       "url": "https://news.cnyes.com/news/id/6674154",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-27 22:45:03",
       "published_ts": "2026-11-27T22:45:03+08:00",
       "ai_points": [
@@ -3333,7 +3333,7 @@
       "article_id": "6674239",
       "title": "盤中速報 - 英特爾(INTC-US)大漲5.33%，報57.38美元",
       "url": "https://news.cnyes.com/news/id/6674239",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-28 02:14:07",
       "published_ts": "2026-11-28T02:14:07+08:00",
       "ai_points": [
@@ -3370,7 +3370,7 @@
       "article_id": "6674242",
       "title": "盤中速報 - 泰瑞達(TER-US)大漲5.36%，報223.53美元",
       "url": "https://news.cnyes.com/news/id/6674242",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-28 02:14:52",
       "published_ts": "2026-11-28T02:14:52+08:00",
       "ai_points": [
@@ -3407,7 +3407,7 @@
       "article_id": "6674245",
       "title": "盤中速報 - 科磊(KLAC-US)大漲5.01%，報140.93美元",
       "url": "https://news.cnyes.com/news/id/6674245",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-28 02:15:05",
       "published_ts": "2026-11-28T02:15:05+08:00",
       "ai_points": [
@@ -3865,7 +3865,7 @@
       "article_id": "6674157",
       "title": "盤中速報 - 美卡多(MELI-US)大漲5.63%，報1549.9美元",
       "url": "https://news.cnyes.com/news/id/6674157",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-27 22:45:06",
       "published_ts": "2026-11-27T22:45:06+08:00",
       "ai_points": [
@@ -3902,7 +3902,7 @@
       "article_id": "6674158",
       "title": "盤中速報 - 福泰製藥(VRTX-US)大跌8.53%，報516.01美元",
       "url": "https://news.cnyes.com/news/id/6674158",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-27 22:45:07",
       "published_ts": "2026-11-27T22:45:07+08:00",
       "ai_points": [
@@ -3939,7 +3939,7 @@
       "article_id": "6674159",
       "title": "盤中速報 - 邁威爾科技(MRVL-US)大漲5.65%，報138.33美元",
       "url": "https://news.cnyes.com/news/id/6674159",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-27 22:45:08",
       "published_ts": "2026-11-27T22:45:08+08:00",
       "ai_points": [
@@ -3976,7 +3976,7 @@
       "article_id": "6674160",
       "title": "盤中速報 - 連貫(COHR-US)大漲6.89%，報209.71美元",
       "url": "https://news.cnyes.com/news/id/6674160",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-27 22:45:12",
       "published_ts": "2026-11-27T22:45:12+08:00",
       "ai_points": [
@@ -4013,7 +4013,7 @@
       "article_id": "6674161",
       "title": "盤中速報 - 安可(AMKR-US)大漲5.15%，報33.67美元",
       "url": "https://news.cnyes.com/news/id/6674161",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-27 22:45:13",
       "published_ts": "2026-11-27T22:45:13+08:00",
       "ai_points": [
@@ -4050,7 +4050,7 @@
       "article_id": "6674162",
       "title": "盤中速報 - Applovin Corp - Class A(APP-US)大漲5.15%，報398.45美元",
       "url": "https://news.cnyes.com/news/id/6674162",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-27 22:45:53",
       "published_ts": "2026-11-27T22:45:53+08:00",
       "ai_points": [
@@ -4087,7 +4087,7 @@
       "article_id": "6674163",
       "title": "盤中速報 - Atlassian Corporation - Class A(TEAM-US)大漲5.01%，報151.63美元",
       "url": "https://news.cnyes.com/news/id/6674163",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-27 22:49:18",
       "published_ts": "2026-11-27T22:49:18+08:00",
       "ai_points": [
@@ -4124,7 +4124,7 @@
       "article_id": "6674164",
       "title": "盤中速報 - ANSYS公司(ANSS-US)大跌5.13%，報15.26美元",
       "url": "https://news.cnyes.com/news/id/6674164",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-27 22:51:35",
       "published_ts": "2026-11-27T22:51:35+08:00",
       "ai_points": [
@@ -4161,7 +4161,7 @@
       "article_id": "6674174",
       "title": "盤中速報 - 特許通訊(CHTR-US)大漲5.04%，報154.69美元",
       "url": "https://news.cnyes.com/news/id/6674174",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-27 23:19:12",
       "published_ts": "2026-11-27T23:19:12+08:00",
       "ai_points": [
@@ -4198,7 +4198,7 @@
       "article_id": "6674185",
       "title": "盤中速報 - 特斯拉(TSLA-US)大漲5.01%，報399.18美元",
       "url": "https://news.cnyes.com/news/id/6674185",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-27 23:50:44",
       "published_ts": "2026-11-27T23:50:44+08:00",
       "ai_points": [
@@ -4235,7 +4235,7 @@
       "article_id": "6674186",
       "title": "盤中速報 - 美光科技(MU-US)大漲5%，報631.33美元",
       "url": "https://news.cnyes.com/news/id/6674186",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-27 23:51:48",
       "published_ts": "2026-11-27T23:51:48+08:00",
       "ai_points": [
@@ -4272,7 +4272,7 @@
       "article_id": "6674211",
       "title": "盤中速報 - 高通(QCOM-US)大漲5.06%，報177.2美元",
       "url": "https://news.cnyes.com/news/id/6674211",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-28 00:35:22",
       "published_ts": "2026-11-28T00:35:22+08:00",
       "ai_points": [
@@ -4309,7 +4309,7 @@
       "article_id": "6674216",
       "title": "盤中速報 - 安森美半導體(ON-US)大漲5.02%，報65.62美元",
       "url": "https://news.cnyes.com/news/id/6674216",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-28 00:49:43",
       "published_ts": "2026-11-28T00:49:43+08:00",
       "ai_points": [
@@ -4346,7 +4346,7 @@
       "article_id": "6674238",
       "title": "盤中速報 - 英特格(ENTG-US)大漲5.09%，報134.9美元",
       "url": "https://news.cnyes.com/news/id/6674238",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-28 02:12:38",
       "published_ts": "2026-11-28T02:12:38+08:00",
       "ai_points": [
@@ -4383,7 +4383,7 @@
       "article_id": "6674246",
       "title": "盤中速報 - 和康電訊(MTSI-US)大漲5.29%，報210.52美元",
       "url": "https://news.cnyes.com/news/id/6674246",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-28 02:15:07",
       "published_ts": "2026-11-28T02:15:07+08:00",
       "ai_points": [
@@ -5306,7 +5306,7 @@
       "article_id": "6674175",
       "title": "盤中速報 - 思佳訊半導體(SWKS-US)大漲5.11%，報86.2美元",
       "url": "https://news.cnyes.com/news/id/6674175",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-27 23:23:17",
       "published_ts": "2026-11-27T23:23:17+08:00",
       "ai_points": [
@@ -5342,7 +5342,7 @@
       "article_id": "6674220",
       "title": "盤中速報 - 萊迪思半導體(LSCC-US)大漲5.02%，報103.16美元",
       "url": "https://news.cnyes.com/news/id/6674220",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-28 01:05:39",
       "published_ts": "2026-11-28T01:05:39+08:00",
       "ai_points": [
@@ -5377,7 +5377,7 @@
       "article_id": "6674240",
       "title": "盤中速報 - 芯源系統(MPWR-US)大漲5.18%，報1256.47美元",
       "url": "https://news.cnyes.com/news/id/6674240",
-      "category": "anue_live",
+      "category": "美股",
       "published": "2026-11-28 02:14:08",
       "published_ts": "2026-11-28T02:14:08+08:00",
       "ai_points": [
@@ -6120,34 +6120,6 @@
       "source": "鉅亨網"
     },
     {
-      "article_id": "6673420",
-      "title": "誰在拋售黃金？俄羅斯連續10個月減持",
-      "url": "https://news.cnyes.com/news/id/6673420",
-      "category": "國際政經",
-      "published": "2026-11-27 11:42:36",
-      "published_ts": "2026-11-27T11:42:36+08:00",
-      "ai_points": [
-        "黃金市場拋售壓力不僅來自投資者獲利了結，部分官方持有者也在資金壓力下持續減持。",
-        "據GoldFix統計，截至9月，土耳其、俄羅斯和亞塞拜然國家石油基金合計淨賣出約166噸黃金。",
-        "俄羅斯是唯一連續十個月每月都在賣出的持有者，1月至10月黃金持倉逐月下降，累計減少約72噸。"
-      ],
-      "summary": "黃金市場拋售壓力不僅來自投資者獲利了結，部分官方持有者也在資金壓力下持續減持。；據GoldFix統計，截至9月，土耳其、俄羅斯和亞塞拜然國家石油基金合計淨賣出約166噸黃金。；俄羅斯是唯一連續十個月每月都在賣出的持有者，1月至10月黃金持倉逐月下降，累計減少約72噸。",
-      "sentiment": "利多",
-      "sectors": [
-        "原物料／能源",
-        "總體經濟"
-      ],
-      "stocks": [],
-      "highlights": [
-        "獲利",
-        "黃金"
-      ],
-      "why": "",
-      "importance": 3.0,
-      "ai_source": "rule",
-      "source": "鉅亨網"
-    },
-    {
       "article_id": "6673835",
       "title": "馬斯克預言：Optimus機器人18個月內包辦家務 人人會想買一至兩台",
       "url": "https://news.cnyes.com/news/id/6673835",
@@ -6301,6 +6273,34 @@
       "highlights": [
         "戰爭",
         "川普"
+      ],
+      "why": "",
+      "importance": 2.0,
+      "ai_source": "rule",
+      "source": "鉅亨網"
+    },
+    {
+      "article_id": "6673420",
+      "title": "誰在拋售黃金？俄羅斯連續10個月減持",
+      "url": "https://news.cnyes.com/news/id/6673420",
+      "category": "國際政經",
+      "published": "2026-11-27 11:42:36",
+      "published_ts": "2026-11-27T11:42:36+08:00",
+      "ai_points": [
+        "黃金市場拋售壓力不僅來自投資者獲利了結，部分官方持有者也在資金壓力下持續減持。",
+        "據GoldFix統計，截至9月，土耳其、俄羅斯和亞塞拜然國家石油基金合計淨賣出約166噸黃金。",
+        "俄羅斯是唯一連續十個月每月都在賣出的持有者，1月至10月黃金持倉逐月下降，累計減少約72噸。"
+      ],
+      "summary": "黃金市場拋售壓力不僅來自投資者獲利了結，部分官方持有者也在資金壓力下持續減持。；據GoldFix統計，截至9月，土耳其、俄羅斯和亞塞拜然國家石油基金合計淨賣出約166噸黃金。；俄羅斯是唯一連續十個月每月都在賣出的持有者，1月至10月黃金持倉逐月下降，累計減少約72噸。",
+      "sentiment": "利多",
+      "sectors": [
+        "原物料／能源",
+        "總體經濟"
+      ],
+      "stocks": [],
+      "highlights": [
+        "獲利",
+        "黃金"
       ],
       "why": "",
       "importance": 2.0,
